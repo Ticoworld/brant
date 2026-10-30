@@ -1,0 +1,9 @@
+{
+  "node": "v24.22.1",
+  "ckb": "ckb 0.210.0 (2592ddf 2026-09-17)",
+  "ckbBinarySHA256": "d687e478aa4a395ba9ce839473fe43684cacd4ad7a38096af1e331b8a1ddd178",
+  "zig": "0.14.1",
+  "platform": "Linux x86_64, isolated CKB Dummy PoW / Ganache Shanghai",
+  "dependencies": "package-lock.json",
+  "stdlibBaseline": "WO04 recovered vendored ckb-c-stdlib, preserved byte-for-byte in deps; per-file SHA256 in delivery manifest"
+}

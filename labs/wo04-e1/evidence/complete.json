@@ -1,0 +1,7 @@
+{
+  "date": "2026-10-30T08:36:00.343Z",
+  "events": 36,
+  "cases": 30,
+  "trades": 5,
+  "scope": "Execution-proof mechanism under explicit trusted checkpoint; NO consensus finality verifier"
+}

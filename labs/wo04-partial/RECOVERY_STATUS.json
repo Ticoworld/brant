@@ -1,0 +1,56 @@
+{
+  "status": "INCOMPLETE, recovered without rerunning experiments",
+  "recovered_at_utc": "2026-10-30T06:11:56.742618+00:00",
+  "ckb_committed_records": 9,
+  "evm_success_receipts": 11,
+  "retained_signed_states": 112,
+  "alternating_updates": 100,
+  "recorded_cases": [
+    {
+      "label": "coordinator_deleted_before_exit",
+      "result": "EXECUTED"
+    },
+    {
+      "label": "alternating100_independent_register",
+      "result": "SUBMITTED"
+    },
+    {
+      "label": "alternating100_independent_seal",
+      "result": "REJECTED"
+    },
+    {
+      "label": "alternating100_independent_seal",
+      "result": "SUBMITTED"
+    },
+    {
+      "label": "stale_native_0",
+      "result": "REJECTED"
+    },
+    {
+      "label": "stale_native_1",
+      "result": "REJECTED"
+    },
+    {
+      "label": "wrong_native_signature",
+      "result": "REJECTED"
+    },
+    {
+      "label": "wrong_native_recipient",
+      "result": "REJECTED"
+    },
+    {
+      "label": "three_states_independent_seal",
+      "result": "SUBMITTED"
+    },
+    {
+      "label": "directional_sixth_overdraft",
+      "result": "REJECTED"
+    }
+  ],
+  "terminal_error": "ERR_PACKAGE_PATH_NOT_EXPORTED: @nervosnetwork/ckb-sdk-core/lib/signWitnessGroup.js",
+  "completion_marker_present": false,
+  "checkpoint_proof_spike_executed": false,
+  "adaptor_experiments_executed": false,
+  "optimistic_relay_experiments_executed": false,
+  "splice_executed": false
+}

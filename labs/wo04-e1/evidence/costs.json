@@ -1,0 +1,405 @@
+{
+  "ckb": [
+    {
+      "label": "filled_shared_reserve_CKB",
+      "hash": "0x6f689c6bdcc9f4431c1e312b74a3359a78e16db91b418c82f36ce7db7f22aa2d",
+      "bytes": 886,
+      "cycles": 1623971,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "unfilled_shared_reserve_CKB",
+      "hash": "0x92e45b394cb6e3eeddc5c4e2d170fdfa651a1fa07b3a3c8f80840a4bb3afbc30",
+      "bytes": 886,
+      "cycles": 1647426,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "filled_individual_reserve_CKB",
+      "hash": "0x71531cccca1fa6f60e2e5a2fe0904afcb9129cd366d5a334ceeda5c552e26384",
+      "bytes": 886,
+      "cycles": 1657098,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "failed_then_unfilled_reserve_CKB",
+      "hash": "0x328810115619585b824a3d8240ea9db01a53a32d06fe86a0067ea78c3c2d2b21",
+      "bytes": 886,
+      "cycles": 1648590,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "pending_without_terminal_outcome_reserve_CKB",
+      "hash": "0x952a6e58240fe9f781d556386db7154fdad5dfae469603c184329b3a82e774c5",
+      "bytes": 886,
+      "cycles": 1649164,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "publish_TRUSTED_TEST_bootstrap",
+      "hash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "bytes": 629,
+      "cycles": 2586445,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "verified_shared_checkpoint",
+      "hash": "0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee",
+      "bytes": 1919,
+      "cycles": 2064388,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "filled_shared_shared_recovery",
+      "hash": "0x841f9d332c21b9f2748347baeca0e57b8574bca88eaae7539bbbe8b5fcba6ea0",
+      "bytes": 376,
+      "cycles": 49592,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "unfilled_shared_shared_recovery",
+      "hash": "0x7fd4db6e1973381d3ed3343856e7962e1409d5426800c63c2853f485e8827936",
+      "bytes": 376,
+      "cycles": 49596,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "filled_individual_individual_recovery",
+      "hash": "0xffee1fc753b3e0abd619a670ad2aeed46adb942b0495dd457a5aac09d19fc851",
+      "bytes": 1466,
+      "cycles": 426417,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "consume_optional_dependency",
+      "hash": "0x412d17f14fecfcf5a21db6861415380960d71bc971ba17b59cb59ba9dd367edd",
+      "bytes": 460,
+      "cycles": 1631931,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    {
+      "label": "failed_then_unfilled_delayed_individual_refund",
+      "hash": "0x79f61418948fd50ae76f7cf6de6bfd75432e3554360f5a89448cd12b15d3760e",
+      "bytes": 1551,
+      "cycles": 458390,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    }
+  ],
+  "evm": [
+    {
+      "label": "deploy_TestToken",
+      "hash": "0x62f5ed958e4b231c102e760b4787c24de6fbd151c3c5f6b95465bbfffb3ae653",
+      "gas": 492758,
+      "effectiveGasPriceWei": 1875000000,
+      "feeWei": 923921250000000,
+      "reverted": false
+    },
+    {
+      "label": "deploy_Outcomes",
+      "hash": "0x9b94d6f6d017adbc2e9ef59425ddc830632ca1104d6c3a12527db0dd593d524b",
+      "gas": 825131,
+      "effectiveGasPriceWei": 1769218028,
+      "feeWei": 1459836640661668,
+      "reverted": false
+    },
+    {
+      "label": "filled_shared_open",
+      "hash": "0xb0cf8bac4f14652fba3cb1f99c6692767324cebe15e7d7cb1aec6fdfcb91fc98",
+      "gas": 185259,
+      "effectiveGasPriceWei": 1678354989,
+      "feeWei": 310930366907151,
+      "reverted": false
+    },
+    {
+      "label": "unfilled_shared_open",
+      "hash": "0x6ec52a413220499f996f7124c87749b6f85060ceecf74e0763e20a2b3252dd38",
+      "gas": 185259,
+      "effectiveGasPriceWei": 1594607877,
+      "feeWei": 295415460685143,
+      "reverted": false
+    },
+    {
+      "label": "filled_individual_open",
+      "hash": "0x599b115617f19404bf39bb9e2a5ea71b62ffa45c763c326972b88c807d0a9297",
+      "gas": 185247,
+      "effectiveGasPriceWei": 1521199863,
+      "feeWei": 281797711021161,
+      "reverted": false
+    },
+    {
+      "label": "failed_then_unfilled_open",
+      "hash": "0x2cb88fcbb1c12ea3badaceaf1cf1bab7a35bff2bd00cf916ad039265e290147a",
+      "gas": 185247,
+      "effectiveGasPriceWei": 1456854470,
+      "feeWei": 269877920004090,
+      "reverted": false
+    },
+    {
+      "label": "pending_without_terminal_outcome_open",
+      "hash": "0x4c27d37f6093c9a49484e06bb5f8ad9bdb1410ee4e60bc75ea73d7e3e27e6147",
+      "gas": 185259,
+      "effectiveGasPriceWei": 1400452919,
+      "feeWei": 259446507321021,
+      "reverted": false
+    },
+    {
+      "label": "maker_allowance",
+      "hash": "0xe0b9b49ed24ee21cecc0ce669814655debac601987ba04abc502381b5cd47080",
+      "gas": 46115,
+      "effectiveGasPriceWei": 1351014534,
+      "feeWei": 62302035235410,
+      "reverted": false
+    },
+    {
+      "label": "wrong_amount",
+      "hash": "0xb12ab9b623e5ae9505619c938999e24d15c9cfe9d94b5a5ffab350b6c8501f17",
+      "gas": 36055,
+      "effectiveGasPriceWei": 1307272610,
+      "feeWei": 47133713953550,
+      "reverted": true
+    },
+    {
+      "label": "wrong_recipient",
+      "hash": "0x23b9c9c728a075bc976d62d5f37ede9e07dca558d34ff17e9ab8f4d5bfdaf786",
+      "gas": 33926,
+      "effectiveGasPriceWei": 1268955857,
+      "feeWei": 43050596404582,
+      "reverted": true
+    },
+    {
+      "label": "wrong_token",
+      "hash": "0x20e2722b06b872cae534bf2676f5cdbf28b47e50f9d7bfba689403b4d8c4aeb8",
+      "gas": 31782,
+      "effectiveGasPriceWei": 1235412414,
+      "feeWei": 39263877341748,
+      "reverted": true
+    },
+    {
+      "label": "wrong_trade_id",
+      "hash": "0x2b1e4bf745f1c6d11a2e982bff2b079f1726255e21f9eec898a37f1ac68ca9f6",
+      "gas": 25311,
+      "effectiveGasPriceWei": 1206048212,
+      "feeWei": 30526286293932,
+      "reverted": true
+    },
+    {
+      "label": "filled_shared_delivery",
+      "hash": "0x4bd91139be5a2fe5e5b14a9eb2ea6a005a7115e09d358942733e01d069be41c0",
+      "gas": 93023,
+      "effectiveGasPriceWei": 1180335647,
+      "feeWei": 109798362890881,
+      "reverted": false
+    },
+    {
+      "label": "filled_individual_delivery",
+      "hash": "0xa2db4614d7ac394c1153f0f94814a1b2551b70fa41b8e56d848d70677035c398",
+      "gas": 93023,
+      "effectiveGasPriceWei": 1157933486,
+      "feeWei": 107714446668178,
+      "reverted": false
+    },
+    {
+      "label": "duplicate_fill",
+      "hash": "0x1a5292a72e7d8b6f2491230ecc51112e771851efa4066d439bfd927832800003",
+      "gas": 25311,
+      "effectiveGasPriceWei": 1138314229,
+      "feeWei": 28811871450219,
+      "reverted": true
+    },
+    {
+      "label": "bad_expire_filled",
+      "hash": "0x281586fb1a834c0240fd9cd37880769ce285309f45b190d87eaaa6255fc2cb14",
+      "gas": 24200,
+      "effectiveGasPriceWei": 1121054125,
+      "feeWei": 27129509825000,
+      "reverted": true
+    },
+    {
+      "label": "token_failure_on",
+      "hash": "0x6b3ebe7f0592eeda6ba4d383644efb901c95d20be627b4ebe1930a6f79037e49",
+      "gas": 43747,
+      "effectiveGasPriceWei": 1105946772,
+      "feeWei": 48381853434684,
+      "reverted": false
+    },
+    {
+      "label": "failed_payment",
+      "hash": "0xb20f4e3a21e5a40557ed30191a1aa13431c3e80bc8d6f1829147656d754b65e6",
+      "gas": 48019,
+      "effectiveGasPriceWei": 1092742050,
+      "feeWei": 52472380498950,
+      "reverted": true
+    },
+    {
+      "label": "token_failure_off",
+      "hash": "0xce6f24229e306c754f7692eb42f824bf2a5b1d8e4129f238d53b14966dda51b8",
+      "gas": 21835,
+      "effectiveGasPriceWei": 1081186406,
+      "feeWei": 23607705175010,
+      "reverted": false
+    },
+    {
+      "label": "unfilled_shared_expire",
+      "hash": "0x263805295a74e291c16ff2b6b27cdf46387ab93eb0949d2496e8f35068b2e7d1",
+      "gas": 56480,
+      "effectiveGasPriceWei": 1062171269,
+      "feeWei": 59991433273120,
+      "reverted": false
+    },
+    {
+      "label": "failed_then_unfilled_expire",
+      "hash": "0xc0cc522f4dd534ffc275eb03fa9626cd33e7afd9ac1042911da234d01762d8ae",
+      "gas": 56468,
+      "effectiveGasPriceWei": 1054429123,
+      "feeWei": 59541503717564,
+      "reverted": false
+    },
+    {
+      "label": "late_fill",
+      "hash": "0xab56bf2ecbb5a65d4e81c6e73ca09f72364a90729ea7bcc0a0562b769b3bf3f5",
+      "gas": 25311,
+      "effectiveGasPriceWei": 1047651096,
+      "feeWei": 26517096890856,
+      "reverted": true
+    },
+    {
+      "label": "duplicate_expiry",
+      "hash": "0x03dc00ce7c9836090537db9b37cbc5b90987c1b80f4f06d27428e69896484d17",
+      "gas": 24200,
+      "effectiveGasPriceWei": 1041704760,
+      "feeWei": 25209255192000,
+      "reverted": true
+    },
+    {
+      "label": "commit_shared_outcomes",
+      "hash": "0x302e532d2f53088ecdf830e43820c3fcf05456400e9438e4900483b4632dfc0f",
+      "gas": 53049,
+      "effectiveGasPriceWei": 1036500076,
+      "feeWei": 54985292531724,
+      "reverted": false
+    }
+  ],
+  "measuredSharing": {
+    "checkpoint": {
+      "label": "verified_shared_checkpoint",
+      "hash": "0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee",
+      "bytes": 1919,
+      "cycles": 2064388,
+      "feeShannons": 100000,
+      "role": "prototype fixed fee, not cycle-priced"
+    },
+    "sharedAverageCycles": 49594,
+    "directAverageCycles": 442403.5,
+    "sharedAverageBytes": 376,
+    "directAverageBytes": 1508.5,
+    "twoTradeSharedTotalCycles": 2163576,
+    "twoTradeDirectProxyCycles": 884807.0,
+    "twoTradeSharedBytes": 2671,
+    "twoTradeDirectProxyBytes": 3017.0
+  },
+  "largerBatchSensitivity": [
+    {
+      "N": 1,
+      "sharedCyclesAssumingConstantSmallTreeCosts": 2113982,
+      "directCyclesProxy": 442403.5,
+      "sharedBytesAssumingConstantSmallTreeCosts": 2295,
+      "directBytesProxy": 1508.5
+    },
+    {
+      "N": 2,
+      "sharedCyclesAssumingConstantSmallTreeCosts": 2163576,
+      "directCyclesProxy": 884807.0,
+      "sharedBytesAssumingConstantSmallTreeCosts": 2671,
+      "directBytesProxy": 3017.0
+    },
+    {
+      "N": 10,
+      "sharedCyclesAssumingConstantSmallTreeCosts": 2560328,
+      "directCyclesProxy": 4424035.0,
+      "sharedBytesAssumingConstantSmallTreeCosts": 5679,
+      "directBytesProxy": 15085.0
+    },
+    {
+      "N": 100,
+      "sharedCyclesAssumingConstantSmallTreeCosts": 7023788,
+      "directCyclesProxy": 44240350.0,
+      "sharedBytesAssumingConstantSmallTreeCosts": 39519,
+      "directBytesProxy": 150850.0
+    },
+    {
+      "N": 1000,
+      "sharedCyclesAssumingConstantSmallTreeCosts": 51658388,
+      "directCyclesProxy": 442403500.0,
+      "sharedBytesAssumingConstantSmallTreeCosts": 377919,
+      "directBytesProxy": 1508500.0
+    }
+  ],
+  "modelLimits": "Only batches of1 or2 implemented. Larger-batch rows assume constant small-tree proof cost and omit added source-tree construction/proof-depth costs, consensus verification, root retention and finality wait. Not benchmarks or savings claims.",
+  "capacity": {
+    "bootstrapAllocatedCKB": 300,
+    "checkpointAllocatedCKB": 400,
+    "bootstrapMinimumCKB": 210,
+    "checkpointMinimumCKB": 294,
+    "perTradePrincipalCKB": 10000,
+    "perTradeMinimumOccupiedCKB": 430,
+    "perTradeFeeReserveShannons": 100000,
+    "pendingPrincipalCKB": 10000,
+    "peakTradePrincipalCKB": 50000
+  },
+  "hostLockMs": [
+    {
+      "label": "filled_shared",
+      "ms": 4668,
+      "terminalStatus": 2
+    },
+    {
+      "label": "unfilled_shared",
+      "ms": 4281,
+      "terminalStatus": 3
+    },
+    {
+      "label": "filled_individual",
+      "ms": 4617,
+      "terminalStatus": 2
+    },
+    {
+      "label": "failed_then_unfilled",
+      "ms": 4920,
+      "terminalStatus": 3
+    },
+    {
+      "label": "pending_without_terminal_outcome",
+      "ms": null,
+      "terminalStatus": 1
+    }
+  ],
+  "timingLimits": "Manual mining and EVM time jumps. Host elapsed values are not network delivery/finality predictions.",
+  "nativeBalancesFromCapturedLedger": {
+    "alice": {
+      "initialNormalWalletShannons": 10000000000000000,
+      "finalNormalWalletShannons": 9996999999000000
+    },
+    "bob": {
+      "initialNormalWalletShannons": 10000000000000000,
+      "finalNormalWalletShannons": 10001959999800000
+    },
+    "watcher": {
+      "initialNormalWalletShannons": 10000000000000000,
+      "finalNormalWalletShannons": 9999969999900000
+    }
+  },
+  "allCkbFeesShannons": 1200000,
+  "allEvmFeesWei": 4647663077377642
+}

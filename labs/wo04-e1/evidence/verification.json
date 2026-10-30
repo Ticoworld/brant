@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-30T08:45:42.939Z",
+  "ckbCommittedRecords": 12,
+  "evmReceipts": 24,
+  "evmReceiptLogging": "Observed ethers receipts; signed transaction hashes verified, duplicate raw RPC receipt not logged for every ethers call",
+  "referenceMptProofs": 5,
+  "termsAndReservationBindings": 5,
+  "deliveryTransferLogs": 2,
+  "terminalTrades": 4,
+  "pendingTrades": 1,
+  "sameBlockSharedSettlement": true,
+  "sharedSettlementBlocks": [
+    "0x2c",
+    "0x2c"
+  ],
+  "scope": "Offline hashes, RPC records, independent ethers-RLP MPT walk, terms and allocations; not audit or foreign consensus proof"
+}

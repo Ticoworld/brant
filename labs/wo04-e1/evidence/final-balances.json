@@ -1,0 +1,104 @@
+{
+  "token": {
+    "alice": "1000200000000",
+    "bob": "999800000000"
+  },
+  "trades": [
+    {
+      "id": "0xe8cad13cfd176b24bee71730e23439ff7e228fc970da5b9c8a49a7350ce5ca2e",
+      "label": "filled_shared",
+      "status": 2,
+      "nativeOutputs": [
+        {
+          "capacity": "0xe8d4a51000",
+          "lock": {
+            "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "ckbSettlement": "0x841f9d332c21b9f2748347baeca0e57b8574bca88eaae7539bbbe8b5fcba6ea0"
+    },
+    {
+      "id": "0x64c3f909f0d4c16213235383acd7e47107fcbfa0db4b110c612c491a6de7daf4",
+      "label": "unfilled_shared",
+      "status": 3,
+      "nativeOutputs": [
+        {
+          "capacity": "0xe8d4a51000",
+          "lock": {
+            "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "ckbSettlement": "0x7fd4db6e1973381d3ed3343856e7962e1409d5426800c63c2853f485e8827936"
+    },
+    {
+      "id": "0xd22ceffbd99f788b16959b894b4ce98156feba89157e833ec2f6cf7afe1e63b9",
+      "label": "filled_individual",
+      "status": 2,
+      "nativeOutputs": [
+        {
+          "capacity": "0xe8d4a51000",
+          "lock": {
+            "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "ckbSettlement": "0xffee1fc753b3e0abd619a670ad2aeed46adb942b0495dd457a5aac09d19fc851"
+    },
+    {
+      "id": "0x96b1424b00b0498ae3cb1ded3bfe8dd14671ff46d18e94396490976fffbc7c6f",
+      "label": "failed_then_unfilled",
+      "status": 3,
+      "nativeOutputs": [
+        {
+          "capacity": "0xe8d4a51000",
+          "lock": {
+            "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "ckbSettlement": "0x79f61418948fd50ae76f7cf6de6bfd75432e3554360f5a89448cd12b15d3760e"
+    },
+    {
+      "id": "0x83c7a5e5bd5687b3bb70388d539b2242657035c3b1d5107fd7509d2e2c497134",
+      "label": "pending_without_terminal_outcome",
+      "status": 1
+    }
+  ],
+  "checkpoint": {
+    "block_hash": "0x93abcaf4a456d87f3eebdb3eea78625bb575077b4623f1a7a7294b8fac777031",
+    "cell": {
+      "data": {
+        "content": "0xe3783ffed567a28a7195957a2c09d3dfb7dcfe17750d28498cef1b05550288f44bbb4531163d9d87e772d4c80ed87b37d9bb8f7139e9176cdf0c0b56562747a71900000000000000",
+        "hash": "0x5ae7ede28a5ebcaf4759903ac220a46d0ffb1ff5d8879a69120f56846f8f9ad3"
+      },
+      "output": {
+        "capacity": "0x9502f9000",
+        "lock": {
+          "args": "0x",
+          "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+          "hash_type": "data1"
+        },
+        "type": {
+          "args": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b62946259e0334f33a064106302415ad3391bed38437084ef7cddeed1d67c3362387956586d6d7f5fef760dde3eca27b657c8b05fde3783ffed567a28a7195957a2c09d3dfb7dcfe17750d28498cef1b05550288f49dba8d16282d73ddaad097b052b2aa81275d51247fe18c3a44ea5fd9a18eb277",
+          "code_hash": "0xa798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e",
+          "hash_type": "data1"
+        }
+      }
+    },
+    "status": "live"
+  }
+}

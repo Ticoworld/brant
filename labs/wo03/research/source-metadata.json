@@ -1,0 +1,36 @@
+{
+  "retrievedAt": "2026-10-30T05:12:30.624Z",
+  "files": [
+    {
+      "encoding": "utf-8",
+      "sha": "b398933e8669eaf4444b2bd696649ea6dc04c3d0",
+      "display_url": "https://github.com/hyperledger-labs/go-perun/blob/main/client/update.go",
+      "display_title": "update.go"
+    },
+    {
+      "encoding": "utf-8",
+      "sha": "ced3a843f8707213836ba205d9280ed87f1dfc1a",
+      "display_url": "https://github.com/hyperledger-labs/perun-eth-contracts/blob/main/contracts/Adjudicator.sol",
+      "display_title": "Adjudicator.sol"
+    },
+    {
+      "encoding": "utf-8",
+      "sha": "ab394e2e351d50e477fb8db6fa724eb5aa12a348",
+      "display_url": "https://github.com/hyperledger-labs/go-perun/blob/main/channel/multi/adjudicator.go",
+      "display_title": "adjudicator.go"
+    },
+    {
+      "encoding": "utf-8",
+      "sha": "f737a9c339bf70b10a02c12fce42c76aeba00e75",
+      "display_url": "https://github.com/hyperledger-labs/go-perun/blob/main/channel/multi/subscription.go",
+      "display_title": "subscription.go"
+    }
+  ],
+  "failedFetches": [
+    "Raw GitHub via search service disabled",
+    "IACR PDFs 403",
+    "direct api.github.com curl timed out",
+    "client/watcher.go returned404"
+  ],
+  "scope": "Inspected four source files, not a Perun protocol audit; references at moving branch pinned by returned Git blob SHA and local SHA256."
+}

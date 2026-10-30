@@ -1,0 +1,21 @@
+{
+  "name": "wo03_atomic_channel_frontier",
+  "version": "1.0.0",
+  "description": "WO03 bounded channel settlement lab. Not production safe.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node src/contract-tests.cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@nervosnetwork/ckb-sdk-core": "0.109.5",
+    "@nervosnetwork/ckb-sdk-utils": "0.109.5",
+    "ethers": "6.15.0",
+    "ganache": "7.9.2",
+    "solc": "0.8.30"
+  },
+  "private": true
+}

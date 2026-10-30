@@ -1,0 +1,1986 @@
+{
+  "abstraction": "finite, synchronous global ticks, bounded one-tick honest relay, no reorg or signature forgery",
+  "independent": [
+    {
+      "eagerAllLegDispute": false,
+      "restart": false,
+      "window": 2,
+      "horizon": 12,
+      "states": 1154,
+      "edges": 1955,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              3
+            ],
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": false,
+      "restart": false,
+      "window": 3,
+      "horizon": 12,
+      "states": 1379,
+      "edges": 2309,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "publish_1_v0",
+          "state": [
+            0,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_0_v1",
+          "state": [
+            2,
+            [
+              1,
+              1,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              1,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_0_v1",
+          "state": [
+            3,
+            [
+              2,
+              1,
+              3
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_1_v0",
+          "state": [
+            3,
+            [
+              2,
+              1,
+              3
+            ],
+            [
+              2,
+              0,
+              3
+            ],
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": false,
+      "restart": false,
+      "window": 4,
+      "horizon": 12,
+      "states": 1526,
+      "edges": 2523,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "publish_1_v0",
+          "state": [
+            0,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_0_v1",
+          "state": [
+            3,
+            [
+              1,
+              1,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              1,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_0_v1",
+          "state": [
+            4,
+            [
+              2,
+              1,
+              4
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_1_v0",
+          "state": [
+            4,
+            [
+              2,
+              1,
+              4
+            ],
+            [
+              2,
+              0,
+              4
+            ],
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": false,
+      "restart": true,
+      "window": 2,
+      "horizon": 12,
+      "states": 861,
+      "edges": 1481,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              3
+            ],
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": false,
+      "restart": true,
+      "window": 3,
+      "horizon": 12,
+      "states": 860,
+      "edges": 1478,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            5,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              2,
+              1,
+              5
+            ],
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": false,
+      "restart": true,
+      "window": 4,
+      "horizon": 12,
+      "states": 841,
+      "edges": 1439,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              0,
+              -1,
+              -1
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            5,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            6,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            7,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            7,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            7,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              2,
+              1,
+              7
+            ],
+            3
+          ]
+        }
+      ]
+    }
+  ],
+  "eagerIndependent": [
+    {
+      "eagerAllLegDispute": true,
+      "restart": false,
+      "window": 2,
+      "horizon": 12,
+      "states": 446,
+      "edges": 755,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            2,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            2,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              3
+            ],
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": true,
+      "restart": false,
+      "window": 3,
+      "horizon": 12,
+      "states": 496,
+      "edges": 835,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              4
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              4
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            4,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              2,
+              1,
+              4
+            ],
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": true,
+      "restart": false,
+      "window": 4,
+      "horizon": 12,
+      "states": 532,
+      "edges": 889,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            4,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            4,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            4
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            4
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              2,
+              1,
+              5
+            ],
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": true,
+      "restart": true,
+      "window": 2,
+      "horizon": 12,
+      "states": 433,
+      "edges": 729,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              0,
+              3
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              3
+            ],
+            1
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            3,
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              2,
+              1,
+              3
+            ],
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": true,
+      "restart": true,
+      "window": 3,
+      "horizon": 12,
+      "states": 500,
+      "edges": 829,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              0,
+              4
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            5,
+            [
+              1,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              1,
+              1,
+              5
+            ],
+            2
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            5,
+            [
+              2,
+              0,
+              3
+            ],
+            [
+              2,
+              1,
+              5
+            ],
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "eagerAllLegDispute": true,
+      "restart": true,
+      "window": 4,
+      "horizon": 12,
+      "states": 537,
+      "edges": 872,
+      "terminal_versions": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "counterexample": [
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            1,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            2,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              0,
+              5
+            ],
+            -1
+          ]
+        },
+        {
+          "action": "publish_1_v1",
+          "state": [
+            3,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            4,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            5,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            6,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "tick+bounded_watcher",
+          "state": [
+            7,
+            [
+              1,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_0_v0",
+          "state": [
+            7,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              1,
+              1,
+              7
+            ],
+            3
+          ]
+        },
+        {
+          "action": "finalize_1_v1",
+          "state": [
+            7,
+            [
+              2,
+              0,
+              4
+            ],
+            [
+              2,
+              1,
+              7
+            ],
+            3
+          ]
+        }
+      ]
+    }
+  ],
+  "anchor": {
+    "cases": 72,
+    "mismatchesWithIndependentRefund": [
+      {
+        "anchor": 1,
+        "proofDelay": 0,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 1,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 2,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 3,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 3,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 4,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 4,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 5,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 5,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 6,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 6,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 7,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 7,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 8,
+        "proofAvailable": false,
+        "independentRefund": true,
+        "follower": 0
+      },
+      {
+        "anchor": 1,
+        "proofDelay": 8,
+        "proofAvailable": true,
+        "independentRefund": true,
+        "follower": 0
+      }
+    ],
+    "soundProofNoRefundMismatches": 0,
+    "proofAbsentOutcome": "locked, not unilateral recovery",
+    "limitation": "transition relation assumes sound finalized proof; verifier and chain not implemented"
+  }
+}

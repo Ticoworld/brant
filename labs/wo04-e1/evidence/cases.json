@@ -1,0 +1,171 @@
+[
+  {
+    "label": "reservation_identity_cannot_recreate",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 17 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af.html#17 })"
+  },
+  {
+    "label": "reservation_identity_duplicate_outputs",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af.html#12 })"
+  },
+  {
+    "label": "wrong_amount",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "wrong_recipient",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "wrong_token",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "wrong_trade_id",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "repeated_EVM_fill",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "filled_cannot_expire",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "reverted_payment",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "expired_payment_attempt",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "repeated_expiry",
+    "result": "REJECTED",
+    "error": "transaction execution reverted"
+  },
+  {
+    "label": "checkpoint_wrong_root",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 16 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e.html#16 })"
+  },
+  {
+    "label": "checkpoint_outdated_height",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 14 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e.html#14 })"
+  },
+  {
+    "label": "checkpoint_malformed_proof",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 70 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e.html#70 })"
+  },
+  {
+    "label": "coordinator_terminated_database_removed",
+    "result": "EXECUTED"
+  },
+  {
+    "label": "consume_immutable_checkpoint",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 10 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e.html#10 })"
+  },
+  {
+    "label": "conflicting_refund_for_filled_trade",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#18 })"
+  },
+  {
+    "label": "wrong_CKB_recipient",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 22 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#22 })"
+  },
+  {
+    "label": "wrong_CKB_amount",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 23 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#23 })"
+  },
+  {
+    "label": "proof_reused_for_another_trade",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#18 })"
+  },
+  {
+    "label": "wrong_checkpoint_identity",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#15 })"
+  },
+  {
+    "label": "outdated_execution_proof",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 70 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be.html#70 })"
+  },
+  {
+    "label": "two_independent_shared_checkpoint_admissions",
+    "result": "ACCEPTED_BEFORE_MINING",
+    "hashes": [
+      "0x841f9d332c21b9f2748347baeca0e57b8574bca88eaae7539bbbe8b5fcba6ea0",
+      "0x7fd4db6e1973381d3ed3343856e7962e1409d5426800c63c2853f485e8827936"
+    ],
+    "pool": {
+      "last_txs_updated_at": "0x1a18bf391de",
+      "max_tx_pool_size": "0xaba9500",
+      "min_fee_rate": "0x3e8",
+      "min_rbf_rate": "0x5dc",
+      "orphan": "0x0",
+      "pending": "0x2",
+      "proposed": "0x0",
+      "tip_hash": "0x93abcaf4a456d87f3eebdb3eea78625bb575077b4623f1a7a7294b8fac777031",
+      "tip_number": "0x28",
+      "total_tx_cycles": "0x18374",
+      "total_tx_size": "0x2f8",
+      "tx_size_limit": "0x7d000",
+      "verify_queue_size": "0x0"
+    }
+  },
+  {
+    "label": "duplicate_CKB_settlement",
+    "result": "REJECTED",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x6f689c6bdcc9f4431c1e312b74a3359a78e16db91b418c82f36ce7db7f22aa2d00000000))"
+  },
+  {
+    "label": "batch_relayer_unavailable",
+    "result": "REJECTED",
+    "error": "NOT_BATCH_MEMBER"
+  },
+  {
+    "label": "consumed_read_dependency",
+    "result": "REJECTED",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee01000000))"
+  },
+  {
+    "label": "shared_checkpoint_remains_live_after_all_consumers",
+    "result": "LIVE",
+    "outpoint": {
+      "txHash": "0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee",
+      "index": "0x0"
+    }
+  },
+  {
+    "label": "no_authoritative_unfilled_outcome_yet",
+    "result": "REJECTED",
+    "error": "NO_TERMINAL_AUTHORIZED_OUTCOME"
+  },
+  {
+    "label": "external_source_unavailable",
+    "result": "REJECTED",
+    "error": "fetch failed"
+  },
+  {
+    "label": "source_outage_leaves_pending_funds_reserved",
+    "result": "LIVE_NO_FALSE_REFUND"
+  }
+]

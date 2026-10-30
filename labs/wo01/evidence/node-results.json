@@ -1,0 +1,248 @@
+{
+  "version": "0.210.0 (2592ddf 2026-09-17)",
+  "network": "custom isolated devnet, Dummy PoW, no peers, manually generated blocks",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "consensus": {
+    "block_version": "0x0",
+    "cellbase_maturity": "0x10000000000",
+    "dao_type_hash": "0x82d76d1b75fe2fd9a27dfbaa65a039221a380d76c926f378d3f81cf3e7e13f2e",
+    "epoch_duration_target": "0x50",
+    "genesis_hash": "0x35695975fc4d93b6fc72e071c9b2a8a5cb33ab97262128a261efba1535a1a008",
+    "hardfork_features": [
+      {
+        "epoch_number": "0x0",
+        "rfc": "0028"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0029"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0030"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0031"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0032"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0036"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0038"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0048"
+      },
+      {
+        "epoch_number": "0x0",
+        "rfc": "0049"
+      }
+    ],
+    "id": "ckb_dev",
+    "initial_primary_epoch_reward": "0xae6c73c3e070",
+    "max_block_bytes": "0x91c08",
+    "max_block_cycles": "0x2540be400",
+    "max_block_proposals_limit": "0x5dc",
+    "max_uncles_num": "0x2",
+    "median_time_block_count": "0x25",
+    "orphan_rate_target": {
+      "denom": "0x28",
+      "numer": "0x1"
+    },
+    "permanent_difficulty_in_dummy": true,
+    "primary_epoch_reward_halving_interval": "0x2238",
+    "proposer_reward_ratio": {
+      "denom": "0xa",
+      "numer": "0x4"
+    },
+    "secondary_epoch_reward": "0x37d0c8e28542",
+    "secp256k1_blake160_multisig_all_type_hash": "0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8",
+    "secp256k1_blake160_sighash_all_type_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "softforks": {
+      "light_client": {
+        "rfc0043": {
+          "bit": 1,
+          "min_activation_epoch": "0x0",
+          "period": "0xa",
+          "start": "0x0",
+          "threshold": {
+            "denom": "0x4",
+            "numer": "0x3"
+          },
+          "timeout": "0x0"
+        },
+        "status": "rfc0043"
+      }
+    },
+    "tx_proposal_window": {
+      "closest": "0x2",
+      "farthest": "0xa"
+    },
+    "tx_version": "0x0",
+    "type_id_code_hash": "0x00000000000000000000000000000000000000000000000000545950455f4944"
+  },
+  "shared_100": {
+    "accepted": 1,
+    "elapsed_ms": 116.55543500000931,
+    "errors": [
+      {
+        "code": -1111,
+        "message": "PoolRejectedRBF: RBF rejected: Tx's current fee is 10001, expect it to >= 10375 to replace old txs",
+        "data": "RBFRejected(\"Tx's current fee is 10001, expect it to >= 10375 to replace old txs\")"
+      },
+      {
+        "code": -1111,
+        "message": "PoolRejectedRBF: RBF rejected: Tx's current fee is 10002, expect it to >= 10375 to replace old txs",
+        "data": "RBFRejected(\"Tx's current fee is 10002, expect it to >= 10375 to replace old txs\")"
+      },
+      {
+        "code": -1111,
+        "message": "PoolRejectedRBF: RBF rejected: Tx's current fee is 10003, expect it to >= 10375 to replace old txs",
+        "data": "RBFRejected(\"Tx's current fee is 10003, expect it to >= 10375 to replace old txs\")"
+      }
+    ]
+  },
+  "independent_100": {
+    "accepted": 100,
+    "elapsed_ms": 120.54110500002935
+  },
+  "twenty_lanes_five_chained": {
+    "accepted": [
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5
+    ]
+  },
+  "cancellation_replacement": {
+    "jsonrpc": "2.0",
+    "result": "0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c",
+    "id": 1
+  },
+  "chain0_status_after_replacement": [
+    {
+      "block_hash": null,
+      "block_number": null,
+      "reason": "{\"type\":\"RBFRejected\",\"description\":\"RBF rejected: replaced by tx Byte32(0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c)\"}",
+      "status": "rejected",
+      "tx_index": null
+    },
+    {
+      "block_hash": null,
+      "block_number": null,
+      "reason": "{\"type\":\"RBFRejected\",\"description\":\"RBF rejected: replaced by tx Byte32(0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c)\"}",
+      "status": "rejected",
+      "tx_index": null
+    },
+    {
+      "block_hash": null,
+      "block_number": null,
+      "reason": "{\"type\":\"RBFRejected\",\"description\":\"RBF rejected: replaced by tx Byte32(0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c)\"}",
+      "status": "rejected",
+      "tx_index": null
+    },
+    {
+      "block_hash": null,
+      "block_number": null,
+      "reason": "{\"type\":\"RBFRejected\",\"description\":\"RBF rejected: replaced by tx Byte32(0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c)\"}",
+      "status": "rejected",
+      "tx_index": null
+    },
+    {
+      "block_hash": null,
+      "block_number": null,
+      "reason": "{\"type\":\"RBFRejected\",\"description\":\"RBF rejected: replaced by tx Byte32(0x3a167dd77956bff876179611aef31fb43ae0c711df6978ff567749db61b8f11c)\"}",
+      "status": "rejected",
+      "tx_index": null
+    }
+  ],
+  "milestones": [
+    {
+      "height": "0x10",
+      "status": {
+        "block_hash": null,
+        "block_number": null,
+        "reason": null,
+        "status": "pending",
+        "tx_index": null
+      }
+    },
+    {
+      "height": "0x11",
+      "status": {
+        "block_hash": null,
+        "block_number": null,
+        "reason": null,
+        "status": "pending",
+        "tx_index": null
+      }
+    },
+    {
+      "height": "0x12",
+      "status": {
+        "block_hash": null,
+        "block_number": null,
+        "reason": null,
+        "status": "pending",
+        "tx_index": null
+      }
+    },
+    {
+      "height": "0x13",
+      "status": {
+        "block_hash": null,
+        "block_number": null,
+        "reason": null,
+        "status": "proposed",
+        "tx_index": null
+      }
+    },
+    {
+      "height": "0x14",
+      "status": {
+        "block_hash": "0xdc745103889abb2b3ee542abf560428c41e28f3a11a68fb31d20c5c4656ca438",
+        "block_number": "0x14",
+        "reason": null,
+        "status": "committed",
+        "tx_index": "0xc4"
+      }
+    }
+  ],
+  "depth_probe": {
+    "accepted": 1000,
+    "last": {
+      "jsonrpc": "2.0",
+      "error": {
+        "code": -1105,
+        "message": "PoolRejectedTransactionByMaxAncestorsCountLimit: Transaction exceeded maximum ancestors count limit; try later",
+        "data": "ExceededMaximumAncestorsCount"
+      },
+      "id": 1
+    }
+  },
+  "limits": "always-success script, passthrough output validator; no signatures, OTX, xUDT, market matching, peer propagation or mainnet latency measured"
+}

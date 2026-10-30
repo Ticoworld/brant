@@ -1,0 +1,6 @@
+// Research Schnorr adaptor equations. NOT BIP340 wire format, not audited.
+const S=require('./session.cjs'),{secp256k1}=require('@noble/curves/secp256k1');const G=secp256k1.ProjectivePoint.BASE,n=secp256k1.CURVE.n,mod=x=>(x%n+n)%n;
+const scalar=()=>{let v;do{v=BigInt('0x'+S.crypto.randomBytes(32).toString('hex'));}while(v===0n||v>=n);return v;};
+const out=x=>'0x'+x.toString(16).padStart(64,'0'),point=p=>p.toHex(true);
+function make(message){const x=scalar(),k=scalar(),t=scalar(),P=G.multiply(x),T=G.multiply(t),R=G.multiply(k).add(T);const e=mod(BigInt(S.sha(Buffer.concat([Buffer.from('WO04-SCHNORR-ADAPTOR-v1'),Buffer.from(R.toRawBytes(true)),Buffer.from(P.toRawBytes(true)),S.buf(message)]))));if(e===0n)throw Error('rare-zero');const sh=mod(k+e*x),s=mod(sh+t);if(!G.multiply(sh).equals(R.subtract(T).add(P.multiply(e))))throw Error('PRESIG');if(!G.multiply(s).equals(R.add(P.multiply(e))))throw Error('COMPLETE');const extracted=mod(s-sh);if(extracted!==t||!G.multiply(extracted).equals(T))throw Error('EXTRACT');return {message,publicKey:point(P),T:point(T),R:point(R),e:out(e),sHat:out(sh),s:out(s),secret:out(t),preSignatureVerified:true,completedVerified:true,extractionVerified:true,secretKnownBeforeAnchor:true};}
+module.exports={make};

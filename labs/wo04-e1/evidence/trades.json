@@ -1,0 +1,254 @@
+[
+  {
+    "label": "filled_shared",
+    "id": "0xe8cad13cfd176b24bee71730e23439ff7e228fc970da5b9c8a49a7350ce5ca2e",
+    "principal": "1000000000000",
+    "fee": "100000",
+    "amount": "100000000",
+    "deadline": 1793349653,
+    "tradeType": {
+      "codeHash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "hashType": "data1",
+      "args": "0x3ad7d541331c39dc87676eaf69821d182cb299043f305f789f764fc966379a7c"
+    },
+    "tradeTypeHash": "0x477387303a0f8da53e58ce5cca87314ed2bea9c114b249341a0ea6a3bc45d60b",
+    "bootstrapTypeHash": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b6",
+    "batchIds": [
+      "0xe8cad13cfd176b24bee71730e23439ff7e228fc970da5b9c8a49a7350ce5ca2e",
+      "0x64c3f909f0d4c16213235383acd7e47107fcbfa0db4b110c612c491a6de7daf4"
+    ],
+    "cpTypeHash": "0x2dda43a7c69fe97f7778605426e4f46186764232068fb73bacecfec88adb2402",
+    "terms": "0x05a8b5918e1663244b3c093675baf399a0527da1d7ece4c8ca125546ad94b187",
+    "outpoint": {
+      "txHash": "0x6f689c6bdcc9f4431c1e312b74a3359a78e16db91b418c82f36ce7db7f22aa2d",
+      "index": "0x0"
+    },
+    "startHostMs": 1793349353565,
+    "initialToken": {
+      "alice": "1000000000000",
+      "bob": "1000000000000"
+    },
+    "status": 2,
+    "leaf": "0x83590a669691e470ddd92744b3afc45de5c35d59dfb0d63961e586557c630b15",
+    "finalToken": {
+      "alice": "1000200000000",
+      "bob": "999800000000"
+    },
+    "bootstrapOutpoint": {
+      "txHash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "index": "0x0"
+    },
+    "checkpointOutpoint": {
+      "txHash": "0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee",
+      "index": "0x0"
+    },
+    "ckbSettlement": "0x841f9d332c21b9f2748347baeca0e57b8574bca88eaae7539bbbe8b5fcba6ea0",
+    "lockHostMs": 4668,
+    "finalNativeOutputs": [
+      {
+        "capacity": "0xe8d4a51000",
+        "lock": {
+          "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064",
+          "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hash_type": "type"
+        },
+        "type": null
+      }
+    ]
+  },
+  {
+    "label": "unfilled_shared",
+    "id": "0x64c3f909f0d4c16213235383acd7e47107fcbfa0db4b110c612c491a6de7daf4",
+    "principal": "1000000000000",
+    "fee": "100000",
+    "amount": "100000000",
+    "deadline": 1793349654,
+    "tradeType": {
+      "codeHash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "hashType": "data1",
+      "args": "0x2ddbd74ba6507273c5588eb4ea13953bbbf2eeecc6448c75a2817b65fb82e080"
+    },
+    "tradeTypeHash": "0x58e7c1c6217bae89a2023ce143c9fb83ac730117bab5ededfa339192af910b23",
+    "bootstrapTypeHash": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b6",
+    "batchIds": [
+      "0xe8cad13cfd176b24bee71730e23439ff7e228fc970da5b9c8a49a7350ce5ca2e",
+      "0x64c3f909f0d4c16213235383acd7e47107fcbfa0db4b110c612c491a6de7daf4"
+    ],
+    "cpTypeHash": "0x2dda43a7c69fe97f7778605426e4f46186764232068fb73bacecfec88adb2402",
+    "terms": "0x2579b9dab2f07f405d9c0ddf810a3dd776fb66efb5cb2511b216bbea7e8b3a14",
+    "outpoint": {
+      "txHash": "0x92e45b394cb6e3eeddc5c4e2d170fdfa651a1fa07b3a3c8f80840a4bb3afbc30",
+      "index": "0x0"
+    },
+    "startHostMs": 1793349353952,
+    "initialToken": {
+      "alice": "1000000000000",
+      "bob": "1000000000000"
+    },
+    "status": 3,
+    "leaf": "0x83f62d72caf994e08af167f775bb5a99e4936ec0f514b94c9ac6654f40100b09",
+    "finalToken": {
+      "alice": "1000200000000",
+      "bob": "999800000000"
+    },
+    "bootstrapOutpoint": {
+      "txHash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "index": "0x0"
+    },
+    "checkpointOutpoint": {
+      "txHash": "0xf46a524d6ea38c6b2a980e6478b7b3c198d738812961f56dcd75d6aadc29f3ee",
+      "index": "0x0"
+    },
+    "ckbSettlement": "0x7fd4db6e1973381d3ed3343856e7962e1409d5426800c63c2853f485e8827936",
+    "lockHostMs": 4281,
+    "finalNativeOutputs": [
+      {
+        "capacity": "0xe8d4a51000",
+        "lock": {
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+          "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hash_type": "type"
+        },
+        "type": null
+      }
+    ]
+  },
+  {
+    "label": "filled_individual",
+    "id": "0xd22ceffbd99f788b16959b894b4ce98156feba89157e833ec2f6cf7afe1e63b9",
+    "principal": "1000000000000",
+    "fee": "100000",
+    "amount": "100000000",
+    "deadline": 1793349655,
+    "tradeType": {
+      "codeHash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "hashType": "data1",
+      "args": "0x4d674d98c6510f78d43819427709db990978810f4f99b07da319a557ef1b464d"
+    },
+    "tradeTypeHash": "0x1fe49224af3e6eed6c681a4a4c82b41dd1f9c1c759a1ed54009731cc280492ef",
+    "bootstrapTypeHash": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b6",
+    "batchIds": [],
+    "cpTypeHash": "0x2dda43a7c69fe97f7778605426e4f46186764232068fb73bacecfec88adb2402",
+    "terms": "0x45890da8113c73917f033ac4190ad99ee97e45ca508ed71b5e41a42ce453510b",
+    "outpoint": {
+      "txHash": "0x71531cccca1fa6f60e2e5a2fe0904afcb9129cd366d5a334ceeda5c552e26384",
+      "index": "0x0"
+    },
+    "startHostMs": 1793349354356,
+    "initialToken": {
+      "alice": "1000000000000",
+      "bob": "1000000000000"
+    },
+    "status": 2,
+    "leaf": "0x668f1161afb26cdb596ca58f1a843b24e76064060afdf6dca8527d0e9b88b976",
+    "finalToken": {
+      "alice": "1000200000000",
+      "bob": "999800000000"
+    },
+    "bootstrapOutpoint": {
+      "txHash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "index": "0x0"
+    },
+    "ckbSettlement": "0xffee1fc753b3e0abd619a670ad2aeed46adb942b0495dd457a5aac09d19fc851",
+    "finalNativeOutputs": [
+      {
+        "capacity": "0xe8d4a51000",
+        "lock": {
+          "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064",
+          "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hash_type": "type"
+        },
+        "type": null
+      }
+    ],
+    "lockHostMs": 4617
+  },
+  {
+    "label": "failed_then_unfilled",
+    "id": "0x96b1424b00b0498ae3cb1ded3bfe8dd14671ff46d18e94396490976fffbc7c6f",
+    "principal": "1000000000000",
+    "fee": "100000",
+    "amount": "100000000",
+    "deadline": 1793349656,
+    "tradeType": {
+      "codeHash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "hashType": "data1",
+      "args": "0xa67c96c5fbe6217887418c505455ca7cb68bb469abb2f213b7da092017ced7a7"
+    },
+    "tradeTypeHash": "0x43d7e756b8a7d0dc309bd335ded14b5d7aa07cd0a4f2ec1bcbfedfe2145bf95d",
+    "bootstrapTypeHash": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b6",
+    "batchIds": [],
+    "cpTypeHash": "0x2dda43a7c69fe97f7778605426e4f46186764232068fb73bacecfec88adb2402",
+    "terms": "0xb57962f4b8dde12940b31ae51c0ebdff6cff51c90cda5ce847074fb75d7f9dc2",
+    "outpoint": {
+      "txHash": "0x328810115619585b824a3d8240ea9db01a53a32d06fe86a0067ea78c3c2d2b21",
+      "index": "0x0"
+    },
+    "startHostMs": 1793349354728,
+    "initialToken": {
+      "alice": "1000000000000",
+      "bob": "1000000000000"
+    },
+    "status": 3,
+    "leaf": "0x481a857c911215b83482ffac6cfe492b6357c218a728f24b484a939b9fae35e4",
+    "finalToken": {
+      "alice": "1000200000000",
+      "bob": "999800000000"
+    },
+    "bootstrapOutpoint": {
+      "txHash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "index": "0x0"
+    },
+    "ckbSettlement": "0x79f61418948fd50ae76f7cf6de6bfd75432e3554360f5a89448cd12b15d3760e",
+    "finalNativeOutputs": [
+      {
+        "capacity": "0xe8d4a51000",
+        "lock": {
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+          "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hash_type": "type"
+        },
+        "type": null
+      }
+    ],
+    "lockHostMs": 4920
+  },
+  {
+    "label": "pending_without_terminal_outcome",
+    "id": "0x83c7a5e5bd5687b3bb70388d539b2242657035c3b1d5107fd7509d2e2c497134",
+    "principal": "1000000000000",
+    "fee": "100000",
+    "amount": "100000000",
+    "deadline": 1793349657,
+    "tradeType": {
+      "codeHash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "hashType": "data1",
+      "args": "0xd621ed67eb8c449140695373b4e8d28e5c38820ecd9981e614ed1355f314b95b"
+    },
+    "tradeTypeHash": "0x9fcba138bf1582252f9259f6c004673e318fd4e9614768ac84bc2b4ea1d84243",
+    "bootstrapTypeHash": "0xf05df2637db78683436abc977dcaf6ad29e9b2c20a146cb9da6e65f46b4504b6",
+    "batchIds": [],
+    "cpTypeHash": "0x2dda43a7c69fe97f7778605426e4f46186764232068fb73bacecfec88adb2402",
+    "terms": "0xfea6296086d0c8527b4b228b370086e391b1474c53cd22f9ac2745a7bffbbabe",
+    "outpoint": {
+      "txHash": "0x952a6e58240fe9f781d556386db7154fdad5dfae469603c184329b3a82e774c5",
+      "index": "0x0"
+    },
+    "startHostMs": 1793349355103,
+    "initialToken": {
+      "alice": "1000000000000",
+      "bob": "1000000000000"
+    },
+    "status": 1,
+    "leaf": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "finalToken": {
+      "alice": "1000200000000",
+      "bob": "999800000000"
+    },
+    "bootstrapOutpoint": {
+      "txHash": "0x757da439ac7be22ed96a9bec4f0ac689a44400fed71b80858237267567b8eb47",
+      "index": "0x0"
+    },
+    "remainsReserved": true
+  }
+]

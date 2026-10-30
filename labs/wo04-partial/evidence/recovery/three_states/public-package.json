@@ -1,0 +1,264 @@
+{
+  "label": "three_states",
+  "environment": {
+    "genesis": "0x8ad62ae327b608ce924dff24b0c7d7337e80d5822d68901a39ac92d52fb675c8",
+    "codeHash": "0xe21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2",
+    "parties": {
+      "alice": {
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+        },
+        "evm": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf"
+      },
+      "bob": {
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064"
+        },
+        "evm": "0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"
+      },
+      "watcher": {
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d"
+        },
+        "evm": "0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69"
+      }
+    },
+    "secpDep": {
+      "outPoint": {
+        "txHash": "0x0a41bee968a5645607181ce0cd07219ba8c684b6f1cdf7404e18d47dbe2004c3",
+        "index": "0x0"
+      },
+      "depType": "depGroup"
+    },
+    "versions": {
+      "ckb": {
+        "active": true,
+        "addresses": [
+          {
+            "address": "/ip4/127.0.0.1/tcp/18215",
+            "score": "0x1"
+          },
+          {
+            "address": "/ip4/127.0.0.1/tcp/18215/ws",
+            "score": "0x1"
+          }
+        ],
+        "connections": "0x0",
+        "node_id": "QmR1HUkgi8mQg4G4W1R3G4Xi8Rv76buottgUbbzzg4MdVT",
+        "protocols": [
+          {
+            "id": "0x64",
+            "name": "/ckb/syn",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x65",
+            "name": "/ckb/relay3",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x79",
+            "name": "/ckb/filter",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x66",
+            "name": "/ckb/tim",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x78",
+            "name": "/ckb/lightclient",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x2",
+            "name": "/ckb/identify",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x0",
+            "name": "/ckb/ping",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x1",
+            "name": "/ckb/discovery",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x3",
+            "name": "/ckb/flr",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x4",
+            "name": "/ckb/disconnectmsg",
+            "support_versions": [
+              "3"
+            ]
+          },
+          {
+            "id": "0x82",
+            "name": "/ckb/holepunching",
+            "support_versions": [
+              "3"
+            ]
+          }
+        ],
+        "version": "0.210.0 (2592ddf 2026-09-17)"
+      },
+      "evm": "Ganache/v7.9.2/EthereumJS TestRPC/v7.9.2/ethereum-js",
+      "node": "v24.22.1"
+    },
+    "codeDep": {
+      "txHash": "0xd009eb5ea75cc96a9f80db7fc6fd35db17c707360462a4682f8a84aa81c13d6d",
+      "index": "0x6"
+    },
+    "token": "0x153b84F377C6C7a7D93Bd9a717E48097Ca6Cfd11"
+  },
+  "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000020000000000000000a0724e1809000000e1f5050000000000804b965d040000007519030000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+  "latest": {
+    "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000020000000000000000a0724e1809000000e1f5050000000000804b965d040000007519030000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+    "alice": "0xcee30dc185cd9b0034525f9e893b840f144b276374caae4d390752166d0ea035ce1e73738e4a0107951f7dea0b73567ab4264782ea3716e509d1f4f4164f1d03",
+    "bob": "0xd0114edc7d2234da979658c056d0ba9c27ae476252cffb13950b945d83c7467f4f200a80ec6936da09ad5b5e41bdddae048ecb63124b30158ba51b01f63fe408",
+    "evmAlice": "0x8e9a0a9aec3b402658da46f7635d5105be48dff3ef018aea6c6ee4c7fae386674eae344e584ad8a95515077fee757d4053018849ed5e70ccc9a37c0fa40f72a31c",
+    "evmBob": "0xc0f97a2fed91e10025f19b74c9a6fef21db559dd0e0cfb78983ba6cb36dc856652d501ed42b85c610907e0c37608628e643b2930ebafc1570e6a34ba1c5ed9f71c",
+    "signingMs": [
+      79.585124,
+      77.747656
+    ],
+    "wallMs": 652.518378,
+    "decoded": {
+      "context": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c66144",
+      "epoch": "0",
+      "version": "2",
+      "ckbTotal": "10000000000000",
+      "tokenTotal": "100000000",
+      "aliceCkb": "4800000000000",
+      "aliceToken": "52000000",
+      "foreign": "0x97fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+    }
+  },
+  "reserve": "700000",
+  "outpoint": {
+    "txHash": "0x48db7ee1f5cce23beaa9b78122b9b0df4f21fa323809835030e2dc9b40a2a36c",
+    "index": "0x0"
+  },
+  "vault": "0x38D8F68983B2830BC4319cb3c6907B0c3f3B94A2",
+  "history": [
+    {
+      "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000000000000000000000a0724e1809000000e1f50500000000005039278c04000080f0fa020000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+      "alice": "0x6d2a24b2f33595993dcaa503a350f2e55287a8cce93c9cf998b0605b561810e382b070438d44792718ef11c346b74c1edcb7e526c68f4f389ad3a4c87ea0240f",
+      "bob": "0x7263e6e617f1bd3e1f80b58bae02b83f8f1beeea91f48c63263e7051d0f5d92025ef6baf469e2716c908eabe684d21f3437867dd5b65862ddc1522c198e7c709",
+      "evmAlice": "0x1e7f2f3327df0d33257cd5804e5bc35a2fc69a67a9d24d0b129bd4f8bed79af9419fd391ebbffa1e3188ce846ffb11eeaee06c1a781646b9d8148bacbf9591ef1b",
+      "evmBob": "0xc564a1872e3a4fd431010f90390134b0304d95509f191b11970c209b56ba9e9512f0c6cb63fa2b5b9b0d971993be4d2a9eee5a8d8aaff35e8cbece5029895a7e1c",
+      "signingMs": [
+        71.292246,
+        68.751157
+      ],
+      "wallMs": 616.04859,
+      "decoded": {
+        "context": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c66144",
+        "epoch": "0",
+        "version": "0",
+        "ckbTotal": "10000000000000",
+        "tokenTotal": "100000000",
+        "aliceCkb": "5000000000000",
+        "aliceToken": "50000000",
+        "foreign": "0x97fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+      }
+    },
+    {
+      "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000000000000000000000a0724e1809000000e1f50500000000005039278c04000080f0fa020000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+      "alice": "0x6d2a24b2f33595993dcaa503a350f2e55287a8cce93c9cf998b0605b561810e382b070438d44792718ef11c346b74c1edcb7e526c68f4f389ad3a4c87ea0240f",
+      "bob": "0x7263e6e617f1bd3e1f80b58bae02b83f8f1beeea91f48c63263e7051d0f5d92025ef6baf469e2716c908eabe684d21f3437867dd5b65862ddc1522c198e7c709",
+      "evmAlice": "0x1e7f2f3327df0d33257cd5804e5bc35a2fc69a67a9d24d0b129bd4f8bed79af9419fd391ebbffa1e3188ce846ffb11eeaee06c1a781646b9d8148bacbf9591ef1b",
+      "evmBob": "0xc564a1872e3a4fd431010f90390134b0304d95509f191b11970c209b56ba9e9512f0c6cb63fa2b5b9b0d971993be4d2a9eee5a8d8aaff35e8cbece5029895a7e1c",
+      "signingMs": [
+        71.292246,
+        68.751157
+      ],
+      "wallMs": 616.04859,
+      "decoded": {
+        "context": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c66144",
+        "epoch": "0",
+        "version": "0",
+        "ckbTotal": "10000000000000",
+        "tokenTotal": "100000000",
+        "aliceCkb": "5000000000000",
+        "aliceToken": "50000000",
+        "foreign": "0x97fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+      }
+    },
+    {
+      "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000010000000000000000a0724e1809000000e1f505000000000068c2de74040000c0320a030000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+      "alice": "0x7334751cac561a38886e8fbd0fa43f9daf4eb0764bff0cb85e153d2ebb3e86148935d2fc9fbd5aa2e58f16506723d117e3cddd684ad0360962661d4f63ba560e",
+      "bob": "0x2d0792f18dc91f74f751a83034bc4fd050606af4cb690ef2601376f2275b7cbffbff81c47944d225937af0888966a4ca5abc1e9d853686af097234cd02f5b305",
+      "evmAlice": "0x985d938007a14192b88769f944f5703963e06207ce2103526c35125324b1087706d000a6a11d246a1b9db6af7bbdbc1f9213447f7f07b05e9597d3dd7531d7b31c",
+      "evmBob": "0xd159abc7f71ebaabe2f2711ad70cf2099527c6357417fc845478a4e3bb2e467d05c8d77c27cdd085163e5a4fabb035f4c3ccc1d1a1407f9624c6095c956e89451c",
+      "signingMs": [
+        70.229294,
+        67.731665
+      ],
+      "wallMs": 603.194966,
+      "decoded": {
+        "context": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c66144",
+        "epoch": "0",
+        "version": "1",
+        "ckbTotal": "10000000000000",
+        "tokenTotal": "100000000",
+        "aliceCkb": "4900000000000",
+        "aliceToken": "51000000",
+        "foreign": "0x97fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+      }
+    },
+    {
+      "state": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000020000000000000000a0724e1809000000e1f5050000000000804b965d040000007519030000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b",
+      "alice": "0xcee30dc185cd9b0034525f9e893b840f144b276374caae4d390752166d0ea035ce1e73738e4a0107951f7dea0b73567ab4264782ea3716e509d1f4f4164f1d03",
+      "bob": "0xd0114edc7d2234da979658c056d0ba9c27ae476252cffb13950b945d83c7467f4f200a80ec6936da09ad5b5e41bdddae048ecb63124b30158ba51b01f63fe408",
+      "evmAlice": "0x8e9a0a9aec3b402658da46f7635d5105be48dff3ef018aea6c6ee4c7fae386674eae344e584ad8a95515077fee757d4053018849ed5e70ccc9a37c0fa40f72a31c",
+      "evmBob": "0xc0f97a2fed91e10025f19b74c9a6fef21db559dd0e0cfb78983ba6cb36dc856652d501ed42b85c610907e0c37608628e643b2930ebafc1570e6a34ba1c5ed9f71c",
+      "signingMs": [
+        79.585124,
+        77.747656
+      ],
+      "wallMs": 652.518378,
+      "decoded": {
+        "context": "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c66144",
+        "epoch": "0",
+        "version": "2",
+        "ckbTotal": "10000000000000",
+        "tokenTotal": "100000000",
+        "aliceCkb": "4800000000000",
+        "aliceToken": "52000000",
+        "foreign": "0x97fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+      }
+    }
+  ],
+  "phase": 1
+}

@@ -1,0 +1,13 @@
+const C=require('./common.cjs'),{ed25519}=require('@noble/curves/ed25519');
+const le=n=>{const b=Buffer.alloc(8);b.writeBigUInt64LE(BigInt(n));return b;},buf=s=>Buffer.from(s.slice(2),'hex'),hx=b=>'0x'+Buffer.from(b).toString('hex');
+function encode(s){return hx(Buffer.concat([buf(s.context),le(s.epoch),le(s.version),le(s.ckbTotal),le(s.tokenTotal),le(s.aliceCkb),le(s.aliceToken),buf(s.foreign)]));}
+function decode(v){const b=buf(v),u=i=>b.readBigUInt64LE(i).toString();return {context:hx(b.subarray(0,32)),epoch:u(32),version:u(40),ckbTotal:u(48),tokenTotal:u(56),aliceCkb:u(64),aliceToken:u(72),foreign:hx(b.subarray(80,112))};}
+function pub(role){return hx(ed25519.getPublicKey(Buffer.alloc(32,role==='alice'?11:22)));}
+function sign(role,state){return hx(ed25519.sign(buf(state),Buffer.alloc(32,role==='alice'?11:22)));}
+function data(phase,state,reserve){return hx(Buffer.concat([Buffer.from([phase]),buf(state),le(reserve)]));}
+function lock(env,state){const s=decode(state);return {codeHash:env.codeHash,hashType:'data1',args:hx(Buffer.concat([buf(pub('alice')),buf(pub('bob')),buf(C.U.scriptToHash(env.parties.alice.lock)),buf(C.U.scriptToHash(env.parties.bob.lock)),buf(s.context),buf(s.foreign)]))};}
+function nextTx(env,p,mode,cert){const old=decode(p.state),s=cert?decode(cert.state):old;let reserve=BigInt(p.reserve),nt=BigInt(s.ckbTotal),tx={version:'0x0',cellDeps:[{outPoint:env.codeDep,depType:'code'}],headerDeps:[],inputs:[{since:mode===2?'0x8000000000000005':'0x0',previousOutput:p.outpoint}],outputs:[],outputsData:[],witnesses:[mode===2?'0x02':hx(Buffer.concat([Buffer.from([mode]),buf(cert.state),buf(cert.alice),buf(cert.bob)]))]};
+ if(mode===2){tx.outputs=[{capacity:C.hex(BigInt(old.aliceCkb)+reserve-100000n),lock:env.parties.alice.lock},{capacity:C.hex(BigInt(old.ckbTotal)-BigInt(old.aliceCkb)),lock:env.parties.bob.lock},{capacity:C.hex(20000000000n),lock:env.parties.alice.lock}];tx.outputsData=['0x','0x',p.state];}
+ else {tx.outputs=[{capacity:C.hex(nt+reserve-100000n+20000000000n),lock:lock(env,cert.state)}];tx.outputsData=[data(mode<2?1:0,cert.state,reserve-100000n)];if(mode===3){tx.cellDeps.push(env.secpDep);tx.inputs.push({since:'0x0',previousOutput:p.donor.outpoint});tx.outputs.push({capacity:C.hex(BigInt(p.donor.capacity)-(nt-BigInt(old.ckbTotal))),lock:env.parties.alice.lock});tx.outputsData.push('0x');tx.witnesses.push({lock:'',inputType:'',outputType:''});}if(mode===4){tx.outputs.push({capacity:C.hex(BigInt(old.ckbTotal)-nt),lock:env.parties.alice.lock});tx.outputsData.push('0x');}}
+ return tx;}
+module.exports={...C,le,buf,hx,encode,decode,pub,sign,data,lock,nextTx};

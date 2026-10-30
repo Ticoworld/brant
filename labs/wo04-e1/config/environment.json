@@ -1,0 +1,186 @@
+{
+  "genesis": "0x30acd4e32784aa5ffb661e880cd6a71fb59cd787786784a853177c3dc95fa5f9",
+  "codes": {
+    "settlement": {
+      "hash": "0x7c42a02f7681729664a7463e386838c0a86451b916e5366b769dfbf0864144be",
+      "outpoint": {
+        "txHash": "0x6e8688a558b3a7c5e7d9c62484b5b8e9c4045ef33018bd4ce28efd7c82cbc46b",
+        "index": "0x6"
+      }
+    },
+    "checkpoint": {
+      "hash": "0xa798545cebaa0ffb44362ffd084c6cc19b6ae4737db4ec77f559f72e77168f8e",
+      "outpoint": {
+        "txHash": "0x6e8688a558b3a7c5e7d9c62484b5b8e9c4045ef33018bd4ce28efd7c82cbc46b",
+        "index": "0x7"
+      }
+    },
+    "deny": {
+      "hash": "0x426fb82d9c05d31b1930c604913b9a862ca98679761ab07a1b5c5cb7fa36ba4a",
+      "outpoint": {
+        "txHash": "0x6e8688a558b3a7c5e7d9c62484b5b8e9c4045ef33018bd4ce28efd7c82cbc46b",
+        "index": "0x8"
+      }
+    },
+    "reservation": {
+      "hash": "0xe2470484fb76b5c8c5d0fbb55577064d9d86f150410e18b71d4def8b8749d1af",
+      "outpoint": {
+        "txHash": "0x6e8688a558b3a7c5e7d9c62484b5b8e9c4045ef33018bd4ce28efd7c82cbc46b",
+        "index": "0x9"
+      }
+    },
+    "always_success": {
+      "hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+      "outpoint": {
+        "txHash": "0x6e8688a558b3a7c5e7d9c62484b5b8e9c4045ef33018bd4ce28efd7c82cbc46b",
+        "index": "0x5"
+      }
+    }
+  },
+  "parties": {
+    "alice": {
+      "lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+      },
+      "evm": "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf"
+    },
+    "bob": {
+      "lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064"
+      },
+      "evm": "0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF"
+    },
+    "watcher": {
+      "lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d"
+      },
+      "evm": "0x6813Eb9362372EEF6200f3b1dbC3f819671cBA69"
+    }
+  },
+  "secpDep": {
+    "outPoint": {
+      "txHash": "0xf0ea8ad140f1be8f52e082787fcd2b7045a5a2acb837b842a8aae0306979bb26",
+      "index": "0x0"
+    },
+    "depType": "depGroup"
+  },
+  "versions": {
+    "ckb": {
+      "active": true,
+      "addresses": [
+        {
+          "address": "/ip4/127.0.0.1/tcp/18225",
+          "score": "0x1"
+        },
+        {
+          "address": "/ip4/127.0.0.1/tcp/18225/ws",
+          "score": "0x1"
+        }
+      ],
+      "connections": "0x0",
+      "node_id": "QmVziFx2wjGsLLKgzo1Gnxc5h1L6ZfexzxZjxsPidw5VsY",
+      "protocols": [
+        {
+          "id": "0x64",
+          "name": "/ckb/syn",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x65",
+          "name": "/ckb/relay3",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x79",
+          "name": "/ckb/filter",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x66",
+          "name": "/ckb/tim",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x78",
+          "name": "/ckb/lightclient",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x2",
+          "name": "/ckb/identify",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x0",
+          "name": "/ckb/ping",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x1",
+          "name": "/ckb/discovery",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x3",
+          "name": "/ckb/flr",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x4",
+          "name": "/ckb/disconnectmsg",
+          "support_versions": [
+            "3"
+          ]
+        },
+        {
+          "id": "0x82",
+          "name": "/ckb/holepunching",
+          "support_versions": [
+            "3"
+          ]
+        }
+      ],
+      "version": "0.210.0 (2592ddf 2026-09-17)"
+    },
+    "evm": "Ganache/v7.9.2/EthereumJS TestRPC/v7.9.2/ethereum-js",
+    "node": "v24.22.1"
+  },
+  "anyLock": {
+    "codeHash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "denyLock": {
+    "codeHash": "0x426fb82d9c05d31b1930c604913b9a862ca98679761ab07a1b5c5cb7fa36ba4a",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "domain": "0xe3783ffed567a28a7195957a2c09d3dfb7dcfe17750d28498cef1b05550288f4",
+  "token": "0xF2E246BB76DF876Cef8b38ae84130F4F55De395b",
+  "outcome": "0x2946259E0334f33A064106302415aD3391BeD384",
+  "outcomeCodeHash": "0x37084ef7cddeed1d67c3362387956586d6d7f5fef760dde3eca27b657c8b05fd"
+}

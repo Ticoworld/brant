@@ -1,0 +1,26 @@
+# Uncontrolled/generated environments
+node_modules/
+**/node_modules/
+**/tools/
+**/.venv/
+**/__pycache__/
+**/target/
+*.log
+*.pid
+*.sqlite
+*.db
+*.tar.gz
+# Raw chain history and generated test runs (summary fixtures may be tracked)
+**/evidence/rpc/
+**/evidence/run.*
+**/historical/
+# Private credentials, never use production keys
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Cloud/runtime and generated outputs
+.chain-data/
+**/.ckb-data/
+**/data/

@@ -1,0 +1,225 @@
+[
+  {
+    "label": "coordinator_deleted_before_exit",
+    "result": "EXECUTED"
+  },
+  {
+    "label": "alternating100_independent_register",
+    "result": "SUBMITTED",
+    "record": {
+      "hash": "0x47f4304cc7599271087e935a3d9d4e58903e044d5c2048fdf739ac2b65033f8d",
+      "expectedHash": "0x47f4304cc7599271087e935a3d9d4e58903e044d5c2048fdf739ac2b65033f8d",
+      "cycles": {
+        "cycles": "0x6ef8be"
+      },
+      "bytes": 800,
+      "tx": {
+        "version": "0x0",
+        "cellDeps": [
+          {
+            "outPoint": {
+              "txHash": "0xd009eb5ea75cc96a9f80db7fc6fd35db17c707360462a4682f8a84aa81c13d6d",
+              "index": "0x6"
+            },
+            "depType": "code"
+          }
+        ],
+        "headerDeps": [],
+        "inputs": [
+          {
+            "since": "0x0",
+            "previousOutput": {
+              "txHash": "0xeefb80e1eab0dc910b72ce113c386a8c563b28bb0bd01139a35f1f05de7e386c",
+              "index": "0x0"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "capacity": "0x91cf69823a0",
+            "lock": {
+              "codeHash": "0xe21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2",
+              "hashType": "data1",
+              "args": "0x66be7e332c7a453332bd9d0a7f7db055f5c5ef1a06ada66d98b39fb6810c473a511c34a1a2cb521df16bb246b8de8e7997ce235c7e76b22a3d7503a24819dd8a0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38b9bdc44941789bebcb689266932cf2df3c6b960a0fdc100c532588e4f99e8f4897fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+            }
+          }
+        ],
+        "outputsData": [
+          "0x01b9bdc44941789bebcb689266932cf2df3c6b960a0fdc100c532588e4f99e8f480000000000000000640000000000000000a0724e1809000000e1f50500000000005039278c04000080f0fa020000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408ba0bb0d0000000000"
+        ],
+        "witnesses": [
+          "0x00b9bdc44941789bebcb689266932cf2df3c6b960a0fdc100c532588e4f99e8f480000000000000000640000000000000000a0724e1809000000e1f50500000000005039278c04000080f0fa020000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408bb36948973881b56f8df3ef2f04583fd5730af4d7c83e63274ac7e53804c6aac56afebe24cf6bce58bef30f74cef000ffc381b88c4efb8779b72f00dfaba0ca0754f5b72c64a2a17089f1780053d8b2e6e77202efde389220a7a3acaeacfe6e662522f3e46cb6754c1e3be2bac24d24fc52add0b15a8b03e45a7254d37078f202"
+        ]
+      }
+    }
+  },
+  {
+    "label": "alternating100_independent_seal",
+    "result": "REJECTED",
+    "record": {
+      "error": "TransactionFailedToVerify: Verification failed Transaction(Immature(Inputs[0]): the transaction is immature because of the since requirement)",
+      "exit": 1
+    }
+  },
+  {
+    "label": "alternating100_independent_seal",
+    "result": "SUBMITTED",
+    "record": {
+      "hash": "0x27653634f71b55234bc851496794a621ac1991ebc291b266328ae2635acd1e8b",
+      "expectedHash": "0x27653634f71b55234bc851496794a621ac1991ebc291b266328ae2635acd1e8b",
+      "cycles": {
+        "cycles": "0x5c8b"
+      },
+      "bytes": 597,
+      "tx": {
+        "version": "0x0",
+        "cellDeps": [
+          {
+            "outPoint": {
+              "txHash": "0xd009eb5ea75cc96a9f80db7fc6fd35db17c707360462a4682f8a84aa81c13d6d",
+              "index": "0x6"
+            },
+            "depType": "code"
+          }
+        ],
+        "headerDeps": [],
+        "inputs": [
+          {
+            "since": "0x8000000000000005",
+            "previousOutput": {
+              "txHash": "0x47f4304cc7599271087e935a3d9d4e58903e044d5c2048fdf739ac2b65033f8d",
+              "index": "0x0"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "capacity": "0x48c27458500",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+            }
+          },
+          {
+            "capacity": "0x48c27395000",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064"
+            }
+          },
+          {
+            "capacity": "0x4a817c800",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+            }
+          }
+        ],
+        "outputsData": [
+          "0x",
+          "0x",
+          "0xb9bdc44941789bebcb689266932cf2df3c6b960a0fdc100c532588e4f99e8f480000000000000000640000000000000000a0724e1809000000e1f50500000000005039278c04000080f0fa020000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+        ],
+        "witnesses": [
+          "0x02"
+        ]
+      }
+    }
+  },
+  {
+    "label": "stale_native_0",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 24 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2.html#24 })"
+  },
+  {
+    "label": "stale_native_1",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 24 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2.html#24 })"
+  },
+  {
+    "label": "wrong_native_signature",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 23 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2.html#23 })"
+  },
+  {
+    "label": "wrong_native_recipient",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2.html#18 })"
+  },
+  {
+    "label": "three_states_independent_seal",
+    "result": "SUBMITTED",
+    "record": {
+      "hash": "0x907970692ce9bfa2dfad33cbd262bad3877376a711ed1ff6d9642fa9b83fc224",
+      "expectedHash": "0x907970692ce9bfa2dfad33cbd262bad3877376a711ed1ff6d9642fa9b83fc224",
+      "cycles": {
+        "cycles": "0x5c8b"
+      },
+      "bytes": 597,
+      "tx": {
+        "version": "0x0",
+        "cellDeps": [
+          {
+            "outPoint": {
+              "txHash": "0xd009eb5ea75cc96a9f80db7fc6fd35db17c707360462a4682f8a84aa81c13d6d",
+              "index": "0x6"
+            },
+            "depType": "code"
+          }
+        ],
+        "headerDeps": [],
+        "inputs": [
+          {
+            "since": "0x8000000000000005",
+            "previousOutput": {
+              "txHash": "0x48db7ee1f5cce23beaa9b78122b9b0df4f21fa323809835030e2dc9b40a2a36c",
+              "index": "0x0"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "capacity": "0x45d9654a7c0",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+            }
+          },
+          {
+            "capacity": "0x4bab8272000",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064"
+            }
+          },
+          {
+            "capacity": "0x4a817c800",
+            "lock": {
+              "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+              "hashType": "type",
+              "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+            }
+          }
+        ],
+        "outputsData": [
+          "0x",
+          "0x",
+          "0x47da8f4b8fe30a260bf9f1004d0b22bb4037c85a131f4a8b26d9748491c661440000000000000000020000000000000000a0724e1809000000e1f5050000000000804b965d040000007519030000000097fe9f6083a1236a9e307b9fd0a241256e648294127cf6751ff52e54a33d408b"
+        ],
+        "witnesses": [
+          "0x02"
+        ]
+      }
+    }
+  },
+  {
+    "label": "directional_sixth_overdraft",
+    "result": "REJECTED",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 22 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e21874f824edf98ce986362e32dc5a09d6445598e963d8fd90b10908768886a2.html#22 })"
+  }
+]
