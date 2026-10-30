@@ -30,7 +30,8 @@ int main(void){
  if(!(sp==p||(sp==p+1&&!zero32(old+232)))||fp>p+1)return 85;
  if(*tail>1)return 86;
  int learn=zero32(old+232)&&ap==p&&*tail;
- if(as<=le(old+80)&&!learn)return 87;
+ /* signature_slot is not itself BLS-signed: no retimed non-finalizing replay. */
+ if(fs<=le(old+80)&&!learn)return 87;
  unsigned part=0;for(unsigned i=0;i<64;i++)for(unsigned j=0;j<8;j++)part+=(bits[i]>>j)&1;
  if(part*3<1024||512-part!=*count)return 88;
  const uint8_t*signing=sp==p?old+200:old+232;

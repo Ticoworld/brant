@@ -8,7 +8,7 @@ const snake=x=>Array.isArray(x)?x.map(snake):x&&typeof x==='object'?Object.fromE
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),read=n=>fs.readFileSync(R+'/fixtures/'+n);
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'e2b-chain-')),ckb=E1+'/tools/ckb/ckb';
 let node,wallet;const result={scope:'Seven actual state transitions; historical Capella checkpoint; isolated chain only',transactions:[],rejections:[],lineages:[]};
-const save=()=>fs.writeFileSync(R+'/evidence/chain.json',JSON.stringify(result,null,2)+'\n');
+const save=()=>fs.writeFileSync(R+'/evidence/chain-hardened.json',JSON.stringify(result,null,2)+'\n');
 const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(j.error)throw Error(JSON.stringify(j.error));return j.result;};
 const bins={};for(const n of ['state','certificate','root','root_probe'])bins[n]=fs.readFileSync(R+'/build/'+n);bins.always=fs.readFileSync(E1+'/config/always_success');
 const script=(n,args='0x')=>({codeHash:H(bins[n]),hashType:'data2',args}),lock=script('always'),deps={};
@@ -23,6 +23,7 @@ async function bootstrap(label){
  const id=H(Buffer.concat([serialized,le(0)])),type=script('state',id),identity=U.scriptToHash(type);
  const t=tx([first],[output(cap,type),output(wallet.capacity-cap-fee)],[read('state-0.bin'),Buffer.alloc(0)],read('bootstrap.bin'),[deps.state,deps.always]);
  const wrong=structuredClone(t);wrong.outputs[0].type=script('state','0x'+'11'.repeat(32));await reject(label+'-incorrect-Type-ID',wrong);
+ const indexWrong=structuredClone(t);indexWrong.outputs[0].type=script('state',H(Buffer.concat([serialized,le(1)])));await reject(label+'-incorrect-Type-ID-output-index',indexWrong);
  const h=await commit(label+'-bootstrap',t);wallet={point:{txHash:h,index:'0x1'},capacity:wallet.capacity-cap-fee};
  const lc={label,type,identity,point:{txHash:h,index:'0x0'},data:read('state-0.bin'),certs:new Map(),roots:[],history:[{txHash:h,index:'0x0'}]};
  const cloned=structuredClone(t);cloned.inputs[0].previousOutput=wallet.point;cloned.outputs[1].capacity=hex(wallet.capacity-cap-fee);await reject(label+'-same-identity-second-constructor',cloned);
@@ -53,7 +54,10 @@ async function advance(lc,i,tests=true){
  const {t,after,rootAdvance,rootType,remaining}=updateTx(lc,i);
  if(tests){
   const bad=structuredClone(t),w=B(bad.witnesses[0]);w[1176]^=1;bad.witnesses[0]='0x'+w.toString('hex');await reject('failed-update-'+i,bad);
-  const period=structuredClone(t),wb=B(period.witnesses[0]);wb.writeBigUInt64LE(wb.readBigUInt64LE(0)+8192n,0);period.witnesses[0]='0x'+wb.toString('hex');await reject('wrong-signing-period-'+i,period);
+  const period=structuredClone(t),wb=B(period.witnesses[0]),wrongSlot=wb.readBigUInt64LE(0)+24576n;wb.writeBigUInt64LE(wrongSlot,0);period.inputs[0].since=hex(0x4000000000000000n+1606824023n+12n*wrongSlot);period.witnesses[0]='0x'+wb.toString('hex');await reject('wrong-signing-period-'+i,period);
+  const time=structuredClone(t);time.inputs[0].since='0x0';await reject('unbound-signature-time-'+i,time);
+  if(i===0){const deleted=tx(t.inputs,[output(cap+wallet.capacity-fee)],[Buffer.alloc(0)],read('update-0.bin'),t.cellDeps);await reject('state-deletion-despite-Type-ID-burn-permission',deleted);}
+  if(i===3){const fork=structuredClone(t),fw=B(fork.witnesses[0]),slot=8626177n;fw.writeBigUInt64LE(slot,0);fork.witnesses[0]='0x'+fw.toString('hex');fork.inputs[0].since=hex(0x4000000000000000n+1606824023n+12n*slot);await reject('unsupported-Deneb-fork-rejected-not-reinterpreted',fork);}
   const rollback=structuredClone(t),rd=B(rollback.outputsData[0]);rd.writeBigUInt64LE(lc.data.readBigUInt64LE(80)-1n,80);rollback.outputsData[0]='0x'+rd.toString('hex');await reject('finalized-slot-rollback-'+i,rollback);
   if(i<6){const np=structuredClone(t),nw=B(np.witnesses[0]),missing=nw[1560],start=1561+434*missing;nw[start+33]^=1;np.witnesses[0]='0x'+nw.toString('hex');await reject('invalid-next-committee-proof-'+i,np);}
   if(i>0){const replay=structuredClone(t);replay.witnesses[0]='0x'+read('update-'+(i-1)+'.bin').toString('hex');await reject('replayed-old-update-'+i,replay);}
@@ -64,9 +68,12 @@ async function advance(lc,i,tests=true){
  result.transactions.at(-1).stateAfter={version:Number(after.readBigUInt64LE(72)),finalizedSlot:Number(after.readBigUInt64LE(80)),period:Number(after.readBigUInt64LE(192)),currentCommittee:'0x'+after.subarray(200,232).toString('hex'),nextCommittee:'0x'+after.subarray(232,264).toString('hex')};save();
  if(rootAdvance){lc.root={point:{txHash:h,index:'0x1'},type:rootType,data:B(t.outputsData[1])};lc.roots.push(lc.root);}
  if(tests)await reject('spent-state-transaction-replay-'+i,t,true);
+ if(tests){const retimed=updateTx(lc,i).t,rw=B(retimed.witnesses[0]),rs=rw.readBigUInt64LE(0)+1n;rw.writeBigUInt64LE(rs,0);retimed.witnesses[0]='0x'+rw.toString('hex');retimed.inputs[0].since=hex(0x4000000000000000n+1606824023n+12n*rs);await reject('retimed-signature-slot-replay-'+i,retimed);}
  return t;
 }
 async function probes(lc,foreign){
+ const consumeRoot=tx([{since:'0x0',previousOutput:lc.root.point}],[output(cap-fee)],[Buffer.alloc(0)],Buffer.alloc(0),[deps.root,deps.always]);await reject('immutable-authorized-root-cannot-be-mutated',consumeRoot);
+ const lastCert=lc.certs.get('868'),consumeCert=tx([{since:'0x0',previousOutput:lastCert.point}],[output(cap-fee)],[Buffer.alloc(0)],Buffer.alloc(0),[deps.certificate,deps.always]);await reject('immutable-committee-certificate-cannot-be-mutated',consumeCert);
  const args=Buffer.concat([B(lc.identity),B(lc.type.codeHash),lc.data.subarray(72,80)]),probe=script('root_probe','0x'+args.toString('hex'));
  const fund=tx([{since:'0x0',previousOutput:wallet.point}],[{capacity:hex(cap),lock:probe,type:null},output(wallet.capacity-cap-fee)],[Buffer.alloc(0),Buffer.alloc(0)],Buffer.alloc(0),[deps.always]);
  const funded=await commit('authorization-probe-funding',fund);wallet={point:{txHash:funded,index:'0x1'},capacity:wallet.capacity-cap-fee};

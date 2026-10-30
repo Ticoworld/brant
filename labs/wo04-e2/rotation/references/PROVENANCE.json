@@ -1,0 +1,5 @@
+{
+  "consensus-specs-v1.6.1": "5fa6edcca8ab4cf548653e6680b17b9d3e04d225",
+  "consensus-spec-tests-v1.5.0": "194a91fd9e6f97118156421aac4c80e6e47a9a7f",
+  "scope": "Official static SSZ/reference proof vectors only, not later-fork consensus-finality authentication"
+}
