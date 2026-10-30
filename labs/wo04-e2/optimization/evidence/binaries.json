@@ -1,0 +1,102 @@
+[
+  {
+    "binary": "build/510/affine",
+    "bytes": 131832,
+    "sha256": "f9cf8e7b9752573cf44c99e566b1c050a37bb706e3da8c8f1ae8862444bd9e2c"
+  },
+  {
+    "binary": "build/510/affine-multi",
+    "bytes": 131752,
+    "sha256": "008c323150814098aa04f27af7d772f71ca1e99e9140ecef0a8114085e6b042f"
+  },
+  {
+    "binary": "build/510/compressed",
+    "bytes": 124616,
+    "sha256": "7627d6b1563e75cc5872a485078d95ea49377735914a3d33a317a50d0c53e545"
+  },
+  {
+    "binary": "build/510/profile-a",
+    "bytes": 132576,
+    "sha256": "b28d1c366e04b237469e3f6bf2b6a0a1acfd48e11851a48f5330c8fb9630fd61"
+  },
+  {
+    "binary": "build/510/profile-c",
+    "bytes": 125360,
+    "sha256": "98eab26939d0bea9202f8da609001843889eba5deebaf1b67e4f3ffb20da5642"
+  },
+  {
+    "binary": "build/510/profile-multi",
+    "bytes": 132496,
+    "sha256": "a3045cb0b3d1df35b3410a6f46b6cb1658eb748e1aafba18d85afc9653185ee8"
+  },
+  {
+    "binary": "build/511/affine",
+    "bytes": 131832,
+    "sha256": "f41b6b09a143cafb5aca5145027d1a45f65b7ea1fd87e539c23c584f3ac1a449"
+  },
+  {
+    "binary": "build/511/affine-multi",
+    "bytes": 131752,
+    "sha256": "c360a513055e6633d1c39e5191cb7aae040c9ff2f04592b67cdd592f9454bb65"
+  },
+  {
+    "binary": "build/511/compressed",
+    "bytes": 124616,
+    "sha256": "fe2c728a9b1cd178e9a9dc75df91e55fd9cfc6026c5bab636cef2f0e71cf7275"
+  },
+  {
+    "binary": "build/511/profile-a",
+    "bytes": 132576,
+    "sha256": "9c9b719cdb15434a7425704f6ecd95375cc894d1bd1b77f68f40dd54bef26a53"
+  },
+  {
+    "binary": "build/511/profile-c",
+    "bytes": 125360,
+    "sha256": "e4e3dc1ab03ed929da0be88d2eb1b871fbaa12dffae377ddcaa1059c0dbfec3e"
+  },
+  {
+    "binary": "build/511/profile-multi",
+    "bytes": 132496,
+    "sha256": "3a4770e38dce6afbb1ab7abebf39b49b8fd4c2edc479aa72bc33d264e49da7e6"
+  },
+  {
+    "binary": "build/512/affine",
+    "bytes": 131824,
+    "sha256": "6a489274573879e3edb6b8208bcf74be7f2602a3c20189004df3865d28bfa784"
+  },
+  {
+    "binary": "build/512/affine-multi",
+    "bytes": 131744,
+    "sha256": "81f9dcf43b93d12c48700e9bb1d4f8701c3a578634f2729830e5e4b3cd148485"
+  },
+  {
+    "binary": "build/512/compressed",
+    "bytes": 124616,
+    "sha256": "fd4467b735d1ff62ef02653a24845d544f247043e456fb12350c5c4ae71ae9f6"
+  },
+  {
+    "binary": "build/512/profile-a",
+    "bytes": 132568,
+    "sha256": "ad923fe5e6364ede33310caac0d06eaf0c1c28ed37014cddf48197dfd53e51de"
+  },
+  {
+    "binary": "build/512/profile-c",
+    "bytes": 125360,
+    "sha256": "c5b2ebbc1c739fff06c56ae54f79a965e073319b7e703a38f8e219c794758f05"
+  },
+  {
+    "binary": "build/512/profile-multi",
+    "bytes": 132488,
+    "sha256": "d1d33444821ec43fa7d2baaef515075356139a371b36ac78e807e26ad341b9cf"
+  },
+  {
+    "binary": "build/committee",
+    "bytes": 33448,
+    "sha256": "53033f117d313fa79dba357525a530a7f06c07a43be2a4aed78cacfa74b24c07"
+  },
+  {
+    "binary": "build/reuse",
+    "bytes": 19440,
+    "sha256": "bb7796c53475fe0bd63ed7fac498ca899e8447cca2fbec5c0963d092d5840de7"
+  }
+]

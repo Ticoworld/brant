@@ -1,0 +1,164 @@
+[
+  {
+    "n": "512",
+    "mode": "compressed",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 124616,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 124657
+  },
+  {
+    "n": "512",
+    "mode": "affine",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 131824,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131865
+  },
+  {
+    "n": "512",
+    "mode": "profile-c",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 125360,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 125401
+  },
+  {
+    "n": "512",
+    "mode": "profile-a",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 132568,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132609
+  },
+  {
+    "n": "512",
+    "mode": "affine-multi",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 131744,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131785
+  },
+  {
+    "n": "512",
+    "mode": "profile-multi",
+    "transactionBytes": 1911,
+    "witnessBytes": 1561,
+    "binaryBytes": 132488,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132529
+  },
+  {
+    "n": "511",
+    "mode": "compressed",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 124616,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 124657
+  },
+  {
+    "n": "511",
+    "mode": "affine",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 131832,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131873
+  },
+  {
+    "n": "511",
+    "mode": "profile-c",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 125360,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 125401
+  },
+  {
+    "n": "511",
+    "mode": "profile-a",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 132576,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132617
+  },
+  {
+    "n": "511",
+    "mode": "affine-multi",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 131752,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131793
+  },
+  {
+    "n": "511",
+    "mode": "profile-multi",
+    "transactionBytes": 2345,
+    "witnessBytes": 1995,
+    "binaryBytes": 132496,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132537
+  },
+  {
+    "n": "510",
+    "mode": "compressed",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 124616,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 124657
+  },
+  {
+    "n": "510",
+    "mode": "affine",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 131832,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131873
+  },
+  {
+    "n": "510",
+    "mode": "profile-c",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 125360,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 125401
+  },
+  {
+    "n": "510",
+    "mode": "profile-a",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 132576,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132617
+  },
+  {
+    "n": "510",
+    "mode": "affine-multi",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 131752,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 131793
+  },
+  {
+    "n": "510",
+    "mode": "profile-multi",
+    "transactionBytes": 2779,
+    "witnessBytes": 2429,
+    "binaryBytes": 132496,
+    "minOutputCapacityCKB": 145,
+    "minCodeCellCapacityCKB": 132537
+  }
+]

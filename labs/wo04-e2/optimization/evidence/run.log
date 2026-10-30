@@ -1,0 +1,78 @@
+{'participants': 512, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 62530288, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 68086631, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 705978, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36875, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3005772, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 705958, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36855, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3005752, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695273, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-oncurve-nonsubgroup', 'scriptExit': 16, 'runnerExit': 254, 'cycles': 6013427, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 353916, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 62528777, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3039458, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-wrong-valid-signature', 'scriptExit': 17, 'runnerExit': 254, 'cycles': 62520707, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695293, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-oncurve-nonsubgroup', 'scriptExit': 16, 'runnerExit': 254, 'cycles': 6013446, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 353936, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 68085120, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3039478, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-wrong-valid-signature', 'scriptExit': 17, 'runnerExit': 254, 'cycles': 68077050, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 69582198, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 68105262, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 20794, 3: 2282642, 4: 913, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 512, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 69600954, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 513322, 3: 2282642, 4: 913, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 512, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 62548919, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 20794, 3: 2282642, 4: 913, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}
+{'participants': 511, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 65113103, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 70669446, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706087, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36984, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997345, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5588587, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147522, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706067, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36964, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997325, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5588567, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147502, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695382, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354025, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 65111592, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147502, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5622273, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695402, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354045, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 70667935, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147522, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5622293, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 72657541, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 70688242, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 20794, 3: 2282642, 4: 2583619, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 511, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 72676462, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 513322, 3: 2282642, 4: 3076147, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 511, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 65131899, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 20794, 3: 2282642, 4: 2583619, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}
+{'participants': 510, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 67603211, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 73159554, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706196, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 37093, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-duplicate', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 5487226, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997454, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8078695, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147634, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706176, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 37073, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-duplicate', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 5487206, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997434, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8078675, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147614, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695491, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354134, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 67601700, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147614, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8112381, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695511, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354154, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 73158043, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147634, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8112401, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 75640177, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 73178350, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 20794, 3: 2282642, 4: 5073618, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 510, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 75659098, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 513322, 3: 2282642, 4: 6058674, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 510, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 67622007, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 20794, 3: 2282642, 4: 5073618, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}

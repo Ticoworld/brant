@@ -1,0 +1,15 @@
+fixtures/510-context.bin: OK
+fixtures/510-output.bin: OK
+fixtures/510-output.json: OK
+fixtures/510.bin: OK
+fixtures/511-context.bin: OK
+fixtures/511-output.bin: OK
+fixtures/511-output.json: OK
+fixtures/511.bin: OK
+fixtures/512-context.bin: OK
+fixtures/512-output.bin: OK
+fixtures/512-output.json: OK
+fixtures/512.bin: OK
+fixtures/certificate-output.bin: OK
+fixtures/certificate.bin: OK
+fixtures/signature-oncurve-nonsubgroup.bin: OK

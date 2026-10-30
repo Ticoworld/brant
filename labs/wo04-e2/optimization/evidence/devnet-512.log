@@ -1,0 +1,26 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  "participants": 512,
+  "negative": {
+    "noncanonical_g1": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#9 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#9 } }\"}",
+    "infinity_signature": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#15 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#15 } }\"}",
+    "output": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#18 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#18 } }\"}"
+  },
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-xDpeJ2",
+  "estimate": {
+    "cycles": "0x3ba22f0"
+  },
+  "accepted": "0x84007624c52673b97b4f8644a2b9274610c7044edc017664ab9833ea44af3653",
+  "observedStatus": {
+    "block_hash": "0xf6404d1f1b719d7788f883c07e14339d0ecba4cac6ac0368577b57ac556acf9b",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 1911,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}

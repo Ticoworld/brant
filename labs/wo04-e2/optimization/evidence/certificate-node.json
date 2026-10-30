@@ -1,0 +1,53 @@
+{
+  "scope": "Immutable bootstrap committee authentication and read-only reuse only; no root publication or rotation",
+  "transactions": [
+    {
+      "name": "authenticated_constructor",
+      "hash": "0x388cd6af135252e64f3548c7c8101014f6250d9d1f2946de04937baf0a5f4766",
+      "cycles": 2533936,
+      "bytes": 1137,
+      "status": {
+        "block_hash": "0xb1b3d7230c2546f84daca87550f35dcba9a5433132f3953b54d541273c38eeef",
+        "block_number": "0x4",
+        "reason": null,
+        "status": "committed",
+        "tx_index": "0x1"
+      }
+    },
+    {
+      "name": "reuse_one",
+      "hash": "0xb815bd5d22800beb9c03539c5a3bfe3d329a863f8dc8d7af86dd775b2625d34d",
+      "cycles": 27347,
+      "bytes": 283,
+      "status": {
+        "block_hash": "0x45ba0e0d594575de51648694ee600bbd82db792922b45a418d2df9ee95eae5c7",
+        "block_number": "0x8",
+        "reason": null,
+        "status": "committed",
+        "tx_index": "0x1"
+      }
+    },
+    {
+      "name": "reuse_two",
+      "hash": "0xc472bc7e2e04f527da08932759550522d222b060a8c05854adadd543b0651879",
+      "cycles": 27347,
+      "bytes": 283,
+      "status": {
+        "block_hash": "0xa6a331ff86a0acf23ac73be12e1cf0875bc49e1378c909343562a78e9d981c4a",
+        "block_number": "0xd",
+        "reason": null,
+        "status": "committed",
+        "tx_index": "0x1"
+      }
+    }
+  ],
+  "rejections": {
+    "forged_bootstrap": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 44 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#44 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 44 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#44 } }\"}",
+    "substituted_certificate": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 48 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#48 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 48 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#48 } }\"}",
+    "wrong_certificate_identity": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 50 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/c90d16ba91a302160706eae94cea2b74ef439d259e414328a656d41fe761796d.html#50 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 50 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/c90d16ba91a302160706eae94cea2b74ef439d259e414328a656d41fe761796d.html#50 } }\"}",
+    "spend_or_mutate_immutable_certificate": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 40 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#40 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 40 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#40 } }\"}"
+  },
+  "certificateLive": "live",
+  "maxTxVerifyCycles": 70000000,
+  "finalizedExecutionRootsPublished": 0
+}

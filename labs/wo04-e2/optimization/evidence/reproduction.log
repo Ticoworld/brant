@@ -1,0 +1,237 @@
+fixtures/PROVENANCE.json: OK
+fixtures/bootstrap.json: OK
+fixtures/finality.json: OK
+fixtures/updates.json: OK
+fixtures/vm-context.bin: OK
+fixtures/vm-update-fast.bin: OK
+fixtures/vm-update.bin: OK
+fixtures/510-context.bin: OK
+fixtures/510-output.bin: OK
+fixtures/510-output.json: OK
+fixtures/510.bin: OK
+fixtures/511-context.bin: OK
+fixtures/511-output.bin: OK
+fixtures/511-output.json: OK
+fixtures/511.bin: OK
+fixtures/512-context.bin: OK
+fixtures/512-output.bin: OK
+fixtures/512-output.json: OK
+fixtures/512.bin: OK
+fixtures/certificate-output.bin: OK
+fixtures/certificate.bin: OK
+fixtures/signature-oncurve-nonsubgroup.bin: OK
+[{'participants': 511, 'sourceUpdateIndex': 2, 'missingIndices': [42], 'referenceVerified': True, 'contextTrust': 'Host reference-authenticated, same harness boundary as fallback', 'signingPeriod': 864, 'witnessBytes': 1995, 'finalizedSlot': 7078240}, {'participants': 510, 'sourceUpdateIndex': 3, 'missingIndices': [198, 480], 'referenceVerified': True, 'contextTrust': 'Host reference-authenticated, same harness boundary as fallback', 'signingPeriod': 865, 'witnessBytes': 2429, 'finalizedSlot': 7089280}, {'participants': 512, 'sourceUpdateIndex': 6, 'missingIndices': [], 'referenceVerified': True, 'contextTrust': 'Host reference-authenticated, same harness boundary as fallback', 'signingPeriod': 867, 'witnessBytes': 1561, 'finalizedSlot': 7109344}]
+fixtures/510-context.bin: OK
+fixtures/510-output.bin: OK
+fixtures/510-output.json: OK
+fixtures/510.bin: OK
+fixtures/511-context.bin: OK
+fixtures/511-output.bin: OK
+fixtures/511-output.json: OK
+fixtures/511.bin: OK
+fixtures/512-context.bin: OK
+fixtures/512-output.bin: OK
+fixtures/512-output.json: OK
+fixtures/512.bin: OK
+fixtures/certificate-output.bin: OK
+fixtures/certificate.bin: OK
+fixtures/signature-oncurve-nonsubgroup.bin: OK
+{'participants': 512, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 62530288, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 68086631, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 705978, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36875, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3005772, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 705958, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36855, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3005752, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695273, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-oncurve-nonsubgroup', 'scriptExit': 16, 'runnerExit': 254, 'cycles': 6013427, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 353916, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 62528777, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3039458, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-multi-wrong-valid-signature', 'scriptExit': 17, 'runnerExit': 254, 'cycles': 62520707, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695293, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-oncurve-nonsubgroup', 'scriptExit': 16, 'runnerExit': 254, 'cycles': 6013446, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 353936, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 68085120, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 3039478, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'bad-wrong-valid-signature', 'scriptExit': 17, 'runnerExit': 254, 'cycles': 68077050, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 69582198, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 512, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 68105262, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 20794, 3: 2282642, 4: 913, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 512, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 69600954, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 513322, 3: 2282642, 4: 913, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 512, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 62548919, 'expectedOutcomeObserved': True, 'profile': {0: 33592, 1: 628354, 2: 20794, 3: 2282642, 4: 913, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}
+{'participants': 511, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 65113103, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 70669446, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706087, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36984, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997345, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5588587, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147522, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706067, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 36964, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997325, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5588567, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147502, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695382, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354025, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 65111592, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147502, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5622273, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695402, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354045, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 70667935, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147522, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 5622293, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 72657541, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 511, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 70688242, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 20794, 3: 2282642, 4: 2583619, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 511, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 72676462, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 513322, 3: 2282642, 4: 3076147, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 511, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 65131899, 'expectedOutcomeObserved': True, 'profile': {0: 33700, 1: 628354, 2: 20794, 3: 2282642, 4: 2583619, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}
+{'participants': 510, 'case': 'affine-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 67603211, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'affine', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 73159554, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706196, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 37093, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-duplicate', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 5487226, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997454, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8078695, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147634, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-affine_commitment', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 706176, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-bitfield', 'scriptExit': 5, 'runnerExit': 254, 'cycles': 37073, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-duplicate', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 5487206, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-index', 'scriptExit': 11, 'runnerExit': 254, 'cycles': 2997434, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-infinity_signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8078675, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-key', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147614, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695491, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354134, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 67601700, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147614, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-multi-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8112381, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-noncanonical_g1', 'scriptExit': 9, 'runnerExit': 254, 'cycles': 695511, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-outcome', 'scriptExit': 7, 'runnerExit': 254, 'cycles': 354154, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-output', 'scriptExit': 18, 'runnerExit': 254, 'cycles': 73158043, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-proof', 'scriptExit': 12, 'runnerExit': 254, 'cycles': 3147634, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'bad-signature', 'scriptExit': 15, 'runnerExit': 254, 'cycles': 8112401, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'compressed', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 75640177, 'expectedOutcomeObserved': True, 'profile': {}}
+{'participants': 510, 'case': 'profile-a', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 73178350, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 20794, 3: 2282642, 4: 5073618, 5: 44181, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 510, 'case': 'profile-c', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 75659098, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 513322, 3: 2282642, 4: 6058674, 5: 1049023, 6: 2972993, 7: 9354034, 8: 32301373, 9: 20409862, 10: 10133}}
+{'participants': 510, 'case': 'profile-multi', 'scriptExit': 0, 'runnerExit': 0, 'cycles': 67622007, 'expectedOutcomeObserved': True, 'profile': {0: 33809, 1: 628354, 2: 20794, 3: 2282642, 4: 5073618, 5: 44181, 6: 2972994, 7: 9354035, 8: 26877673, 9: 20277237, 10: 10133}}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  "participants": 512,
+  "negative": {
+    "noncanonical_g1": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#9 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#9 } }\"}",
+    "infinity_signature": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#15 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#15 } }\"}",
+    "output": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#18 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/fc6a80ba7a5325fd6b98742272ace70ba78568014b8bd4a1748621379b2cfff2.html#18 } }\"}"
+  },
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-reDZl7",
+  "estimate": {
+    "cycles": "0x3ba22f0"
+  },
+  "accepted": "0xf854e1e518d943d9e9c69a11bd394682b0060f54ec05319101938aed726e2790",
+  "observedStatus": {
+    "block_hash": "0x14193ed475462f4ade4ef02f57ae700b42a32fd421431f08bed97b8c2402d7a5",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 1911,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  "participants": 511,
+  "negative": {
+    "key": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#12 } }\"}",
+    "index": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#11 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#11 } }\"}",
+    "proof": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#12 } }\"}",
+    "noncanonical_g1": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#9 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#9 } }\"}",
+    "infinity_signature": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#15 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#15 } }\"}",
+    "output": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#18 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/46bce58bd822aaa21c92c592672bbd8c9e3127f40616001f11c429e46e60ad0a.html#18 } }\"}"
+  },
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-ZbKjUN",
+  "estimate": {
+    "cycles": "0x3e18c0f"
+  },
+  "accepted": "0x65fcb495e027545f69ad8d57e59101b77a6314f8fd87d229ddf8847c91f12cc2",
+  "observedStatus": {
+    "block_hash": "0x4bcc87bce994f1a6ae5a8118f1ded2e136ddd97f5a553bc0c8b2075ac2a01cc2",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 2345,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  "participants": 510,
+  "negative": {
+    "key": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 } }\"}",
+    "index": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 } }\"}",
+    "proof": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 } }\"}",
+    "duplicate": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 } }\"}",
+    "noncanonical_g1": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#9 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#9 } }\"}",
+    "infinity_signature": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#15 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#15 } }\"}",
+    "output": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#18 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#18 } }\"}"
+  },
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-PvThQf",
+  "estimate": {
+    "cycles": "0x4078b0b"
+  },
+  "accepted": "0x8dd646fd4982cdf3be70361aa76f39e38d020ede7f9f1c02ae2f62f5e898d582",
+  "observedStatus": {
+    "block_hash": "0x7176e51d0d6c65d3aa140f65a62fa3b9a5f3fec8424002d3de12e7591c69e1a8",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 2779,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  scope: 'Immutable bootstrap committee authentication and read-only reuse only; no root publication or rotation',
+  transactions: [
+    {
+      name: 'authenticated_constructor',
+      hash: '0x388cd6af135252e64f3548c7c8101014f6250d9d1f2946de04937baf0a5f4766',
+      cycles: 2533936,
+      bytes: 1137,
+      status: [Object]
+    },
+    {
+      name: 'reuse_one',
+      hash: '0xb815bd5d22800beb9c03539c5a3bfe3d329a863f8dc8d7af86dd775b2625d34d',
+      cycles: 27347,
+      bytes: 283,
+      status: [Object]
+    },
+    {
+      name: 'reuse_two',
+      hash: '0xc472bc7e2e04f527da08932759550522d222b060a8c05854adadd543b0651879',
+      cycles: 27347,
+      bytes: 283,
+      status: [Object]
+    }
+  ],
+  rejections: {
+    forged_bootstrap: '{"code":-302,"message":"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 44 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#44 })","data":"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 44 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#44 } }"}',
+    substituted_certificate: '{"code":-302,"message":"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 48 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#48 })","data":"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 48 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#48 } }"}',
+    wrong_certificate_identity: '{"code":-302,"message":"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 50 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/c90d16ba91a302160706eae94cea2b74ef439d259e414328a656d41fe761796d.html#50 })","data":"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 50 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/c90d16ba91a302160706eae94cea2b74ef439d259e414328a656d41fe761796d.html#50 } }"}',
+    spend_or_mutate_immutable_certificate: '{"code":-302,"message":"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 40 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#40 })","data":"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 40 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/08d1a83bb76e63f1336cc328a315fe0db36f2581f9ff01c6f5f1e970dd815461.html#40 } }"}'
+  },
+  certificateLive: 'live',
+  maxTxVerifyCycles: 70000000,
+  finalizedExecutionRootsPublished: 0
+}

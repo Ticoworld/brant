@@ -1,0 +1,29 @@
+{
+  "participants": 510,
+  "negative": {
+    "key": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 } }\"}",
+    "index": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 } }\"}",
+    "proof": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#12 } }\"}",
+    "duplicate": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#11 } }\"}",
+    "noncanonical_g1": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#9 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 9 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#9 } }\"}",
+    "infinity_signature": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#15 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#15 } }\"}",
+    "output": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#18 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5b0b581eb000d75872a62272c763b608fef2980e50b4786b9ed9448e0b4631f5.html#18 } }\"}"
+  },
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-PvThQf",
+  "estimate": {
+    "cycles": "0x4078b0b"
+  },
+  "accepted": "0x8dd646fd4982cdf3be70361aa76f39e38d020ede7f9f1c02ae2f62f5e898d582",
+  "observedStatus": {
+    "block_hash": "0x7176e51d0d6c65d3aa140f65a62fa3b9a5f3fec8424002d3de12e7591c69e1a8",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 2779,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}

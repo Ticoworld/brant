@@ -1,0 +1,452 @@
+[
+  {
+    "participants": 512,
+    "mode": "profile-a",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33592
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 913
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 512,
+    "mode": "profile-c",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33592
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 513322
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 913
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 1049023
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 512,
+    "mode": "profile-multi",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33592
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 913
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972994
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354035
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 26877673
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20277237
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 511,
+    "mode": "profile-a",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33700
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 2583619
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 511,
+    "mode": "profile-c",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33700
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 513322
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 3076147
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 1049023
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 511,
+    "mode": "profile-multi",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33700
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 2583619
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972994
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354035
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 26877673
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20277237
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 510,
+    "mode": "profile-a",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33809
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 5073618
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 510,
+    "mode": "profile-c",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33809
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 513322
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 6058674
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 1049023
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972993
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354034
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 32301373
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20409862
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  },
+  {
+    "participants": 510,
+    "mode": "profile-multi",
+    "stages": [
+      {
+        "name": "witness/context/committee commitment",
+        "cycles": 33809
+      },
+      {
+        "name": "SSZ finality/execution/domain",
+        "cycles": 628354
+      },
+      {
+        "name": "G1 parse/curve/canonical binding",
+        "cycles": 20794
+      },
+      {
+        "name": "G1 aggregate subgroup",
+        "cycles": 2282642
+      },
+      {
+        "name": "missing proofs/subgroups/subtraction",
+        "cycles": 5073618
+      },
+      {
+        "name": "G2 parse/curve/canonical binding",
+        "cycles": 44181
+      },
+      {
+        "name": "G2 signature subgroup",
+        "cycles": 2972994
+      },
+      {
+        "name": "hash-to-G2",
+        "cycles": 9354035
+      },
+      {
+        "name": "Miller loop(s)",
+        "cycles": 26877673
+      },
+      {
+        "name": "final exponent/equality",
+        "cycles": 20277237
+      },
+      {
+        "name": "transaction output binding",
+        "cycles": 10133
+      }
+    ]
+  }
+]
