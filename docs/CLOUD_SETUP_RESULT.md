@@ -51,7 +51,7 @@ Both exited 0. Solidity compiler reports `0.8.30+commit.73712a01.Emscripten.clan
 
 ## Included and absent E1 evidence
 
-Included exactly these ten evidence JSON files: bootstrap, cases, complete, costs, events, final-balances, runtime-identity, source-proofs, trades, verification. These are historical artifacts, not newly executed chain results. The imported original SHA256SUMS manifest is not a complete selective-bundle verification manifest; use the root MIGRATION_SHA256SUMS.txt.
+Included exactly these ten evidence JSON files: bootstrap, cases, complete, costs, events, final-balances, runtime-identity, source-proofs, trades, verification. These are historical artifacts, not newly executed chain results. The original archive SHA256SUMS.txt referenced by the E1 README is absent from this selective handoff; use the root MIGRATION_SHA256SUMS.txt.
 
 Absent: evidence/rpc raw JSONL transcripts and evidence/build.json; other extensive duplicate historical build/evidence trees and damaged WO02 archive are deliberately excluded per PROVENANCE. The original E1 evidence Library artifact is `libfile_8483a9e9050c8191baceb84a1a818c25`; implementation artifact is `libfile_ee4dda00fa5c81919e61cce29b171989`. Their contents cannot be independently enumerated from this chat, so exact remaining raw-file names and archive equivalence are NOT VERIFIED. No missing files were fabricated.
 
@@ -63,6 +63,6 @@ Absent: evidence/rpc raw JSONL transcripts and evidence/build.json; other extens
 
 Saved install_script and start_skill in the environment draft, confirmed `status: saved`, `requires_publish: true`. Installation preserves source/lockfiles and uses the tested platform override; startup directs future tasks to use existing checkouts and temporary validation copies. This does not publish the snapshot or prove fresh-task restoration. Review/save changes in environment settings, then publish the prepared environment.
 
-Compilation and partial offline fixture inspection are available. Full original offline verification remains blocked by omitted raw RPC evidence. Supply the original E1 evidence archive from Library, or authorize a separate isolated fresh reproduction with new output directories; never merge generated runs into historical evidence. Full runtime reproduction was outside this bounded migration check. E2 remains a subsequent engineering task.
+The complete saved install_script was executed from /workspace/trade and exited 0, including repeated checksum validation, pinned compiler installation and locked npm installation with the documented platform override. Compilation and partial offline fixture inspection are available. Full original offline verification remains blocked by omitted raw RPC evidence. Supply the original E1 evidence archive from Library, or authorize a separate isolated fresh reproduction with new output directories; never merge generated runs into historical evidence. Full runtime reproduction was outside this bounded migration check. E2 remains a subsequent engineering task.
 
-Git import and this report are committed together; see Git history for the commit identifier. The migration task's final response records the push result.
+Migration commit `ea9cf1da2599f8d9ec079cd7ef7c1d56d9e14659` was successfully pushed to `origin/main` (Ticoworld/trade). This report clarification is recorded in a follow-up commit. Git whitespace checking reported existing whitespace in preserved historical/vendor files; those files remain byte-identical to the handoff.
