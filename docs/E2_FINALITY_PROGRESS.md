@@ -79,3 +79,56 @@ Post "https://api.github.com/graphql": Forbidden
 ```
 
 This affects review publication, not the executed engineering checks. The draft description is preserved in `labs/wo04-e2/PR_DESCRIPTION.md`; no PR number or URL is claimed. GitHub's branch review entry is https://github.com/Ticoworld/trade/pull/new/wo04-e2a-finality. No merge was attempted. A bounded credential-pattern scan of new E2 material found no unexpected credential signatures.
+
+## Subsequent milestone: BLS profiling and real missing-signer subtraction
+
+Implementation checkpoint: `377f5ac` on the same E2 branch. The original 69,703,714-cycle fallback and all earlier E2 evidence remain byte-identical; the new work lives entirely in `labs/wo04-e2/optimization/`. Its README, source, pinned/derived fixtures and evidence contain the full stage profiles and reproduction commands. The complete reproduction script was executed successfully, including fresh reference checks, debugger tests and all isolated-node tests.
+
+### 1. Performance optimizations actually demonstrated
+
+Canonical affine witnesses parsed with supported blst deserializers saved approximately 1.5 million cycles at full participation. Exact round-trip affine encoding and recompression to the authenticated compressed key are enforced. Curve checks do not replace subgroup checks. Combining the two pairing terms with `blst_miller_loop_n`, followed by final exponentiation/equality, saved a further approximately 5.56 million cycles relative to separate loops. No witness-supplied precomputed pairing data is accepted. No 45-million-cycle result was achieved.
+
+The decomposed compressed benchmark is an equivalent explicit-call implementation (69,582,200 cycles), not an instrumentation rewrite of the preserved 69,703,714-cycle fallback core call. Its costs include G1 parsing/curve/canonical checks 513,322; G2 parsing/curve/canonical checks 1,049,023; G1 subgroup 2,282,642; G2 subgroup 2,972,993; hash-to-G2 9,354,034; separate Miller loops 32,301,373; final exponent/equality 20,409,862; SSZ/finality/domain 628,354; output binding 10,133. Profiling overhead is excluded from the production totals below. Exact per-vector profiles are retained in optimization/evidence/profiles.json.
+
+### 2. Genuine partial participation passed
+
+| Real captured update | Missing indices | Production cycles | Witness bytes | Transaction bytes | Local node result |
+| --- | --- | ---: | ---: | ---: | --- |
+| 512/512 finality | none | 62,530,288 | 1,561 | 1,911 | accepted and committed |
+| 511/512 update index 2 | 42 | 65,113,103 | 1,995 | 2,345 | accepted and committed |
+| 510/512 update index 3 | 198, 480 | 67,603,211 | 2,429 | 2,779 | accepted and committed |
+
+These are the original mainnet Capella captures, reference-verified from the pinned bootstrap and preceding updates. Missing keys are authenticated at their exact SSZ vector indices and must cover exactly the zero bits. Only those missing points are parsed/subgroup-checked/subtracted; there is no full-key scan. The aggregate and each missing point are validated in G1, so subtraction stays in G1 by group closure. The signature is separately validated in G2. At most two missing positions are supported by this bounded implementation.
+
+The debugger suite recorded 78 expected outcomes: 18 valid/profile executions and 60 negative executions. Modified keys/proofs, incorrect/duplicate indices, bitfield disagreement, noncanonical/invalid points, inconsistent affine/compressed encodings, infinity, altered signatures and substituted outcomes/output data were rejected. A canonical on-curve point outside G2 was rejected specifically at the subgroup check. A different genuine, subgroup-valid signature was rejected at the pairing equation. Raw results are in optimization/evidence/results.json.
+
+### 3. Single-transaction feasibility and staging
+
+All three optimized predicates were estimated, submitted and committed on fresh loopback-only CKB v0.210.0 devnets at the unraised 70,000,000-cycle policy, including every script in each tested transaction. Custom output policy was `passthrough`, with script verification retained. Node negative estimates also rejected tampered missing-member proofs/material and output substitution. Smallest remaining headroom is **2,396,789 cycles** for 510/512. This is actual lab admission, not a claim of public-chain acceptance or of room for all future trust-state scripts.
+
+A BLS two-transaction split was not needed for these tested predicates and was not implemented. Chained/interrupted/recovered **staged BLS verification is untested and unclaimed**. The committee certificate below is not a staged finality proof and cannot publish a finalized outcome. If complete client-state overhead exceeds the remaining budget, restricted intermediate-cell identity and binding to the exact trust version, committee, message, bitfield and update remain mandatory before attempting staging.
+
+Under the tested untyped empty-args code-cell shape, derived minimum code capacities are 131,785 CKB (512) and 131,793 CKB (511/510), and the 104-byte data output occupies 145 CKB. These are occupied-byte capacity calculations; code deployment fees and complete-client economic viability were not benchmarked. Binary hashes/sizes and exact transaction sizes are recorded separately.
+
+### 4. Security guarantees and reusable authentication actually implemented
+
+The optimized harness retains the prior host-reference-authenticated committee context boundary. Its BLS signature, committee membership/bitfield, finality/execution-header and output-binding predicates execute in CKB-VM. The context is not yet a CKB-enforced mutable light-client state. No Ganache root has been relabeled as Ethereum finalized, and no principal payout has been demonstrated against a complete E2 publisher.
+
+An additional immutable **bootstrap committee certificate** now authenticates its header against the fixed historical checkpoint and its current committee against the header's state root, validates the exact aggregate point including subgroup membership, and binds committee root, key-vector root, compressed/affine aggregate, period, checkpoint and version in a typed cell. Every creation executes that proof. Its type script forbids any subsequent consumption/mutation. A read-only consumer checks the certificate constructor's exact code hash/hash type/args and can safely reuse the subgroup-validated point without repeating that subgroup test; canonical parsing and compressed binding remain checked. A host-named cell alone does not establish this invariant.
+
+Actual node measurements, including all scripts:
+
+- Authenticated constructor: **2,533,936 cycles**, 1,137 transaction bytes.
+- Two independently committed reuse transactions: **27,347 cycles**, 283 bytes each.
+- Forged bootstrap, substituted certificate, wrong constructor identity, and attempted consumption/mutation failed node script verification. The certificate remained live.
+- Zero finalized execution roots were published by the constructor or reuse probes. The 264-byte certificate has a derived minimum capacity of 338 CKB under the tested shapes; the disposable lab allocated 1,000 CKB.
+
+### 5. Remaining complete-finality and rotation gap
+
+The certificate authenticates only the bootstrap-period committee. It does **not** authorize later committees, and it is not used to launder the later harness contexts into on-chain authenticated state. Persistent trust-version ownership, atomic committee rotation, old-committee authorization of next-committee proofs, monotonic finality/replay/rollback policy, current weak-subjectivity acquisition, later forks, live time policy and E1 publisher type identity remain incomplete. The original historical checkpoint's weak-subjectivity limitation remains explicit. These performance results do not complete Ethereum finality authentication for a live CKB payout system.
+
+### 6. Direct verification versus succinct proofs
+
+Direct, authenticated missing-signer verification is now demonstrated below the tested policy for 512/511/510 participation, so a succinct proof is not established as a better path by these results. No succinct prover or verifier was implemented. Complete state transitions, broader participation and newer forks may change the economic decision and must be measured. The next executable priority is connecting authenticated reusable committee state and correct rotation to this working predicate, while retaining the proven checks and measuring added overhead.
+
+The existing draft PR #2 is the user-designated review target. GitHub API metadata access still returns `Post "https://api.github.com/graphql": Forbidden`; this did not block implementation or Git branch publication. No merge is authorized or attempted.

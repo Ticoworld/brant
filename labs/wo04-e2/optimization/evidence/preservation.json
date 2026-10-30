@@ -2,5 +2,7 @@
   "baseCommit": "3855f779b2cc08070d901d1800b2e52ef95637a9",
   "preservedE2TrackedFiles": 129,
   "allByteIdentical": true,
-  "importManifestRecords": 200
+  "importManifestRecords": 200,
+  "fallbackBinarySHA256": "1309c835b0a06076a9f2b3b0a14d2177846006149d20a1fb4c2193e4ba2612d4",
+  "fallbackBinaryMatchesPreservedEvidence": true
 }
