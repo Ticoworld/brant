@@ -1,0 +1,20 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+{
+  "scope": "Local isolated E2 harness admission; not complete on-chain consensus trust state or E1 payout",
+  "chainDirectory": "/tmp/e2-finality-SLGJbr",
+  "estimate": {
+    "cycles": "0x4279822"
+  },
+  "accepted": "0x13626a4561317def9b7fbff49abdfc91590ef9c5e64108571878cfb94ee35198",
+  "observedStatus": {
+    "block_hash": "0xc7506fff022f0090d38cc84c23b00a258c72f58346c75d69620f112e343529e4",
+    "block_number": "0x4",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "transactionBytes": 1622,
+  "feeShannons": "1000000",
+  "outputValidator": "passthrough (script verification retained)",
+  "nodeMaxTxVerifyCycles": 70000000
+}

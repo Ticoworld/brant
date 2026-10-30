@@ -1,0 +1,163 @@
+[
+  {
+    "binary": "direct",
+    "bytes": 150624,
+    "sha256": "835ac8c4ec853f470f4008f4c1db66228a260a5f34bd52e06fd200a0b97674d1",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 31316,
+        "mappedBytes": 31316
+      },
+      {
+        "virtualAddress": 100948,
+        "fileBytes": 118466,
+        "mappedBytes": 118466
+      },
+      {
+        "virtualAddress": 223510,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 179782
+  },
+  {
+    "binary": "subtract",
+    "bytes": 149424,
+    "sha256": "438729c825df039a05495ef94b6033f45c27d8d35c27521ab9d6468bffba1e37",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 31316,
+        "mappedBytes": 31316
+      },
+      {
+        "virtualAddress": 100948,
+        "fileBytes": 117268,
+        "mappedBytes": 117268
+      },
+      {
+        "virtualAddress": 222312,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 178584
+  },
+  {
+    "binary": "direct64",
+    "bytes": 170000,
+    "sha256": "733a1f3e520653ab5caada52d6013673138671d9d071602b6a12e24d8366d76c",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 31256,
+        "mappedBytes": 31256
+      },
+      {
+        "virtualAddress": 100888,
+        "fileBytes": 137904,
+        "mappedBytes": 137904
+      },
+      {
+        "virtualAddress": 242888,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 199160
+  },
+  {
+    "binary": "subtract64",
+    "bytes": 166584,
+    "sha256": "78386c5b2834ef5e73629c677ed952fbe2fe86fc1f86ccfd641379073c94529d",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 31256,
+        "mappedBytes": 31256
+      },
+      {
+        "virtualAddress": 100888,
+        "fileBytes": 134490,
+        "mappedBytes": 134490
+      },
+      {
+        "virtualAddress": 239474,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 195746
+  },
+  {
+    "binary": "witness64",
+    "bytes": 140496,
+    "sha256": "0eee9886e1299341a973f67db9c01629c22b2cc7c764608cbe8ccdf63dddb90e",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 5488,
+        "mappedBytes": 5488
+      },
+      {
+        "virtualAddress": 75120,
+        "fileBytes": 134170,
+        "mappedBytes": 134170
+      },
+      {
+        "virtualAddress": 213386,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 169658
+  },
+  {
+    "binary": "fast64",
+    "bytes": 137992,
+    "sha256": "1309c835b0a06076a9f2b3b0a14d2177846006149d20a1fb4c2193e4ba2612d4",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 5488,
+        "mappedBytes": 5488
+      },
+      {
+        "virtualAddress": 75120,
+        "fileBytes": 131666,
+        "mappedBytes": 131666
+      },
+      {
+        "virtualAddress": 210882,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 167154
+  },
+  {
+    "binary": "memory64",
+    "bytes": 167040,
+    "sha256": "71bea698ce6f69505cc278aa1328a057a4836b971e05741ca206454818234cb6",
+    "loadSegments": [
+      {
+        "virtualAddress": 65536,
+        "fileBytes": 31336,
+        "mappedBytes": 31336
+      },
+      {
+        "virtualAddress": 100968,
+        "fileBytes": 134864,
+        "mappedBytes": 134864
+      },
+      {
+        "virtualAddress": 239928,
+        "fileBytes": 0,
+        "mappedBytes": 30000
+      }
+    ],
+    "elfMappedBytes": 196200
+  }
+]

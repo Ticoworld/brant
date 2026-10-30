@@ -1,0 +1,13 @@
+test_bootstrap_committee_tamper (test_reference.FinalityTests.test_bootstrap_committee_tamper) ... ok
+test_full_mainnet_chain (test_reference.FinalityTests.test_full_mainnet_chain) ... ok
+test_future_signature (test_reference.FinalityTests.test_future_signature) ... ok
+test_invalid_updates (test_reference.FinalityTests.test_invalid_updates) ... ok
+test_replay (test_reference.FinalityTests.test_replay) ... ok
+test_unknown_rotated_committee (test_reference.FinalityTests.test_unknown_rotated_committee) ... ok
+test_wrong_chain_domain (test_reference.FinalityTests.test_wrong_chain_domain) ... ok
+test_wrong_checkpoint (test_reference.FinalityTests.test_wrong_checkpoint) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 65.501s
+
+OK

@@ -1,0 +1,29 @@
+Requirement already satisfied: annotated-types==0.8.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 1)) (0.8.0)
+Requirement already satisfied: cytoolz==1.2.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 2)) (1.2.0)
+Requirement already satisfied: eth-hash==0.8.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 3)) (0.8.0)
+Requirement already satisfied: eth-typing==6.0.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 4)) (6.0.0)
+Requirement already satisfied: eth-utils==6.0.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 5)) (6.0.0)
+Requirement already satisfied: py-ecc==8.0.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 6)) (8.0.0)
+Requirement already satisfied: pydantic==2.14.2 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 7)) (2.14.2)
+Requirement already satisfied: pydantic_core==2.50.2 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 8)) (2.50.2)
+Requirement already satisfied: toolz==1.2.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 9)) (1.2.0)
+Requirement already satisfied: typing-inspection==0.4.4 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 10)) (0.4.4)
+Requirement already satisfied: typing_extensions==4.16.0 in ./.venv/lib/python3.12/site-packages (from -r requirements.lock (line 11)) (4.16.0)
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python3 -m pip install --upgrade pip
+Collecting ziglang==0.14.1
+  Using cached ziglang-0.14.1-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl.metadata (2.7 kB)
+Using cached ziglang-0.14.1-py3-none-manylinux_2_12_x86_64.manylinux2010_x86_64.musllinux_1_1_x86_64.whl (83.2 MB)
+Installing collected packages: ziglang
+Successfully installed ziglang-0.14.1
+
+[notice] A new release of pip is available: 25.0.1 -> 26.2.2
+[notice] To update, run: python3 -m pip install --upgrade pip
+fixtures/PROVENANCE.json: OK
+fixtures/bootstrap.json: OK
+fixtures/finality.json: OK
+fixtures/updates.json: OK
+fixtures/vm-context.bin: OK
+fixtures/vm-update-fast.bin: OK
+fixtures/vm-update.bin: OK

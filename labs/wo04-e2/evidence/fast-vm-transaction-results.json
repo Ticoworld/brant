@@ -1,0 +1,50 @@
+[
+  {
+    "name": "valid",
+    "runnerExit": 0,
+    "scriptExit": 0,
+    "cycles": 69703714,
+    "seconds": 0.10771450199990795,
+    "expectedOutcomeObserved": true
+  },
+  {
+    "name": "wrong-root",
+    "runnerExit": 254,
+    "scriptExit": 16,
+    "cycles": 69702205,
+    "seconds": 0.09774429600020085,
+    "expectedOutcomeObserved": true
+  },
+  {
+    "name": "signature",
+    "runnerExit": 254,
+    "scriptExit": 14,
+    "cycles": 5232448,
+    "seconds": 0.025228374999642256,
+    "expectedOutcomeObserved": true
+  },
+  {
+    "name": "state-root",
+    "runnerExit": 254,
+    "scriptExit": 8,
+    "cycles": 356261,
+    "seconds": 0.008150254000156565,
+    "expectedOutcomeObserved": true
+  },
+  {
+    "name": "committee",
+    "runnerExit": 254,
+    "scriptExit": 7,
+    "cycles": 67617,
+    "seconds": 0.007240694000302028,
+    "expectedOutcomeObserved": true
+  },
+  {
+    "name": "bits",
+    "runnerExit": 254,
+    "scriptExit": 6,
+    "cycles": 37747,
+    "seconds": 0.00879097200004253,
+    "expectedOutcomeObserved": true
+  }
+]

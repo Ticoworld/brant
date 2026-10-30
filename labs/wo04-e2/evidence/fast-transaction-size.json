@@ -1,0 +1,6 @@
+{
+  "transactionBytes": 1622,
+  "witnessBytes": 1272,
+  "codeCellBytes": 137992,
+  "scope": "Mock transaction, code deployed separately; no live admission or capacity accounting"
+}

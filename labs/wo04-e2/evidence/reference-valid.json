@@ -1,0 +1,44 @@
+[
+  {
+    "slot": 7069376,
+    "state_root": "0x7577fc9f52c5670c80059bcba187ad3fa6d160dab1a0dd1b98a4515861fa8076",
+    "participants": 511,
+    "signing_root": "0x68ee2e9e6e9b51a6d68805ad7b37d0bf2e932405db8fd269f618a73390f0b9be"
+  },
+  {
+    "slot": 7070047,
+    "state_root": "0x131c419a6dff2a3b801a2bff1e4118c6a519b6aa03ea877606d126c5ab79f1e2",
+    "participants": 512,
+    "signing_root": "0x14f46da8ea62d1f1706964a2ec316db685dda2f50a973b1d167609f5c1606cd2"
+  },
+  {
+    "slot": 7078240,
+    "state_root": "0x4aee79ed77cf9b4c550b0ba73f296e064dac05bd55c5c156d6d67572d34dc2ff",
+    "participants": 511,
+    "signing_root": "0x075cd047512721923242b5be7b76bf711a4adfa661380297ab8ae6213a7ccbab"
+  },
+  {
+    "slot": 7089280,
+    "state_root": "0x6ea98833f0ad934e6a3b6adcd447fd7674a40bd82f87b26eb20fb6917201f45b",
+    "participants": 510,
+    "signing_root": "0x059cbffa9efc8adf1a56e15115f6a21a255018b1a50dbc980160f8ef7c5daeb6"
+  },
+  {
+    "slot": 7094272,
+    "state_root": "0x8e207cea4b70036f9a3cbc7f493def39a7473e5b5615055c3ed7637674c9f724",
+    "participants": 512,
+    "signing_root": "0x39aa389087d121cbe2d1fa23e239ae9abc57044d06ceb6d3830468fa58c0b723"
+  },
+  {
+    "slot": 7104096,
+    "state_root": "0x0b8fe0d109ba6285ca334f7ce3f7f34fe218b073c0df9efab71ede4a9213ac6b",
+    "participants": 512,
+    "signing_root": "0xb2058219c3951177142e6a08d2a9b7db296ec9fca428f4111b1d6472ae8fdf5e"
+  },
+  {
+    "slot": 7109344,
+    "state_root": "0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3",
+    "participants": 512,
+    "signing_root": "0x1b9e9c14c5434cdbc98962323732e43281b8597688eebfbc4af3b6a9c1c16f39"
+  }
+]

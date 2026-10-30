@@ -1,0 +1,8 @@
+{
+  "scope": "HOST-VERIFIED ONLY; not yet a CKB-authenticated publishing cell",
+  "layout": "domain[32] || stateRoot[32] || blockNumberLE[8] || blockHash[32]",
+  "data": "0x51f788ea2153473ae7df6d5f8880f14787f9e786a5c5abdfa32a6de99da83bba226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3d27b110100000000bc8499537876e5406c7a65e25f99063f1cd85a17014a3aa5ade38271b1fbf64f",
+  "finalized_beacon_slot": 7109344,
+  "state_root": "0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3",
+  "ganache_proofs_compatible": false
+}

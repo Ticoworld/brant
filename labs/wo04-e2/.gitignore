@@ -1,0 +1,5 @@
+/build/
+/.venv/
+/tools/
+__pycache__/
+!/evidence/*.log

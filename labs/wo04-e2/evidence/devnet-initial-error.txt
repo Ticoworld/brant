@@ -1,0 +1,4 @@
+Error: {"code":-1,"message":"CKBInternalError: Config(BlockAssembler disabled)"}
+    at rpc (/workspace/trade/labs/wo04-e2/src/devnet.cjs:10:239)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspace/trade/labs/wo04-e2/src/devnet.cjs:34:22
