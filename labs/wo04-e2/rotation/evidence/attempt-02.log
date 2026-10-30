@@ -1,0 +1,9 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+primary-bootstrap 528700 1649
+primary-certify-862 17432720 25590
+primary-update-0 63176437 3651
+primary-certify-863 17432728 25590
+Error: INVALID_ACCEPTED abandoned-certification-no-signing-certificate
+    at reject (/workspace/trade/labs/wo04-e2/rotation/src/run.cjs:18:145)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspace/trade/labs/wo04-e2/rotation/src/run.cjs:79:42

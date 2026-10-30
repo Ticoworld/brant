@@ -1,0 +1,14 @@
+{
+  "scope": "Seven actual state transitions; historical Capella checkpoint; isolated chain only",
+  "transactions": [],
+  "rejections": [
+    {
+      "name": "primary-incorrect-Type-ID",
+      "error": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 71 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/9108074265002c82fd85c49a39177e430ae1281528b29cf74ed9741b96bf401b.html#71 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 71 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/9108074265002c82fd85c49a39177e430ae1281528b29cf74ed9741b96bf401b.html#71 } }\"}",
+      "method": "estimate_cycles"
+    }
+  ],
+  "lineages": [],
+  "nodeMaxTxVerifyCycles": 70000000,
+  "failure": "Error: not committed primary-bootstrap\n    at commit (/workspace/trade/labs/wo04-e2/rotation/src/run.cjs:19:391)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async bootstrap (/workspace/trade/labs/wo04-e2/rotation/src/run.cjs:26:10)\n    at async /workspace/trade/labs/wo04-e2/rotation/src/run.cjs:77:11"
+}

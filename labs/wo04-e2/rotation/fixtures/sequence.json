@@ -1,0 +1,86 @@
+[
+  {
+    "index": 0,
+    "participants": 511,
+    "missing": [
+      243
+    ],
+    "signatureSlot": 7061720,
+    "signingPeriod": 862,
+    "finalizedSlot": 7069376,
+    "hasNext": true,
+    "witnessBytes": 2796,
+    "referenceVerified": true
+  },
+  {
+    "index": 1,
+    "participants": 512,
+    "missing": [],
+    "signatureSlot": 7070143,
+    "signingPeriod": 863,
+    "finalizedSlot": 7070047,
+    "hasNext": true,
+    "witnessBytes": 2362,
+    "referenceVerified": true
+  },
+  {
+    "index": 2,
+    "participants": 511,
+    "missing": [
+      42
+    ],
+    "signatureSlot": 7078318,
+    "signingPeriod": 864,
+    "finalizedSlot": 7078240,
+    "hasNext": true,
+    "witnessBytes": 2796,
+    "referenceVerified": true
+  },
+  {
+    "index": 3,
+    "participants": 510,
+    "missing": [
+      198,
+      480
+    ],
+    "signatureSlot": 7089369,
+    "signingPeriod": 865,
+    "finalizedSlot": 7089280,
+    "hasNext": true,
+    "witnessBytes": 3230,
+    "referenceVerified": true
+  },
+  {
+    "index": 4,
+    "participants": 512,
+    "missing": [],
+    "signatureSlot": 7094353,
+    "signingPeriod": 866,
+    "finalizedSlot": 7094272,
+    "hasNext": true,
+    "witnessBytes": 2362,
+    "referenceVerified": true
+  },
+  {
+    "index": 5,
+    "participants": 512,
+    "missing": [],
+    "signatureSlot": 7104191,
+    "signingPeriod": 867,
+    "finalizedSlot": 7104096,
+    "hasNext": true,
+    "witnessBytes": 2362,
+    "referenceVerified": true
+  },
+  {
+    "index": 6,
+    "participants": 512,
+    "missing": [],
+    "signatureSlot": 7109431,
+    "signingPeriod": 867,
+    "finalizedSlot": 7109344,
+    "hasNext": false,
+    "witnessBytes": 2362,
+    "referenceVerified": true
+  }
+]

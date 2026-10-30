@@ -1,0 +1,23 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+primary-bootstrap 528700 1649
+primary-certify-862 17432720 25590
+primary-update-0 63176437 3651
+primary-certify-863 17432728 25590
+primary-update-1 60733937 3567
+primary-certify-864 17432728 25590
+primary-update-2 63313512 4001
+primary-certify-865 17432728 25590
+primary-update-3 65805080 4435
+primary-certify-866 17432728 25590
+primary-update-4 60733937 3567
+primary-certify-867 17432728 25590
+primary-update-5 60733937 3567
+primary-certify-868 17432728 25590
+primary-update-6 60661006 3567
+independent-bootstrap 528700 1649
+independent-certify-862 17432720 25590
+independent-update-0 63176437 3651
+independent-certify-863 17432728 25590
+independent-update-1 60733937 3567
+authorization-probe-funding 539 407
+authorized-current-root-probe-no-principal-settlement 27609 321

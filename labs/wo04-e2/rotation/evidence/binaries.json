@@ -1,0 +1,26 @@
+[
+  {
+    "name": "certificate",
+    "bytes": 34960,
+    "codeHash": "0x28c1042201db298d2689381a1910a33a087111cc344dd7ef0021bc424ee09de0",
+    "sha256": "cbf4b9b3760bd69423be0c5b04bf66a9f472c74e04d89c1a2eb920fbe6dda08b"
+  },
+  {
+    "name": "state",
+    "bytes": 144648,
+    "codeHash": "0x9108074265002c82fd85c49a39177e430ae1281528b29cf74ed9741b96bf401b",
+    "sha256": "07dd2ec9a2c8767b6ce95dd4769060bb238e7c71f21408754afe69cd3802d3dc"
+  },
+  {
+    "name": "root",
+    "bytes": 4864,
+    "codeHash": "0x8144cb52eb37983b5382471c9411c866af69344739194c5e09a4f244023f7547",
+    "sha256": "a7d819c473d0cd72c80e2e28ecffd85469f064d6a26add35bef981780dd1503d"
+  },
+  {
+    "name": "root_probe",
+    "bytes": 8888,
+    "codeHash": "0x54aeb822f4879f456b2f104608969c59fab2d9ee7d8235f4f0a152de03eba309",
+    "sha256": "57e3f1dd251ff6289ed66e09c08a123327cbd06232b65d6430de76efe4225d31"
+  }
+]

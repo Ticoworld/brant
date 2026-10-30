@@ -1,0 +1,6 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+Error: not committed primary-bootstrap
+    at commit (/workspace/trade/labs/wo04-e2/rotation/src/run.cjs:19:391)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async bootstrap (/workspace/trade/labs/wo04-e2/rotation/src/run.cjs:26:10)
+    at async /workspace/trade/labs/wo04-e2/rotation/src/run.cjs:77:11
