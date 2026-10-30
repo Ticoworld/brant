@@ -1,0 +1,249 @@
+bootstrap.bin: OK
+bootstrap.json: OK
+ckb-dev.toml: OK
+ckb-genesis.json: OK
+ckb-runtime.toml: OK
+committee-0.bin: OK
+configuration.json: OK
+generated-config.yaml: OK
+generated-genesis.json: OK
+generated-genesis.ssz: OK
+genesis.json: OK
+raw/block-128.json.gz: OK
+raw/block-192.json.gz: OK
+raw/block-224.json.gz: OK
+raw/block-256.json.gz: OK
+raw/block-282.json.gz: OK
+raw/block-283.json.gz: OK
+raw/block-284.json.gz: OK
+raw/block-285.json.gz: OK
+raw/block-286.json.gz: OK
+raw/block-287.json.gz: OK
+raw/block-288.json.gz: OK
+raw/block-289.json.gz: OK
+raw/block-290.json.gz: OK
+raw/block-291.json.gz: OK
+raw/block-292.json.gz: OK
+raw/block-293.json.gz: OK
+raw/block-294.json.gz: OK
+raw/block-295.json.gz: OK
+raw/block-296.json.gz: OK
+raw/block-297.json.gz: OK
+raw/block-298.json.gz: OK
+raw/block-299.json.gz: OK
+raw/block-300.json.gz: OK
+raw/block-303.json.gz: OK
+raw/block-304.json.gz: OK
+raw/block-305.json.gz: OK
+raw/block-307.json.gz: OK
+raw/block-308.json.gz: OK
+raw/block-309.json.gz: OK
+raw/block-310.json.gz: OK
+raw/block-311.json.gz: OK
+raw/block-312.json.gz: OK
+raw/block-313.json.gz: OK
+raw/block-314.json.gz: OK
+raw/block-315.json.gz: OK
+raw/block-316.json.gz: OK
+raw/block-317.json.gz: OK
+raw/block-318.json.gz: OK
+raw/block-319.json.gz: OK
+raw/block-320.json.gz: OK
+raw/block-321.json.gz: OK
+raw/block-322.json.gz: OK
+raw/block-323.json.gz: OK
+raw/block-324.json.gz: OK
+raw/block-325.json.gz: OK
+raw/block-326.json.gz: OK
+raw/block-327.json.gz: OK
+raw/block-328.json.gz: OK
+raw/block-329.json.gz: OK
+raw/block-330.json.gz: OK
+raw/block-331.json.gz: OK
+raw/block-332.json.gz: OK
+raw/block-333.json.gz: OK
+raw/block-334.json.gz: OK
+raw/block-335.json.gz: OK
+raw/block-352.json.gz: OK
+raw/block-376.json.gz: OK
+raw/block-377.json.gz: OK
+raw/block-417.json.gz: OK
+raw/block-418.json.gz: OK
+raw/state-128.json.gz: OK
+raw/state-282.json.gz: OK
+raw/state-283.json.gz: OK
+raw/state-285.json.gz: OK
+raw/state-286.json.gz: OK
+raw/state-288.json.gz: OK
+raw/state-289.json.gz: OK
+raw/state-291.json.gz: OK
+raw/state-292.json.gz: OK
+raw/state-293.json.gz: OK
+raw/state-295.json.gz: OK
+raw/state-296.json.gz: OK
+raw/state-297.json.gz: OK
+raw/state-299.json.gz: OK
+raw/state-303.json.gz: OK
+raw/state-308.json.gz: OK
+raw/state-309.json.gz: OK
+raw/state-310.json.gz: OK
+raw/state-312.json.gz: OK
+raw/state-313.json.gz: OK
+raw/state-314.json.gz: OK
+raw/state-316.json.gz: OK
+raw/state-317.json.gz: OK
+raw/state-318.json.gz: OK
+raw/state-319.json.gz: OK
+raw/state-321.json.gz: OK
+raw/state-322.json.gz: OK
+raw/state-323.json.gz: OK
+raw/state-325.json.gz: OK
+raw/state-326.json.gz: OK
+raw/state-327.json.gz: OK
+raw/state-328.json.gz: OK
+raw/state-330.json.gz: OK
+raw/state-331.json.gz: OK
+raw/state-332.json.gz: OK
+raw/state-334.json.gz: OK
+raw/state-376.json.gz: OK
+raw/state-417.json.gz: OK
+spec.json: OK
+state-0.bin: OK
+state-1.bin: OK
+state-2.bin: OK
+update-0.bin: OK
+update-0.json: OK
+update-1.bin: OK
+update-1.json: OK
+verification-0.json: OK
+verification-1.json: OK
+Real finalized devnet bootstrap captured 0x2ffa4a88dd006ea29c47443ba3aee5bbdfeaee28d39db00c205137348e426810
+{
+  "actualCapturedUpdates": [
+    {
+      "index": 0,
+      "participants": 512,
+      "finalizedSlot": 288
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "finalizedSlot": 352
+    }
+  ],
+  "rawStateRootsVerified": 38,
+  "rawBodyRootsChecked": 60,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replayed-private-PoS-bootstrap 531326 1649
+replayed-private-PoS-certify-0 17424406 25590
+replayed-fund-principal-2 14426 869
+replayed-fund-principal-3 14426 869
+replayed-private-PoS-update-0 60832914 3530
+replayed-private-PoS-update-1 60831584 3530
+replayed-fund-negative-control-forged-contract-code-hash 14426 869
+replayed-fund-negative-control-wrong-terms 14426 869
+replayed-fund-negative-control-invalid-trade-storage-slot 14426 869
+replayed-fund-negative-control-wrong-source-genesis 14426 869
+replayed-fund-negative-control-unauthorized-lineage 14426 869
+replayed-fund-negative-control-future-minimum-state-version 14426 869
+replayed-fund-negative-control-expired-block-window 14426 869
+replayed-REAL-POS-FILL-PRINCIPAL-PAYOUT 564138 1872
+replayed-REAL-POS-UNFILLED-PRINCIPAL-REFUND 624993 2021
+extra-disposable-substituted-root-negative-control 1078 556
+{
+  "committedTransactions": 16,
+  "expectedNodeRejections": 26,
+  "principalSettlements": [],
+  "transactions": [
+    {
+      "name": "replayed-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replayed-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replayed-fund-principal-2",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-principal-3",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replayed-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replayed-fund-negative-control-forged-contract-code-hash",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-wrong-terms",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-invalid-trade-storage-slot",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-wrong-source-genesis",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-unauthorized-lineage",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-future-minimum-state-version",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-expired-block-window",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-REAL-POS-FILL-PRINCIPAL-PAYOUT",
+      "cycles": 564138,
+      "bytes": 1872
+    },
+    {
+      "name": "replayed-REAL-POS-UNFILLED-PRINCIPAL-REFUND",
+      "cycles": 624993,
+      "bytes": 2021
+    },
+    {
+      "name": "extra-disposable-substituted-root-negative-control",
+      "cycles": 1078,
+      "bytes": 556
+    }
+  ],
+  "evmGasFeesWei": 0,
+  "ckbFeesShannons": 16000000,
+  "classification": "Fresh native replay of actual private-PoS consensus and both principal transfers"
+}

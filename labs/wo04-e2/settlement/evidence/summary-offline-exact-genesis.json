@@ -1,0 +1,85 @@
+{
+  "committedTransactions": 15,
+  "expectedNodeRejections": 22,
+  "principalSettlements": [],
+  "transactions": [
+    {
+      "name": "replayed-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replayed-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replayed-fund-principal-2",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-principal-3",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replayed-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replayed-fund-negative-control-forged-contract-code-hash",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-wrong-terms",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-invalid-trade-storage-slot",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-wrong-source-genesis",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-unauthorized-lineage",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-future-minimum-state-version",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-fund-negative-control-expired-block-window",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "replayed-REAL-POS-FILL-PRINCIPAL-PAYOUT",
+      "cycles": 564138,
+      "bytes": 1872
+    },
+    {
+      "name": "replayed-REAL-POS-UNFILLED-PRINCIPAL-REFUND",
+      "cycles": 624993,
+      "bytes": 2021
+    }
+  ],
+  "evmGasFeesWei": 0,
+  "ckbFeesShannons": 15000000,
+  "classification": "Fresh native replay of actual private-PoS consensus and both principal transfers"
+}

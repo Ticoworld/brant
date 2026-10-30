@@ -1,0 +1,148 @@
+{
+  "committedTransactions": 15,
+  "expectedNodeRejections": 22,
+  "principalSettlements": [
+    {
+      "id": "0x191c4d81ad10262762cb5a331cdb1022ba6a8fd91ee37de984e8f765702ccec7",
+      "status": 2,
+      "hash": "0x2c4e3d138395fb4f7430ad90aae59eac3e3eee809c87570f7001c70ce18bcec0",
+      "root": {
+        "txHash": "0xb6c81c38c9623db46b1f92316bd04beff7327daecd5cb989a3412daff6bf709c",
+        "index": "0x1"
+      },
+      "rootVersion": 1,
+      "recoveredAfterLaterRootPublication": true,
+      "latencyMs": 514785,
+      "latencyBasis": "CKB committed header timestamp minus original funding host timestamp",
+      "principalShannons": "100000000000",
+      "feeShannons": "1000000",
+      "received": {
+        "data": {
+          "content": "0x",
+          "hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "output": {
+          "capacity": "0x174876e800",
+          "lock": {
+            "args": "0x2222222222222222222222222222222222222222222222222222222222222222",
+            "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+            "hash_type": "data2"
+          },
+          "type": null
+        }
+      },
+      "consumedInputStatus": "unknown",
+      "recoveredAlreadyCommittedPrincipal": true
+    },
+    {
+      "received": {
+        "data": {
+          "content": "0x",
+          "hash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "output": {
+          "capacity": "0x174876e800",
+          "lock": {
+            "args": "0x3333333333333333333333333333333333333333333333333333333333333333",
+            "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+            "hash_type": "data2"
+          },
+          "type": null
+        }
+      },
+      "consumedInputStatus": "unknown",
+      "id": "0x58b94ee229545e28bd56fcbd06b0c40896cce48f3676d09f143b5661ae35c009",
+      "status": 3,
+      "hash": "0x6728815506740463998e2a48a0d6c4582eb5bc6b58010ccfb96c745aab3cc3cb",
+      "root": {
+        "txHash": "0xb6c81c38c9623db46b1f92316bd04beff7327daecd5cb989a3412daff6bf709c",
+        "index": "0x1"
+      },
+      "rootVersion": 1,
+      "recoveredAfterLaterRootPublication": true,
+      "latencyMs": 595327,
+      "principalShannons": "100000000000",
+      "feeShannons": "1000000"
+    }
+  ],
+  "transactions": [
+    {
+      "name": "private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "fund-principal-2",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-principal-3",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "fund-negative-control-forged-contract-code-hash",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-wrong-terms",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-invalid-trade-storage-slot",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-wrong-source-genesis",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-unauthorized-lineage",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-future-minimum-state-version",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "fund-negative-control-expired-block-window",
+      "cycles": 14426,
+      "bytes": 869
+    },
+    {
+      "name": "REAL-POS-FILL-PRINCIPAL-PAYOUT",
+      "cycles": 564138,
+      "bytes": 1872
+    },
+    {
+      "name": "REAL-POS-UNFILLED-PRINCIPAL-REFUND",
+      "cycles": 624993,
+      "bytes": 2021
+    }
+  ],
+  "evmGasFeesWei": 1884025013188175,
+  "ckbFeesShannons": 15000000,
+  "classification": "Actual private-PoS finalized principal fill and unfilled refund"
+}

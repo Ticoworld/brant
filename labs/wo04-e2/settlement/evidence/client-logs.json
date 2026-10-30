@@ -1,0 +1,20 @@
+[
+  {
+    "name": "beacon-client",
+    "rawBytes": 16852152,
+    "sha256": "4092a6910857b2a5bc474643130767970e352fc98bd0540b61669b7b91193276",
+    "compressedBytes": 686032
+  },
+  {
+    "name": "validator-client",
+    "rawBytes": 1349113,
+    "sha256": "8286290ad9aa42b7ccea46bff29d4ea0d9fbdd9abb5e6335a86d61330856865d",
+    "compressedBytes": 91494
+  },
+  {
+    "name": "execution-client",
+    "rawBytes": 366239,
+    "sha256": "201287681cc266624e982c0c9d9aa8e4cc157cdca94a7c765ccbc5268bb88824",
+    "compressedBytes": 43242
+  }
+]

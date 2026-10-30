@@ -1,0 +1,53 @@
+{
+  "successfulWorkflow": {
+    "ckbTransactions": 15,
+    "ckbFeesShannons": 15000000,
+    "coreCkbTransactionsWithoutSevenDefensiveFundingControls": 8,
+    "coreCkbFeesShannons": 8000000,
+    "evmReceipts": 7,
+    "evmGasUsed": 1884025,
+    "evmFeesWei": 1884025013188175
+  },
+  "allLivePosDriverAttemptsDeduplicated": {
+    "ckbTransactionsAcrossThreeIsolatedChains": 19,
+    "ckbFeesShannons": 19000000,
+    "evmReceiptsOnSinglePrivatePosChain": 14,
+    "evmFeesWei": 4797280033580960
+  },
+  "occupiedCapacity": [
+    {
+      "name": "private-PoS-bootstrap",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 386
+    },
+    {
+      "name": "private-PoS-certify-0",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 482
+    },
+    {
+      "name": "fund-principal-2",
+      "allocatedShannons": 100001000000,
+      "occupiedBytes": 518
+    },
+    {
+      "name": "private-PoS-update-0",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 282
+    },
+    {
+      "name": "REAL-POS-FILL-PRINCIPAL-PAYOUT",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 73
+    }
+  ],
+  "retainedProtocolCapacityCKB": 4000,
+  "negativeControlCapacityCKB": 7000.07,
+  "codeCapacity": "Shared bundle148241CKB minimum; adapter9457CKB minimum; code supplied as isolated genesis cells, no deployment transaction or deployment fee measured",
+  "settlementLatencyMs": {
+    "2": 514785,
+    "3": 595327
+  },
+  "latencyWarning": "Includes actual helper/configuration interruptions and persisted recovery; not an optimized latency benchmark. Signature-since second update required20 local maturity waits.",
+  "fixtureOnly": "All ETH, controlled tokens and CKB are isolated disposable assets. Fees fixed for experiment; not a public fee quote."
+}

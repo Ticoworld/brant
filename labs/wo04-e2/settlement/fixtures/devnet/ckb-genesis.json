@@ -1,0 +1,4 @@
+{
+  "message": "1793375149150",
+  "reason": "ckb init inserts wall-clock genesis message; freeze for byte-exact transaction/Type ID replay"
+}

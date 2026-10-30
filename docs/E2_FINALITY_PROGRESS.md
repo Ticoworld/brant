@@ -256,3 +256,48 @@ and real local Geth/Lighthouse execution are feasible; real signatures/finality
 and same-history terminal storage proofs must still pass before claiming exchange
 settlement. See the subsequent executed evidence rather than this checkpoint for
 the final E2C result.
+
+## WO04-E2C: actual private-PoS finalized principal settlement — VERIFIED
+
+The bounded positive target is now executed. See
+[`E2_SETTLEMENT_RESULT.md`](E2_SETTLEMENT_RESULT.md) for exact trust assumptions,
+transactions, fees, capacity, latency, failure recovery and remaining limits.
+The new isolated implementation is `labs/wo04-e2/settlement/`.
+
+A real digest-pinned Geth/Lighthouse private PoS network finalized the unchanged
+E1 controlled-token fill and unfilled Outcomes expiry. Extracted complete SSZ
+state/body commitments matched actual consensus headers; real 512-participant
+sync signatures and finality/execution branches passed both Python and native
+CKB verification. Exact-block Geth account/storage proofs then paid **1,000
+fixture CKB to the maker and 1,000 to the refund recipient** through actual E1
+principal logic adapted to the exact typed publisher/registry/source identity.
+No controller-selected payout root, mock signatures or arbitrary 104-byte root
+was accepted. Bootstrap trust remains explicit and fixed.
+
+Both used the version-1 immutable root after version 2 committed, and survived
+real driver interruption/restart with the original funded cells. The execution
+blocks 218/280 share a state-root value; their beacon finality, block hashes,
+registry version and root-cell identities differ. This is not claimed as changing
+application storage between publications. Historical-mainnet root authorization
+separately passed across five later updates with different execution states.
+
+Measured native fill/refund: 564,138 /624,993 cycles and 1,872 /2,021 bytes.
+Finality/root transitions: 60,832,914 /60,831,584 cycles, each 3,530 bytes.
+Successful live workflow: 15 native transactions, 22 native negatives, 7 EVM
+receipts. Final complete offline reproduction: 16 native transactions (15 exact
+captured plus one additional forged-root control), 26 native negatives, identical
+captured transaction hashes/cycles; both principal outputs read independently.
+38 raw beacon-state roots and 60 block bodies checked offline; invalid signature,
+execution root, finality branch and chain domain rejected for both real updates.
+
+The final reproduction command `E2C_RUN_NAME=offline-final bash
+labs/wo04-e2/settlement/src/reproduce.sh` passed. All 570 pre-existing tracked lab
+files from 8eae0f1 remain byte-identical. Historical reports/verdicts were preserved.
+Private clients stopped; no public deployments, real funds or PR merge.
+
+This demonstrates a controlled Capella proof-gated exchange mechanism. It does
+not demonstrate mainnet payout, newer-fork production readiness, independently
+fresh mainnet checkpoint acquisition, general participation, economically secure
+validator decentralization or a profitable business. Those boundaries and the
+remaining proof-availability, reorg, funding-lock/audit and capacity obligations
+are explicit in the settlement report.

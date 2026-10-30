@@ -45,3 +45,32 @@ those local services, not arbitrary Internet destinations.
 Actual results, commands, fees and limitations are recorded after execution in
 `evidence/` and `docs/E2_FINALITY_PROGRESS.md`. Do not infer positive settlement
 from a diagnostic probe or from historical root metadata alone.
+
+
+Executed result: **actual private-PoS finalized fill and unfilled refund**, each
+transferring 1,000 disposable CKB. See [the report](../../../docs/E2_SETTLEMENT_RESULT.md)
+and `evidence/chain-pos-settlement-verified.json`. The independent final replay
+has 16 committed transactions and 26 expected native rejections; 15 original
+transactions reproduce hashes and cycle counts exactly. Fill/refund cost 564,138 /
+624,993 cycles. These are actual principal transfers, distinct from probes.
+
+```sh
+# Captured real-consensus reproduction; no Ethereum network or Docker required.
+E2C_RUN_NAME=new-label bash labs/wo04-e2/settlement/src/reproduce.sh
+```
+
+For a fresh LIVE experiment, first install the same pinned images, then use a
+fresh `devnet/runtime` (start refuses an existing genesis) and an unused evidence
+label. `devnet/start.sh` generates disposable validators and starts real clients.
+Run `src/native.py`, wait for non-genesis finality, run
+`../.venv/bin/python devnet/prepare.py bootstrap`, `python devnet/build.py`,
+`node src/compile.cjs`, then `E2C_RUN_NAME=... node src/pos-trades.cjs` from this
+lab. The checked-in fixtures are immutable: select a fresh checkout/output
+location for new genesis/captures, not the archived evidence paths. Exact captured
+configuration is provided for offline replay. Stop only the named `e2c-*`
+containers after use. No public peers or public-chain fixture-key use.
+
+The private-network helper currently requires the directly attached 172.18.*
+bridge and fails closed for another subnet; adapt and inspect that local routing
+explicitly when reproducing elsewhere. It never uses host networking to bypass
+an external network policy. The running experiment was stopped after capture.
