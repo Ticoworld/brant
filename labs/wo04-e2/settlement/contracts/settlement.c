@@ -1,0 +1,15 @@
+// E2C principal settlement. E1 terminal leaf/payout rules, E2B immutable root authority.
+#include "ckb_syscalls.h"
+#include <stdint.h>
+#include <string.h>
+#include "hash.h"
+#include "proof.h"
+#include "authorize.h"
+static uint8_t script[512],witness[MAX_PROOF],boot[104],cp[72];
+int main(void){uint64_t n=sizeof(script);if(ckb_load_script(script,&n,0)||n!=465||le32(script+49)!=412)return 10;uint8_t*a=script+53,b[64];n=64;if(ckb_load_input(b,&n,0,1,CKB_SOURCE_INPUT)!=CKB_INDEX_OUT_OF_BOUND)return 11;n=8;uint64_t cap=0,principal=le64(a+276),fee=le64(a+284);if(principal+fee<principal||ckb_load_cell_by_field(&cap,&n,0,0,CKB_SOURCE_INPUT,CKB_CELL_FIELD_CAPACITY)||cap!=principal+fee)return 12;n=sizeof(witness);if(ckb_load_witness(witness,&n,0,0,CKB_SOURCE_INPUT)||n<2||n>sizeof(witness))return 13;uint8_t it[32];uint64_t tn=32;if(ckb_load_cell_by_field(it,&tn,0,0,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(it,a+292,32))return 27;uint8_t mode=witness[0],status=witness[1];if(status!=2&&status!=3)return 14;uint8_t raw[97],leaf[32];memcpy(raw,a+116,32);memcpy(raw+32,a+148,32);memcpy(raw+64,a+180,32);raw[96]=status;sha(raw,97,leaf);
+ if(mode!=0)return 21;
+ int auth=authorize(a,boot);if(auth)return auth;
+ uint8_t slotInput[64]={0},slot[32],value[32];memcpy(slotInput,a+148,32);slotInput[63]=2;kh(slotInput,64,slot);
+ Wire wire={witness+2,(size_t)n-2,0};int r=prove(&wire,boot+32,a+64,a+84,slot,value);if(r||wire.off!=wire.n)return 40+r;
+ if(memcmp(value,leaf,32))return 20;
+ uint8_t hash[32];n=32;if(ckb_load_cell_by_field(hash,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK_HASH)||memcmp(hash,a+(status==2?212:244),32))return 22;n=8;if(ckb_load_cell_by_field(&cap,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_CAPACITY)||cap!=principal)return 23;n=32;if(ckb_load_cell_by_field(hash,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH)!=CKB_ITEM_MISSING)return 24;n=0;if(ckb_load_cell_data(b,&n,0,0,CKB_SOURCE_OUTPUT)||n)return 25;n=8;if(ckb_load_cell_by_field(&cap,&n,0,1,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_CAPACITY)!=CKB_INDEX_OUT_OF_BOUND)return 26;return 0;}

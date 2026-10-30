@@ -1,0 +1,140 @@
+{
+  "committedTransactions": 26,
+  "expectedNodeRejections": 108,
+  "principalSettlements": [],
+  "transactions": [
+    {
+      "name": "primary-bootstrap",
+      "cycles": 531319,
+      "bytes": 1649
+    },
+    {
+      "name": "primary-certify-862",
+      "cycles": 17424399,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-0",
+      "cycles": 63217075,
+      "bytes": 3614
+    },
+    {
+      "name": "primary-certify-863",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-1",
+      "cycles": 60831488,
+      "bytes": 3530
+    },
+    {
+      "name": "pending-historical-authorization-funding",
+      "cycles": 539,
+      "bytes": 747
+    },
+    {
+      "name": "primary-certify-864",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-2",
+      "cycles": 63411077,
+      "bytes": 3964
+    },
+    {
+      "name": "primary-certify-865",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-3",
+      "cycles": 65902659,
+      "bytes": 4398
+    },
+    {
+      "name": "primary-certify-866",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-4",
+      "cycles": 60831488,
+      "bytes": 3530
+    },
+    {
+      "name": "primary-certify-867",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-5",
+      "cycles": 60831488,
+      "bytes": 3530
+    },
+    {
+      "name": "primary-certify-868",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-update-6",
+      "cycles": 60758561,
+      "bytes": 3530
+    },
+    {
+      "name": "independent-bootstrap",
+      "cycles": 531319,
+      "bytes": 1649
+    },
+    {
+      "name": "independent-certify-862",
+      "cycles": 17424399,
+      "bytes": 25590
+    },
+    {
+      "name": "independent-update-0",
+      "cycles": 63217075,
+      "bytes": 3614
+    },
+    {
+      "name": "independent-certify-863",
+      "cycles": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "independent-update-1",
+      "cycles": 60831488,
+      "bytes": 3530
+    },
+    {
+      "name": "actual-principal-funding",
+      "cycles": 1078,
+      "bytes": 832
+    },
+    {
+      "name": "arbitrary-104-byte-root-negative-control",
+      "cycles": 1078,
+      "bytes": 524
+    },
+    {
+      "name": "historical-root-after-five-later-finality-updates",
+      "cycles": 20990,
+      "bytes": 357
+    },
+    {
+      "name": "pending-historical-authorization-funding",
+      "cycles": 539,
+      "bytes": 747
+    },
+    {
+      "name": "latest-history-authorized-independent-of-live-state",
+      "cycles": 20990,
+      "bytes": 357
+    }
+  ],
+  "evmGasFeesWei": 0,
+  "ckbFeesShannons": 26000000,
+  "classification": "Historical-root authorization and principal rejection only"
+}

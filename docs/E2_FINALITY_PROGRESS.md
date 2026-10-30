@@ -232,3 +232,27 @@ Bootstrap is now **531,319 cycles**; initial/subsequent certification **17,424,3
 Restart recovery, failed/abandoned certification, genuine unrelated lineage rejection, arbitrary-registry rejection, immutable record protection, rollback, exact/retimed replay, required root publication and wrong-history E1 proof rejection all passed again after this change. Actual transactions, independently audited ancestry/Type-ID construction and capacities are in `summary-permissionless.json`; earlier working checkpoints and measurements remain preserved. Evidence-label guards prevent accidentally overwriting a recorded run.
 
 The final full command workflow was rerun after permissionless-lock hardening with label `release-check` and exited 0. It reproduced all seven reference-verified fixtures, native transitions, restart recovery, 24 commits/113 rejections, and fork-reference results. Audited final results: `rotation/evidence/summary-release-check.json`; raw transactions: `chain-release-check.json`. The measured fee input uses a disposable always-success lock; production funding-lock costs are not included and require their own headroom check.
+
+## WO04-E2C milestone: immutable historical-root settlement adapter
+
+New work is isolated under `labs/wo04-e2/settlement/`; E2B commit
+`8eae0f158095bfed327b7b6d3cbab5aa95aadefc` and all preceding lab evidence remain
+unchanged. The E1 terminal account/storage proof and exact principal payout rules
+now have an adapter that pins E2B's exact bundle code identity, full registry
+lineage, source genesis/domain and trade-selected version/block bounds. The old
+shared-checkpoint witness mode cannot bypass authentication.
+
+VERIFIED on a fresh isolated CKB node: 26 committed transactions and 108 expected
+script/context rejections (`evidence/chain-historical.json`). A diagnostic funded
+at version 2 consumed that immutable authorized root after five further finality
+advances to version 7, without depending on a spent/live state cell. A second
+lineage, caller-created 104-byte cell and history below the funded minimum version
+were rejected. Actual principal remained live after empty filled/refund proofs,
+checkpoint-mode bypass and the old Ganache proof. This milestone alone is NOT a
+positive trade payout. Historical authorization costs 20,990 cycles /357 bytes.
+
+Private PoS infrastructure exploration is ongoing in this milestone. Image pulls
+and real local Geth/Lighthouse execution are feasible; real signatures/finality
+and same-history terminal storage proofs must still pass before claiming exchange
+settlement. See the subsequent executed evidence rather than this checkpoint for
+the final E2C result.
