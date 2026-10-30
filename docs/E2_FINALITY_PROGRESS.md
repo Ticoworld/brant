@@ -69,3 +69,13 @@ The next bounded engineering step is to implement and adversarially test that st
 Commands and pinned dependencies: `labs/wo04-e2/README.md`. Captured/derived fixtures, output logs, size/cycle metrics and devnet admission are committed under that directory. Builds and live node data remain separate from historical evidence. `MIGRATION_SHA256SUMS.txt` is unchanged and remains usable for all 200 imported records.
 
 No automatic merge into main is authorized or performed. Branch push and draft-PR creation results are reported by the task's final response.
+
+## Publication result
+
+Implementation checkpoint `72caab9` was pushed successfully to `origin/wo04-e2a-finality`. Draft pull-request creation was attempted with `gh pr create --draft --base main --head wo04-e2a-finality` and failed before PR creation with the exact error:
+
+```text
+Post "https://api.github.com/graphql": Forbidden
+```
+
+This affects review publication, not the executed engineering checks. The draft description is preserved in `labs/wo04-e2/PR_DESCRIPTION.md`; no PR number or URL is claimed. GitHub's branch review entry is https://github.com/Ticoworld/trade/pull/new/wo04-e2a-finality. No merge was attempted. A bounded credential-pattern scan of new E2 material found no unexpected credential signatures.
