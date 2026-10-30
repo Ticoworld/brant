@@ -210,3 +210,25 @@ Wider participation (more than two missing members), newer-fork runtime headers/
 The on-chain rotation in this bounded chain is independent of host-selected committees, but begins at the explicit **historical trusted checkpoint**. It was not independently acquired as a fresh weak-subjectivity anchor. A live deployment still needs an independently justified recent checkpoint for the correct active fork, complete modern-fork synchronization, maximum-age/liveness policy, CKB confirmation/reorg handling, storage lifecycle/fees, review/audit and genuine E1 proof/payout integration. Application scripts do not prevent canonical CKB chain reorgs.
 
 Reproduction: `cd labs/wo04-e2/rotation && bash src/reproduce.sh`. Pinned existing dependencies are reused; no live Ethereum endpoint or new package is required. The script uses a new evidence label, preserves earlier milestones, verifies fixture/reference hashes, regenerates and checks the real sequence, compiles, executes the chain with restart recovery, runs fork references and audits actual ancestry/Type-ID bytes. Work remains on the existing E2/PR #2 branch; no merge is authorized or performed.
+
+### Final E2B liveness hardening and latest measurements
+
+The preceding E2B table is preserved as the pre-lock-hardening checkpoint. The **current implementation** additionally fixes the state lock to an empty-argument permissionless role of the same immutable program. A valid updater cannot switch it to a frozen/private lock. The type still enforces all transition rules and capacity conservation. The permissionless role was also created as an attacker-controlled state-shaped type and could not mint certificates or roots; role shape is checked, not just program hash.
+
+Latest actual node result (`rotation/evidence/chain-permissionless.json`): **24 committed transactions, 113 expected script/context rejections**, including seven lock-replacement attacks and two permissionless-role impersonations. The seven genuine primary updates remain `511,512,511,510,512,512,512`, with final state version 7 / beacon slot 7109344 / the same authenticated execution root.
+
+| Update index | Latest cycles, all scripts | Transaction bytes |
+| ---: | ---: | ---: |
+| 0 | 63,217,075 | 3,614 |
+| 1 | 60,831,488 | 3,530 |
+| 2 | 63,411,077 | 3,964 |
+| 3 | 65,902,659 | 4,398 |
+| 4 | 60,831,488 | 3,530 |
+| 5 | 60,831,488 | 3,530 |
+| 6 | 60,758,561 | 3,530 |
+
+Bootstrap is now **531,319 cycles**; initial/subsequent certification **17,424,399 / 17,424,407 cycles**, respectively. Byte counts and the 27,609-cycle authority probe are unchanged. Worst-case headroom is **4,097,341 cycles**. Shared code size is **148,168 bytes**, with derived code-cell occupied capacity **148,209 CKB**; the state/certificate/root capacities above are unchanged. All state-lock, fee-lock, state-type and root-type scripts are included in these node measurements.
+
+Restart recovery, failed/abandoned certification, genuine unrelated lineage rejection, arbitrary-registry rejection, immutable record protection, rollback, exact/retimed replay, required root publication and wrong-history E1 proof rejection all passed again after this change. Actual transactions, independently audited ancestry/Type-ID construction and capacities are in `summary-permissionless.json`; earlier working checkpoints and measurements remain preserved. Evidence-label guards prevent accidentally overwriting a recorded run.
+
+The final full command workflow was rerun after permissionless-lock hardening with label `release-check` and exited 0. It reproduced all seven reference-verified fixtures, native transitions, restart recovery, 24 commits/113 rejections, and fork-reference results. Audited final results: `rotation/evidence/summary-release-check.json`; raw transactions: `chain-release-check.json`. The measured fee input uses a disposable always-success lock; production funding-lock costs are not included and require their own headroom check.

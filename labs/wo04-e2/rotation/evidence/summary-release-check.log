@@ -1,0 +1,156 @@
+{
+  "run": "release-check",
+  "startingCheckpoint": "9380e624636de55db315ba1e68b3f5ac057ed30c",
+  "committedTransactions": 24,
+  "rejectedNodeCases": 113,
+  "sevenUpdateChain": [
+    {
+      "index": 0,
+      "participants": 511,
+      "cyclesAllScripts": 63217075,
+      "transactionBytes": 3614,
+      "witnessBytes": 2796,
+      "stateVersion": 1,
+      "finalizedSlot": 7069376,
+      "period": 862,
+      "rootPublished": false,
+      "transactionHash": "0x8a8c755e15cf1c66853989ec1a2bc60fc4cac90977bef2ee3ac802afa791a0ca"
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 2,
+      "finalizedSlot": 7070047,
+      "period": 863,
+      "rootPublished": true,
+      "transactionHash": "0x2beec300a461c409c7f5ee21674d83d2b3a637030d7c3952a629c6202403f60d"
+    },
+    {
+      "index": 2,
+      "participants": 511,
+      "cyclesAllScripts": 63411077,
+      "transactionBytes": 3964,
+      "witnessBytes": 2796,
+      "stateVersion": 3,
+      "finalizedSlot": 7078240,
+      "period": 864,
+      "rootPublished": true,
+      "transactionHash": "0xce61ea5ec2a103f28ae32fc3e42cd79216329689aeac9d5c33eb75755f9019ce"
+    },
+    {
+      "index": 3,
+      "participants": 510,
+      "cyclesAllScripts": 65902659,
+      "transactionBytes": 4398,
+      "witnessBytes": 3230,
+      "stateVersion": 4,
+      "finalizedSlot": 7089280,
+      "period": 865,
+      "rootPublished": true,
+      "transactionHash": "0x57873fe9cca02320aa50874f842bf8aeb78d7ce663d7ca2e4c4f72374d886e60"
+    },
+    {
+      "index": 4,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 5,
+      "finalizedSlot": 7094272,
+      "period": 866,
+      "rootPublished": true,
+      "transactionHash": "0x4b92f85883be2aacb4ce488247c7c15af23a99c42dfe1be3d477b44972f0e3b7"
+    },
+    {
+      "index": 5,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 6,
+      "finalizedSlot": 7104096,
+      "period": 867,
+      "rootPublished": true,
+      "transactionHash": "0x2dde57e04b2ef88c8b6d6df0692509754bb402e59ff8bae26f3aab273d90413c"
+    },
+    {
+      "index": 6,
+      "participants": 512,
+      "cyclesAllScripts": 60758561,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 7,
+      "finalizedSlot": 7109344,
+      "period": 867,
+      "rootPublished": true,
+      "transactionHash": "0x5c5c996d02cf8bbe8ebd2158917c072b684e40b8cc5c90d8af15529d81a78cd4"
+    }
+  ],
+  "typeIDExact44ByteCellInputAnd8ByteIndexIndependentlyChecked": true,
+  "hostSelectedReplacementCommittees": false,
+  "canonicalAuthority": "0xfe2b861d2458e09c2351016beae9ec2e27733a6e11250baea2cf495ae3b96aeb",
+  "finalExecutionRoot": "0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3",
+  "finalizedBeaconSlot": 7109344,
+  "finalStateVersion": 7,
+  "committeeCertification": [
+    {
+      "name": "primary-certify-862",
+      "cyclesAllScripts": 17424399,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-863",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-864",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-865",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-866",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-867",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-868",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    }
+  ],
+  "recovery": {
+    "nodeRestartedAfterCommittedUpdate": 0,
+    "reloadedStateVersion": 1,
+    "authenticatedNextCommittee": "0x512102228b8e5d610dde3e8adb3a43cbff202a64f409edacb98366405dcd8977",
+    "certificationNotYetPerformed": true,
+    "source": "persisted CKB cell, not replacement committee context"
+  },
+  "allocatedCapacityCKB": {
+    "state": 1000,
+    "eachCertificate": 1000,
+    "eachRoot": 1000,
+    "primaryRetainedCells": 14000
+  },
+  "derivedOccupiedCapacityCKB": {
+    "state": 386,
+    "certificate": 482,
+    "root": 282,
+    "bundleCodeCell": 148209
+  },
+  "feePerTransactionShannons": 1000000,
+  "liveE1PrincipalPayoutDemonstrated": false
+}

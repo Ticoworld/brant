@@ -1,0 +1,25 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+primary-bootstrap 531319 1649
+primary-certify-862 17424399 25590
+primary-update-0 63217075 3614
+primary-certify-863 17424407 25590
+primary-update-1 60831488 3530
+primary-certify-864 17424407 25590
+primary-update-2 63411077 3964
+primary-certify-865 17424407 25590
+primary-update-3 65902659 4398
+primary-certify-866 17424407 25590
+primary-update-4 60831488 3530
+primary-certify-867 17424407 25590
+primary-update-5 60831488 3530
+primary-certify-868 17424407 25590
+primary-update-6 60758561 3530
+independent-bootstrap 531319 1649
+independent-certify-862 17424399 25590
+independent-update-0 63217075 3614
+independent-certify-863 17424407 25590
+independent-update-1 60831488 3530
+untrusted-registry-negative-control 1078 700
+permissionless-role-is-not-state-authority-control 38484 705
+authorization-probe-funding 539 407
+authorized-current-root-probe-no-principal-settlement 27609 321

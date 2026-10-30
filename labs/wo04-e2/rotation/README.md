@@ -8,7 +8,7 @@ The E2A verifier, optimization experiments and their evidence remain untouched. 
 
 ## Program identity and state
 
-`bundle.c` dispatches three type-script roles by disjoint canonical argument lengths: 32 bytes for state, 112 for committee certification, 104 for root publication. Each role authenticates the other roles against its **own loaded code hash**, with `data2` hash type and exact argument shape. Thus a caller cannot name an arbitrary registry implementation as a trusted state. A single immutable program avoids circular state/certificate code-hash constants. `root_probe.c` is a separate laboratory consumer pinned to that bundle's actual code hash.
+`bundle.c` dispatches three type-script roles by disjoint canonical argument lengths: 32 bytes for state, 112 for committee certification, 104 for root publication. Each role authenticates the other roles against its **own loaded code hash**, with `data2` hash type and exact argument shape. Thus a caller cannot name an arbitrary registry implementation as a trusted state. A single immutable program avoids circular state/certificate code-hash constants. A zero-argument fourth role is the fixed permissionless state lock. Every constructor/transition enforces that exact lock; valid proofs cannot replace it with a frozen or privileged lock. The zero-argument role cannot masquerade as a state type or mint certificates/roots from state-shaped data. `root_probe.c` is a separate laboratory consumer pinned to that bundle's actual code hash.
 
 State identity is the full CKB script hash of `(bundle code hash, data2, Type-ID nonce)`. The state type calls the vendored `ckb_validate_type_id` implementation and independently requires the state at global input/output 0 for transitions. Creation uses exactly:
 
@@ -84,27 +84,27 @@ The probe is **not** an E1 principal settlement contract: its metadata-only mode
 
 ## Actual executed costs
 
-All numbers below include every script in the tested transaction, including the ordinary input lock and the root type when present. CKB policy remained 70,000,000 cycles; the driver asserts it before startup. Output policy was `passthrough` for custom lab scripts, retaining script/transaction verification. The development block limits and dummy mining are not public-chain admission evidence.
+All numbers below include every script in the tested transaction, including the permissionless state lock, fee-input lock, state type and root type when present. The fee input is an always-success disposable fixture; normal wallet-validation costs are not included and must be measured before claiming production funding headroom. CKB policy remained 70,000,000 cycles; the driver asserts it before startup. Output policy was `passthrough` for custom lab scripts, retaining script/transaction verification. The development block limits and dummy mining are not public-chain admission evidence.
 
 | Update | Participation | Version | Finalized slot | Period | Cycles | Tx bytes | Root |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| 0 | 511 | 1 | 7069376 | 862 | 63,177,960 | 3,614 | no: committee learning only |
-| 1 | 512 | 2 | 7070047 | 863 | 60,792,733 | 3,530 | yes |
-| 2 | 511 | 3 | 7078240 | 864 | 63,372,308 | 3,964 | yes |
-| 3 | 510 | 4 | 7089280 | 865 | 65,863,876 | 4,398 | yes |
-| 4 | 512 | 5 | 7094272 | 866 | 60,792,733 | 3,530 | yes |
-| 5 | 512 | 6 | 7104096 | 867 | 60,792,733 | 3,530 | yes |
-| 6 | 512 | 7 | 7109344 | 867 | 60,719,806 | 3,530 | yes |
+| 0 | 511 | 1 | 7069376 | 862 | 63,217,075 | 3,614 | no: committee learning only |
+| 1 | 512 | 2 | 7070047 | 863 | 60,831,488 | 3,530 | yes |
+| 2 | 511 | 3 | 7078240 | 864 | 63,411,077 | 3,964 | yes |
+| 3 | 510 | 4 | 7089280 | 865 | 65,902,659 | 4,398 | yes |
+| 4 | 512 | 5 | 7094272 | 866 | 60,831,488 | 3,530 | yes |
+| 5 | 512 | 6 | 7104096 | 867 | 60,831,488 | 3,530 | yes |
+| 6 | 512 | 7 | 7109344 | 867 | 60,758,561 | 3,530 | yes |
 
-Bootstrap: 530,165 cycles / 1,649 bytes. Initial committee certification: 17,424,353 cycles / 25,590 bytes; subsequent certification: 17,424,361 cycles / 25,590 bytes. The authority/MPT probe's positive metadata case cost 27,609 cycles / 321 bytes. Machine-readable summaries and raw transactions are authoritative if checking exact counters.
+Bootstrap: 531,319 cycles / 1,649 bytes. Initial committee certification: 17,424,399 cycles / 25,590 bytes; subsequent certification: 17,424,407 cycles / 25,590 bytes. The authority/MPT probe's positive metadata case cost 27,609 cycles / 321 bytes. Machine-readable summaries and raw transactions are authoritative if checking exact counters.
 
-The smallest measured headroom is **4,136,124 cycles**. The shared bundle is **148,016 bytes** and is deployed once for all three roles; the separate diagnostic probe is 8,888 bytes. Hashes are recorded in binaries-final.json and the verified reproduction metrics.
+The smallest measured headroom is **4,097,341 cycles**. The shared bundle is **148,168 bytes** and is deployed once for all three roles; the separate diagnostic probe is 8,888 bytes. Hashes are recorded in binaries-permissionless.json and binaries-release-check.json.
 
-Every tested state, certificate and root was allocated 1,000 CKB from disposable genesis funds. Derived occupied-capacity minima under these exact lock/type/args/data shapes are 386 CKB for state, 482 for certificate, 282 for root, and 148,057 CKB for the shared code cell. Primary retained protocol data cells total 14,000 allocated CKB (one state, seven certificates, six roots), excluding code and test controls. The test fee is 1,000,000 shannons per transaction, not a market-fee or profitability estimate. Code was loaded through genesis; a real deployment transaction/fee was not benchmarked. Immutable records currently have no reclamation path.
+Every tested state, certificate and root was allocated 1,000 CKB from disposable genesis funds. Derived occupied-capacity minima under these exact lock/type/args/data shapes are 386 CKB for state, 482 for certificate, 282 for root, and 148,209 CKB for the shared code cell. Primary retained protocol data cells total 14,000 allocated CKB (one state, seven certificates, six roots), excluding code and test controls. The test fee is 1,000,000 shannons per transaction, not a market-fee or profitability estimate. Code was loaded through genesis; a real deployment transaction/fee was not benchmarked. Immutable records currently have no reclamation path.
 
 ## Negative evidence and scope
 
-The final run has 23 committed transactions: 15 for the primary chain, five for an independent valid registry, one malicious-registry control, and two authority-probe transactions. It records 104 real node rejections, checked to be script/context failures rather than connection errors. Cases cover wrong Type-ID nonce/index, duplicate state, deletion, exact and retimed replay, wrong signing period, unbound time, coherent rollback proposals, failed update/recovery, invalid next proof, unavailable/wrong/stale certificates, registry substitution, immutable record mutation, forbidden later fork, root withholding, unauthorized publication and wrong-history E1 proof. Full result, including actual serialized transactions: evidence/chain-recovery.json and the verified reproduction run.
+The final run has 24 committed transactions: 15 for the primary chain, five for an independent valid registry, two malicious-registry controls, and two authority-probe transactions. It records 113 real node rejections, checked to be script/context failures rather than connection errors. Cases cover wrong Type-ID nonce/index, duplicate state, deletion, exact and retimed replay, wrong signing period, unbound time, coherent rollback proposals, failed update/recovery, invalid next proof, unavailable/wrong/stale certificates, registry substitution, immutable record mutation, forbidden later fork, root withholding, unauthorized publication and wrong-history E1 proof. Full result, including actual serialized transactions: evidence/chain-permissionless.json and evidence/chain-release-check.json (the final full reproduction).
 
 The final execution root is `0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3`, at finalized beacon slot 7109344, state version 7. It is historical Ethereum mainnet Capella finality **under the pinned checkpoint assumption**, not a statement of current Ethereum state.
 

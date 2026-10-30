@@ -15,7 +15,7 @@ const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.0.1:19224'
 const bins={};for(const n of ['state','certificate','root','root_probe'])bins[n]=fs.readFileSync(R+'/build/'+n);bins.always=fs.readFileSync(E1+'/config/always_success');
 const script=(n,args='0x')=>({codeHash:H(bins[n]),hashType:'data2',args}),lock=script('always'),deps={};
 const fee=1000000n,cap=100000000000n;
-const output=(capacity,type=null)=>({capacity:hex(capacity),lock,type});
+const output=(capacity,type=null)=>({capacity:hex(capacity),lock:type&&type.codeHash===H(bins.state)&&B(type.args).length===32?script('state'):lock,type});
 const tx=(inputs,outputs,data,witness,cellDeps)=>({version:'0x0',cellDeps:cellDeps.filter((d,i,a)=>a.findIndex(x=>JSON.stringify(x)===JSON.stringify(d))===i),headerDeps:[],inputs,outputs,outputsData:data.map(b=>'0x'+b.toString('hex')),witnesses:['0x'+witness.toString('hex')]});
 const reject=async(name,t,send=false)=>{try{await rpc(send?'send_transaction':'estimate_cycles',send?[snake(t),'passthrough']:[snake(t)]);throw Error('INVALID_ACCEPTED '+name);}catch(e){if(e.message.includes('INVALID_ACCEPTED'))throw e;result.rejections.push({name,error:e.message,method:send?'send_transaction':'estimate_cycles'});save();}};
 const commit=async(name,t)=>{const estimate=await rpc('estimate_cycles',[snake(t)]);if(BigInt(estimate.cycles)>70000000n)throw Error('policy exceeded '+name+' '+estimate.cycles);const hash=await rpc('send_transaction',[snake(t),'passthrough']);let status;for(let i=0;i<30;i++){await rpc('generate_block');await pause(100);status=(await rpc('get_transaction',[hash])).tx_status;if(status.status==='committed')break;}if(status.status!=='committed')throw Error('not committed '+name+' '+JSON.stringify(status));const row={name,hash,cycles:Number(BigInt(estimate.cycles)),bytes:(U.serializeTransaction(t).length-2)/2,status,tx:snake(t)};result.transactions.push(row);save();console.log(name,row.cycles,row.bytes);return hash;};
@@ -55,6 +55,7 @@ function updateTx(lc,i,forceCert){
 async function advance(lc,i,tests=true){
  const {t,after,rootAdvance,rootType,remaining}=updateTx(lc,i);
  if(tests){
+  const frozen=structuredClone(t);frozen.outputs[0].lock=script('always','0x'+'ff'.repeat(32));await reject('valid-proof-cannot-replace-state-lock-'+i,frozen);
   const bad=structuredClone(t),w=B(bad.witnesses[0]);w[1176]^=1;bad.witnesses[0]='0x'+w.toString('hex');await reject('failed-update-'+i,bad);
   const period=structuredClone(t),wb=B(period.witnesses[0]),wrongSlot=wb.readBigUInt64LE(0)+24576n;wb.writeBigUInt64LE(wrongSlot,0);period.inputs[0].since=hex(0x4000000000000000n+1606824023n+12n*wrongSlot);period.witnesses[0]='0x'+wb.toString('hex');await reject('wrong-signing-period-'+i,period);
   const time=structuredClone(t);time.inputs[0].since='0x0';await reject('unbound-signature-time-'+i,time);
@@ -88,6 +89,11 @@ async function probes(lc,foreign){
   const ra=Buffer.concat([B(fakeIdentity),B(code),le(1),next.subarray(88,120)]),rd=Buffer.concat([sha(Buffer.concat([next.subarray(8,40),B(fakeIdentity)])),next.subarray(120,192)]);
   const r=tx([{since:'0x0',previousOutput:fp},{since:'0x0',previousOutput:wallet.point}],[output(cap,fakeType),output(cap,script('root','0x'+ra.toString('hex'))),output(wallet.capacity-cap-fee)],[next,rd,Buffer.alloc(0)],Buffer.alloc(0),[deps.root,deps.always]);await reject('caller-selected-registry-cannot-publish-'+pretend,r);
  }
+ const roleType=script('state'),roleIdentity=U.scriptToHash(roleType),roleTx=tx([{since:'0x0',previousOutput:wallet.point}],[output(cap,roleType),output(wallet.capacity-cap-fee)],[fakeData,Buffer.alloc(0)],Buffer.alloc(0),[deps.state,deps.always]);
+ const rh=await commit('permissionless-role-is-not-state-authority-control',roleTx);wallet={point:{txHash:rh,index:'0x1'},capacity:wallet.capacity-cap-fee};const rp={txHash:rh,index:'0x0'},ca=Buffer.concat([B(roleIdentity),B(lc.type.codeHash),le(0),le(862),fakeData.subarray(200,232)]);
+ const roleCert=tx([{since:'0x0',previousOutput:wallet.point}],[output(cap,script('certificate','0x'+ca.toString('hex'))),output(wallet.capacity-cap-fee)],[Buffer.alloc(296),Buffer.alloc(0)],read('committee-862.bin'),[{outPoint:rp,depType:'code'},deps.certificate,deps.always]);await reject('permissionless-role-cannot-certify-state-shaped-data',roleCert);
+ const nr=Buffer.from(fakeData);nr.writeBigUInt64LE(1n,72);nr.writeBigUInt64LE(nr.readBigUInt64LE(80)+1n,80);const ar=Buffer.concat([B(roleIdentity),B(lc.type.codeHash),le(1),nr.subarray(88,120)]),dr=Buffer.concat([sha(Buffer.concat([nr.subarray(8,40),B(roleIdentity)])),nr.subarray(120,192)]);
+ const roleRoot=tx([{since:'0x0',previousOutput:rp},{since:'0x0',previousOutput:wallet.point}],[output(cap,roleType),output(cap,script('root','0x'+ar.toString('hex'))),output(wallet.capacity-cap-fee)],[nr,dr,Buffer.alloc(0)],Buffer.alloc(0),[deps.root,deps.always]);await reject('permissionless-role-cannot-publish-finalized-data',roleRoot);
  const args=Buffer.concat([B(lc.identity),B(lc.type.codeHash),lc.data.subarray(72,80)]),probe=script('root_probe','0x'+args.toString('hex'));
  const fund=tx([{since:'0x0',previousOutput:wallet.point}],[{capacity:hex(cap),lock:probe,type:null},output(wallet.capacity-cap-fee)],[Buffer.alloc(0),Buffer.alloc(0)],Buffer.alloc(0),[deps.always]);
  const funded=await commit('authorization-probe-funding',fund);wallet={point:{txHash:funded,index:'0x1'},capacity:wallet.capacity-cap-fee};

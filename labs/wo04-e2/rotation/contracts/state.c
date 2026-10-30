@@ -7,6 +7,8 @@ int main(void){
  if(ckb_validate_type_id(script+53))return 71;
  n=32;if(ckb_load_script_hash(identity,&n,0)||!type_matches(0,CKB_SOURCE_OUTPUT,identity)||cell_data(out,STATE_SIZE,0,CKB_SOURCE_OUTPUT))return 72;
  if(state_policy(out))return 73;
+ uint8_t state_lock[64];n=sizeof(state_lock);
+ if(ckb_load_cell_by_field(state_lock,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK)||n!=53||state_lock[48]!=4||memcmp(state_lock+16,script+16,32)||memcmp(state_lock+49,"\0\0\0\0",4))return 103;
  n=0;int creation=ckb_load_cell(h,&n,0,0,CKB_SOURCE_GROUP_INPUT)==CKB_INDEX_OUT_OF_BOUND;
  if(creation){
   n=sizeof(packet);if(ckb_load_witness(packet,&n,0,0,CKB_SOURCE_INPUT)||n!=912)return 74;

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "bundle",
+    "bytes": 148168,
+    "codeHash": "0x9e626063e3bf7e5cc9d5c4e0d3a099e31a61facc8efcba912ff47aa0f64b4af6",
+    "sha256": "e3d127f70f4cb2cfa7e2cd9ff9d6c37479079d9ca36751f8d234632f28d46499"
+  },
+  {
+    "name": "root_probe",
+    "bytes": 8888,
+    "codeHash": "0xc03344aa8726932ec8ea0ec185144452bc0c3d24cd4fe87904e2914808a36a14",
+    "sha256": "efb15fa9a182d907eed0d965c97a547d1d5af3eb08d1b374a0f4313d4b2234a7"
+  }
+]

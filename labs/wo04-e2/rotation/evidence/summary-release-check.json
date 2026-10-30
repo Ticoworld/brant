@@ -1,0 +1,610 @@
+{
+  "run": "release-check",
+  "startingCheckpoint": "9380e624636de55db315ba1e68b3f5ac057ed30c",
+  "committedTransactions": 24,
+  "rejectedNodeCases": 113,
+  "sevenUpdateChain": [
+    {
+      "index": 0,
+      "participants": 511,
+      "cyclesAllScripts": 63217075,
+      "transactionBytes": 3614,
+      "witnessBytes": 2796,
+      "stateVersion": 1,
+      "finalizedSlot": 7069376,
+      "period": 862,
+      "rootPublished": false,
+      "transactionHash": "0x8a8c755e15cf1c66853989ec1a2bc60fc4cac90977bef2ee3ac802afa791a0ca"
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 2,
+      "finalizedSlot": 7070047,
+      "period": 863,
+      "rootPublished": true,
+      "transactionHash": "0x2beec300a461c409c7f5ee21674d83d2b3a637030d7c3952a629c6202403f60d"
+    },
+    {
+      "index": 2,
+      "participants": 511,
+      "cyclesAllScripts": 63411077,
+      "transactionBytes": 3964,
+      "witnessBytes": 2796,
+      "stateVersion": 3,
+      "finalizedSlot": 7078240,
+      "period": 864,
+      "rootPublished": true,
+      "transactionHash": "0xce61ea5ec2a103f28ae32fc3e42cd79216329689aeac9d5c33eb75755f9019ce"
+    },
+    {
+      "index": 3,
+      "participants": 510,
+      "cyclesAllScripts": 65902659,
+      "transactionBytes": 4398,
+      "witnessBytes": 3230,
+      "stateVersion": 4,
+      "finalizedSlot": 7089280,
+      "period": 865,
+      "rootPublished": true,
+      "transactionHash": "0x57873fe9cca02320aa50874f842bf8aeb78d7ce663d7ca2e4c4f72374d886e60"
+    },
+    {
+      "index": 4,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 5,
+      "finalizedSlot": 7094272,
+      "period": 866,
+      "rootPublished": true,
+      "transactionHash": "0x4b92f85883be2aacb4ce488247c7c15af23a99c42dfe1be3d477b44972f0e3b7"
+    },
+    {
+      "index": 5,
+      "participants": 512,
+      "cyclesAllScripts": 60831488,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 6,
+      "finalizedSlot": 7104096,
+      "period": 867,
+      "rootPublished": true,
+      "transactionHash": "0x2dde57e04b2ef88c8b6d6df0692509754bb402e59ff8bae26f3aab273d90413c"
+    },
+    {
+      "index": 6,
+      "participants": 512,
+      "cyclesAllScripts": 60758561,
+      "transactionBytes": 3530,
+      "witnessBytes": 2362,
+      "stateVersion": 7,
+      "finalizedSlot": 7109344,
+      "period": 867,
+      "rootPublished": true,
+      "transactionHash": "0x5c5c996d02cf8bbe8ebd2158917c072b684e40b8cc5c90d8af15529d81a78cd4"
+    }
+  ],
+  "typeIDExact44ByteCellInputAnd8ByteIndexIndependentlyChecked": true,
+  "hostSelectedReplacementCommittees": false,
+  "canonicalAuthority": "0xfe2b861d2458e09c2351016beae9ec2e27733a6e11250baea2cf495ae3b96aeb",
+  "finalExecutionRoot": "0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3",
+  "finalizedBeaconSlot": 7109344,
+  "finalStateVersion": 7,
+  "committeeCertification": [
+    {
+      "name": "primary-certify-862",
+      "cyclesAllScripts": 17424399,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-863",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-864",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-865",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-866",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-867",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    },
+    {
+      "name": "primary-certify-868",
+      "cyclesAllScripts": 17424407,
+      "bytes": 25590
+    }
+  ],
+  "recovery": {
+    "nodeRestartedAfterCommittedUpdate": 0,
+    "reloadedStateVersion": 1,
+    "authenticatedNextCommittee": "0x512102228b8e5d610dde3e8adb3a43cbff202a64f409edacb98366405dcd8977",
+    "certificationNotYetPerformed": true,
+    "source": "persisted CKB cell, not replacement committee context"
+  },
+  "allocatedCapacityCKB": {
+    "state": 1000,
+    "eachCertificate": 1000,
+    "eachRoot": 1000,
+    "primaryRetainedCells": 14000
+  },
+  "derivedOccupiedCapacityCKB": {
+    "state": 386,
+    "certificate": 482,
+    "root": 282,
+    "bundleCodeCell": 148209
+  },
+  "feePerTransactionShannons": 1000000,
+  "rejectionCodes": [
+    {
+      "name": "primary-incorrect-Type-ID",
+      "scriptError": 71
+    },
+    {
+      "name": "primary-incorrect-Type-ID-output-index",
+      "scriptError": 71
+    },
+    {
+      "name": "primary-same-identity-second-constructor",
+      "scriptError": 71
+    },
+    {
+      "name": "primary-forged-committee-862",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-862",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-862",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-0",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-0",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-0",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-0",
+      "scriptError": 84
+    },
+    {
+      "name": "state-deletion-despite-Type-ID-burn-permission",
+      "scriptError": 72
+    },
+    {
+      "name": "finalized-slot-rollback-0",
+      "scriptError": 99
+    },
+    {
+      "name": "invalid-next-committee-proof-0",
+      "scriptError": 94
+    },
+    {
+      "name": "competing-state-lineage",
+      "scriptError": 71
+    },
+    {
+      "name": "committee-learning-cannot-publish-nonadvanced-outcome",
+      "scriptError": 66
+    },
+    {
+      "name": "spent-state-transaction-replay-0",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-0",
+      "scriptError": 87
+    },
+    {
+      "name": "abandoned-certification-no-signing-certificate",
+      "scriptError": 89
+    },
+    {
+      "name": "primary-forged-committee-863",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-863",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-863",
+      "scriptError": 45
+    },
+    {
+      "name": "incorrect-committee-certificate",
+      "scriptError": 90
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-1",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-1",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-1",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-1",
+      "scriptError": 84
+    },
+    {
+      "name": "finalized-slot-rollback-1",
+      "scriptError": 66
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-1",
+      "scriptError": 101
+    },
+    {
+      "name": "invalid-next-committee-proof-1",
+      "scriptError": 94
+    },
+    {
+      "name": "replayed-old-update-1",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-1",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-1",
+      "scriptError": 87
+    },
+    {
+      "name": "primary-forged-committee-864",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-864",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-864",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-2",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-2",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-2",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-2",
+      "scriptError": 84
+    },
+    {
+      "name": "finalized-slot-rollback-2",
+      "scriptError": 99
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-2",
+      "scriptError": 101
+    },
+    {
+      "name": "invalid-next-committee-proof-2",
+      "scriptError": 94
+    },
+    {
+      "name": "replayed-old-update-2",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-2",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-2",
+      "scriptError": 87
+    },
+    {
+      "name": "primary-forged-committee-865",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-865",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-865",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-3",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-3",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-3",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-3",
+      "scriptError": 84
+    },
+    {
+      "name": "unsupported-Deneb-fork-rejected-not-reinterpreted",
+      "scriptError": 82
+    },
+    {
+      "name": "finalized-slot-rollback-3",
+      "scriptError": 66
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-3",
+      "scriptError": 101
+    },
+    {
+      "name": "invalid-next-committee-proof-3",
+      "scriptError": 94
+    },
+    {
+      "name": "replayed-old-update-3",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-3",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-3",
+      "scriptError": 87
+    },
+    {
+      "name": "primary-forged-committee-866",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-866",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-866",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-4",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-4",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-4",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-4",
+      "scriptError": 84
+    },
+    {
+      "name": "finalized-slot-rollback-4",
+      "scriptError": 66
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-4",
+      "scriptError": 101
+    },
+    {
+      "name": "invalid-next-committee-proof-4",
+      "scriptError": 94
+    },
+    {
+      "name": "replayed-old-update-4",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-4",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-4",
+      "scriptError": 87
+    },
+    {
+      "name": "primary-forged-committee-867",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-867",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-867",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-5",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-5",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-5",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-5",
+      "scriptError": 84
+    },
+    {
+      "name": "finalized-slot-rollback-5",
+      "scriptError": 66
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-5",
+      "scriptError": 101
+    },
+    {
+      "name": "invalid-next-committee-proof-5",
+      "scriptError": 94
+    },
+    {
+      "name": "replayed-old-update-5",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-5",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-5",
+      "scriptError": 87
+    },
+    {
+      "name": "primary-forged-committee-868",
+      "scriptError": 48
+    },
+    {
+      "name": "primary-unrelated-registry-certificate-868",
+      "scriptError": 45
+    },
+    {
+      "name": "primary-stale-transition-certification-868",
+      "scriptError": 45
+    },
+    {
+      "name": "valid-proof-cannot-replace-state-lock-6",
+      "scriptError": 103
+    },
+    {
+      "name": "failed-update-6",
+      "scriptError": 15
+    },
+    {
+      "name": "wrong-signing-period-6",
+      "scriptError": 85
+    },
+    {
+      "name": "unbound-signature-time-6",
+      "scriptError": 84
+    },
+    {
+      "name": "finalized-slot-rollback-6",
+      "scriptError": 66
+    },
+    {
+      "name": "valid-proof-cannot-withhold-authorized-root-6",
+      "scriptError": 101
+    },
+    {
+      "name": "replayed-old-update-6",
+      "scriptError": 82
+    },
+    {
+      "name": "spent-state-transaction-replay-6",
+      "scriptError": null
+    },
+    {
+      "name": "retimed-signature-slot-replay-6",
+      "scriptError": 87
+    },
+    {
+      "name": "independent-incorrect-Type-ID",
+      "scriptError": 71
+    },
+    {
+      "name": "independent-incorrect-Type-ID-output-index",
+      "scriptError": 71
+    },
+    {
+      "name": "independent-same-identity-second-constructor",
+      "scriptError": 71
+    },
+    {
+      "name": "immutable-authorized-root-cannot-be-mutated",
+      "scriptError": 60
+    },
+    {
+      "name": "immutable-committee-certificate-cannot-be-mutated",
+      "scriptError": 40
+    },
+    {
+      "name": "caller-selected-registry-cannot-certify-false",
+      "scriptError": 51
+    },
+    {
+      "name": "caller-selected-registry-cannot-publish-false",
+      "scriptError": 68
+    },
+    {
+      "name": "caller-selected-registry-cannot-certify-true",
+      "scriptError": 43
+    },
+    {
+      "name": "caller-selected-registry-cannot-publish-true",
+      "scriptError": 64
+    },
+    {
+      "name": "permissionless-role-cannot-certify-state-shaped-data",
+      "scriptError": 43
+    },
+    {
+      "name": "permissionless-role-cannot-publish-finalized-data",
+      "scriptError": 64
+    },
+    {
+      "name": "genuine-unrelated-registry-root",
+      "scriptError": 21
+    },
+    {
+      "name": "stale-authorized-root-version",
+      "scriptError": 24
+    },
+    {
+      "name": "stale-spent-trust-state",
+      "scriptError": null
+    },
+    {
+      "name": "E1-Ganache-proof-under-authenticated-Ethereum-root",
+      "scriptError": 30
+    },
+    {
+      "name": "root-publication-without-verified-transition",
+      "scriptError": 63
+    }
+  ],
+  "liveE1PrincipalPayoutDemonstrated": false
+}

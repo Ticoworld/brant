@@ -3,6 +3,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p build evidence
 export E2B_RUN_NAME="${E2B_RUN_NAME:-reproduce-$(date -u +%Y%m%dT%H%M%S)}"
+if [ -e "evidence/chain-$E2B_RUN_NAME.json" ] || [ -e "evidence/run-$E2B_RUN_NAME.log" ]; then
+  echo 'Evidence label already exists; choose a new E2B_RUN_NAME' >&2
+  exit 1
+fi
 export ZIG_GLOBAL_CACHE_DIR=/tmp/zig-global
 export ZIG_LOCAL_CACHE_DIR=/tmp/zig-native
 (cd .. && sha256sum -c fixtures/SHA256SUMS)
