@@ -1,3 +1,5 @@
+#ifndef E2B_LAYOUT_H
+#define E2B_LAYOUT_H
 #include "common.h"
 #include "blake2b.h"
 #define STATE_SIZE 280
@@ -12,3 +14,4 @@ static int state_policy(const uint8_t*s){return memcmp(s,"E2STATE1",8)||memcmp(s
 static void domain(const uint8_t*lineage,uint8_t*out){uint8_t b[64];memcpy(b,genesis,32);memcpy(b+32,lineage,32);sha(b,64,out);}
 static int point1(blst_p1_affine*p,const uint8_t*c,const uint8_t*u){uint8_t canonical[96],compressed[48];if(blst_p1_deserialize(p,u)!=BLST_SUCCESS||blst_p1_affine_is_inf(p))return 1;blst_p1_affine_serialize(canonical,p);blst_p1_affine_compress(compressed,p);return memcmp(canonical,u,96)||memcmp(compressed,c,48);}
 static int point2(blst_p2_affine*p,const uint8_t*c,const uint8_t*u){uint8_t canonical[192],compressed[96];if(blst_p2_deserialize(p,u)!=BLST_SUCCESS||blst_p2_affine_is_inf(p))return 1;blst_p2_affine_serialize(canonical,p);blst_p2_affine_compress(compressed,p);return memcmp(canonical,u,192)||memcmp(compressed,c,96);}
+#endif

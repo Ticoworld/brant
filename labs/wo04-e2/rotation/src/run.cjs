@@ -8,13 +8,13 @@ const snake=x=>Array.isArray(x)?x.map(snake):x&&typeof x==='object'?Object.fromE
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),read=n=>fs.readFileSync(R+'/fixtures/'+n);
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'e2b-chain-')),ckb=E1+'/tools/ckb/ckb';
 let node,wallet;const result={scope:'Seven actual state transitions; historical Capella checkpoint; isolated chain only',transactions:[],rejections:[],lineages:[]};
-const save=()=>fs.writeFileSync(R+'/evidence/chain-hardened.json',JSON.stringify(result,null,2)+'\n');
+const save=()=>fs.writeFileSync(R+'/evidence/chain-bundle.json',JSON.stringify(result,null,2)+'\n');
 const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(j.error)throw Error(JSON.stringify(j.error));return j.result;};
 const bins={};for(const n of ['state','certificate','root','root_probe'])bins[n]=fs.readFileSync(R+'/build/'+n);bins.always=fs.readFileSync(E1+'/config/always_success');
 const script=(n,args='0x')=>({codeHash:H(bins[n]),hashType:'data2',args}),lock=script('always'),deps={};
 const fee=1000000n,cap=100000000000n;
 const output=(capacity,type=null)=>({capacity:hex(capacity),lock,type});
-const tx=(inputs,outputs,data,witness,cellDeps)=>({version:'0x0',cellDeps,headerDeps:[],inputs,outputs,outputsData:data.map(b=>'0x'+b.toString('hex')),witnesses:['0x'+witness.toString('hex')]});
+const tx=(inputs,outputs,data,witness,cellDeps)=>({version:'0x0',cellDeps:cellDeps.filter((d,i,a)=>a.findIndex(x=>JSON.stringify(x)===JSON.stringify(d))===i),headerDeps:[],inputs,outputs,outputsData:data.map(b=>'0x'+b.toString('hex')),witnesses:['0x'+witness.toString('hex')]});
 const reject=async(name,t,send=false)=>{try{await rpc(send?'send_transaction':'estimate_cycles',send?[snake(t),'passthrough']:[snake(t)]);throw Error('INVALID_ACCEPTED '+name);}catch(e){if(e.message.includes('INVALID_ACCEPTED'))throw e;result.rejections.push({name,error:e.message,method:send?'send_transaction':'estimate_cycles'});save();}};
 const commit=async(name,t)=>{const estimate=await rpc('estimate_cycles',[snake(t)]);if(BigInt(estimate.cycles)>70000000n)throw Error('policy exceeded '+name+' '+estimate.cycles);const hash=await rpc('send_transaction',[snake(t),'passthrough']);let status;for(let i=0;i<30;i++){await rpc('generate_block');await pause(100);status=(await rpc('get_transaction',[hash])).tx_status;if(status.status==='committed')break;}if(status.status!=='committed')throw Error('not committed '+name+' '+JSON.stringify(status));const row={name,hash,cycles:Number(BigInt(estimate.cycles)),bytes:(U.serializeTransaction(t).length-2)/2,status,tx:snake(t)};result.transactions.push(row);save();console.log(name,row.cycles,row.bytes);return hash;};
 const live=async p=>{const c=await rpc('get_live_cell',[snake(p),true]);if(c.status!=='live')throw Error('not live');return c.cell;};
@@ -62,6 +62,7 @@ async function advance(lc,i,tests=true){
   if(i<6){const np=structuredClone(t),nw=B(np.witnesses[0]),missing=nw[1560],start=1561+434*missing;nw[start+33]^=1;np.witnesses[0]='0x'+nw.toString('hex');await reject('invalid-next-committee-proof-'+i,np);}
   if(i>0){const replay=structuredClone(t);replay.witnesses[0]='0x'+read('update-'+(i-1)+'.bin').toString('hex');await reject('replayed-old-update-'+i,replay);}
   if(i===0){const fake=structuredClone(t);fake.outputs.push(output(cap,lc.type));fake.outputsData.push('0x'+after.toString('hex'));fake.outputs[1].capacity=hex(BigInt(fake.outputs[1].capacity)-cap);await reject('competing-state-lineage',fake);}
+  if(i===0){const early=structuredClone(t),a=Buffer.concat([B(lc.identity),B(lc.type.codeHash),after.subarray(72,80),after.subarray(88,120)]),rtype=script('root','0x'+a.toString('hex')),datum=Buffer.concat([sha(Buffer.concat([after.subarray(8,40),B(lc.identity)])),after.subarray(120,192)]);early.outputs.splice(1,0,output(cap,rtype));early.outputsData.splice(1,0,'0x'+datum.toString('hex'));early.outputs[2].capacity=hex(BigInt(early.outputs[2].capacity)-cap);await reject('committee-learning-cannot-publish-nonadvanced-outcome',early);}
  }
  const before=lc.point;const h=await commit(lc.label+'-update-'+i,t);wallet={point:{txHash:h,index:hex(t.outputs.length-1)},capacity:remaining};lc.point={txHash:h,index:'0x0'};lc.data=after;lc.history.push(lc.point);
  const observed=await live(lc.point);if(observed.data.content!=='0x'+after.toString('hex'))throw Error('state differs');
@@ -74,6 +75,16 @@ async function advance(lc,i,tests=true){
 async function probes(lc,foreign){
  const consumeRoot=tx([{since:'0x0',previousOutput:lc.root.point}],[output(cap-fee)],[Buffer.alloc(0)],Buffer.alloc(0),[deps.root,deps.always]);await reject('immutable-authorized-root-cannot-be-mutated',consumeRoot);
  const lastCert=lc.certs.get('868'),consumeCert=tx([{since:'0x0',previousOutput:lastCert.point}],[output(cap-fee)],[Buffer.alloc(0)],Buffer.alloc(0),[deps.certificate,deps.always]);await reject('immutable-committee-certificate-cannot-be-mutated',consumeCert);
+ // A real caller-controlled registry that does NOT execute this light client.
+ const fakeType=script('always','0x'+'99'.repeat(32)),fakeIdentity=U.scriptToHash(fakeType),fakeData=Buffer.from(read('state-0.bin'));fakeData.fill(0x11,200,232);
+ const ftx=tx([{since:'0x0',previousOutput:wallet.point}],[output(cap,fakeType),output(wallet.capacity-cap-fee)],[fakeData,Buffer.alloc(0)],Buffer.alloc(0),[deps.always]);const fh=await commit('untrusted-registry-negative-control',ftx);wallet={point:{txHash:fh,index:'0x1'},capacity:wallet.capacity-cap-fee};const fp={txHash:fh,index:'0x0'};
+ for(const pretend of [false,true]){
+  const code=pretend?lc.type.codeHash:fakeType.codeHash,args=Buffer.concat([B(fakeIdentity),B(code),le(0),le(862),fakeData.subarray(200,232)]);
+  const c=tx([{since:'0x0',previousOutput:wallet.point}],[output(cap,script('certificate','0x'+args.toString('hex'))),output(wallet.capacity-cap-fee)],[Buffer.alloc(296),Buffer.alloc(0)],read('committee-862.bin'),[{outPoint:fp,depType:'code'},deps.certificate,deps.always]);await reject('caller-selected-registry-cannot-certify-'+pretend,c);
+  const next=Buffer.from(fakeData);next.writeBigUInt64LE(1n,72);next.writeBigUInt64LE(next.readBigUInt64LE(80)+1n,80);
+  const ra=Buffer.concat([B(fakeIdentity),B(code),le(1),next.subarray(88,120)]),rd=Buffer.concat([sha(Buffer.concat([next.subarray(8,40),B(fakeIdentity)])),next.subarray(120,192)]);
+  const r=tx([{since:'0x0',previousOutput:fp},{since:'0x0',previousOutput:wallet.point}],[output(cap,fakeType),output(cap,script('root','0x'+ra.toString('hex'))),output(wallet.capacity-cap-fee)],[next,rd,Buffer.alloc(0)],Buffer.alloc(0),[deps.root,deps.always]);await reject('caller-selected-registry-cannot-publish-'+pretend,r);
+ }
  const args=Buffer.concat([B(lc.identity),B(lc.type.codeHash),lc.data.subarray(72,80)]),probe=script('root_probe','0x'+args.toString('hex'));
  const fund=tx([{since:'0x0',previousOutput:wallet.point}],[{capacity:hex(cap),lock:probe,type:null},output(wallet.capacity-cap-fee)],[Buffer.alloc(0),Buffer.alloc(0)],Buffer.alloc(0),[deps.always]);
  const funded=await commit('authorization-probe-funding',fund);wallet={point:{txHash:funded,index:'0x1'},capacity:wallet.capacity-cap-fee};
@@ -93,7 +104,8 @@ async function probes(lc,foreign){
 }
 (async()=>{
  cp.execFileSync(ckb,['init','-C',dir,'--chain','dev','--rpc-port','19224','--p2p-port','19225']);let spec=fs.readFileSync(dir+'/specs/dev.toml','utf8');
- for(const [n,b]of Object.entries(bins)){fs.writeFileSync(dir+'/'+n,b);spec=spec.replace('[genesis.system_cells_lock]',`[[genesis.system_cells]]\nfile = { file = "../${n}" }\ncreate_type_id = false\ncapacity = 100_000_000_000_000\n\n[genesis.system_cells_lock]`);}
+ const unique=Object.entries(bins).filter(([n,b],i,a)=>a.findIndex(([k,v])=>H(v)===H(b))===i);
+ for(const [n,b]of unique){fs.writeFileSync(dir+'/'+n,b);spec=spec.replace('[genesis.system_cells_lock]',`[[genesis.system_cells]]\nfile = { file = "../${n}" }\ncreate_type_id = false\ncapacity = 100_000_000_000_000\n\n[genesis.system_cells_lock]`);}
  spec=spec.replace('[params]',`[[genesis.issued_cells]]\ncapacity = 100_000_000_000_000\nlock.code_hash = "${lock.codeHash}"\nlock.hash_type = "data2"\nlock.args = "0x"\n\n[params]`);fs.writeFileSync(dir+'/specs/dev.toml',spec);
  let conf=fs.readFileSync(dir+'/ckb.toml','utf8').replace('"Debug", "Terminal"','"Debug", "Terminal", "IntegrationTest"').replaceAll('/ip4/0.0.0.0/','/ip4/127.0.0.1/');conf+=`\n[block_assembler]\ncode_hash = "${H(bins.always)}"\nargs = "0x"\nhash_type = "data"\nmessage = "0x"\n`;fs.writeFileSync(dir+'/ckb.toml',conf);
  result.nodeMaxTxVerifyCycles=Number(conf.match(/max_tx_verify_cycles\s*=\s*([\d_]+)/)[1].replaceAll('_',''));if(result.nodeMaxTxVerifyCycles!==70000000)throw Error('policy changed');

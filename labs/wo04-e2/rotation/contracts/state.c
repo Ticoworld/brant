@@ -1,6 +1,5 @@
 #include "layout.h"
 #include "ckb_type_id.h"
-#include "certificate_hash.h"
 static uint8_t old[STATE_SIZE],out[STATE_SIZE],want[STATE_SIZE],cert[CERT_SIZE];
 int main(void){
  uint8_t script[100],identity[32],h[32];uint64_t n=sizeof(script);
@@ -35,7 +34,7 @@ int main(void){
  unsigned part=0;for(unsigned i=0;i<64;i++)for(unsigned j=0;j<8;j++)part+=(bits[i]>>j)&1;
  if(part*3<1024||512-part!=*count)return 88;
  const uint8_t*signing=sp==p?old+200:old+232;
- uint8_t ct[200];n=sizeof(ct);if(ckb_load_cell_by_field(ct,&n,0,0,CKB_SOURCE_CELL_DEP,CKB_CELL_FIELD_TYPE)||n!=165||ct[48]!=4||memcmp(ct+16,certificate_hash,32)||memcmp(ct+53,identity,32)||memcmp(ct+85,script+16,32))return 89;
+ uint8_t ct[200];n=sizeof(ct);if(ckb_load_cell_by_field(ct,&n,0,0,CKB_SOURCE_CELL_DEP,CKB_CELL_FIELD_TYPE)||n!=165||ct[48]!=4||memcmp(ct+16,script+16,32)||memcmp(ct+53,identity,32)||memcmp(ct+85,script+16,32))return 89;
  if(cell_data(cert,CERT_SIZE,0,CKB_SOURCE_CELL_DEP)||memcmp(cert,"E2BCERT1",8)||memcmp(cert+8,identity,32)||memcmp(cert+40,script+16,32)||le(cert+72)>le(old+72)||le(cert+80)!=sp||memcmp(cert+88,signing,32)||memcmp(cert+120,kr,32)||memcmp(cert+152,agg,48)||memcmp(cert+200,ua,96))return 90;
  /* The exact aggregate point was subgroup-checked by the immutable certificate. */
  uint8_t buf[64]={0};merkle(h,chunks,15,16);branch(h,eb,25,4);if(memcmp(h,f+80,32))return 91;

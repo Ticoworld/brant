@@ -4,7 +4,7 @@ int main(void){
  if(ckb_load_cell(h,&n,0,0,CKB_SOURCE_GROUP_INPUT)!=CKB_INDEX_OUT_OF_BOUND)return 40;
  n=0;if(ckb_load_cell(h,&n,0,1,CKB_SOURCE_GROUP_OUTPUT)!=CKB_INDEX_OUT_OF_BOUND)return 41;
  n=sizeof(script);if(ckb_load_script(script,&n,0)||n!=165||script[49]!=112||script[50]||script[51]||script[52])return 42;
- uint8_t*a=script+53;int found=0;
+ uint8_t*a=script+53;int found=0;if(memcmp(a+32,script+16,32))return 51;
  for(unsigned i=0;i<64;i++)if(type_matches(i,CKB_SOURCE_CELL_DEP,a)){
   uint8_t t[100];uint64_t z=100;if(ckb_load_cell_by_field(t,&z,0,i,CKB_SOURCE_CELL_DEP,CKB_CELL_FIELD_TYPE)||z!=85||t[48]!=4||memcmp(t+16,a+32,32))return 43;
   if(cell_data(s,STATE_SIZE,i,CKB_SOURCE_CELL_DEP)||state_policy(s))return 44;found=1;break;
