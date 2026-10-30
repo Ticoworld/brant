@@ -8,6 +8,7 @@ const snake=x=>Array.isArray(x)?x.map(snake):x&&typeof x==='object'?Object.fromE
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),read=n=>fs.readFileSync(R+'/fixtures/'+n);
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'e2b-chain-')),ckb=E1+'/tools/ckb/ckb';
 const runName=process.env.E2B_RUN_NAME||'final';if(!/^[A-Za-z0-9_-]+$/.test(runName))throw Error('invalid run label');
+if(fs.existsSync(R+'/evidence/chain-'+runName+'.json'))throw Error('Evidence label already exists; use a new E2B_RUN_NAME');
 let node,wallet;const result={scope:'Seven actual state transitions; historical Capella checkpoint; isolated chain only',runName,transactions:[],rejections:[],lineages:[]};
 const save=()=>fs.writeFileSync(R+'/evidence/chain-'+runName+'.json',JSON.stringify(result,null,2)+'\n');
 const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(j.error)throw Error(JSON.stringify(j.error));return j.result;};
@@ -119,7 +120,14 @@ async function probes(lc,foreign){
  for(let i=0;i<7;i++){
   if(i===1){const wrong=updateTx(lc,i,lc.certs.get('862'));await reject('incorrect-committee-certificate',wrong.t);}
   await advance(lc,i);
-  if(i===0){const missing=updateTx(lc,1);await reject('abandoned-certification-no-signing-certificate',missing.t);}
+  if(i===0){
+   const stopped=new Promise(r=>node.once('exit',r));node.kill('SIGTERM');await stopped;
+   node=cp.spawn(ckb,['run','-C',dir,'--ba-advanced'],{stdio:['ignore',log,log]});let ready=false;
+   for(let j=0;j<100;j++){try{await rpc('get_tip_header');ready=true;break;}catch{}await pause(200);}if(!ready)throw Error('restart failed');
+   const recovered=await live(lc.point);lc.data=B(recovered.data.content);const funds=await live(wallet.point);wallet.capacity=BigInt(funds.output.capacity);
+   result.recovery={nodeRestartedAfterCommittedUpdate:0,reloadedStateVersion:Number(lc.data.readBigUInt64LE(72)),authenticatedNextCommittee:'0x'+lc.data.subarray(232,264).toString('hex'),certificationNotYetPerformed:true,source:'persisted CKB cell, not replacement committee context'};save();
+   const missing=updateTx(lc,1);await reject('abandoned-certification-no-signing-certificate',missing.t);
+  }
   if(i<6)await certify(lc,lc.data.readBigUInt64LE(192)+1n);
  }
  const foreign=await bootstrap('independent');await certify(foreign,862n,false);await advance(foreign,0,false);await certify(foreign,863n,false);await advance(foreign,1,false);await probes(lc,foreign);

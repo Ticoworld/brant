@@ -134,3 +134,79 @@ Direct, authenticated missing-signer verification is now demonstrated below the 
 The existing draft PR #2 is the user-designated review target. GitHub API metadata access still returns `Post "https://api.github.com/graphql": Forbidden`; this did not block implementation or Git branch publication. No merge is authorized or attempted.
 
 A subsequent capacity-boundary test committed the 510/512 predicate with a 145-CKB root output and a 131,793-CKB genesis verifier-code cell. A 144-CKB root output failed node verification with `InsufficientCellCapacity(Outputs[0])`. With its additional change output this test transaction was 2,868 bytes; the original single-output size measurements above remain preserved. Details: optimization/evidence/capacity-510.json. This is a tested root storage boundary, not a measured code-deployment fee or a below-minimum code-cell rejection test.
+
+## WO04-E2B — complete bounded on-chain trust-state chain
+
+**VERIFIED:** the actual seven historical Capella updates advanced a CKB-enforced, persistent light-client state through five committee-period rotations. This replaces host-selected committee context for this bounded chain. **NOT CLAIMED:** live current-fork Ethereum synchronization, a fresh weak-subjectivity anchor, arbitrary participation, or genuine E1 principal settlement.
+
+New implementation: `labs/wo04-e2/rotation/`. The 69,703,714-cycle fallback, E2A optimizations and historical labs/evidence remain unchanged. Detailed source/layout/security/reproduction documentation is in the new directory's README. Existing E2B checkpoints and diagnostic attempts are preserved; final measurements use the shared-program implementation.
+
+### 1. Actual seven-update chain
+
+The sequence is exactly **511, 512, 511, 510, 512, 512, 512**. No invented lower participation was used. Every row below is an actual CKB transaction accepted and committed with the unraised **70,000,000-cycle** policy, including every input lock/type and authorized-root type script in that transaction.
+
+| Index | Participation | State version | Finalized beacon slot | Period | Cycles | Transaction bytes |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 511 | 1 | 7069376 | 862 | 63,177,960 | 3,614 |
+| 1 | 512 | 2 | 7070047 | 863 | 60,792,733 | 3,530 |
+| 2 | 511 | 3 | 7078240 | 864 | 63,372,308 | 3,964 |
+| 3 | 510 | 4 | 7089280 | 865 | 65,863,876 | 4,398 |
+| 4 | 512 | 5 | 7094272 | 866 | 60,792,733 | 3,530 |
+| 5 | 512 | 6 | 7104096 | 867 | 60,792,733 | 3,530 |
+| 6 | 512 | 7 | 7109344 | 867 | 60,719,806 | 3,530 |
+
+Update 0 learns the authenticated next committee and retains the newer bootstrap finality. It cannot publish its older finalized outcome. Updates 1–6 each publish a new authorized root. Final execution root: `0x226f5ff47ab3725b5a4a3afc74b1e79e4aa3a29704561eccce590e58900baec3`. The smallest measured headroom is **4,136,124 cycles**.
+
+The driver proposes transactions but does not supply an authoritative replacement committee. Each signing certificate must match the actual input state's authorized current/next root, period and lineage. Each new next commitment is checked at the correct SSZ branch under the BLS-signed attested header. Both attested and finalized execution-header branches are checked. All successor state bytes are computed and checked by the CKB script, not accepted from a host context file.
+
+### 2. Identity, continuity and replay
+
+A custom type script enforces the canonical Type-ID construction using the serialized **44-byte first CellInput** and **8-byte little-endian global output index**, with CKB-personalized BLAKE2b. The Type-ID helper is supplemented by custom rules: exactly one continuation, unchanged identity, no deletion, preserved state capacity, fixed genesis/checkpoint/fork policy, version +1, monotonic finalized data and authenticated committee changes. The summary independently reconstructs the Type-ID nonce and full Molecule script hash from actual transaction bytes.
+
+The 280-byte state binds genesis validators root, bootstrap root, version, finalized slot/beacon root, execution root/block number/hash, committee period, current/next commitments, last signature slot and fork policy. Applications pin the full state script identity. Independent valid registries are allowed but cannot become authoritative for another identity; a second constructor/duplicate continuation for the same identity fails.
+
+`signature_slot` is not itself BLS-signed. Besides strict last-slot ordering, this finalized-only mode rejects retimed replays unless finality genuinely advances or a previously unknown next committee is learned. CKB absolute timestamp `since` binds signature time to the input, and native maturity validation provides the upper-time bound. This is not a current-head/maximum-age policy.
+
+### 3. Safe separate committee certification
+
+Transaction A verifies the real BLS/finality predicate and authenticates the next committee SSZ commitment. Transaction B reads that commitment from a live state dependency, hashes the complete 512-key data into the exact commitment, validates the aggregate point and produces an immutable certificate bound to lineage, state program, origin version, period and root. It cannot certify an arbitrary hash from a caller-named registry.
+
+State/certificate/root roles use a single **148,016-byte immutable program**, with disjoint canonical argument lengths and same-program checks, avoiding circular code-hash constants. Actual attacker-created always-success registries with forged state data were tested and could neither mint certificates nor publish roots. This class binding is stronger than merely trusting a state-shaped data buffer.
+
+Bootstrap state creation cost **530,165 cycles / 1,649 bytes**. Initial certification cost **17,424,353 cycles / 25,590 bytes**; subsequent certificates cost **17,424,361 cycles / 25,590 bytes**. A and B were measured and committed separately. No claim is made that summing their work into one transaction meets policy.
+
+The certificate validates the aggregate subgroup and full committee commitment; it does not claim to subgroup-check every member. Every missing member is still explicitly subgroup-checked during updates. Reusing the exact immutable, previously validated aggregate is sound. The same period-867 certificate was actually reused by updates 5 and 6.
+
+Failed/abandoned certification cannot authorize the next period. The test stops CKB after committed update 0, restarts the same database, reloads version 1 and its next commitment from persisted cells, rejects uncertified advancement, then certifies period 863 and completes the chain. Wrong/stale certification and mutation of certificates fail. This is not an incomplete two-stage BLS proof: A already authenticates its own finalized outcome; B only prepares a committee for later updates.
+
+### 4. Authorized root publisher and E1 boundary
+
+Every finality advance requires its correctly bound immutable root output in the same transaction. Valid proof plus withheld root fails. The root constructor independently requires the actual state input/output of the expected program/lineage, version +1 and advanced finality. Failed updates produce no root. Constructor-only publication, caller-selected registries, genuine foreign registries, stale roots/state and record mutation were rejected.
+
+Root arguments bind lineage, program, source state version and finalized beacon root. Data has E1's exact 104-byte layout: `SHA256(genesis_validators_root || state_script_hash)[32] || execution_state_root[32] || execution_block_number_LE[8] || execution_block_hash[32]`. The laboratory reader checks the typed authority/current state before calling the unchanged E1 MPT implementation against bytes 32–63. Its positive authority probe cost **27,609 cycles / 321 bytes**. The saved Ganache account/storage proof failed against this authenticated Ethereum root (MPT error 30).
+
+This is **not** a demonstrated E1 principal payout. A real integration must bind the intended registry/root identity and trade domain in the reservation/settlement flow, and supply Outcome/account/storage proofs from the same authenticated execution history. Existing E1 code/evidence was not rewritten. The diagnostic reader's metadata-only mode is not a principal settlement rule.
+
+### 5. Evidence, capacity and rejection results
+
+The final/reproduction runs each contain **23 committed transactions and 104 real node rejections**: the primary chain, an independently valid registry, a malicious-registry control and authorization probes. Rejections were checked to be native script/context errors, not network failures. Tests include exact Type-ID nonce/index, competing state, state burn/deletion, exact and retimed replay, wrong period, time binding, rollback, bad next proof, absent/wrong/stale/forged certificates, failed-update recovery, class substitution, immutable record mutation, unsupported fork, root withholding and unauthorized publication.
+
+Actual allocated capacity: **1,000 CKB per state/certificate/root cell**. Derived occupied minima for the tested shapes: **386 CKB state, 482 certificate, 282 root**, and **148,057 CKB shared program**. Primary retained protocol data cells total 14,000 allocated CKB (one state, seven certificates, six roots), excluding code/test controls. Fee was 1,000,000 shannons per transaction. Real code deployment fees and economic viability were not measured; immutable records have no reclamation policy.
+
+The code was supplied through genesis, but no protected state, certificate or root was injected. Nodes were loopback-only isolated chains with dummy mining and custom output policy `passthrough`; script verification and the 70-million policy remained enforced. This is not public-network admission or CKB reorg/finality evidence.
+
+Actual serialized transactions, code hashes, committed block/status results and rejection errors: `rotation/evidence/chain-recovery.json` and `chain-verified-reproduction.json`. Compact audited results: `summary-recovery.json` / `summary-verified-reproduction.json`. Full reproduction exited 0. Initial diagnostic attempts (insufficient pool/proposal wait, then an absence test mistakenly placed after certification) remain preserved and are not classified as final verification passes.
+
+### 6. Fork-correct reference test and limits
+
+Official specs/configuration are pinned at v1.6.1 (`5fa6edcca8ab4cf548653e6680b17b9d3e04d225`), and official Electra static/proof fixtures at consensus-spec-tests v1.5.0 (`194a91fd9e6f97118156421aac4c80e6e47a9a7f`). Executed reference tests verify mainnet fork versions/epochs, signature_slot - 1 boundaries, Capella/Deneb indices **54/55/105/25**, Electra/Fulu **86/87/169/25**, and their branch depths.
+
+A 17-field Electra execution-header/LightClientHeader SSZ vector reproduced its independently supplied official hash-tree root; the 15-field Capella interpretation and modified blob gas failed. Official Electra current/next/finality proofs derived a consistent state root and rejected legacy depths/indices. This is structural/config/reference verification, **not** a later-fork BLS-finality run; the random SSZ object is not claimed as canonical chain evidence. Runtime Deneb and later updates fail closed.
+
+Wider participation (more than two missing members), newer-fork runtime headers/branches/domains/rules, additional valid nonfinalizing/timeout update classes and live syncing remain unimplemented. They require executable signed vectors and new measurements, not index changes alone. The conservative root reader accepts only the current state version; general historical-root freshness/retention policy remains future work.
+
+### 7. Remaining live-deployment requirements
+
+The on-chain rotation in this bounded chain is independent of host-selected committees, but begins at the explicit **historical trusted checkpoint**. It was not independently acquired as a fresh weak-subjectivity anchor. A live deployment still needs an independently justified recent checkpoint for the correct active fork, complete modern-fork synchronization, maximum-age/liveness policy, CKB confirmation/reorg handling, storage lifecycle/fees, review/audit and genuine E1 proof/payout integration. Application scripts do not prevent canonical CKB chain reorgs.
+
+Reproduction: `cd labs/wo04-e2/rotation && bash src/reproduce.sh`. Pinned existing dependencies are reused; no live Ethereum endpoint or new package is required. The script uses a new evidence label, preserves earlier milestones, verifies fixture/reference hashes, regenerates and checks the real sequence, compiles, executes the chain with restart recovery, runs fork references and audits actual ancestry/Type-ID bytes. Work remains on the existing E2/PR #2 branch; no merge is authorized or performed.

@@ -16,7 +16,10 @@ def proof(leaves,index):
 def state(s,v):
  b=s.finalized['beacon'];e=s.finalized['execution'];p=int(b['slot'])//8192
  return (b'E2STATE1'+bytes.fromhex(GENESIS)+bytes.fromhex(CHECKPOINT)+uint(v)[:8]+uint(b['slot'])[:8]+beacon(b)+hx(e['state_root'],32)+uint(e['block_number'])[:8]+hx(e['block_hash'],32)+uint(p)[:8]+committee(s.current)+(committee(s.next) if s.next else bytes(32))+uint(s.last_signature)[:8]+bytes.fromhex('0300000000000000'))
-def save(n,b): (R/'fixtures'/n).write_bytes(b)
+def save(n,b):
+ p=R/'fixtures'/n
+ if p.exists():assert p.read_bytes()==b, 'refuse changing pinned fixture '+n
+ else:p.write_bytes(b)
 b=load('bootstrap');s=Store(b);header=b['header'];co=b['current_sync_committee'];initial=state(s,0);assert len(initial)==280;save('state-0.bin',initial)
 save('bootstrap.bin',serial_beacon(header['beacon'])+b''.join(execution_chunks(header['execution']))+b''.join(hx(x,32) for x in header['execution_branch'])+committee(co)+b''.join(hx(x,32) for x in b['current_sync_committee_branch']))
 committees={int(header['beacon']['slot'])//8192:co};rows=[]
@@ -36,6 +39,6 @@ for i,u in enumerate(load('updates')+[load('finality')]):
  rows.append({'index':i,'participants':512-len(missing),'missing':missing,'signatureSlot':ss,'signingPeriod':sp,'finalizedSlot':int(s.finalized['beacon']['slot']),'hasNext':has,'witnessBytes':len(packet),'referenceVerified':True})
 for p,c in committees.items():
  agg=hx(c['aggregate_pubkey'],48);save(f'committee-{p}.bin',b''.join(hx(k,48) for k in c['pubkeys'])+agg+affine(agg,1))
-(R/'fixtures/sequence.json').write_text(json.dumps(rows,indent=2)+'\n')
+save('sequence.json',(json.dumps(rows,indent=2)+'\n').encode())
 assert [r['participants'] for r in rows]==[511,512,511,510,512,512,512]
 print(rows)

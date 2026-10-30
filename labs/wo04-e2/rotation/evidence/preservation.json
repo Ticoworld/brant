@@ -1,0 +1,8 @@
+{
+  "startingCheckpoint": "9380e624636de55db315ba1e68b3f5ac057ed30c",
+  "historicalLabFilesByteIdentical": 459,
+  "allHistoricalLabsPreserved": true,
+  "originalFullParticipationFallbackBinarySHA256": "1309c835b0a06076a9f2b3b0a14d2177846006149d20a1fb4c2193e4ba2612d4",
+  "fallbackMatchesPreservedEvidence": true,
+  "newRuntimeScope": "historical Capella seven-update state chain only"
+}

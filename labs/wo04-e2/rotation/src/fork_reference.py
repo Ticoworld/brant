@@ -1,5 +1,5 @@
 """Official SSZ/header/config reference tests; NOT later-fork consensus proof."""
-import ast,json,sys,re,copy
+import ast,json,sys,re,copy,os
 from pathlib import Path
 R=Path(__file__).resolve().parents[1];sys.path.insert(0,str(R.parent/'src'))
 from reference import H,hx,tree,uint,beacon,execution_chunks,GENESIS,branch
@@ -59,4 +59,5 @@ for i,f in enumerate(forks):
  data=tree([bytes.fromhex(f['version']).ljust(32,b'\0'),bytes.fromhex(GENESIS)]);domains.append('07000000'+data[:28].hex())
 assert len(set(domains))==4
 result={'officialElectraSSZHeaderRootMatched':expected,'legacy15FieldHeaderRejected':True,'mutatedBlobGasRejected':True,'proofIndicesAndDepthsChecked':True,'legacyIndicesRejected':True,'consistentOfficialElectraStateProofRoot':'0x'+state_roots[0].hex(),'forks':forks,'signatureSlotMinusOneDomainBoundariesPassed':True,'scope':'SSZ static/header/config/branch consistency only. No Electra/Fulu/Deneb BLS-finality/state-transition run.'}
-(R/'evidence/fork-reference.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))
+label=os.environ.get('E2B_RUN_NAME','reference')
+(R/f'evidence/fork-{label}.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

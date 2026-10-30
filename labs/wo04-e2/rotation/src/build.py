@@ -15,4 +15,6 @@ for name in ['bundle','root_probe']:
  metrics.append({'name':name,'bytes':len(b),'codeHash':'0x'+h.hex(),'sha256':hashlib.sha256(b).hexdigest()})
 label=os.environ.get('E2B_RUN_NAME','final')
 assert label and all(c.isalnum() or c in '-_' for c in label)
-(R/f'evidence/binaries-{label}.json').write_text(json.dumps(metrics,indent=2)+'\n')
+destination=R/f'evidence/binaries-{label}.json';encoded=json.dumps(metrics,indent=2)+'\n'
+if destination.exists():assert destination.read_text()==encoded, 'use a new evidence label'
+else:destination.write_text(encoded)
