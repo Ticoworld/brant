@@ -7,8 +7,9 @@ const sha=b=>require('crypto').createHash('sha256').update(b).digest();
 const snake=x=>Array.isArray(x)?x.map(snake):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).map(([k,v])=>[k.replace(/[A-Z]/g,c=>'_'+c.toLowerCase()),snake(v)])):x;
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),read=n=>fs.readFileSync(R+'/fixtures/'+n);
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'e2b-chain-')),ckb=E1+'/tools/ckb/ckb';
-let node,wallet;const result={scope:'Seven actual state transitions; historical Capella checkpoint; isolated chain only',transactions:[],rejections:[],lineages:[]};
-const save=()=>fs.writeFileSync(R+'/evidence/chain-bundle.json',JSON.stringify(result,null,2)+'\n');
+const runName=process.env.E2B_RUN_NAME||'final';if(!/^[A-Za-z0-9_-]+$/.test(runName))throw Error('invalid run label');
+let node,wallet;const result={scope:'Seven actual state transitions; historical Capella checkpoint; isolated chain only',runName,transactions:[],rejections:[],lineages:[]};
+const save=()=>fs.writeFileSync(R+'/evidence/chain-'+runName+'.json',JSON.stringify(result,null,2)+'\n');
 const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(j.error)throw Error(JSON.stringify(j.error));return j.result;};
 const bins={};for(const n of ['state','certificate','root','root_probe'])bins[n]=fs.readFileSync(R+'/build/'+n);bins.always=fs.readFileSync(E1+'/config/always_success');
 const script=(n,args='0x')=>({codeHash:H(bins[n]),hashType:'data2',args}),lock=script('always'),deps={};
@@ -58,7 +59,8 @@ async function advance(lc,i,tests=true){
   const time=structuredClone(t);time.inputs[0].since='0x0';await reject('unbound-signature-time-'+i,time);
   if(i===0){const deleted=tx(t.inputs,[output(cap+wallet.capacity-fee)],[Buffer.alloc(0)],read('update-0.bin'),t.cellDeps);await reject('state-deletion-despite-Type-ID-burn-permission',deleted);}
   if(i===3){const fork=structuredClone(t),fw=B(fork.witnesses[0]),slot=8626177n;fw.writeBigUInt64LE(slot,0);fork.witnesses[0]='0x'+fw.toString('hex');fork.inputs[0].since=hex(0x4000000000000000n+1606824023n+12n*slot);await reject('unsupported-Deneb-fork-rejected-not-reinterpreted',fork);}
-  const rollback=structuredClone(t),rd=B(rollback.outputsData[0]);rd.writeBigUInt64LE(lc.data.readBigUInt64LE(80)-1n,80);rollback.outputsData[0]='0x'+rd.toString('hex');await reject('finalized-slot-rollback-'+i,rollback);
+  const rollback=structuredClone(t),rd=Buffer.from(lc.data),rs=lc.data.readBigUInt64LE(80)-1n;rd.writeBigUInt64LE(lc.data.readBigUInt64LE(72)+1n,72);rd.writeBigUInt64LE(rs,80);rd.writeBigUInt64LE(rs/8192n,192);rd.writeBigUInt64LE(B(t.witnesses[0]).readBigUInt64LE(0),264);rollback.outputsData[0]='0x'+rd.toString('hex');await reject('finalized-slot-rollback-'+i,rollback);
+  if(rootAdvance){const withheld=structuredClone(t);withheld.outputs.splice(1,1);withheld.outputsData.splice(1,1);withheld.outputs[1].capacity=hex(BigInt(withheld.outputs[1].capacity)+cap);await reject('valid-proof-cannot-withhold-authorized-root-'+i,withheld);}
   if(i<6){const np=structuredClone(t),nw=B(np.witnesses[0]),missing=nw[1560],start=1561+434*missing;nw[start+33]^=1;np.witnesses[0]='0x'+nw.toString('hex');await reject('invalid-next-committee-proof-'+i,np);}
   if(i>0){const replay=structuredClone(t);replay.witnesses[0]='0x'+read('update-'+(i-1)+'.bin').toString('hex');await reject('replayed-old-update-'+i,replay);}
   if(i===0){const fake=structuredClone(t);fake.outputs.push(output(cap,lc.type));fake.outputsData.push('0x'+after.toString('hex'));fake.outputs[1].capacity=hex(BigInt(fake.outputs[1].capacity)-cap);await reject('competing-state-lineage',fake);}

@@ -74,5 +74,11 @@ int main(void){
  if(zero32(old+232)){if(fp!=p||ap!=p||!*tail)return 98;memcpy(want+232,nc,32);}
  else if(fp==p+1){memcpy(want+200,old+232,32);if(ap==fp&&*tail)memcpy(want+232,nc,32);else memset(want+232,0,32);}
  if(fs>le(old+80)){memcpy(want+80,f,8);beacon_root(f,want+88);memcpy(want+120,chunks+64,32);memcpy(want+152,chunks+192,8);memcpy(want+160,chunks+384,32);put64(want+192,fp);}
+ if(fs>le(old+80)){
+  /* A valid updater must not advance state while withholding its root record. */
+  uint8_t rt[180],rootdata[104],expected[104];n=sizeof(rt);
+  if(ckb_load_cell_by_field(rt,&n,0,1,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE)||n!=157||rt[48]!=4||memcmp(rt+16,script+16,32)||memcmp(rt+53,identity,32)||memcmp(rt+85,script+16,32)||memcmp(rt+117,want+72,8)||memcmp(rt+125,want+88,32))return 101;
+  domain(identity,expected);memcpy(expected+32,want+120,72);if(cell_data(rootdata,104,1,CKB_SOURCE_OUTPUT)||memcmp(rootdata,expected,104))return 102;
+ }
  return memcmp(want,out,STATE_SIZE)?99:0;
 }

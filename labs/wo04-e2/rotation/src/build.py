@@ -13,4 +13,6 @@ for name in ['bundle','root_probe']:
   (R/'build/root_hash.h').write_text('static const uint8_t root_hash[32]={'+','.join(str(x) for x in h)+'};\n')
  (R/f'build/{name}_hash.h').write_text('static const uint8_t '+name+'_hash[32]={'+','.join(str(x) for x in h)+'};\n')
  metrics.append({'name':name,'bytes':len(b),'codeHash':'0x'+h.hex(),'sha256':hashlib.sha256(b).hexdigest()})
-(R/'evidence/binaries-bundle.json').write_text(json.dumps(metrics,indent=2)+'\n')
+label=os.environ.get('E2B_RUN_NAME','final')
+assert label and all(c.isalnum() or c in '-_' for c in label)
+(R/f'evidence/binaries-{label}.json').write_text(json.dumps(metrics,indent=2)+'\n')
