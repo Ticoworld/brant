@@ -1,0 +1,55 @@
+{
+  "boundedAccessCheck": "git ls-remote succeeded for both public repositories; pinned fetched heads; no permission/network blocker",
+  "sources": [
+    {
+      "project": "dln",
+      "commit": "d54e94f2b5102bff89a4df506404bb77f3edc148",
+      "path": "contracts/DLN/DlnSource.sol",
+      "file": "dln/DlnSource.sol",
+      "sha256": "783f5d6ef94cb6768d964a34e3c919db398f8760aa6ed9d05d99448ef5b5f8a3"
+    },
+    {
+      "project": "dln",
+      "commit": "d54e94f2b5102bff89a4df506404bb77f3edc148",
+      "path": "contracts/DLN/DlnDestination.sol",
+      "file": "dln/DlnDestination.sol",
+      "sha256": "4ccccce682aacb25f35d2a6d16b69ead289a3be774ca077476b57cbf9bd77d81"
+    },
+    {
+      "project": "dln",
+      "commit": "d54e94f2b5102bff89a4df506404bb77f3edc148",
+      "path": "contracts/libraries/DlnOrderLib.sol",
+      "file": "dln/DlnOrderLib.sol",
+      "sha256": "20d1a222fb1759d9f78b42606ea3d77e9980f8ef90c2747289ba52031a0a31b0"
+    },
+    {
+      "project": "dln",
+      "commit": "d54e94f2b5102bff89a4df506404bb77f3edc148",
+      "path": "LICENSE",
+      "file": "dln/LICENSE",
+      "sha256": "53f599e855133b4822746fb4ee1dddba076e66247bfc2d942631b3a530d9cf80"
+    },
+    {
+      "project": "across",
+      "commit": "b1c4e86225420df5cb8d03042526622aca80fe61",
+      "path": "contracts/spoke-pools/SpokePool.sol",
+      "file": "across/SpokePool.sol",
+      "sha256": "a30a02a2fc942e83ed404d96affbf495255f2999e3fbccf48e2a6f214a1de6db"
+    },
+    {
+      "project": "across",
+      "commit": "b1c4e86225420df5cb8d03042526622aca80fe61",
+      "path": "contracts/libraries/MerkleLib.sol",
+      "file": "across/MerkleLib.sol",
+      "sha256": "982ad89eff54f5ef8ca5d5735fe5ff45caa46436bc6e0e6db4cbd5a7a9e02401"
+    },
+    {
+      "project": "across",
+      "commit": "b1c4e86225420df5cb8d03042526622aca80fe61",
+      "path": "LICENSE",
+      "file": "across/LICENSE",
+      "sha256": "3dec0978a12d8549f2416b7960f39373da1e589ccac02113f6a780097bf77a7b"
+    }
+  ],
+  "use": "Source inspection/design lessons only; no DLN/Across production contract code is linked into the experiment. Original BUSL-1.1 licenses retained."
+}

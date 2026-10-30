@@ -1,0 +1,16 @@
+{
+  "checkpoint": "0x498ba839213a617aee951e3930f47c01c4b51ec74b9907b67b478a0130017f32",
+  "genesis": {
+    "genesis_time": "1793374393",
+    "genesis_validators_root": "0xe38f0731f47307d936c408de9d38a0706247d1652b2f712a5b2a4e85fc54dff1",
+    "genesis_fork_version": "0x10000000"
+  },
+  "trust": "Single explicit local finalized checkpoint from independently executing Lighthouse+Geth; NOT host root per payout",
+  "preset": "mainnet",
+  "slotsPerEpoch": 32,
+  "epochsPerPeriod": 256,
+  "committeeSize": 512,
+  "secondsPerSlot": 3,
+  "capellaForkVersion": "0x03000000",
+  "denebForkEpoch": 1000000000
+}

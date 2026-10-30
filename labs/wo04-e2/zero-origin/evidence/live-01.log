@@ -1,0 +1,21 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+private-PoS-bootstrap 531326 1649
+private-PoS-certify-0 17424406 25590
+EVM deploy-ControlledUSDC 616
+EVM deploy-OutcomesV2 617
+EVM maker-amortizable-approval 618
+EVM token-test-mode-1 619
+EVM token-test-mode-2 621
+EVM token-test-mode-3 623
+EVM token-test-mode-6 625
+EVM no-return-token-mode 627
+EVM no-return-valid-fill 628
+EVM configure-reentrancy 629
+EVM outer-fill-reentrancy-guard 630
+EVM restore-standard-USDC 631
+Error: {"code":-32602,"message":"Invalid params: unknown variant `depGroup`, expected `code` or `dep_group`."}
+    at rpc (/workspace/trade/labs/wo04-e2/zero-origin/src/run.cjs:18:239)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async commit (/workspace/trade/labs/wo04-e2/zero-origin/src/run.cjs:25:70)
+    at async fund (/workspace/trade/labs/wo04-e2/zero-origin/src/run.cjs:114:106)
+    at async /workspace/trade/labs/wo04-e2/zero-origin/src/run.cjs:188:15

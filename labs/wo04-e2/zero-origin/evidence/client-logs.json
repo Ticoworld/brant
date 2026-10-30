@@ -1,0 +1,23 @@
+[
+  {
+    "container": "e2c-el",
+    "since": "2026-10-30T18:03:34.426000+00:00",
+    "rawBytes": 288681,
+    "rawSHA256": "9c12fcb552b04d9b032a5af83aef2ff3e573e42b7f5d3f1e7d9cae573aa75b12",
+    "compressedBytes": 32963
+  },
+  {
+    "container": "e2c-cl",
+    "since": "2026-10-30T18:03:34.426000+00:00",
+    "rawBytes": 13683762,
+    "rawSHA256": "8fa83778b57edc9f02c5443b7ccc68b037a09e8120e45a01e6592de7005a5bba",
+    "compressedBytes": 553541
+  },
+  {
+    "container": "e2c-vc",
+    "since": "2026-10-30T18:03:34.426000+00:00",
+    "rawBytes": 1114453,
+    "rawSHA256": "9d252acbfe3fd95f9289d8000484c80611b0db36c18bf92915a4b9658146d08f",
+    "compressedBytes": 70415
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "comparator": "trie3.1.0 HexaryTrie.get_from_proof",
+  "nativeChecks": 3602,
+  "validVectors": [
+    {
+      "name": "empty-storage",
+      "nodes": 0,
+      "bytes": 114,
+      "present": false
+    },
+    {
+      "name": "included-single",
+      "nodes": 1,
+      "bytes": 152,
+      "present": true
+    },
+    {
+      "name": "leaf-divergence",
+      "nodes": 1,
+      "bytes": 152,
+      "present": false
+    },
+    {
+      "name": "included-branch",
+      "nodes": 3,
+      "bytes": 706,
+      "present": true
+    },
+    {
+      "name": "absent-branch",
+      "nodes": 2,
+      "bytes": 669,
+      "present": false
+    }
+  ],
+  "rawFixedKeyCases": [
+    {
+      "name": "inline-extension",
+      "nodes": 2,
+      "bytes": 84,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "inline-inclusion",
+      "nodes": 3,
+      "bytes": 89,
+      "present": true,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "extension-divergence",
+      "nodes": 1,
+      "bytes": 60,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "branch-empty",
+      "nodes": 1,
+      "bytes": 87,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    }
+  ],
+  "missingAccountRefundRejected": true,
+  "malformedAuthenticatedNodesRejected": 3,
+  "allTruncationsAndSingleBitMutationsRejected": true,
+  "scope": "Parser tests only; generated roots are NOT consensus fixtures"
+}

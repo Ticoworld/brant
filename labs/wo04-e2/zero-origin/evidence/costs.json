@@ -1,0 +1,120 @@
+{
+  "core": {
+    "coreEvmReceiptsWithSetup": 4,
+    "coreEvmGasWithSetup": 1548014,
+    "coreEvmFeesWithSetupWei": 1548014010836098,
+    "perFilledOrderEvmTransactions": 1,
+    "perFilledOrderGas": 85534,
+    "perFilledOrderFeeWei": 85534000598738,
+    "perUnfilledOrderEvmTransactions": 0,
+    "userEthereumGas": 0,
+    "allEvmReceiptsWithAdversarialTests": 17,
+    "allEvmGas": 2927949,
+    "allEvmFeesWei": 2927949020495643
+  },
+  "nativeTransactions": [
+    {
+      "name": "private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "USER-CKB-FUND-filled",
+      "cycles": 1637091,
+      "bytes": 1098
+    },
+    {
+      "name": "USER-CKB-FUND-unfilled",
+      "cycles": 1645292,
+      "bytes": 1098
+    },
+    {
+      "name": "private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "MAKER-REIMBURSEMENT",
+      "cycles": 1038250,
+      "bytes": 2503
+    },
+    {
+      "name": "private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "USER-INDEPENDENT-EMPTY-SLOT-REFUND",
+      "cycles": 973118,
+      "bytes": 2347
+    }
+  ],
+  "nativeFeesShannons": 8000000,
+  "occupiedCapacity": [
+    {
+      "name": "private-PoS-bootstrap",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 386
+    },
+    {
+      "name": "private-PoS-certify-0",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 482
+    },
+    {
+      "name": "USER-CKB-FUND-filled",
+      "allocatedShannons": 100001000000,
+      "occupiedBytes": 642
+    },
+    {
+      "name": "private-PoS-update-0",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 282
+    },
+    {
+      "name": "MAKER-REIMBURSEMENT",
+      "allocatedShannons": 100000000000,
+      "occupiedBytes": 61
+    }
+  ],
+  "retainedStateCertificateTwoRootsCKB": 4000,
+  "code": {
+    "bundleBytes": 148200,
+    "bundleMinimumCKB": 148241,
+    "settlementBytes": 13056,
+    "settlementMinimumCKB": 13097,
+    "actualAdditionalCodeCells": 4,
+    "actualGenesisAllocationPerCodeCellCKB": 1000000,
+    "deploymentFeesMeasured": false
+  },
+  "deliveryLatencyMs": 2538,
+  "makerSubmitToDeliveryMs": 1987,
+  "makerReimbursementLatencyMs": 275684,
+  "refundLatencyMs": 372787,
+  "latencyCaveat": "Actual private3-second-slot run, including native since-maturity waits; not a mainnet latency forecast",
+  "allLiveAttempts": {
+    "nativeTransactions": 10,
+    "nativeFeesShannons": 10000000,
+    "evmReceipts": 33,
+    "evmGas": 5770364,
+    "evmFeesWei": 5770364040392548
+  },
+  "comparisonE2C": {
+    "coreEvmTransactionsWithSetup": 7,
+    "userEthereumOpens": 2,
+    "explicitEthereumExpiries": 1,
+    "perTradeNativeOccupiedMinimumCKB": 518
+  },
+  "p0": {
+    "coreEvmTransactionsWithSetup": 4,
+    "userEthereumTransactions": 0,
+    "explicitEthereumExpiries": 0,
+    "perTradeNativeOccupiedMinimumCKB": 642
+  },
+  "scope": "Isolated disposable ETH/CKB/controlled-USDC fixture; fixed fees and genesis code allocation are not production quotes"
+}

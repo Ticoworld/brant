@@ -1,0 +1,423 @@
+defensive-controls.json: OK
+devnet/bootstrap.bin: OK
+devnet/bootstrap.json: OK
+devnet/ckb-dev.toml: OK
+devnet/committee-0.bin: OK
+devnet/configuration.json: OK
+devnet/genesis.json: OK
+devnet/raw/block-2944.json.gz: OK
+devnet/raw/block-2976.json.gz: OK
+devnet/raw/block-3008.json.gz: OK
+devnet/raw/block-3023.json.gz: OK
+devnet/raw/block-3024.json.gz: OK
+devnet/raw/block-3025.json.gz: OK
+devnet/raw/block-3026.json.gz: OK
+devnet/raw/block-3027.json.gz: OK
+devnet/raw/block-3028.json.gz: OK
+devnet/raw/block-3029.json.gz: OK
+devnet/raw/block-3030.json.gz: OK
+devnet/raw/block-3031.json.gz: OK
+devnet/raw/block-3032.json.gz: OK
+devnet/raw/block-3033.json.gz: OK
+devnet/raw/block-3034.json.gz: OK
+devnet/raw/block-3035.json.gz: OK
+devnet/raw/block-3036.json.gz: OK
+devnet/raw/block-3037.json.gz: OK
+devnet/raw/block-3038.json.gz: OK
+devnet/raw/block-3039.json.gz: OK
+devnet/raw/block-3040.json.gz: OK
+devnet/raw/block-3041.json.gz: OK
+devnet/raw/block-3042.json.gz: OK
+devnet/raw/block-3043.json.gz: OK
+devnet/raw/block-3044.json.gz: OK
+devnet/raw/block-3045.json.gz: OK
+devnet/raw/block-3046.json.gz: OK
+devnet/raw/block-3047.json.gz: OK
+devnet/raw/block-3048.json.gz: OK
+devnet/raw/block-3049.json.gz: OK
+devnet/raw/block-3050.json.gz: OK
+devnet/raw/block-3051.json.gz: OK
+devnet/raw/block-3052.json.gz: OK
+devnet/raw/block-3053.json.gz: OK
+devnet/raw/block-3054.json.gz: OK
+devnet/raw/block-3055.json.gz: OK
+devnet/raw/block-3056.json.gz: OK
+devnet/raw/block-3057.json.gz: OK
+devnet/raw/block-3058.json.gz: OK
+devnet/raw/block-3059.json.gz: OK
+devnet/raw/block-3060.json.gz: OK
+devnet/raw/block-3061.json.gz: OK
+devnet/raw/block-3062.json.gz: OK
+devnet/raw/block-3063.json.gz: OK
+devnet/raw/block-3064.json.gz: OK
+devnet/raw/block-3065.json.gz: OK
+devnet/raw/block-3066.json.gz: OK
+devnet/raw/block-3067.json.gz: OK
+devnet/raw/block-3068.json.gz: OK
+devnet/raw/block-3069.json.gz: OK
+devnet/raw/block-3070.json.gz: OK
+devnet/raw/block-3071.json.gz: OK
+devnet/raw/block-3072.json.gz: OK
+devnet/raw/block-3073.json.gz: OK
+devnet/raw/block-3074.json.gz: OK
+devnet/raw/block-3075.json.gz: OK
+devnet/raw/block-3076.json.gz: OK
+devnet/raw/block-3077.json.gz: OK
+devnet/raw/block-3078.json.gz: OK
+devnet/raw/block-3079.json.gz: OK
+devnet/raw/block-3080.json.gz: OK
+devnet/raw/block-3081.json.gz: OK
+devnet/raw/block-3082.json.gz: OK
+devnet/raw/block-3083.json.gz: OK
+devnet/raw/block-3084.json.gz: OK
+devnet/raw/block-3085.json.gz: OK
+devnet/raw/block-3086.json.gz: OK
+devnet/raw/block-3087.json.gz: OK
+devnet/raw/block-3088.json.gz: OK
+devnet/raw/block-3089.json.gz: OK
+devnet/raw/block-3090.json.gz: OK
+devnet/raw/block-3091.json.gz: OK
+devnet/raw/block-3092.json.gz: OK
+devnet/raw/block-3093.json.gz: OK
+devnet/raw/block-3094.json.gz: OK
+devnet/raw/block-3095.json.gz: OK
+devnet/raw/block-3096.json.gz: OK
+devnet/raw/block-3097.json.gz: OK
+devnet/raw/block-3098.json.gz: OK
+devnet/raw/block-3099.json.gz: OK
+devnet/raw/block-3100.json.gz: OK
+devnet/raw/block-3101.json.gz: OK
+devnet/raw/block-3102.json.gz: OK
+devnet/raw/block-3103.json.gz: OK
+devnet/raw/block-3104.json.gz: OK
+devnet/raw/block-3105.json.gz: OK
+devnet/raw/block-3115.json.gz: OK
+devnet/raw/block-3116.json.gz: OK
+devnet/raw/block-3118.json.gz: OK
+devnet/raw/block-3119.json.gz: OK
+devnet/raw/block-3121.json.gz: OK
+devnet/raw/block-3122.json.gz: OK
+devnet/raw/block-3125.json.gz: OK
+devnet/raw/block-3126.json.gz: OK
+devnet/raw/block-3128.json.gz: OK
+devnet/raw/block-3129.json.gz: OK
+devnet/raw/block-3131.json.gz: OK
+devnet/raw/block-3132.json.gz: OK
+devnet/raw/block-3134.json.gz: OK
+devnet/raw/block-3135.json.gz: OK
+devnet/raw/block-3137.json.gz: OK
+devnet/raw/block-3138.json.gz: OK
+devnet/raw/block-512.json.gz: OK
+devnet/raw/state-3023.json.gz: OK
+devnet/raw/state-3024.json.gz: OK
+devnet/raw/state-3025.json.gz: OK
+devnet/raw/state-3027.json.gz: OK
+devnet/raw/state-3028.json.gz: OK
+devnet/raw/state-3030.json.gz: OK
+devnet/raw/state-3031.json.gz: OK
+devnet/raw/state-3032.json.gz: OK
+devnet/raw/state-3034.json.gz: OK
+devnet/raw/state-3035.json.gz: OK
+devnet/raw/state-3036.json.gz: OK
+devnet/raw/state-3038.json.gz: OK
+devnet/raw/state-3039.json.gz: OK
+devnet/raw/state-3041.json.gz: OK
+devnet/raw/state-3042.json.gz: OK
+devnet/raw/state-3043.json.gz: OK
+devnet/raw/state-3045.json.gz: OK
+devnet/raw/state-3046.json.gz: OK
+devnet/raw/state-3047.json.gz: OK
+devnet/raw/state-3049.json.gz: OK
+devnet/raw/state-3051.json.gz: OK
+devnet/raw/state-3052.json.gz: OK
+devnet/raw/state-3053.json.gz: OK
+devnet/raw/state-3054.json.gz: OK
+devnet/raw/state-3056.json.gz: OK
+devnet/raw/state-3057.json.gz: OK
+devnet/raw/state-3058.json.gz: OK
+devnet/raw/state-3060.json.gz: OK
+devnet/raw/state-3061.json.gz: OK
+devnet/raw/state-3062.json.gz: OK
+devnet/raw/state-3064.json.gz: OK
+devnet/raw/state-3065.json.gz: OK
+devnet/raw/state-3066.json.gz: OK
+devnet/raw/state-3068.json.gz: OK
+devnet/raw/state-3069.json.gz: OK
+devnet/raw/state-3070.json.gz: OK
+devnet/raw/state-3071.json.gz: OK
+devnet/raw/state-3073.json.gz: OK
+devnet/raw/state-3074.json.gz: OK
+devnet/raw/state-3075.json.gz: OK
+devnet/raw/state-3077.json.gz: OK
+devnet/raw/state-3078.json.gz: OK
+devnet/raw/state-3079.json.gz: OK
+devnet/raw/state-3080.json.gz: OK
+devnet/raw/state-3082.json.gz: OK
+devnet/raw/state-3083.json.gz: OK
+devnet/raw/state-3084.json.gz: OK
+devnet/raw/state-3086.json.gz: OK
+devnet/raw/state-3087.json.gz: OK
+devnet/raw/state-3088.json.gz: OK
+devnet/raw/state-3090.json.gz: OK
+devnet/raw/state-3091.json.gz: OK
+devnet/raw/state-3092.json.gz: OK
+devnet/raw/state-3094.json.gz: OK
+devnet/raw/state-3095.json.gz: OK
+devnet/raw/state-3096.json.gz: OK
+devnet/raw/state-3098.json.gz: OK
+devnet/raw/state-3099.json.gz: OK
+devnet/raw/state-3100.json.gz: OK
+devnet/raw/state-3102.json.gz: OK
+devnet/raw/state-3103.json.gz: OK
+devnet/raw/state-3104.json.gz: OK
+devnet/raw/state-3115.json.gz: OK
+devnet/raw/state-3118.json.gz: OK
+devnet/raw/state-3121.json.gz: OK
+devnet/raw/state-3125.json.gz: OK
+devnet/raw/state-3128.json.gz: OK
+devnet/raw/state-3131.json.gz: OK
+devnet/raw/state-3134.json.gz: OK
+devnet/raw/state-3137.json.gz: OK
+devnet/raw/state-512.json.gz: OK
+devnet/spec.json: OK
+devnet/state-0.bin: OK
+devnet/state-1.bin: OK
+devnet/state-2.bin: OK
+devnet/update-0.bin: OK
+devnet/update-0.json: OK
+devnet/update-1.bin: OK
+devnet/update-1.json: OK
+devnet/verification-0.json: OK
+devnet/verification-1.json: OK
+mpt-vectors.json: OK
+wrong-slot-proof.json: OK
+PROVENANCE.json: OK
+across/LICENSE: OK
+across/MerkleLib.sol: OK
+across/SpokePool.sol: OK
+dln/DlnDestination.sol: OK
+dln/DlnOrderLib.sol: OK
+dln/DlnSource.sol: OK
+dln/LICENSE: OK
+Real finalized devnet bootstrap captured 0x498ba839213a617aee951e3930f47c01c4b51ec74b9907b67b478a0130017f32
+{
+  "comparator": "trie3.1.0 HexaryTrie.get_from_proof",
+  "nativeChecks": 3602,
+  "validVectors": [
+    {
+      "name": "empty-storage",
+      "nodes": 0,
+      "bytes": 114,
+      "present": false
+    },
+    {
+      "name": "included-single",
+      "nodes": 1,
+      "bytes": 152,
+      "present": true
+    },
+    {
+      "name": "leaf-divergence",
+      "nodes": 1,
+      "bytes": 152,
+      "present": false
+    },
+    {
+      "name": "included-branch",
+      "nodes": 3,
+      "bytes": 706,
+      "present": true
+    },
+    {
+      "name": "absent-branch",
+      "nodes": 2,
+      "bytes": 669,
+      "present": false
+    }
+  ],
+  "rawFixedKeyCases": [
+    {
+      "name": "inline-extension",
+      "nodes": 2,
+      "bytes": 84,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "inline-inclusion",
+      "nodes": 3,
+      "bytes": 89,
+      "present": true,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "extension-divergence",
+      "nodes": 1,
+      "bytes": 60,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "branch-empty",
+      "nodes": 1,
+      "bytes": 87,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    }
+  ],
+  "missingAccountRefundRejected": true,
+  "malformedAuthenticatedNodesRejected": 3,
+  "allTruncationsAndSingleBitMutationsRejected": true,
+  "scope": "Parser tests only; generated roots are NOT consensus fixtures"
+}
+{
+  "actualCapturedUpdates": [
+    {
+      "index": 0,
+      "participants": 512,
+      "finalizedSlot": 3040
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "finalizedSlot": 3072
+    }
+  ],
+  "rawStateRootsVerified": 71,
+  "rawBodyRootsChecked": 103,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replay-private-PoS-bootstrap 531326 1649
+replay-private-PoS-certify-0 17424406 25590
+replay-USER-CKB-FUND-filled 1637091 1098
+replay-USER-CKB-FUND-unfilled 1645292 1098
+replay-private-PoS-update-0 60832914 3530
+replay-MAKER-REIMBURSEMENT 1038250 2503
+replay-private-PoS-update-1 60831584 3530
+replay-USER-INDEPENDENT-EMPTY-SLOT-REFUND 973118 2347
+defensive-funding-missing-account 1641772 1098
+defensive-funding-wrong-code-hash 1666537 1098
+defensive-funding-alternate-Ethereum-chain 1653008 1098
+defensive-funding-alternate-genesis 1642798 1098
+defensive-funding-alternate-registry 1639106 1098
+defensive-funding-invalid-deadline 1672577 1098
+defensive-funding-deadline-equality 1647506 1098
+defensive-funding-future-trust-version 1664839 1098
+defensive-funding-wrong-funding-identity 1664859 1098
+defensive-forged-root-publication-control 1078 524
+{
+  "run": "offline-final",
+  "committedTransactions": 18,
+  "nativeRejections": 50,
+  "feesShannons": 18000000,
+  "transactions": [
+    {
+      "name": "replay-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replay-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replay-USER-CKB-FUND-filled",
+      "cycles": 1637091,
+      "bytes": 1098
+    },
+    {
+      "name": "replay-USER-CKB-FUND-unfilled",
+      "cycles": 1645292,
+      "bytes": 1098
+    },
+    {
+      "name": "replay-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-MAKER-REIMBURSEMENT",
+      "cycles": 1038250,
+      "bytes": 2503
+    },
+    {
+      "name": "replay-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-USER-INDEPENDENT-EMPTY-SLOT-REFUND",
+      "cycles": 973118,
+      "bytes": 2347
+    },
+    {
+      "name": "defensive-funding-missing-account",
+      "cycles": 1641772,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-wrong-code-hash",
+      "cycles": 1666537,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-Ethereum-chain",
+      "cycles": 1653008,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-genesis",
+      "cycles": 1642798,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-registry",
+      "cycles": 1639106,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-invalid-deadline",
+      "cycles": 1672577,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-deadline-equality",
+      "cycles": 1647506,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-future-trust-version",
+      "cycles": 1664839,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-wrong-funding-identity",
+      "cycles": 1664859,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-forged-root-publication-control",
+      "cycles": 1078,
+      "bytes": 524
+    }
+  ],
+  "swapSettlements": [],
+  "delivery": null,
+  "user": null,
+  "costs": null,
+  "reproduction": {
+    "capturedTransactions": 8,
+    "capturedNegativeCases": 38,
+    "allTransactions": 18,
+    "allNegativeCases": 50,
+    "identicalHashesAndCycles": true,
+    "noEthereumOrDockerAccess": true
+  }
+}

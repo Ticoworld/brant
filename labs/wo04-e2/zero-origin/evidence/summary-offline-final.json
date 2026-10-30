@@ -1,0 +1,110 @@
+{
+  "run": "offline-final",
+  "committedTransactions": 18,
+  "nativeRejections": 50,
+  "feesShannons": 18000000,
+  "transactions": [
+    {
+      "name": "replay-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replay-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replay-USER-CKB-FUND-filled",
+      "cycles": 1637091,
+      "bytes": 1098
+    },
+    {
+      "name": "replay-USER-CKB-FUND-unfilled",
+      "cycles": 1645292,
+      "bytes": 1098
+    },
+    {
+      "name": "replay-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-MAKER-REIMBURSEMENT",
+      "cycles": 1038250,
+      "bytes": 2503
+    },
+    {
+      "name": "replay-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-USER-INDEPENDENT-EMPTY-SLOT-REFUND",
+      "cycles": 973118,
+      "bytes": 2347
+    },
+    {
+      "name": "defensive-funding-missing-account",
+      "cycles": 1641772,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-wrong-code-hash",
+      "cycles": 1666537,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-Ethereum-chain",
+      "cycles": 1653008,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-genesis",
+      "cycles": 1642798,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-alternate-registry",
+      "cycles": 1639106,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-invalid-deadline",
+      "cycles": 1672577,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-deadline-equality",
+      "cycles": 1647506,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-future-trust-version",
+      "cycles": 1664839,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-funding-wrong-funding-identity",
+      "cycles": 1664859,
+      "bytes": 1098
+    },
+    {
+      "name": "defensive-forged-root-publication-control",
+      "cycles": 1078,
+      "bytes": 524
+    }
+  ],
+  "swapSettlements": [],
+  "delivery": null,
+  "user": null,
+  "costs": null,
+  "reproduction": {
+    "capturedTransactions": 8,
+    "capturedNegativeCases": 38,
+    "allTransactions": 18,
+    "allNegativeCases": 50,
+    "identicalHashesAndCycles": true,
+    "noEthereumOrDockerAccess": true
+  }
+}

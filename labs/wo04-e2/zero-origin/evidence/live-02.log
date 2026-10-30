@@ -1,0 +1,34 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+private-PoS-bootstrap 531326 1649
+private-PoS-certify-0 17424406 25590
+EVM deploy-ControlledUSDC 642
+EVM deploy-OutcomesV2 643
+EVM maker-amortizable-approval 644
+EVM token-test-mode-1 645
+EVM token-test-mode-2 647
+EVM token-test-mode-3 649
+EVM token-test-mode-6 651
+EVM no-return-token-mode 653
+EVM no-return-valid-fill 654
+EVM configure-reentrancy 655
+EVM outer-fill-reentrancy-guard 656
+EVM restore-standard-USDC 657
+USER-CKB-FUND-filled 1637091 1098
+USER-CKB-FUND-unfilled 1645292 1098
+EVM MAKER-REAL-USDC-DELIVERY 658
+Finality pending 0 0 AssertionError: trade terminal states not finalized yet
+Finality pending 0 10 AssertionError: trade terminal states not finalized yet
+Finality pending 0 20 AssertionError: trade terminal states not finalized yet
+Finality pending 0 30 AssertionError: trade terminal states not finalized yet
+Finality pending 0 40 AssertionError: trade terminal states not finalized yet
+Finality pending 0 50 AssertionError: trade terminal states not finalized yet
+Finality pending 0 60 AssertionError: trade terminal states not finalized yet
+Real full-predicate update verified 512 3040
+
+private-PoS-update-0 60832914 3530
+MAKER-REIMBURSEMENT 1038250 2503
+Finality pending 1 0 AssertionError: wait for newer real finality
+Real full-predicate update verified 512 3072
+
+private-PoS-update-1 60831584 3530
+USER-INDEPENDENT-EMPTY-SLOT-REFUND 973118 2347

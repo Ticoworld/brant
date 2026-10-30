@@ -301,3 +301,52 @@ fresh mainnet checkpoint acquisition, general participation, economically secure
 validator decentralization or a profitable business. Those boundaries and the
 remaining proof-availability, reorg, funding-lock/audit and capacity obligations
 are explicit in the settlement report.
+
+## WO04-E2D-P0: zero-user-Ethereum-transaction delivery and no-expiry refund — VERIFIED
+
+New isolated lab: `labs/wo04-e2/zero-origin/`. Detailed results and exact costs:
+[`E2_ZERO_ORIGIN_RESULT.md`](E2_ZERO_ORIGIN_RESULT.md). E2C remains the original
+fallback; all 745 prior tracked lab files from `aa78dac9` remain byte-identical.
+
+Two real user-secp-signed native orders executed on private PoS /isolated CKB.
+The maker delivered 100 controlled-USDC units without a user Ethereum `open`,
+then recovered the original 1,000 CKB. The unfilled order returned its original
+1,000 CKB using actual storage non-inclusion and strictly post-deadline finalized
+execution time, with no EVM transaction for that order, including no `expire`.
+Customer Ethereum nonce stayed 0; user Ethereum transactions/gas were 0.
+
+The immutable deterministic order binds funding identity, both chain identities,
+registry, contract, maker/reimbursement address, token/amount, recipient and
+deadline. Present account and exact code hash are required even for refund.
+Errors, missing accounts and malformed/truncated proofs never become absence.
+Independent py-trie comparison passed 3,602 native parser calls, including the
+selected vectors' truncations/bit mutations and inline-node representation cases.
+
+The unchanged 104-byte E2 publisher is paired with a 720-byte SSZ header/time
+proof bound to its exact finalized beacon identity, execution root, block/hash
+and branch. A later genuine header cannot retime an older root, even with equal
+execution state roots. Actual time 1793383513 failed against deadline 1793383582;
+time 1793383609 allowed refund. Equality was separately rejected natively.
+
+Core native execution: 8 committed transactions /38 rejected cases. Final
+independent reproduction passed 18 native transactions /50 rejected cases,
+reproducing all 8 original hashes and cycle counts, plus missing-account,
+wrong-code/chain/slot/funding, exact-deadline and forged-root controls. It checked
+71 actual beacon states, 103 block bodies, and both real 512-participant BLS /
+finality/execution updates, with invalid reference variants. Contract runtime
+with constructor immutables independently matched the pinned compiler artifact.
+
+Maker reimbursement: 1,038,250 cycles /2,503 bytes; empty-slot refund: 973,118 /
+2,347. User funding: 1,637,091 and 1,645,292 cycles with standard secp locks.
+Both root updates remain near 60.83 million, below unchanged 70-million policy.
+Actual maker fill: 85,534 EVM gas. Customer delivery 2.538 seconds; maker
+reimbursement 275.684 seconds; refund 372.787 seconds in the private 3-second-slot
+run. Core EVM receipts including setup fall from E2C's 7 to 4; user opens and the
+expiry actor are removed. Fixed test fees, capacity and exclusions are in report.
+
+Pinned DLN and Across public source access succeeded; relevant source-level
+lessons and licenses are saved in `DESIGN_LESSONS.md` /`references/`. EVM-side
+CKB funding/confirmation authentication remains UNIMPLEMENTED: makers must check
+live funded CKB independently; unit unfunded EVM fills are explicitly not swaps.
+No reverse trading, staged >2-missing-signer implementation, public deployment,
+real funds or PR merge. Private clients stopped after evidence capture.

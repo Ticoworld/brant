@@ -1,0 +1,11 @@
+[
+  [ 'missing-account', 70 ],
+  [ 'wrong-code-hash', 71 ],
+  [ 'alternate-Ethereum-chain', 19 ],
+  [ 'alternate-genesis', 103 ],
+  [ 'alternate-registry', 101 ],
+  [ 'invalid-deadline', 13 ],
+  [ 'deadline-equality', 21 ],
+  [ 'future-trust-version', 101 ],
+  [ 'wrong-funding-identity', 16 ]
+]

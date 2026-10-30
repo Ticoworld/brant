@@ -1,0 +1,19 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replay-private-PoS-bootstrap 531326 1649
+replay-private-PoS-certify-0 17424406 25590
+replay-USER-CKB-FUND-filled 1637091 1098
+replay-USER-CKB-FUND-unfilled 1645292 1098
+replay-private-PoS-update-0 60832914 3530
+replay-MAKER-REIMBURSEMENT 1038250 2503
+replay-private-PoS-update-1 60831584 3530
+replay-USER-INDEPENDENT-EMPTY-SLOT-REFUND 973118 2347
+defensive-funding-missing-account 1641772 1098
+defensive-funding-wrong-code-hash 1666537 1098
+defensive-funding-alternate-Ethereum-chain 1653008 1098
+defensive-funding-alternate-genesis 1642798 1098
+defensive-funding-alternate-registry 1639106 1098
+defensive-funding-invalid-deadline 1672577 1098
+defensive-funding-deadline-equality 1647506 1098
+defensive-funding-future-trust-version 1664839 1098
+defensive-funding-wrong-funding-identity 1664859 1098
+defensive-forged-root-publication-control 1078 524
