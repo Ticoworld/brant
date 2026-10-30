@@ -14,6 +14,8 @@ All three simultaneous-pairing transactions were actually estimated, submitted a
 
 Code cells for the optimized 512, 511 and 510 builds are respectively 131,744, 131,752 and 131,752 bytes. Under the exact untyped empty-args lock shape used in the lab, derived minimum code-cell capacities are 131,785 / 131,793 / 131,793 CKB. The 104-byte root-data output occupies 145 bytes, hence 145 CKB minimum capacity; actual node fixtures deliberately allocate much more from disposable genesis cells. Witness bytes are transaction bytes, not retained cell storage. Code deployment fees and full client-state capacity economics are not measured.
 
+A separate capacity-boundary run (`src/capacity_node.cjs 510`) then committed the 510/512 predicate with a **145-CKB** root output and a **131,793-CKB** genesis verifier-code cell. Reducing the root output to **144 CKB** failed node verification with `InsufficientCellCapacity(Outputs[0])`. A separate change output conserved the disposable input capacity; this version was 2,868 transaction bytes. This tests the root storage boundary; no below-minimum code-cell deployment transaction was tested. Full data/error records are in evidence/capacity-510.json.
+
 ## Profiling and affine encoding
 
 `contracts/partial.c` is new code; `../contracts/update.c` is untouched. Profiling uses `ckb_current_cycles()` around each stage and emits deltas at the end. Instrumented totals include measurement/debug overhead; production totals in the table use noninstrumented builds.

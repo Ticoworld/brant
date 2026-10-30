@@ -18,4 +18,5 @@ node src/mock.cjs
 ../.venv/bin/python src/run.py
 for n in 512 511 510; do node src/devnet.cjs "$n"; done
 node src/certificate_node.cjs
+node src/capacity_node.cjs 510
 ../.venv/bin/python src/summarize.py
