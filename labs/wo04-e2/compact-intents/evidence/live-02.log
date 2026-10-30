@@ -1,0 +1,27 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+private-PoS-bootstrap 531326 1649
+private-PoS-certify-0 17424406 25590
+node-capacity-exact-32-byte-minimum 1625542 472
+node-capacity-exact-20-byte-minimum 1651742 460
+EVM deploy-ControlledUSDC 1112
+EVM deploy-OutcomesV3 1113
+EVM maker-amortizable-approval 1114
+USER-FUND-filled-A-identical-B 1624886 593
+USER-FUND-filled-D 1630640 472
+USER-FUND-unfilled-C 1663467 472
+EVM MAKER-DELIVERY-filled-A 1116
+EVM MAKER-DELIVERY-filled-D 1117
+Finality pending 0 0 AssertionError: trade terminal states not finalized yet
+Finality pending 0 10 AssertionError: trade terminal states not finalized yet
+Finality pending 0 20 AssertionError: trade terminal states not finalized yet
+Finality pending 0 30 AssertionError: trade terminal states not finalized yet
+Finality pending 0 40 AssertionError: trade terminal states not finalized yet
+Finality pending 0 50 AssertionError: trade terminal states not finalized yet
+Error: Traceback (most recent call last):
+  File "/workspace/trade/labs/wo04-e2/compact-intents/devnet/prepare.py", line 75, in <module>
+    assert len(missing)<=2,'actual participation outside bounded range'
+           ^^^^^^^^^^^^^^^
+AssertionError: actual participation outside bounded range
+
+    at obtainUpdate (/workspace/trade/labs/wo04-e2/compact-intents/src/run.cjs:145:57)
+    at async /workspace/trade/labs/wo04-e2/compact-intents/src/run.cjs:202:103

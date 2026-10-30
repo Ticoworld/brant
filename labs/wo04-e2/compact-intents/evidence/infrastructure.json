@@ -1,0 +1,16 @@
+{
+  "baseline": "8eae0f158095bfed327b7b6d3cbab5aa95aadefc",
+  "images": {
+    "genesis": "ethpandaops/ethereum-genesis-generator@sha256:b65d64732d3d7e9ba42313522b882033fab0ac75fe4a385671de3acfa4d09915",
+    "execution": "ethereum/client-go@sha256:f7923f04a33f23e6be427ec527912ff9b7cc49ba9e2290885e3bb83f0c142dba",
+    "consensus": "sigp/lighthouse@sha256:7954b6c3bb0b2e1ec2ba57897c977af8e640c54e648a21e200b70a85d9a88f2f"
+  },
+  "hardware": {
+    "cpus": 5,
+    "memoryMiB": 34087,
+    "initialFreeDiskGiB": 29
+  },
+  "network": "Docker --internal; no discovery; zero peers; only own loopback/bridge APIs. Explicit NO_PROXY for internal services. No public Ethereum transactions.",
+  "scope": "P1A continued own isolated PoS clients, separate native chains, no historical files changed",
+  "checkpoint": "0x5b186b0d2f63a9d8bb4a3bff3f579b6636b68bc76e40892336d48bae4de381f6"
+}

@@ -1,0 +1,10 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replay-private-PoS-bootstrap 531326 1649
+replay-private-PoS-certify-0 17424406 25590
+replay-node-capacity-exact-32-byte-minimum 1645387 472
+replay-node-capacity-exact-20-byte-minimum 1652569 460
+replay-USER-FUND-filled-A-identical-B 1626285 593
+replay-first-attempt-update-0 60832914 3530
+replay-first-attempt-update-1 60831584 3530
+replay-USER-100-CKB-REFUND-early-0 1011653 2765
+replay-USER-100-CKB-REFUND-early-1 1011653 2765

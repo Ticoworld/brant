@@ -1,0 +1,25 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+private-PoS-bootstrap 531326 1649
+private-PoS-certify-0 17424406 25590
+node-capacity-exact-32-byte-minimum 1645387 472
+node-capacity-exact-20-byte-minimum 1652569 460
+EVM deploy-ControlledUSDC 1088
+EVM deploy-OutcomesV3 1089
+EVM maker-amortizable-approval 1090
+USER-FUND-filled-A-identical-B 1626285 593
+TypeError: invalid BytesLike value (argument="value", value="0x0", code=INVALID_ARGUMENT, version=6.15.0)
+    at makeError (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/errors.js:130:21)
+    at assert (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/errors.js:157:15)
+    at assertArgument (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/errors.js:169:5)
+    at _getBytes (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/data.js:27:36)
+    at getBytes (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/data.js:37:12)
+    at zeroPad (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/data.js:140:19)
+    at Object.zeroPadValue (/workspace/trade/labs/wo04-e1/node_modules/ethers/lib.commonjs/utils/data.js:167:12)
+    at fullId (/workspace/trade/labs/wo04-e2/compact-intents/src/run.cjs:111:127)
+    at fundBatch (/workspace/trade/labs/wo04-e2/compact-intents/src/run.cjs:123:42)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  code: 'INVALID_ARGUMENT',
+  argument: 'value',
+  value: '0x0',
+  shortMessage: 'invalid BytesLike value'
+}

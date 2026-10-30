@@ -1,0 +1,96 @@
+{
+  "order": {
+    "ethGenesis": "0xe38f0731f47307d936c408de9d38a0706247d1652b2f712a5b2a4e85fc54dff1",
+    "registry": "0x671e2c080b66afa1409386a01b54c3d6e4812d76add392b8cd797f44cdc9c4e1",
+    "ckbGenesis": "0xab9b88e29d05fa02bc5f8bf96a43a10e7c9bded27ded2df884155c62f0cf134b",
+    "fundingId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "ckbMaker": "0x97743fa0df293fb01498944b2b05d7afebaf3d4fa5544d00e6abceafcac1e12d",
+    "ckbRefund": "0xaed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d",
+    "asset": "0x6653b7e3cE71Ccd6552205a0d574850670304800",
+    "amount": "100000000",
+    "recipient": "0x01c25Fd98a475aae8DFb65012F6A4D8ff1092D19",
+    "maker": "0xfCd9569Ab54097047D3b512510674826aaf444d6",
+    "deadline": 1793388796,
+    "ckbAmount": "10000000000"
+  },
+  "terms": "0x3a94674fb493798c900854a8e3a5be7089cce710e3f6a874f64ba7568093e9ef00000000000000000000000000000000000000000000000000000000000005390000000000000000000000000248f57f85deea329b1659c2b403e0d2f5da6048e38f0731f47307d936c408de9d38a0706247d1652b2f712a5b2a4e85fc54dff1671e2c080b66afa1409386a01b54c3d6e4812d76add392b8cd797f44cdc9c4e1ab9b88e29d05fa02bc5f8bf96a43a10e7c9bded27ded2df884155c62f0cf134b000000000000000000000000000000000000000000000000000000000000000097743fa0df293fb01498944b2b05d7afebaf3d4fa5544d00e6abceafcac1e12daed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d0000000000000000000000006653b7e3ce71ccd6552205a0d5748506703048000000000000000000000000000000000000000000000000000000000005f5e10000000000000000000000000001c25fd98a475aae8dfb65012f6a4d8ff1092d19000000000000000000000000fcd9569ab54097047d3b512510674826aaf444d6000000000000000000000000000000000000000000000000000000006ae4f0fc00000000000000000000000000000000000000000000000000000002540be400ec9087277e46e51f8256a193be226fc8b335bf59a727f40a492371182fec40dd01000000000000005a0400000000000040420f0000000000",
+  "commitment": "0x815f7cd3008bae98d6b0d7eac2491de852281b359e895ab536d02a0838d592f2",
+  "signedFunding": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x40bd4b0c0c73973c9ceaa1648a901e1f4200b7fb4ee5857887f5260338d02e9a",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      }
+    ],
+    "headerDeps": [],
+    "inputs": [
+      {
+        "since": "0x0",
+        "previousOutput": {
+          "txHash": "0xb73cce3104f268d48f7716a7db6ff32e9df95479b73570d10e5b7f9dc2ffdf8b",
+          "index": "0x1"
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x2541b2640",
+        "lock": {
+          "codeHash": "0xf9181ef8888137c080adfdb0a52ed0347d0493466ec83fac18ce409fa2e1f4ec",
+          "hashType": "data2",
+          "args": "0x815f7cd3008bae98d6b0d7eac2491de852281b359e895ab536d02a0838d592f2"
+        },
+        "type": null
+      },
+      {
+        "capacity": "0x2541b2640",
+        "lock": {
+          "codeHash": "0xf9181ef8888137c080adfdb0a52ed0347d0493466ec83fac18ce409fa2e1f4ec",
+          "hashType": "data2",
+          "args": "0x815f7cd3008bae98d6b0d7eac2491de852281b359e895ab536d02a0838d592f2"
+        },
+        "type": null
+      },
+      {
+        "capacity": "0x5aeb496266c0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x933f510da1273d5d944d8eb487bdc66aeddc0972"
+        },
+        "type": null
+      }
+    ],
+    "outputsData": [
+      "0x",
+      "0x",
+      "0x"
+    ],
+    "witnesses": [
+      "0x55000000100000005500000055000000410000001987010de3774e23f0b4137be5d1c91e6d3cd24a1d2d93faaf5e6ee5b478d57e3ae7119a452113ff86e431dd47a314a998ca374ef79df8d7bbd07381463a789f00"
+    ]
+  },
+  "expectedHash": "0xae6f16eef7e4a14d904eb3e56ab97196916fa755a9308f726278c333e06d610e",
+  "outputs": [
+    {
+      "label": "filled-A",
+      "point": {
+        "txHash": "0xae6f16eef7e4a14d904eb3e56ab97196916fa755a9308f726278c333e06d610e",
+        "index": "0x0"
+      },
+      "id": "0x9da6b6c46e3e739e8273a409df0627bfc72904f94335b33e4dba0d244452e7ab"
+    },
+    {
+      "label": "identical-B",
+      "point": {
+        "txHash": "0xae6f16eef7e4a14d904eb3e56ab97196916fa755a9308f726278c333e06d610e",
+        "index": "0x1"
+      },
+      "id": "0x646db2a05eb45f3d16d964a908a3ea36ccc76852e4880636db04189b03415fe9"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "scope": "early development cells recovered and refunded; not the main latency sample",
+  "rawTraceLatency": "The early helper used fundedAt=0 because original post-funding metadata was absent; raw latencyMs is not an elapsed-trade measurement and is excluded from costs/report",
+  "principalTransfersVerified": 2,
+  "principalCKBEach": 100,
+  "preimageRecovery": "Exact SHA256 match from bounded known creation-time metadata, not arbitrary hash recovery"
+}

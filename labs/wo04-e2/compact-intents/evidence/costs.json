@@ -1,0 +1,167 @@
+{
+  "principalCKB": 100,
+  "feeReserveCKB": 0.01,
+  "actualIntentCapacityCKB": 100.01,
+  "occupied32CKB": 73,
+  "occupied20CapacityOnlyCKB": 61,
+  "oldP0OccupiedCKB": 642,
+  "occupiedSavingCKB": 569,
+  "defaultCommitmentBits": 256,
+  "experimentalCommitmentBits": 160,
+  "birthdayCollisionWorkBits": {
+    "32-byte": 128,
+    "20-byte": 80
+  },
+  "tradeBytesAndCycles": [
+    {
+      "name": "private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "node-capacity-exact-32-byte-minimum",
+      "cycles": 1625542,
+      "bytes": 472
+    },
+    {
+      "name": "node-capacity-exact-20-byte-minimum",
+      "cycles": 1651742,
+      "bytes": 460
+    },
+    {
+      "name": "USER-FUND-filled-A-identical-B",
+      "cycles": 1624886,
+      "bytes": 593
+    },
+    {
+      "name": "USER-FUND-filled-D",
+      "cycles": 1630640,
+      "bytes": 472
+    },
+    {
+      "name": "USER-FUND-unfilled-C",
+      "cycles": 1663467,
+      "bytes": 472
+    },
+    {
+      "name": "private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "MAKER-100-CKB-filled-A",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "MAKER-100-CKB-filled-D",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "USER-100-CKB-REFUND-identical-B",
+      "cycles": 1011230,
+      "bytes": 2830
+    },
+    {
+      "name": "USER-100-CKB-REFUND-unfilled-C",
+      "cycles": 1011230,
+      "bytes": 2830
+    }
+  ],
+  "mainNativeTransactions": 13,
+  "mainNativeFeesShannons": 13000000,
+  "mainEthereumReceipts": 5,
+  "mainEthereumGas": 1673880,
+  "mainEthereumFeeWei": 1673880011717160,
+  "gasPerReceipt": [
+    {
+      "name": "deploy-ControlledUSDC",
+      "gas": 724521,
+      "feeWei": "724521005071647"
+    },
+    {
+      "name": "deploy-OutcomesV3",
+      "gas": 715458,
+      "feeWei": "715458005008206"
+    },
+    {
+      "name": "maker-amortizable-approval",
+      "gas": 44339,
+      "feeWei": "44339000310373"
+    },
+    {
+      "name": "MAKER-DELIVERY-filled-A",
+      "gas": 103325,
+      "feeWei": "103325000723275"
+    },
+    {
+      "name": "MAKER-DELIVERY-filled-D",
+      "gas": 86237,
+      "feeWei": "86237000603659"
+    }
+  ],
+  "userEthereumTransactions": 0,
+  "recipientMinimumCKB": 61,
+  "retainedProtocolStateCertificateRootsCKB": 4000,
+  "capacityOnlyInertProbesPerLiveChainCKB": 134,
+  "codeMinimumCKB": {
+    "bundle": 148241,
+    "consumer32": 13321,
+    "consumer20": 13537
+  },
+  "codeSuppliedInGenesis": true,
+  "productionDeploymentFeesMeasured": false,
+  "allLiveAttemptsIncludingRecoveredEarlyCells": {
+    "nativeTransactions": 22,
+    "nativeFeesShannons": 22000000,
+    "ethereumReceipts": 8,
+    "ethereumGas": 3158198,
+    "ethereumFeesWei": 3158198022107386
+  },
+  "latencies": {
+    "deliveries": [
+      {
+        "label": "filled-A",
+        "amount": "100000000",
+        "fundingToDeliveryMs": 5339,
+        "submitToDeliveryMs": 3543
+      },
+      {
+        "label": "filled-D",
+        "amount": "50000000",
+        "fundingToDeliveryMs": 7223,
+        "submitToDeliveryMs": 3117
+      }
+    ],
+    "settlements": [
+      {
+        "label": "filled-A",
+        "latencyMs": 324096
+      },
+      {
+        "label": "filled-D",
+        "latencyMs": 323414
+      },
+      {
+        "label": "identical-B",
+        "latencyMs": 440094
+      },
+      {
+        "label": "unfilled-C",
+        "latencyMs": 438958
+      }
+    ]
+  },
+  "caveat": "Controlled private3-second-slot run with a missing-signer interruption/recovery, fixed test fees and unpriced controlled tokens; not public-chain gas or profitability evidence"
+}

@@ -350,3 +350,51 @@ CKB funding/confirmation authentication remains UNIMPLEMENTED: makers must check
 live funded CKB independently; unit unfunded EVM fills are explicitly not swaps.
 No reverse trading, staged >2-missing-signer implementation, public deployment,
 real funds or PR merge. Private clients stopped after evidence capture.
+
+## WO04-E2D-P1A:73-CKB occupied intents and unique 100-CKB settlement — VERIFIED
+
+New isolated lab: `labs/wo04-e2/compact-intents/`; detailed result:
+[`E2_COMPACT_INTENT_RESULT.md`](E2_COMPACT_INTENT_RESULT.md). Prior P0/E2C/E2B
+source and evidence remain byte-identical at the starting `b6f3e688` checkpoint.
+
+Actual node tests accepted a32-byte commitment/no-data/no-type cell at73 CKB and
+rejected 72.99999999. Actual orders held 100.01 CKB and settled exactly 100, to
+standard native secp recipients. Occupancy falls from 642 to73 CKB, saving 569;
+73 is included in principal capacity, not charged on top. A separate weaker
+20-byte capacity-only experiment accepted 61 and rejected one shannon below; it
+is not adopted for swaps. Its 12-CKB saving does not justify lower collision margin.
+
+The base commitment has no funding transaction hash/index. Complete canonical
+terms are supplied in the spending witness, with exact hash verification. After
+funding construction, Ethereum's full ID adds the real OutPoint. Native code
+loads that OutPoint from the consumed input and derives its own ID/key. Two
+identical-base outputs 0/1 of the same transaction had distinct IDs. One fill
+could not pay its twin, even with a rebound witness point. The twin later
+refunded via real finalized non-inclusion at index 1.
+
+Two same-group inputs with one proof and two different groups with two valid
+fills could not claim one payout. Global input count must be exactly one; output
+count, principal and recipient are exact. No multi-input settlement or sponsor
+input is supported. Replaced intents, mutated terms/principal/fee/recipients,
+mismatched points, replay and duplicate settlement were rejected. Two maker
+settlements and two unfilled refunds each transferred 100 CKB.
+
+Main live run:13 native transactions /89 rejection cases. Final independent
+release replay:13 identical transaction hashes/cycle counts and 90 rejections,
+including an exact-one-witness same-group attack. Native maker settlement:
+1,044,297 cycles /2,901 bytes; refund:1,011,230 /2,830. Signed single funding 472
+bytes; identical-pair funding 593. Root updates remain near 60.83 million cycles.
+A/D Ethereum fills used 103,325 /86,237 gas; no customer Ethereum transactions.
+
+A real 342/512 update exceeded the preserved missing-signer range and failed
+closed. Original funded cells/deliveries resumed with real 512-participant updates;
+no staged BLS was added. Earlier driver-error cells also refunded via genuine
+empty-storage-trie proofs and independently replayed their original chain.
+Recovery packages must be retained; release source writes/fsyncs before broadcast.
+
+`P1_RUN_NAME=final-preserved bash labs/wo04-e2/compact-intents/src/reproduce.sh`
+passed using archived genuine-consensus fixtures without Ethereum/Docker/network.
+Public gas, liquidity, quote profitability, fresh mainnet checkpoints, modern
+forks/wider participation, proof/term availability and reorg policies remain.
+Ethereum still does not verify CKB funding itself. No reverse swap, rollup,
+large settlement batch, public deployment, real assets or PR merge.

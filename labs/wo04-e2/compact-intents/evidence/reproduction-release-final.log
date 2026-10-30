@@ -1,0 +1,424 @@
+devnet/bootstrap.bin: OK
+devnet/bootstrap.json: OK
+devnet/ckb-dev.toml: OK
+devnet/committee-0.bin: OK
+devnet/configuration.json: OK
+devnet/genesis.json: OK
+devnet/raw/block-3328.json.gz: OK
+devnet/raw/block-4672.json.gz: OK
+devnet/raw/block-4704.json.gz: OK
+devnet/raw/block-4736.json.gz: OK
+devnet/raw/block-4763.json.gz: OK
+devnet/raw/block-4764.json.gz: OK
+devnet/raw/block-4765.json.gz: OK
+devnet/raw/block-4766.json.gz: OK
+devnet/raw/block-4767.json.gz: OK
+devnet/raw/block-4768.json.gz: OK
+devnet/raw/block-4769.json.gz: OK
+devnet/raw/block-4770.json.gz: OK
+devnet/raw/block-4771.json.gz: OK
+devnet/raw/block-4772.json.gz: OK
+devnet/raw/block-4773.json.gz: OK
+devnet/raw/block-4774.json.gz: OK
+devnet/raw/block-4775.json.gz: OK
+devnet/raw/block-4776.json.gz: OK
+devnet/raw/block-4777.json.gz: OK
+devnet/raw/block-4778.json.gz: OK
+devnet/raw/block-4779.json.gz: OK
+devnet/raw/block-4780.json.gz: OK
+devnet/raw/block-4781.json.gz: OK
+devnet/raw/block-4782.json.gz: OK
+devnet/raw/block-4783.json.gz: OK
+devnet/raw/block-4784.json.gz: OK
+devnet/raw/block-4785.json.gz: OK
+devnet/raw/block-4786.json.gz: OK
+devnet/raw/block-4787.json.gz: OK
+devnet/raw/block-4788.json.gz: OK
+devnet/raw/block-4789.json.gz: OK
+devnet/raw/block-4790.json.gz: OK
+devnet/raw/block-4791.json.gz: OK
+devnet/raw/block-4792.json.gz: OK
+devnet/raw/block-4793.json.gz: OK
+devnet/raw/block-4794.json.gz: OK
+devnet/raw/block-4795.json.gz: OK
+devnet/raw/block-4796.json.gz: OK
+devnet/raw/block-4797.json.gz: OK
+devnet/raw/block-4798.json.gz: OK
+devnet/raw/block-4799.json.gz: OK
+devnet/raw/block-4800.json.gz: OK
+devnet/raw/block-4801.json.gz: OK
+devnet/raw/block-4802.json.gz: OK
+devnet/raw/block-4803.json.gz: OK
+devnet/raw/block-4804.json.gz: OK
+devnet/raw/block-4805.json.gz: OK
+devnet/raw/block-4806.json.gz: OK
+devnet/raw/block-4807.json.gz: OK
+devnet/raw/block-4808.json.gz: OK
+devnet/raw/block-4809.json.gz: OK
+devnet/raw/block-4810.json.gz: OK
+devnet/raw/block-4811.json.gz: OK
+devnet/raw/block-4812.json.gz: OK
+devnet/raw/block-4813.json.gz: OK
+devnet/raw/block-4814.json.gz: OK
+devnet/raw/block-4815.json.gz: OK
+devnet/raw/block-4816.json.gz: OK
+devnet/raw/block-4817.json.gz: OK
+devnet/raw/block-4818.json.gz: OK
+devnet/raw/block-4819.json.gz: OK
+devnet/raw/block-4820.json.gz: OK
+devnet/raw/block-4821.json.gz: OK
+devnet/raw/block-4822.json.gz: OK
+devnet/raw/block-4823.json.gz: OK
+devnet/raw/block-4824.json.gz: OK
+devnet/raw/block-4825.json.gz: OK
+devnet/raw/block-4826.json.gz: OK
+devnet/raw/block-4827.json.gz: OK
+devnet/raw/block-4828.json.gz: OK
+devnet/raw/block-4829.json.gz: OK
+devnet/raw/block-4830.json.gz: OK
+devnet/raw/block-4831.json.gz: OK
+devnet/raw/block-4832.json.gz: OK
+devnet/raw/block-4833.json.gz: OK
+devnet/raw/block-4863.json.gz: OK
+devnet/raw/block-4864.json.gz: OK
+devnet/raw/block-4870.json.gz: OK
+devnet/raw/block-4871.json.gz: OK
+devnet/raw/block-4873.json.gz: OK
+devnet/raw/block-4874.json.gz: OK
+devnet/raw/block-4876.json.gz: OK
+devnet/raw/block-4877.json.gz: OK
+devnet/raw/block-4878.json.gz: OK
+devnet/raw/block-4879.json.gz: OK
+devnet/raw/block-4881.json.gz: OK
+devnet/raw/block-4882.json.gz: OK
+devnet/raw/block-4884.json.gz: OK
+devnet/raw/block-4885.json.gz: OK
+devnet/raw/block-4887.json.gz: OK
+devnet/raw/block-4888.json.gz: OK
+devnet/raw/block-4890.json.gz: OK
+devnet/raw/block-4891.json.gz: OK
+devnet/raw/block-4893.json.gz: OK
+devnet/raw/block-4894.json.gz: OK
+devnet/raw/block-4897.json.gz: OK
+devnet/raw/block-4898.json.gz: OK
+devnet/raw/state-3328.json.gz: OK
+devnet/raw/state-4763.json.gz: OK
+devnet/raw/state-4765.json.gz: OK
+devnet/raw/state-4766.json.gz: OK
+devnet/raw/state-4767.json.gz: OK
+devnet/raw/state-4769.json.gz: OK
+devnet/raw/state-4770.json.gz: OK
+devnet/raw/state-4771.json.gz: OK
+devnet/raw/state-4773.json.gz: OK
+devnet/raw/state-4774.json.gz: OK
+devnet/raw/state-4775.json.gz: OK
+devnet/raw/state-4776.json.gz: OK
+devnet/raw/state-4778.json.gz: OK
+devnet/raw/state-4779.json.gz: OK
+devnet/raw/state-4780.json.gz: OK
+devnet/raw/state-4782.json.gz: OK
+devnet/raw/state-4783.json.gz: OK
+devnet/raw/state-4784.json.gz: OK
+devnet/raw/state-4786.json.gz: OK
+devnet/raw/state-4787.json.gz: OK
+devnet/raw/state-4788.json.gz: OK
+devnet/raw/state-4789.json.gz: OK
+devnet/raw/state-4791.json.gz: OK
+devnet/raw/state-4792.json.gz: OK
+devnet/raw/state-4793.json.gz: OK
+devnet/raw/state-4795.json.gz: OK
+devnet/raw/state-4796.json.gz: OK
+devnet/raw/state-4797.json.gz: OK
+devnet/raw/state-4799.json.gz: OK
+devnet/raw/state-4800.json.gz: OK
+devnet/raw/state-4801.json.gz: OK
+devnet/raw/state-4803.json.gz: OK
+devnet/raw/state-4804.json.gz: OK
+devnet/raw/state-4806.json.gz: OK
+devnet/raw/state-4807.json.gz: OK
+devnet/raw/state-4808.json.gz: OK
+devnet/raw/state-4810.json.gz: OK
+devnet/raw/state-4811.json.gz: OK
+devnet/raw/state-4812.json.gz: OK
+devnet/raw/state-4814.json.gz: OK
+devnet/raw/state-4815.json.gz: OK
+devnet/raw/state-4816.json.gz: OK
+devnet/raw/state-4817.json.gz: OK
+devnet/raw/state-4819.json.gz: OK
+devnet/raw/state-4820.json.gz: OK
+devnet/raw/state-4821.json.gz: OK
+devnet/raw/state-4823.json.gz: OK
+devnet/raw/state-4824.json.gz: OK
+devnet/raw/state-4825.json.gz: OK
+devnet/raw/state-4827.json.gz: OK
+devnet/raw/state-4828.json.gz: OK
+devnet/raw/state-4829.json.gz: OK
+devnet/raw/state-4831.json.gz: OK
+devnet/raw/state-4832.json.gz: OK
+devnet/raw/state-4863.json.gz: OK
+devnet/raw/state-4870.json.gz: OK
+devnet/raw/state-4873.json.gz: OK
+devnet/raw/state-4876.json.gz: OK
+devnet/raw/state-4878.json.gz: OK
+devnet/raw/state-4881.json.gz: OK
+devnet/raw/state-4884.json.gz: OK
+devnet/raw/state-4887.json.gz: OK
+devnet/raw/state-4890.json.gz: OK
+devnet/raw/state-4893.json.gz: OK
+devnet/raw/state-4897.json.gz: OK
+devnet/spec.json: OK
+devnet/state-0.bin: OK
+devnet/state-1.bin: OK
+devnet/state-2.bin: OK
+devnet/update-0.bin: OK
+devnet/update-0.json: OK
+devnet/update-1.bin: OK
+devnet/update-1.json: OK
+devnet/verification-0.json: OK
+devnet/verification-1.json: OK
+mpt-vectors.json: OK
+recovery-filled-A-identical-B.json: OK
+recovery-filled-D.json: OK
+recovery-unfilled-C.json: OK
+Real finalized devnet bootstrap captured 0x5b186b0d2f63a9d8bb4a3bff3f579b6636b68bc76e40892336d48bae4de381f6
+Offline saved-data: Exact immutable deployed source and funded code hash verified
+{
+  "checkedActualEthereumAndNativeIds": [
+    {
+      "label": "filled-A",
+      "point": {
+        "txHash": "0xae6f16eef7e4a14d904eb3e56ab97196916fa755a9308f726278c333e06d610e",
+        "index": "0x0"
+      },
+      "id": "0x9da6b6c46e3e739e8273a409df0627bfc72904f94335b33e4dba0d244452e7ab"
+    },
+    {
+      "label": "identical-B",
+      "point": {
+        "txHash": "0xae6f16eef7e4a14d904eb3e56ab97196916fa755a9308f726278c333e06d610e",
+        "index": "0x1"
+      },
+      "id": "0x646db2a05eb45f3d16d964a908a3ea36ccc76852e4880636db04189b03415fe9"
+    },
+    {
+      "label": "filled-D",
+      "point": {
+        "txHash": "0x1ecb7a1c59d2a411d025490e5578afa1f55a79d5a44ce76f9349664ed0b93dbd",
+        "index": "0x0"
+      },
+      "id": "0x26c2bc5b2f685d96da0da9e8d5588c1894055fbbce47b7cc47d5472061b42e3e"
+    },
+    {
+      "label": "unfilled-C",
+      "point": {
+        "txHash": "0x6cd4521f8e1c9f9d21478aa0ea9ba5f981107949bc6aedd52932238bbed0145a",
+        "index": "0x0"
+      },
+      "id": "0x7b6a721c0d3f380698f263eae558e413d1f7c787a14825d3eda253a73a06834f"
+    }
+  ],
+  "indexBoundaryVectors": [
+    0,
+    1,
+    255,
+    256,
+    4294967295
+  ],
+  "nativeVsCanonicalABI": true,
+  "sameTxDistinctOutputIndexBinding": true,
+  "noFundingHashCircularity": "Base preimage contains no funding transaction hash/index; full identifier is derived only after raw funding transaction construction"
+}
+{
+  "comparator": "trie3.1.0 HexaryTrie.get_from_proof",
+  "nativeChecks": 3602,
+  "validVectors": [
+    {
+      "name": "empty-storage",
+      "nodes": 0,
+      "bytes": 114,
+      "present": false
+    },
+    {
+      "name": "included-single",
+      "nodes": 1,
+      "bytes": 152,
+      "present": true
+    },
+    {
+      "name": "leaf-divergence",
+      "nodes": 1,
+      "bytes": 152,
+      "present": false
+    },
+    {
+      "name": "included-branch",
+      "nodes": 3,
+      "bytes": 706,
+      "present": true
+    },
+    {
+      "name": "absent-branch",
+      "nodes": 2,
+      "bytes": 669,
+      "present": false
+    }
+  ],
+  "rawFixedKeyCases": [
+    {
+      "name": "inline-extension",
+      "nodes": 2,
+      "bytes": 84,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "inline-inclusion",
+      "nodes": 3,
+      "bytes": 89,
+      "present": true,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "extension-divergence",
+      "nodes": 1,
+      "bytes": 60,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    },
+    {
+      "name": "branch-empty",
+      "nodes": 1,
+      "bytes": 87,
+      "present": false,
+      "inlineNodesIncludedAndOmittedAccepted": true
+    }
+  ],
+  "missingAccountRefundRejected": true,
+  "malformedAuthenticatedNodesRejected": 3,
+  "allTruncationsAndSingleBitMutationsRejected": true,
+  "scope": "Parser tests only; generated roots are NOT consensus fixtures"
+}
+{
+  "actualCapturedUpdates": [
+    {
+      "index": 0,
+      "participants": 512,
+      "finalizedSlot": 4768
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "finalizedSlot": 4832
+    }
+  ],
+  "rawStateRootsVerified": 65,
+  "rawBodyRootsChecked": 97,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replay-private-PoS-bootstrap 531326 1649
+replay-private-PoS-certify-0 17424406 25590
+replay-node-capacity-exact-32-byte-minimum 1625542 472
+replay-node-capacity-exact-20-byte-minimum 1651742 460
+replay-USER-FUND-filled-A-identical-B 1624886 593
+replay-USER-FUND-filled-D 1630640 472
+replay-USER-FUND-unfilled-C 1663467 472
+replay-private-PoS-update-0 60832914 3530
+replay-MAKER-100-CKB-filled-A 1044297 2901
+replay-MAKER-100-CKB-filled-D 1044297 2901
+replay-private-PoS-update-1 60831584 3530
+replay-USER-100-CKB-REFUND-identical-B 1011230 2830
+replay-USER-100-CKB-REFUND-unfilled-C 1011230 2830
+{
+  "run": "release-final",
+  "nativeTransactions": 13,
+  "nativeRejections": 90,
+  "nativeFeesShannons": 13000000,
+  "transactions": [
+    {
+      "name": "replay-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replay-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replay-node-capacity-exact-32-byte-minimum",
+      "cycles": 1625542,
+      "bytes": 472
+    },
+    {
+      "name": "replay-node-capacity-exact-20-byte-minimum",
+      "cycles": 1651742,
+      "bytes": 460
+    },
+    {
+      "name": "replay-USER-FUND-filled-A-identical-B",
+      "cycles": 1624886,
+      "bytes": 593
+    },
+    {
+      "name": "replay-USER-FUND-filled-D",
+      "cycles": 1630640,
+      "bytes": 472
+    },
+    {
+      "name": "replay-USER-FUND-unfilled-C",
+      "cycles": 1663467,
+      "bytes": 472
+    },
+    {
+      "name": "replay-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-MAKER-100-CKB-filled-A",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "replay-MAKER-100-CKB-filled-D",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "replay-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-USER-100-CKB-REFUND-identical-B",
+      "cycles": 1011230,
+      "bytes": 2830
+    },
+    {
+      "name": "replay-USER-100-CKB-REFUND-unfilled-C",
+      "cycles": 1011230,
+      "bytes": 2830
+    }
+  ],
+  "identity": null,
+  "capacityTests": null,
+  "settlements": [],
+  "deliveries": null,
+  "evmReceipts": 0,
+  "evmGas": 0,
+  "evmFeesWei": 0,
+  "evmGasPerReceipt": [],
+  "reproduction": {
+    "capturedTransactions": 13,
+    "capturedNegativeCases": 89,
+    "negativeCases": 90,
+    "identicalHashesAndCycles": true,
+    "noEthereumOrDockerAccess": true
+  }
+}

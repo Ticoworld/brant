@@ -1,0 +1,11 @@
+Real full-predicate update verified 512 4768
+
+private-PoS-update-0 60832914 3530
+MAKER-100-CKB-filled-A 1044297 2901
+MAKER-100-CKB-filled-D 1044297 2901
+Finality pending 1 0 AssertionError: trade terminal states not finalized yet
+Real full-predicate update verified 512 4832
+
+private-PoS-update-1 60831584 3530
+USER-100-CKB-REFUND-identical-B 1011230 2830
+USER-100-CKB-REFUND-unfilled-C 1011230 2830

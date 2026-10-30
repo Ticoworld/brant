@@ -1,0 +1,87 @@
+{
+  "run": "release-check",
+  "nativeTransactions": 13,
+  "nativeRejections": 89,
+  "nativeFeesShannons": 13000000,
+  "transactions": [
+    {
+      "name": "replay-private-PoS-bootstrap",
+      "cycles": 531326,
+      "bytes": 1649
+    },
+    {
+      "name": "replay-private-PoS-certify-0",
+      "cycles": 17424406,
+      "bytes": 25590
+    },
+    {
+      "name": "replay-node-capacity-exact-32-byte-minimum",
+      "cycles": 1625542,
+      "bytes": 472
+    },
+    {
+      "name": "replay-node-capacity-exact-20-byte-minimum",
+      "cycles": 1651742,
+      "bytes": 460
+    },
+    {
+      "name": "replay-USER-FUND-filled-A-identical-B",
+      "cycles": 1624886,
+      "bytes": 593
+    },
+    {
+      "name": "replay-USER-FUND-filled-D",
+      "cycles": 1630640,
+      "bytes": 472
+    },
+    {
+      "name": "replay-USER-FUND-unfilled-C",
+      "cycles": 1663467,
+      "bytes": 472
+    },
+    {
+      "name": "replay-private-PoS-update-0",
+      "cycles": 60832914,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-MAKER-100-CKB-filled-A",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "replay-MAKER-100-CKB-filled-D",
+      "cycles": 1044297,
+      "bytes": 2901
+    },
+    {
+      "name": "replay-private-PoS-update-1",
+      "cycles": 60831584,
+      "bytes": 3530
+    },
+    {
+      "name": "replay-USER-100-CKB-REFUND-identical-B",
+      "cycles": 1011230,
+      "bytes": 2830
+    },
+    {
+      "name": "replay-USER-100-CKB-REFUND-unfilled-C",
+      "cycles": 1011230,
+      "bytes": 2830
+    }
+  ],
+  "identity": null,
+  "capacityTests": null,
+  "settlements": [],
+  "deliveries": null,
+  "evmReceipts": 0,
+  "evmGas": 0,
+  "evmFeesWei": 0,
+  "evmGasPerReceipt": [],
+  "reproduction": {
+    "capturedTransactions": 13,
+    "negativeCases": 89,
+    "identicalHashesAndCycles": true,
+    "noEthereumOrDockerAccess": true
+  }
+}
