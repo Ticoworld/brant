@@ -1,0 +1,4 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+Error: different rejection private-PoS-incorrect-Type-ID
+    at /workspace/trade/labs/wo04-e2e-viability/src/replay.cjs:119:147
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)

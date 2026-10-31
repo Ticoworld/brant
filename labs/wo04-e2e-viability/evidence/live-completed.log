@@ -1,0 +1,19 @@
+Finality pending 0 0 AssertionError: wait for newer real finality
+Finality pending 0 10 AssertionError: wait for newer real finality
+Finality pending 0 20 AssertionError: trade terminal states not finalized yet
+Real full-predicate update verified 512 192
+
+private-PoS-update-0 60832914 3530
+MAKER-100-CKB-filled-A 1079004 2878
+MAKER-100-CKB-filled-D 1079013 2878
+Finality pending 1 0 AssertionError: wait for newer real finality
+Error: Traceback (most recent call last):
+  File "/workspace/trade/labs/wo04-e2e-viability/devnet/prepare.py", line 73, in <module>
+    sig=int(u['signature_slot']);s.update(u,sig)
+                                 ^^^^^^^^^^^^^^^
+  File "devnet-capella-reference", line 127, in update
+  File "devnet-capella-reference", line 19, in require
+ValueError: insufficient supermajority
+
+    at obtainUpdate (/workspace/trade/labs/wo04-e2e-viability/src/run.cjs:169:100)
+    at async /workspace/trade/labs/wo04-e2e-viability/src/run.cjs:245:26

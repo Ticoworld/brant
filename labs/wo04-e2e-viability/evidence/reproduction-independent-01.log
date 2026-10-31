@@ -1,0 +1,247 @@
+fixtures/devnet/bootstrap.bin: OK
+fixtures/devnet/bootstrap.json: OK
+fixtures/devnet/ckb-dev.toml: OK
+fixtures/devnet/committee-0.bin: OK
+fixtures/devnet/configuration.json: OK
+fixtures/devnet/genesis.json: OK
+fixtures/devnet/raw/block-139.json.gz: OK
+fixtures/devnet/raw/block-192.json.gz: OK
+fixtures/devnet/raw/block-194.json.gz: OK
+fixtures/devnet/raw/block-195.json.gz: OK
+fixtures/devnet/raw/block-196.json.gz: OK
+fixtures/devnet/raw/block-197.json.gz: OK
+fixtures/devnet/raw/block-198.json.gz: OK
+fixtures/devnet/raw/block-199.json.gz: OK
+fixtures/devnet/raw/block-200.json.gz: OK
+fixtures/devnet/raw/block-201.json.gz: OK
+fixtures/devnet/raw/block-202.json.gz: OK
+fixtures/devnet/raw/block-203.json.gz: OK
+fixtures/devnet/raw/block-204.json.gz: OK
+fixtures/devnet/raw/block-205.json.gz: OK
+fixtures/devnet/raw/block-206.json.gz: OK
+fixtures/devnet/raw/block-207.json.gz: OK
+fixtures/devnet/raw/block-208.json.gz: OK
+fixtures/devnet/raw/block-209.json.gz: OK
+fixtures/devnet/raw/block-210.json.gz: OK
+fixtures/devnet/raw/block-211.json.gz: OK
+fixtures/devnet/raw/block-212.json.gz: OK
+fixtures/devnet/raw/block-213.json.gz: OK
+fixtures/devnet/raw/block-214.json.gz: OK
+fixtures/devnet/raw/block-215.json.gz: OK
+fixtures/devnet/raw/block-216.json.gz: OK
+fixtures/devnet/raw/block-221.json.gz: OK
+fixtures/devnet/raw/block-226.json.gz: OK
+fixtures/devnet/raw/block-235.json.gz: OK
+fixtures/devnet/raw/block-242.json.gz: OK
+fixtures/devnet/raw/block-248.json.gz: OK
+fixtures/devnet/raw/block-249.json.gz: OK
+fixtures/devnet/raw/block-250.json.gz: OK
+fixtures/devnet/raw/block-251.json.gz: OK
+fixtures/devnet/raw/block-252.json.gz: OK
+fixtures/devnet/raw/block-253.json.gz: OK
+fixtures/devnet/raw/block-254.json.gz: OK
+fixtures/devnet/raw/block-255.json.gz: OK
+fixtures/devnet/raw/block-256.json.gz: OK
+fixtures/devnet/raw/block-257.json.gz: OK
+fixtures/devnet/raw/block-258.json.gz: OK
+fixtures/devnet/raw/block-275.json.gz: OK
+fixtures/devnet/raw/block-276.json.gz: OK
+fixtures/devnet/raw/block-279.json.gz: OK
+fixtures/devnet/raw/block-280.json.gz: OK
+fixtures/devnet/raw/block-282.json.gz: OK
+fixtures/devnet/raw/block-283.json.gz: OK
+fixtures/devnet/raw/block-285.json.gz: OK
+fixtures/devnet/raw/block-286.json.gz: OK
+fixtures/devnet/raw/block-291.json.gz: OK
+fixtures/devnet/raw/block-292.json.gz: OK
+fixtures/devnet/raw/block-307.json.gz: OK
+fixtures/devnet/raw/block-308.json.gz: OK
+fixtures/devnet/raw/block-64.json.gz: OK
+fixtures/devnet/raw/state-194.json.gz: OK
+fixtures/devnet/raw/state-196.json.gz: OK
+fixtures/devnet/raw/state-197.json.gz: OK
+fixtures/devnet/raw/state-198.json.gz: OK
+fixtures/devnet/raw/state-199.json.gz: OK
+fixtures/devnet/raw/state-201.json.gz: OK
+fixtures/devnet/raw/state-202.json.gz: OK
+fixtures/devnet/raw/state-203.json.gz: OK
+fixtures/devnet/raw/state-204.json.gz: OK
+fixtures/devnet/raw/state-206.json.gz: OK
+fixtures/devnet/raw/state-207.json.gz: OK
+fixtures/devnet/raw/state-208.json.gz: OK
+fixtures/devnet/raw/state-210.json.gz: OK
+fixtures/devnet/raw/state-211.json.gz: OK
+fixtures/devnet/raw/state-212.json.gz: OK
+fixtures/devnet/raw/state-213.json.gz: OK
+fixtures/devnet/raw/state-215.json.gz: OK
+fixtures/devnet/raw/state-249.json.gz: OK
+fixtures/devnet/raw/state-251.json.gz: OK
+fixtures/devnet/raw/state-252.json.gz: OK
+fixtures/devnet/raw/state-254.json.gz: OK
+fixtures/devnet/raw/state-255.json.gz: OK
+fixtures/devnet/raw/state-257.json.gz: OK
+fixtures/devnet/raw/state-275.json.gz: OK
+fixtures/devnet/raw/state-279.json.gz: OK
+fixtures/devnet/raw/state-282.json.gz: OK
+fixtures/devnet/raw/state-285.json.gz: OK
+fixtures/devnet/raw/state-291.json.gz: OK
+fixtures/devnet/raw/state-307.json.gz: OK
+fixtures/devnet/raw/state-64.json.gz: OK
+fixtures/devnet/spec.json: OK
+fixtures/devnet/state-0.bin: OK
+fixtures/devnet/state-1.bin: OK
+fixtures/devnet/state-2.bin: OK
+fixtures/devnet/update-0.bin: OK
+fixtures/devnet/update-0.json: OK
+fixtures/devnet/update-1.bin: OK
+fixtures/devnet/update-1.json: OK
+fixtures/devnet/verification-0.json: OK
+fixtures/devnet/verification-1.json: OK
+fixtures/recovery-config.json: OK
+Real finalized devnet bootstrap captured 0x2af071f59c69e908baf745e72d6a6cb46c874b30495b1c0b575f7283fb5fa5d6
+Offline saved-data: Exact immutable deployed source and funded code hash verified
+{
+  "cases": 1130,
+  "recordVersion": "CKBREC01",
+  "completeOrderBytes": 536,
+  "multipleIdenticalRecords": true,
+  "malformedAndTruncatedRejected": true
+}
+P1A pinned code, lineage, formats and 4 funded preimages independently inventoried
+64 route/notional/N rows generated; 128 endpoint scenarios; all verdicts UNPROVEN
+{
+  "actualCapturedUpdates": [
+    {
+      "index": 0,
+      "participants": 512,
+      "finalizedSlot": 192
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "finalizedSlot": 221
+    }
+  ],
+  "rawStateRootsVerified": 30,
+  "rawBodyRootsChecked": 53,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+replay-private-PoS-bootstrap 531326 1649
+replay-private-PoS-certify-0 17424406 25590
+replay-node-capacity-exact-32-byte-minimum 1626384 472
+replay-node-capacity-exact-20-byte-minimum 1633062 460
+replay-USER-FUND-filled-A-identical-B 1684013 1689
+replay-USER-FUND-filled-D 1656921 1028
+replay-USER-FUND-unfilled-C 1676712 1028
+replay-private-PoS-update-0 60832914 3530
+replay-MAKER-100-CKB-filled-A 1079004 2878
+replay-MAKER-100-CKB-filled-D 1079013 2878
+replay-private-PoS-update-1 60831584 3530
+replay-USER-100-CKB-REFUND-identical-B 1045772 2807
+replay-USER-100-CKB-REFUND-unfilled-C 1045772 2807
+fixtures/devnet/bootstrap.bin: OK
+fixtures/devnet/bootstrap.json: OK
+fixtures/devnet/ckb-dev.toml: OK
+fixtures/devnet/committee-0.bin: OK
+fixtures/devnet/configuration.json: OK
+fixtures/devnet/genesis.json: OK
+fixtures/devnet/raw/block-139.json.gz: OK
+fixtures/devnet/raw/block-192.json.gz: OK
+fixtures/devnet/raw/block-194.json.gz: OK
+fixtures/devnet/raw/block-195.json.gz: OK
+fixtures/devnet/raw/block-196.json.gz: OK
+fixtures/devnet/raw/block-197.json.gz: OK
+fixtures/devnet/raw/block-198.json.gz: OK
+fixtures/devnet/raw/block-199.json.gz: OK
+fixtures/devnet/raw/block-200.json.gz: OK
+fixtures/devnet/raw/block-201.json.gz: OK
+fixtures/devnet/raw/block-202.json.gz: OK
+fixtures/devnet/raw/block-203.json.gz: OK
+fixtures/devnet/raw/block-204.json.gz: OK
+fixtures/devnet/raw/block-205.json.gz: OK
+fixtures/devnet/raw/block-206.json.gz: OK
+fixtures/devnet/raw/block-207.json.gz: OK
+fixtures/devnet/raw/block-208.json.gz: OK
+fixtures/devnet/raw/block-209.json.gz: OK
+fixtures/devnet/raw/block-210.json.gz: OK
+fixtures/devnet/raw/block-211.json.gz: OK
+fixtures/devnet/raw/block-212.json.gz: OK
+fixtures/devnet/raw/block-213.json.gz: OK
+fixtures/devnet/raw/block-214.json.gz: OK
+fixtures/devnet/raw/block-215.json.gz: OK
+fixtures/devnet/raw/block-216.json.gz: OK
+fixtures/devnet/raw/block-221.json.gz: OK
+fixtures/devnet/raw/block-226.json.gz: OK
+fixtures/devnet/raw/block-235.json.gz: OK
+fixtures/devnet/raw/block-242.json.gz: OK
+fixtures/devnet/raw/block-248.json.gz: OK
+fixtures/devnet/raw/block-249.json.gz: OK
+fixtures/devnet/raw/block-250.json.gz: OK
+fixtures/devnet/raw/block-251.json.gz: OK
+fixtures/devnet/raw/block-252.json.gz: OK
+fixtures/devnet/raw/block-253.json.gz: OK
+fixtures/devnet/raw/block-254.json.gz: OK
+fixtures/devnet/raw/block-255.json.gz: OK
+fixtures/devnet/raw/block-256.json.gz: OK
+fixtures/devnet/raw/block-257.json.gz: OK
+fixtures/devnet/raw/block-258.json.gz: OK
+fixtures/devnet/raw/block-275.json.gz: OK
+fixtures/devnet/raw/block-276.json.gz: OK
+fixtures/devnet/raw/block-279.json.gz: OK
+fixtures/devnet/raw/block-280.json.gz: OK
+fixtures/devnet/raw/block-282.json.gz: OK
+fixtures/devnet/raw/block-283.json.gz: OK
+fixtures/devnet/raw/block-285.json.gz: OK
+fixtures/devnet/raw/block-286.json.gz: OK
+fixtures/devnet/raw/block-291.json.gz: OK
+fixtures/devnet/raw/block-292.json.gz: OK
+fixtures/devnet/raw/block-307.json.gz: OK
+fixtures/devnet/raw/block-308.json.gz: OK
+fixtures/devnet/raw/block-64.json.gz: OK
+fixtures/devnet/raw/state-194.json.gz: OK
+fixtures/devnet/raw/state-196.json.gz: OK
+fixtures/devnet/raw/state-197.json.gz: OK
+fixtures/devnet/raw/state-198.json.gz: OK
+fixtures/devnet/raw/state-199.json.gz: OK
+fixtures/devnet/raw/state-201.json.gz: OK
+fixtures/devnet/raw/state-202.json.gz: OK
+fixtures/devnet/raw/state-203.json.gz: OK
+fixtures/devnet/raw/state-204.json.gz: OK
+fixtures/devnet/raw/state-206.json.gz: OK
+fixtures/devnet/raw/state-207.json.gz: OK
+fixtures/devnet/raw/state-208.json.gz: OK
+fixtures/devnet/raw/state-210.json.gz: OK
+fixtures/devnet/raw/state-211.json.gz: OK
+fixtures/devnet/raw/state-212.json.gz: OK
+fixtures/devnet/raw/state-213.json.gz: OK
+fixtures/devnet/raw/state-215.json.gz: OK
+fixtures/devnet/raw/state-249.json.gz: OK
+fixtures/devnet/raw/state-251.json.gz: OK
+fixtures/devnet/raw/state-252.json.gz: OK
+fixtures/devnet/raw/state-254.json.gz: OK
+fixtures/devnet/raw/state-255.json.gz: OK
+fixtures/devnet/raw/state-257.json.gz: OK
+fixtures/devnet/raw/state-275.json.gz: OK
+fixtures/devnet/raw/state-279.json.gz: OK
+fixtures/devnet/raw/state-282.json.gz: OK
+fixtures/devnet/raw/state-285.json.gz: OK
+fixtures/devnet/raw/state-291.json.gz: OK
+fixtures/devnet/raw/state-307.json.gz: OK
+fixtures/devnet/raw/state-64.json.gz: OK
+fixtures/devnet/spec.json: OK
+fixtures/devnet/state-0.bin: OK
+fixtures/devnet/state-1.bin: OK
+fixtures/devnet/state-2.bin: OK
+fixtures/devnet/update-0.bin: OK
+fixtures/devnet/update-0.json: OK
+fixtures/devnet/update-1.bin: OK
+fixtures/devnet/update-1.json: OK
+fixtures/devnet/verification-0.json: OK
+fixtures/devnet/verification-1.json: OK
+fixtures/recovery-config.json: OK

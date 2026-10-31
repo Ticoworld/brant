@@ -1,0 +1,18 @@
+INFO [10-31|00:14:49.455] Maximum peer count                       ETH=50 total=50
+INFO [10-31|00:14:49.456] Smartcard socket not found, disabling    err="stat /run/pcscd/pcscd.comm: no such file or directory"
+INFO [10-31|00:14:49.461] Set global gas cap                       cap=50,000,000
+INFO [10-31|00:14:49.461] Initializing the KZG library             backend=gokzg
+INFO [10-31|00:14:49.501] Defaulting to pebble as the backing database
+INFO [10-31|00:14:49.501] Allocated cache and file handles         database=/data/geth/geth/chaindata cache=16.00MiB handles=16
+INFO [10-31|00:14:49.515] Opened ancient database                  database=/data/geth/geth/chaindata/ancient/chain readonly=false
+INFO [10-31|00:14:49.515] State schema set to default              scheme=hash
+INFO [10-31|00:14:49.515] Writing custom genesis block
+INFO [10-31|00:14:49.527] Persisted trie from memory database      nodes=427 size=60.08KiB time=1.477637ms gcnodes=0 gcsize=0.00B gctime=0s livenodes=0 livesize=0.00B
+INFO [10-31|00:14:49.533] Successfully wrote genesis state         database=chaindata                               hash=1eb617..d94c93
+INFO [10-31|00:14:49.533] Defaulting to pebble as the backing database
+INFO [10-31|00:14:49.533] Allocated cache and file handles         database=/data/geth/geth/lightchaindata cache=16.00MiB handles=16
+INFO [10-31|00:14:49.540] Opened ancient database                  database=/data/geth/geth/lightchaindata/ancient/chain readonly=false
+INFO [10-31|00:14:49.540] State schema set to default              scheme=hash
+INFO [10-31|00:14:49.540] Writing custom genesis block
+INFO [10-31|00:14:49.552] Persisted trie from memory database      nodes=427 size=60.08KiB time=1.89341ms  gcnodes=0 gcsize=0.00B gctime=0s livenodes=0 livesize=0.00B
+INFO [10-31|00:14:49.555] Successfully wrote genesis state         database=lightchaindata                          hash=1eb617..d94c93

@@ -1,0 +1,12 @@
+WARN: Mining feature is disabled because of the lack of the block assembler config options.
+private-PoS-bootstrap 531326 1649
+private-PoS-certify-0 17424406 25590
+node-capacity-exact-32-byte-minimum 1626384 472
+node-capacity-exact-20-byte-minimum 1633062 460
+EVM deploy-ControlledUSDC 135
+EVM deploy-OutcomesV3 136
+EVM maker-amortizable-approval 137
+USER-FUND-filled-A-identical-B 1684013 1689
+USER-FUND-filled-D 1656921 1028
+USER-FUND-unfilled-C 1676712 1028
+EVM MAKER-DELIVERY-filled-A 139
