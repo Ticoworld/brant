@@ -1,0 +1,5 @@
+{
+  "bootstrap": "Restored exact original new private bootstrap from immutable actual raw state/block64 and committed CKB bootstrap/certificate transactions",
+  "checkpoint": "0x2af071f59c69e908baf745e72d6a6cb46c874b30495b1c0b575f7283fb5fa5d6",
+  "reason": "Fresh bootstrap completed and child driver began before stop request reached it; brief client interruption preserved original funded cells. No replacement funding/host root introduced."
+}

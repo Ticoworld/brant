@@ -1,0 +1,82 @@
+{
+  "scope": "E2E fresh CKB recovery and settlement; no new Ethereum delivery",
+  "runName": "recovered-native-01",
+  "transactions": [],
+  "rejections": [
+    {
+      "name": "replay-private-PoS-incorrect-Type-ID",
+      "error": "{\"code\":-301,\"message\":\"TransactionFailedToResolve: Unknown(OutPoint(0x79d9a9c0460c715201a8b48534f600d2ddb86ce6c622431b37a2321c8cd15c680d000000))\",\"data\":\"Unknown(OutPoint(0x79d9a9c0460c715201a8b48534f600d2ddb86ce6c622431b37a2321c8cd15c680d000000))\"}",
+      "method": "estimate_cycles",
+      "tx": {
+        "version": "0x0",
+        "cell_deps": [
+          {
+            "out_point": {
+              "tx_hash": "0x79d9a9c0460c715201a8b48534f600d2ddb86ce6c622431b37a2321c8cd15c68",
+              "index": "0x5"
+            },
+            "dep_type": "code"
+          },
+          {
+            "out_point": {
+              "tx_hash": "0x79d9a9c0460c715201a8b48534f600d2ddb86ce6c622431b37a2321c8cd15c68",
+              "index": "0x8"
+            },
+            "dep_type": "code"
+          }
+        ],
+        "header_deps": [],
+        "inputs": [
+          {
+            "since": "0x0",
+            "previous_output": {
+              "tx_hash": "0x79d9a9c0460c715201a8b48534f600d2ddb86ce6c622431b37a2321c8cd15c68",
+              "index": "0xd"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "capacity": "0x174876e800",
+            "lock": {
+              "code_hash": "0x5028bc182d02a5de629e5df443f0b932a6a9f38bd6fdf5451157019390a765e7",
+              "hash_type": "data2",
+              "args": "0x"
+            },
+            "type": {
+              "code_hash": "0x5028bc182d02a5de629e5df443f0b932a6a9f38bd6fdf5451157019390a765e7",
+              "hash_type": "data2",
+              "args": "0x1111111111111111111111111111111111111111111111111111111111111111"
+            }
+          },
+          {
+            "capacity": "0x5adbc7f415c0",
+            "lock": {
+              "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+              "hash_type": "data2",
+              "args": "0x"
+            },
+            "type": null
+          }
+        ],
+        "outputs_data": [
+          "0x4532535441544531e38f0731f47307d936c408de9d38a0706247d1652b2f712a5b2a4e85fc54dff15b186b0d2f63a9d8bb4a3bff3f579b6636b68bc76e40892336d48bae4de381f60000000000000000000d0000000000005b186b0d2f63a9d8bb4a3bff3f579b6636b68bc76e40892336d48bae4de381f6abe248c03ad4014a4784e5f068ef4d83e538650941749a2fc106456bb61bdaaab103000000000000befb994acfc336b405a10a6a01054b1dc9a917b6c2362ddafcf5849a093249740000000000000000f748e6ba76e36d21ebcbabf60de1198927dbe8bf73ddd046f5fed0d9c62aa533000000000000000000000000000000000000000000000000000000000000000000000000000000000300000000000000",
+          "0x"
+        ],
+        "witnesses": [
+          "0x000d0000000000001200000000000000fa7c2497317c64124876087f7619fad4a871b1ce8643d918fe062c57b2ba5c8f0f8bac3e7bb5dc90e9c4e4fe74806e5646fe0667e77349edc0e4072af06742bf6fb6f9f077599eaa4eae1e70d2a4621f415569fda6252eb40b6a651b13cdf1de8d5d3378ca113a5d9e5a5121f2a09dbf3deb2fb38ec88310b4e589ae3d53a3b70000000000000000000000000000000000000001000000000000000000000000abe248c03ad4014a4784e5f068ef4d83e538650941749a2fc106456bb61bdaaa56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421c78009fdf07fc56a11f122370658a353aaa542ed63e44c4bc15ff4cd105ab33cdec2d89ec52f85af06bf6138af50e414c5483a2e72af096bf076401cfd51dc5bb10300000000000000000000000000000000000000000000000000000000000080c3c901000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b9dfe46a000000000000000000000000000000000000000000000000000000006a307ae35642234f0cf157d4671b0b8534292950c360ae21ee536e9371fcc22a0700000000000000000000000000000000000000000000000000000000000000befb994acfc336b405a10a6a01054b1dc9a917b6c2362ddafcf5849a093249747ffe241ea60187fdb0187bfa22de35d1f9bed7ab061d9401fd47e34a54fbede1792930bbd5baac43bcc798ee49aa8185ef76bb3b44ba62b91d86ae569e4bb53509c2142f81c182036b8ba10b936ca2b7e99fd31365e8e042567e51c88d8bd39a336488033fe5f3ef4ccc12af07b9370b92e553e35ecb4a337a1b1c0e4afe1e0edb56114e00fdd4c1f85c892bf35ac9a89289aaecb1ebd0a96cde606a748b5d71bc485ce476e459c60394eec12ce0bef2b372e63b0de3ff223a45670dc6aa0d75f748e6ba76e36d21ebcbabf60de1198927dbe8bf73ddd046f5fed0d9c62aa533f748e6ba76e36d21ebcbabf60de1198927dbe8bf73ddd046f5fed0d9c62aa533a4038044e7adf85b4d5d1213be9baa75f25e80291aadf4348a9e6ac2d77df184dc76444e07fa8ecf3a411e928225af432ac1132cf53abfceaab3826a4d3e753bcbbbdb2d2169e7eaff1052778e0568c8e2cca69894a1a52fad18b09c19f091ad879e492f63672269d369a7071730b17fdd539bc6d8ded9b76cdd7bd9d57e316d"
+        ]
+      },
+      "afterTransactions": 0
+    }
+  ],
+  "lineages": [],
+  "evm": [],
+  "trades": [],
+  "proofs": [],
+  "settlements": [],
+  "evmRejections": [],
+  "ckbDir": "/tmp/p1-replay-EOReWO",
+  "nodeMaxTxVerifyCycles": 70000000,
+  "failure": "Error: different rejection private-PoS-incorrect-Type-ID\n    at /workspace/trade/labs/wo04-e2e-viability/src/replay.cjs:119:147\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+}

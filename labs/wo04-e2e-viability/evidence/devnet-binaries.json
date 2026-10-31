@@ -1,0 +1,20 @@
+[
+  {
+    "name": "bundle",
+    "bytes": 148200,
+    "codeHash": "0x9f8ef663bbce79b23ca6625577d623e1f27562f004c10155feeed7691d59c0b3",
+    "sha256": "d6c8c98f1831b48fdb1f048f66eaba5f03fb8b2991453ccfcb8d51a898e7c721"
+  },
+  {
+    "name": "settlement",
+    "bytes": 13280,
+    "codeHash": "0x8bf8c800b1ae0a73cf65ad4e5f313103591b5e8e067a28299ff4f67bf7e6fc2c",
+    "sha256": "0b721f2542b13890280e8d0e642d685b94fe56ecc9e901b57c15511351646025"
+  },
+  {
+    "name": "settlement20",
+    "bytes": 13496,
+    "codeHash": "0x220eaa81bf3b95f78466480ba5957de7eed04bc12c505a9ab3e91320733b2f2e",
+    "sha256": "8c6d9fdee4a9a3f3b19b728c5cb05d0d2ddae015ea67cd0328f30768090b0066"
+  }
+]

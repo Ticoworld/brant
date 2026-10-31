@@ -1,0 +1,25 @@
+{
+  "status": "UNVERIFIED_CURRENT_ISSUER_DATA",
+  "reason": "Circle official live contract address page denied by configured proxy; addresses below are candidate known deployments, not independently authenticated active code/issuer attestation",
+  "officialSource": "https://developers.circle.com/stablecoins/usdc-contract-addresses",
+  "candidateUSDC": {
+    "Ethereum": {
+      "chainId": 1,
+      "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    },
+    "Base": {
+      "chainId": 8453,
+      "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+    },
+    "Arbitrum": {
+      "chainId": 42161,
+      "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831"
+    },
+    "Linea": {
+      "chainId": 59144,
+      "address": null,
+      "nativeUSDCConfirmed": false
+    }
+  },
+  "doNotUse": "No deployments, code hashes, block proofs, active freeze controls or maker inventory access were authenticated in this audit. ControlledUSDC is not any of these tokens."
+}

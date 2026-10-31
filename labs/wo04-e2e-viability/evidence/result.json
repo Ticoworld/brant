@@ -1,0 +1,52 @@
+{
+  "actualSettlements": 4,
+  "principalCKBPerSettlement": 100,
+  "makerPayouts": 2,
+  "userRefunds": 2,
+  "customerEthereumTransactions": 0,
+  "sourceOrderFilesRequired": false,
+  "actualNativeTransactions": 13,
+  "nativeRejectedCases": 91,
+  "recoveryRejectedCases": 24,
+  "fixedFeesCKB": 0.13,
+  "evmGas": 1673904,
+  "evmFeeWei": "1673904028972139",
+  "fundingOverhead": [
+    {
+      "labels": [
+        "filled-A",
+        "identical-B"
+      ],
+      "beforeBytes": 593,
+      "afterBytes": 1689,
+      "recordBytes": 1092,
+      "feeBeforeShannons": "1000000",
+      "feeAfterShannons": "1000000",
+      "sameRawHash": true
+    },
+    {
+      "labels": [
+        "filled-D"
+      ],
+      "beforeBytes": 472,
+      "afterBytes": 1028,
+      "recordBytes": 552,
+      "feeBeforeShannons": "1000000",
+      "feeAfterShannons": "1000000",
+      "sameRawHash": true
+    },
+    {
+      "labels": [
+        "unfilled-C"
+      ],
+      "beforeBytes": 472,
+      "afterBytes": 1028,
+      "recordBytes": 552,
+      "feeBeforeShannons": "1000000",
+      "feeAfterShannons": "1000000",
+      "sameRawHash": true
+    }
+  ],
+  "publicationIdentity": "0x35541f0a2334dd03bdec05da9a5d0f4e5de6987f4fb7faec4c35fd325323fde2",
+  "scope": "Fresh actual private PoS delivery and finalized CKB settlement; same original funded cells recovered after interruption"
+}

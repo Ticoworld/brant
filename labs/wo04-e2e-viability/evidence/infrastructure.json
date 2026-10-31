@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-10-31T00:36:37.094661+00:00",
+  "networkInternal": true,
+  "clients": [
+    {
+      "name": "e2e-el",
+      "image": "ethereum/client-go@sha256:f7923f04a33f23e6be427ec527912ff9b7cc49ba9e2290885e3bb83f0c142dba",
+      "network": "e2e-private",
+      "status": "running"
+    },
+    {
+      "name": "e2e-cl",
+      "image": "sigp/lighthouse@sha256:7954b6c3bb0b2e1ec2ba57897c977af8e640c54e648a21e200b70a85d9a88f2f",
+      "network": "e2e-private",
+      "status": "running"
+    },
+    {
+      "name": "e2e-vc",
+      "image": "sigp/lighthouse@sha256:7954b6c3bb0b2e1ec2ba57897c977af8e640c54e648a21e200b70a85d9a88f2f",
+      "network": "e2e-private",
+      "status": "running"
+    }
+  ],
+  "sourceAssets": "disposable fixture only; no public peers/deployment"
+}

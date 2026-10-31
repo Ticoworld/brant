@@ -1,0 +1,11 @@
+{
+  "actualCapturedUpdates": [],
+  "rawStateRootsVerified": 7,
+  "rawBodyRootsChecked": 10,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "initialObservationBeforeChildLaunch": {
+    "scope": "setup only, no orders funded, no finalized-root or new-delivery claim",
+    "reason": "Fresh chain produced blocks through slot118 but finalized checkpoint remained genesis at observation. Bounded recovery proof uses exact preserved P1A finalized history and same funding raw hashes instead, avoiding new cryptographic research.",
+    "oldChainRestart": "block production HTTP timeout after offline gap; retained runtime",
+    "newChainNetwork": "e2e-private internal",
+    "historicalReplayIsNotNewEthereumDelivery": true,
+    "correction": "Bootstrap subsequently finalized block64 and launched its child driver before the stop reached it. Four original orders are actually funded; A delivered. Preserve and complete this actual run. Earlier note was an observation before bootstrap success, not final result."
+  },
+  "finalInterpretation": "Fresh bootstrap succeeded after initial slot118 observation. The child launched while the launcher stop was in flight; four intents funded and both maker fills actually committed. See chain-recovery-completed.json for authoritative final result. No replacement funding or host-selected root was used."
+}

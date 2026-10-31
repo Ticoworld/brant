@@ -1,0 +1,22 @@
+{
+  "actualCapturedUpdates": [
+    {
+      "index": 0,
+      "participants": 512,
+      "finalizedSlot": 192
+    },
+    {
+      "index": 1,
+      "participants": 512,
+      "finalizedSlot": 221
+    }
+  ],
+  "rawStateRootsVerified": 30,
+  "rawBodyRootsChecked": 53,
+  "negativeCasesPerUpdate": [
+    "signature",
+    "execution-root",
+    "finality-branch",
+    "chain-domain"
+  ]
+}

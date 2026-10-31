@@ -1,0 +1,42 @@
+{
+  "baselinePreservedFiles": 1271,
+  "freshNativeReplay": {
+    "capturedTransactions": 13,
+    "capturedNegativeCases": 91,
+    "negativeCases": 92,
+    "identicalHashesAndCycles": true,
+    "noEthereumOrDockerAccess": true,
+    "recoveredOrders": 4,
+    "freshClientRestart": true
+  },
+  "recoveryRejections": 40,
+  "reference": {
+    "actualCapturedUpdates": [
+      {
+        "index": 0,
+        "participants": 512,
+        "finalizedSlot": 192
+      },
+      {
+        "index": 1,
+        "participants": 512,
+        "finalizedSlot": 221
+      }
+    ],
+    "rawStateRootsVerified": 30,
+    "rawBodyRootsChecked": 53,
+    "negativeCasesPerUpdate": [
+      "signature",
+      "execution-root",
+      "finality-branch",
+      "chain-domain"
+    ]
+  },
+  "parserChecks": 1130,
+  "savedActualRPCStrictRecovery": 4,
+  "commercialCases": 64,
+  "marketQuotesVerified": false,
+  "routeVerdict": "UNPROVEN",
+  "recommendation": "Freeze protocol expansion; obtain matched executable inventory and quote evidence first",
+  "privateClientsStopped": true
+}

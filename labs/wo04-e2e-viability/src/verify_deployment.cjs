@@ -1,0 +1,19 @@
+// Independently reconstruct immutable runtime from the exact compiler artifact.
+const fs=require('fs'),path=require('path'),cp=require('child_process'),ethers=require('../../wo04-e1/node_modules/ethers'),solc=require('../../wo04-e1/node_modules/solc');
+const R=path.resolve(__dirname,'..'),j=JSON.parse(fs.readFileSync(R+'/evidence/chain-recovery-final.json')),artifact=JSON.parse(fs.readFileSync(R+'/evidence/solidity.json'));
+const offline=process.argv.includes('--offline'),saved=offline?JSON.parse(fs.readFileSync(R+'/evidence/deployment-verification.json')):null;let provider;
+if(!offline){const ip=JSON.parse(cp.execFileSync('docker',['inspect','e2e-el']))[0].NetworkSettings.Networks['e2e-private'].IPAddress;if(!ip.startsWith('172.19.'))throw Error('private network');provider=new ethers.JsonRpcProvider('http://'+ip+':8545');}
+(async()=>{
+ const input=structuredClone(artifact.input);input.settings.outputSelection={'*':{'*':['evm.deployedBytecode.object','evm.deployedBytecode.immutableReferences'], '':['ast']}};const output=JSON.parse(solc.compile(JSON.stringify(input)));if(output.errors?.some(e=>e.severity==='error'))throw Error(JSON.stringify(output.errors));
+ const source=output.sources['OutcomesV3.sol'].ast,ids={};function walk(n){if(!n||typeof n!=='object')return;if(n.nodeType==='VariableDeclaration'&&n.mutability==='immutable')ids[n.id]=n.name;for(const v of Object.values(n))if(Array.isArray(v))v.forEach(walk);else if(v&&typeof v==='object')walk(v);}walk(source);
+ const deploy=j.evm.find(e=>e.name==='deploy-OutcomesV3'),address=deploy.receipt.contractAddress,contract=output.contracts['OutcomesV3.sol'].OutcomesV3;
+ if(contract.evm.deployedBytecode.object!==artifact.contracts.OutcomesV3.evm.deployedBytecode.object)throw Error('compiler output mismatch');
+ const config=JSON.parse(fs.readFileSync(R+'/fixtures/devnet/configuration.json')),genesis=j.trades[0].order.ckbGenesis,registry=j.trades[0].order.registry;
+ const values={ETH_GENESIS:config.genesis.genesis_validators_root,REGISTRY:registry,CKB_GENESIS:genesis},bytes=Buffer.from(contract.evm.deployedBytecode.object,'hex');
+ for(const [id,refs]of Object.entries(contract.evm.deployedBytecode.immutableReferences)){const value=values[ids[id]];if(!value)throw Error('unknown immutable');for(const r of refs){if(r.length!==32)throw Error('immutable width');Buffer.from(value.slice(2),'hex').copy(bytes,r.start);}}
+ const actual=offline?saved.code:await provider.getCode(address);if(actual!=='0x'+bytes.toString('hex'))throw Error('not exact compiled immutable contract');
+ const transaction=offline?saved.creationTransaction:await provider.send('eth_getTransactionByHash',[deploy.hash]);const expected='0x'+artifact.contracts.OutcomesV3.evm.bytecode.object+ethers.AbiCoder.defaultAbiCoder().encode(['bytes32','bytes32','bytes32'],[values.ETH_GENESIS,values.REGISTRY,values.CKB_GENESIS]).slice(2);if(transaction.input!==expected)throw Error('creation transaction');
+ for(const t of j.trades)if('0x'+Buffer.from(t.terms.slice(2),'hex').subarray(480,512).toString('hex')!==ethers.keccak256(actual))throw Error('funded code hash differs');
+ const before=offline?saved.userNonce:await provider.getTransactionCount(j.user.address),balance=offline?BigInt(saved.userBalanceWei):await provider.getBalance(j.user.address);if(before!==0)throw Error('user sent tx');
+ if(!offline)fs.writeFileSync(R+'/evidence/deployment-verification.json',JSON.stringify({exactCompiledRuntimeWithBoundImmutables:true,creationInputMatches:true,address,values,code:actual,codeHash:ethers.keccak256(actual),creationTransaction:transaction,userNonce:before,userBalanceWei:balance.toString(),source:'Independent read-only EVM queries; no signer or EVM transaction'},null,2)+'\n');console.log((offline?'Offline saved-data: ':'')+'Exact immutable deployed source and funded code hash verified');
+})().catch(e=>{console.error(e);process.exitCode=1;});
