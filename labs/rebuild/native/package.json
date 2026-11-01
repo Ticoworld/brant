@@ -1,0 +1,1 @@
+{"name":"trade-native-rebuild","version":"0.1.0","private":true,"type":"commonjs","scripts":{"test":"node src/run.cjs"},"dependencies":{"@ckb-ccc/core":"1.23.0","@nervosnetwork/ckb-sdk-core":"0.109.5","@nervosnetwork/ckb-sdk-utils":"0.109.5"}}

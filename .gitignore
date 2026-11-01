@@ -24,3 +24,6 @@ node_modules/
 .chain-data/
 **/.ckb-data/
 **/data/
+# Rebuild scratch clones and ephemeral node logs
+/work/
+/labs/rebuild/native/evidence/*/node.log
