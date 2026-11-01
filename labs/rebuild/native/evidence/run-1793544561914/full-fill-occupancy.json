@@ -1,0 +1,6 @@
+{
+  "capacity": "19500000000",
+  "occupied": "19500000000",
+  "unoccupied": 0,
+  "correction": "Earlier 289-CKB residual had 94 unoccupied CKB and was not a full CKB bid fill."
+}

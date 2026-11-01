@@ -1,0 +1,27 @@
+{
+  "binary": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+  "scope": "Published upstream full-fill batch bounds, not maximum capacity or a custom-candidate comparison",
+  "metrics": [
+    {
+      "n": 2,
+      "cycles": {
+        "cycles": "0x1ab4b1"
+      },
+      "bytes": 1156
+    },
+    {
+      "n": 8,
+      "cycles": {
+        "cycles": "0x1e9720"
+      },
+      "bytes": 3046
+    },
+    {
+      "n": 32,
+      "cycles": {
+        "cycles": "0x2e56e9"
+      },
+      "bytes": 10606
+    }
+  ]
+}

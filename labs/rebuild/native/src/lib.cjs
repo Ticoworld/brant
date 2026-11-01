@@ -10,4 +10,5 @@ const snake=x=>x==='depGroup'?'dep_group':Array.isArray(x)?x.map(snake):x&&typeo
 const camel=x=>Array.isArray(x)?x.map(camel):x&&typeof x==='object'?Object.fromEntries(Object.entries(x).map(([k,v])=>[k.replace(/_([a-z])/g,(_,c)=>c.toUpperCase()),camel(v)])):x;
 const write=(p,x)=>fs.writeFileSync(p,JSON.stringify(x,(_,v)=>typeof v==='bigint'?v.toString():v,2));
 function orderData(amount,master=null,ratio=[1n,UNIT],reverse=false){return hx(Buffer.concat([le(amount,16),le(master?1:0,4),master?b(master.txHash):Buffer.alloc(32),master?le(master.index,4):le(1,4),...(!reverse?[...ratio,0,0]:[0,0,...ratio]).map(x=>le(x)),Buffer.from([0])]));}
-module.exports={fs,path,crypto,U,ROOT,UNIT,fee,hex,b,hx,le,hash,keys,locks,snake,camel,write,orderData};
+const occupied=c=>BigInt(8+33+(c.lock.args.length-2)/2+(c.type?33+(c.type.args.length-2)/2:0)+(c.data.length-2)/2)*UNIT;
+module.exports={occupied,fs,path,crypto,U,ROOT,UNIT,fee,hex,b,hx,le,hash,keys,locks,snake,camel,write,orderData};

@@ -63,10 +63,12 @@
         "labs/rebuild/native/src/run.cjs"
       ],
       "evidence": [
-        "labs/rebuild/native/evidence/run-1793542987108/complete.json"
+        "labs/rebuild/native/evidence/run-1793542987108/complete.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
       ],
       "limitations": [
-        "Fixture recovery succeeds; arbitrary chain provenance/LO-01 unresolved."
+        "Fixture recovery succeeds; arbitrary chain provenance/LO-01 unresolved.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1",
       "future_reuse": "Baseline native order execution",
@@ -130,10 +132,12 @@
         "labs/rebuild/native/src/run.cjs"
       ],
       "evidence": [
-        "labs/rebuild/native/evidence/run-1793542987108/complete.json"
+        "labs/rebuild/native/evidence/run-1793542987108/complete.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
       ],
       "limitations": [
-        "CKB/xUDT fixture domains only; not general arbitrary-asset router."
+        "CKB/xUDT fixture domains only; not general arbitrary-asset router.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2",
       "future_reuse": "Clearing baseline",
@@ -565,10 +569,12 @@
       ],
       "evidence": [
         "labs/rebuild/native/evidence/run-1793542987108/complete.json",
-        "labs/rebuild/native/evidence/run-1793542987108/dao-lifecycle.json"
+        "labs/rebuild/native/evidence/run-1793542987108/dao-lifecycle.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
       ],
       "limitations": [
-        "Short integration epochs are not real network waiting time; not a business proof."
+        "Short integration epochs are not real network waiting time; not a business proof.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2",
       "future_reuse": "Native liquid-staking/trading infrastructure",

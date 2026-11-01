@@ -73,3 +73,5 @@ Fresh clone of remote ac8ebe2023bcff67e074becbf1cf0c8eb555dd91, full bootstrap a
 ## Essential recovery qualification
 
 The successful standalone recoveries establish signing/execution for harness-tracked authentic fixtures. recover.cjs does not authenticate arbitrary input history or intended payouts. Known upstream A2 LO-01 is unresolved here; no reproduction or correction tested. The rewritten-lineage rejection case is narrow and must not be promoted into a general forged-lineage rejection claim. Read-only review-lineage passes only self-created recorded ancestry. See REBUILD_OWNER_RECOVERY_REVIEW.md.
+
+CORRECTION: previous 289-CKB bid successors were above occupancy, so prior "full fill" labels are narrowed to partial. New canonical corrected full-fill evidence is run-1793544609163: actual 195-CKB xUDT bid reserve, 199-CKB iCKB reserve, 76 committed transactions, 18 rejections, CCC/SDK/raw checks plus occupancy assertions PASS. See REBUILD_FULL_FILL_CORRECTION.md; historical runs remain unmodified.
