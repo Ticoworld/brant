@@ -12,7 +12,7 @@ function sign(t,ins,roles,options={}){t=structuredClone(t);const h=U.rawTransact
 async function send(label,t){const cycles=await rpc('estimate_cycles',[C.snake(t)]);const h=await rpc('send_transaction',[C.snake(t),'passthrough']);let r;for(let i=0;i<20;i++){r=await rpc('get_transaction',[h]);if(r.tx_status.status==='committed')break;await mine();}assert.equal(r.tx_status.status,'committed');const e={label,hash:h,cycles,bytes:(U.serializeTransaction(t).length-2)/2,tx:t,committed:r};events.push(e);save();console.log(label,h);return t.outputs.map((x,i)=>({...x,capacity:BigInt(x.capacity),data:t.outputsData[i],outPoint:{txHash:h,index:hex(i)},blockHash:r.tx_status.block_hash}));}
 async function reject(label,t,pattern,method='estimate_cycles'){let error;try{await rpc(method,method==='send_transaction'?[C.snake(t),'passthrough']:[C.snake(t)]);}catch(e){error=e;}assert(error,'unexpected acceptance '+label);assert.match(error.message,pattern,label);cases.push({label,method,error:error.message,rpc:error.rpc});save();}
 const dep=n=>({outPoint:codes[n].outPoint,depType:'code'});
-async function mintOrder(label,role,type,amount=0n,reverse=false,lock=locks[role]){let w=wallets[role];const order=cell((amount?600n:1200n)*UNIT,codes.a2.script,type,orderData(amount,null,[1n,UNIT],reverse)),master=cell(100n*UNIT,lock,codes.a2.script);const change=cell(w.capacity-order.capacity-master.capacity-fee,locks[role]);const t=tx([w],[order,master,change],[dep('a2'),dep('xudt')]);const r=await send(label,sign(t,[w],[role]));wallets[role]=r[2];return {order:r[0],master:r[1]};}
+async function mintOrder(label,role,type,amount=0n,reverse=false,lock=locks[role]){let w=wallets[role];const order=cell((amount?600n:1200n)*UNIT,codes.a2.script,type,orderData(amount,null,[1n,UNIT],reverse)),master=cell((lock.args.length>42?108n:100n)*UNIT,lock,codes.a2.script);const change=cell(w.capacity-order.capacity-master.capacity-fee,locks[role]);const t=tx([w],[order,master,change],[dep('a2'),dep('xudt')]);const r=await send(label,sign(t,[w],[role]));wallets[role]=r[2];return {order:r[0],master:r[1]};}
 async function melt(label,pair,role,options={}){const ins=[pair.master,pair.order],output=cell(ins.reduce((a,c)=>a+c.capacity,0n)-fee,locks[role],pair.order.type,hx(le(BigInt('0x'+Buffer.from(b(pair.order.data).subarray(0,16)).reverse().toString('hex')),16)));let t=tx(ins,[output],[dep('a2'),dep('xudt'),...(options.deps||[])]);if(options.since)t.inputs[0].since=hex(options.since);t=sign(t,ins,[role],options);return {t,ins};}
 async function main(){execFileSync(process.execPath,[__dirname+'/setup.cjs',dir]);const bin=process.env.CKB_BIN||C.path.resolve(ROOT,'../../wo04-e1/tools/ckb/ckb');const log=fs.openSync(out+'/node.log','w');child=spawn(bin,['run','-C',dir,'--ba-advanced'],{stdio:['ignore',log,log]});for(let i=0;i<100;i++){try{await rpc('get_tip_header');break;}catch{await new Promise(r=>setTimeout(r,100));}}
  gen=await rpc('get_block_by_number',['0x0']);deps.secp={outPoint:{txHash:gen.transactions[1].hash,index:'0x0'},depType:'depGroup'};
@@ -33,6 +33,46 @@ async function main(){execFileSync(process.execPath,[__dirname+'/setup.cjs',dir]
  ins=[pair.order,tokens];const used=pair.order.capacity-289n*UNIT;successor=cell(289n*UNIT,codes.a2.script,token,orderData(400n+used/UNIT,pair.master.outPoint));remain=cell(200n*UNIT,locks[1],token,hx(le(1600n-used/UNIT,16)));payout=cell(used-fee,locks[1]);t=sign(tx(ins,[successor,remain,payout],[dep('a2'),dep('xudt')]),ins,[1]);r=await send('complete_fill_direct_ckb_payout',t);pair.order=r[0];tokens=r[1];
  let recovery=await melt('recover',pair,0);await reject('unauthorized_owner_recovery',sign(recovery.t,recovery.ins,[0],{key:keys[1]}),/ValidationFailure/);C.write(out+'/recovery-package.json',{tx:{...recovery.t,witnesses:recovery.t.witnesses.map(()=> '0x')},inputs:recovery.ins,role:0});const independent=JSON.parse(execFileSync(process.execPath,[__dirname+'/recover.cjs',out+'/recovery-package.json'],{encoding:'utf8'}));await send('independent_owner_recovery',independent);
  C.write(out+'/checkpoint-A.json',{status:'REPRODUCED',transactions:events.length,cases:cases.length});
+ const askMaster=cell(100n*UNIT,locks[1],codes.a2.script),askCell=cell(289n*UNIT,codes.a2.script,token,orderData(500n,null,[1n,UNIT],true));
+ w=wallets[1];ins=[w,tokens];t=tx(ins,[askCell,askMaster,cell(200n*UNIT,locks[1],token,hx(le(589n,16))),cell(w.capacity+tokens.capacity-589n*UNIT-fee,locks[1])],[dep('a2'),dep('xudt')]);
+ r=await send('holder_funds_authentic_ask',sign(t,ins,[1]));wallets[1]=r[3];tokens=r[2];const ask={order:r[0],master:r[1]};
+ const bid=await mintOrder('second_maker_bid',0,token);ins=[bid.order,ask.order];
+ t=tx(ins,[cell(bid.order.capacity-500n*UNIT,codes.a2.script,token,orderData(500n,bid.master.outPoint)),cell(ask.order.capacity+500n*UNIT,codes.a2.script,token,orderData(0n,ask.master.outPoint,[1n,UNIT],true)),cell(wallets[2].capacity-fee,locks[2])],[dep('a2'),dep('xudt')]);
+ ins.push(wallets[2]);t.inputs.push({previousOutput:wallets[2].outPoint,since:'0x0'});t.witnesses.push('0x');
+ r=await send('atomic_two_owner_net_settlement',sign(t,ins,[2]));bid.order=r[0];ask.order=r[1];wallets[2]=r[2];
+ await send('bid_owner_recovers_net_assets',(await melt('bid',bid,0)).t);await send('ask_owner_recovers_net_assets',(await melt('ask',ask,1)).t);
+ // Native bounded batching uses the published upstream binary; no compact rival is invented.
+ const batchMetrics=[];
+ for(const n of [2,8,32]){
+   const pairs=[];for(let i=0;i<n;i++)pairs.push(await mintOrder('batch_'+n+'_fund_'+i,0,token));
+   w=wallets[2];let ti=tx([w],[cell(200n*UNIT,locks[1],token,hx(le(BigInt(n)*100n,16))),cell(w.capacity-200n*UNIT-fee,locks[2])],[dep('xudt')]);let rr=await send('batch_'+n+'_issuer_inventory',sign(ti,[w],[2]));wallets[2]=rr[1];
+   const bi=[...pairs.map(p=>p.order),rr[0]],bo=pairs.map(p=>cell(p.order.capacity-100n*UNIT,codes.a2.script,token,orderData(100n,p.master.outPoint)));
+   bo.push(cell(BigInt(n)*100n*UNIT+rr[0].capacity-fee,locks[1],token,hx(le(0,16))));
+   const bt=sign(tx(bi,bo,[dep('a2'),dep('xudt')]),bi,[1]);
+   if(n===2){let broken=structuredClone(bt);broken.outputsData[1]=orderData(99n,pairs[1].master.outPoint);broken.outputsData[2]=hx(le(1n,16));broken=sign(broken,bi,[1]);await reject('one_bad_leg_rejects_atomic_batch',broken,/ValidationFailure/);}
+   await send('bounded_batch_'+n,bt);batchMetrics.push({n,cycles:events.at(-1).cycles,bytes:events.at(-1).bytes});
+ }
+ C.write(out+'/batch-metrics.json',{binary:codes.a2.hash,scope:'Published upstream batch bounds, not maximum capacity or a custom-candidate comparison',metrics:batchMetrics});
+ // Standard 1-of-1 multisig with embedded absolute block since commits owner, not customers.
+ const deadline=BigInt((await rpc('get_tip_header')).number)+30n;
+ const configHex='0x00000101'+locks[0].args.slice(2),multi={r:0,m:1,n:1,blake160s:[locks[0].args]};
+ const committedLock={codeHash:U.systemScripts.SECP256K1_MULTISIG.codeHash,hashType:'type',args:'0x'+U.blake160(b(configHex),'hex')+le(deadline).toString('hex')};
+ const multisigDep={outPoint:{txHash:gen.transactions[1].hash,index:'0x1'},depType:'depGroup'};
+ const committed=await mintOrder('bounded_commitment_funding',0,token,0n,false,committedLock);
+ const options={lock:committedLock,multisig:multi,configHex,deps:[multisigDep]};
+ let exit=(await melt('early',committed,0,{...options,since:deadline})).t;
+ await reject('owner_since_before_maturity',exit,/Immature|since|Since/, 'send_transaction');
+ const noSince=(await melt('no_since',committed,0,options)).t;await reject('owner_omits_since',noSince,/ValidationFailure|since|Since/);
+ const inventory=wallets[2];t=tx([inventory],[cell(200n*UNIT,locks[1],token,hx(le(200n,16))),cell(inventory.capacity-200n*UNIT-fee,locks[2])],[dep('xudt')]);r=await send('commitment_customer_inventory',sign(t,[inventory],[2]));wallets[2]=r[1];let ctoken=r[0];
+ async function commitmentFill(label){const ci=[committed.order,ctoken],amt=BigInt('0x'+Buffer.from(b(committed.order.data).subarray(0,16)).reverse().toString('hex'))+100n;const co=[cell(committed.order.capacity-100n*UNIT,codes.a2.script,token,orderData(amt,committed.master.outPoint)),cell(ctoken.capacity,locks[1],token,hx(le(200n-amt,16))),cell(100n*UNIT-fee,locks[1])];const cr=await send(label,sign(tx(ci,co,[dep('a2'),dep('xudt')]),ci,[1]));committed.order=cr[0];ctoken=cr[1];}
+ await commitmentFill('customer_fill_before_owner_maturity');
+ let tip=BigInt((await rpc('get_tip_header')).number);await mine(Number(deadline-tip+2n));await commitmentFill('customer_late_fill_after_owner_maturity');
+ exit=(await melt('mature',committed,0,{...options,since:deadline})).t;
+ const wrong=(await melt('wrong_sig',committed,0,{...options,since:deadline,key:keys[1]})).t;await reject('committed_owner_wrong_signature',wrong,/ValidationFailure/);
+ await send('committed_owner_mature_recovery',exit);
+ C.write(out+'/commitment.json',{deadline,lateFill:events.find(e=>e.label==='customer_late_fill_after_owner_maturity').committed.tx_status,ordinaryMaster:100n*UNIT,committedMaster:108n*UNIT,occupiedDeltaCKB:8,note:'Extra 8 bytes in lock args; fixture allocates 8 additional CKB to committed master.'});
+ C.write(out+'/checkpoint-B.json',{status:'REPRODUCED_BOUNDED',transactions:events.length,cases:cases.length});
+
 }
 main().then(()=>{C.write(out+'/complete.json',{transactions:events.length,cases:cases.length});console.log('COMPLETE',events.length,cases.length);}).catch(e=>{C.write(out+'/failure.json',{error:e.stack});console.error(e);process.exitCode=1;}).finally(()=>{save();if(child)child.kill('SIGTERM');});
 module.exports={};

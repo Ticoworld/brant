@@ -1,0 +1,28 @@
+{
+  "classification": "newly reproduced synthetic counterexamples; no external snapshots",
+  "cases": {
+    "selective_solver_admission": "Excluding customer changes winner and price from 12 to 8.",
+    "sequential_auction_manipulation": "A value-4 participant gains 2 by buying first at 1 rather than second at 3.",
+    "creator_cross_batch_roundtrip": "Buy at 1 in batch A, sell at 3 in B: 2 extracted before fees; no same-batch wash needed.",
+    "split_allocation_gaming": {
+      "honest": "1/2",
+      "two_identities": "2/3",
+      "mechanism": "per-address equal allocation"
+    },
+    "artificial_creator_demand": "90 recycled creator funds plus 10 independent funds meets a gross threshold of 100; net external demand is 10.",
+    "revocable_post_launch_liquidity": "An LP can remove all 100 reserves if withdrawal remains authorized; graduation does not preserve depth.",
+    "since_is_no_upper_expiry": "The same old header and lower-bound since remain admissible later; no authenticated current-height upper bound.",
+    "outpoint_revocation_race": "Exact gate must be a live dependency; spending it disables later admission, but a fill already ordered first wins. Historical covenant only, not newly executed.",
+    "hedge_is_not_inventory": "After selling 10 native CKB, cash preserves value but native delivery inventory is zero; hedge execution elsewhere cannot replenish it.",
+    "obligations_reduce_equity": "100 assets minus 80 obligations leaves 20; deposited collateral and claims cannot both be free assets.",
+    "receipt_deposit_double_count_rejected": "Receipt/iCKB ownership is a claim; do not add underlying DAO CKB to the same beneficial balance.",
+    "stale_quote_loss": "Sell for stale 100, replace inventory for 120, fee 1: realized loss 21.",
+    "p2p_netting_not_lp_income": "Netting 100 opposite principal at zero spread/fees produces zero LP revenue.",
+    "idle_capital_and_delay": "Gross 10 less 2 fees and opportunity cost of 100 locked capital for 180/365 years is below gross return.",
+    "inventory_exhaustion": "One 10-unit fill exhausts a 10-unit delivery inventory even when net equity stays positive.",
+    "exact_depth_after_fee": "10*0.1 + 10*0.09 - 1 = 0.9 exactly; no floating point.",
+    "insufficient_depth_unknown": "Insufficient book depth yields UNKNOWN, not fabricated execution.",
+    "missing_fee_unknown": "Missing fee yields UNKNOWN.",
+    "technical_success_not_profit": "A technically valid trade with revenue 1 and cost 2 loses 1."
+  }
+}
