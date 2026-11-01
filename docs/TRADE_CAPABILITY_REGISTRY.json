@@ -179,17 +179,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Selective solver admission",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -203,17 +205,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Sequential auction/order price manipulation",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -227,17 +231,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Creator cross-batch roundtrip",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -251,17 +257,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Split allocation gaming",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -275,17 +283,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Artificial creator demand",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -299,17 +309,19 @@
       "work_order": "WO06-E1",
       "mechanism": "Revocable post-launch liquidity",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
       ],
       "evidence": [
-        "labs/rebuild/models/results.json"
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
       ],
       "limitations": [
-        "Minimal new synthetic witnesses; old curve/architecture not reconstructed; some witnesses are arithmetic rather than a stateful mechanism."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad/fair allocation adversarial checklist",
@@ -323,13 +335,17 @@
       "work_order": "WO06-E1",
       "mechanism": "Rejected launchpad architecture and alternative reserve/fairness mechanisms",
       "status": [
-        "Historical evidence only",
-        "Missing implementation"
+        "Reproduced with executable evidence"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
       "limitations": [
-        "Preserve minimal executable architecture/counterexample, not whole obsolete product."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1",
       "future_reuse": "Launchpad design comparisons",
@@ -367,13 +383,17 @@
       "work_order": "WO06-E2",
       "mechanism": "Adaptive allocation/split strategy parameter search",
       "status": [
-        "Historical evidence only",
-        "Missing implementation"
+        "Reproduced with executable evidence"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
       "limitations": [
-        "Historic 4950 cases not reproduced; useful mechanism search missing."
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e2",
       "future_reuse": "Fair issuance mechanism search",

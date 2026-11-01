@@ -1,0 +1,158 @@
+{
+  "scope": "Exact stateful synthetic counterexamples; reconstructed mechanisms, not old file identity or a validated launchpad",
+  "architectures": [
+    "reserve-backed constant-product launch pool",
+    "selective uniform auction",
+    "equal-identity allocation",
+    "gross-demand graduation",
+    "revocable LP reserve",
+    "reserve-floor solvency alternative"
+  ],
+  "results": {
+    "selective_admission": {
+      "all": "(Fraction(12, 1), 'customer')",
+      "selected": "(Fraction(8, 1), 'creator')",
+      "limitation": "Uniform price does not force solver inclusion."
+    },
+    "sequential_auction": {
+      "first_cost": "100/9",
+      "second_cost": "125/9",
+      "limitation": "Order determines execution price even in a solvent reserve-backed pool."
+    },
+    "creator_roundtrip": {
+      "profit": "25/9",
+      "customer_paid": "125/9",
+      "remaining_reserve": "1000/9",
+      "limitation": "Reserve conservation is not fair price discovery; cross-batch extraction remains possible."
+    },
+    "split_search": {
+      "cases": [
+        {
+          "honest": 1,
+          "sybils": 1,
+          "budget": 10,
+          "gain": "0"
+        },
+        {
+          "honest": 1,
+          "sybils": 1,
+          "budget": 100,
+          "gain": "0"
+        },
+        {
+          "honest": 1,
+          "sybils": 2,
+          "budget": 10,
+          "gain": "5/3"
+        },
+        {
+          "honest": 1,
+          "sybils": 2,
+          "budget": 100,
+          "gain": "50/3"
+        },
+        {
+          "honest": 1,
+          "sybils": 4,
+          "budget": 10,
+          "gain": "3"
+        },
+        {
+          "honest": 1,
+          "sybils": 4,
+          "budget": 100,
+          "gain": "30"
+        },
+        {
+          "honest": 2,
+          "sybils": 1,
+          "budget": 10,
+          "gain": "0"
+        },
+        {
+          "honest": 2,
+          "sybils": 1,
+          "budget": 100,
+          "gain": "0"
+        },
+        {
+          "honest": 2,
+          "sybils": 2,
+          "budget": 10,
+          "gain": "5/3"
+        },
+        {
+          "honest": 2,
+          "sybils": 2,
+          "budget": 100,
+          "gain": "50/3"
+        },
+        {
+          "honest": 2,
+          "sybils": 4,
+          "budget": 10,
+          "gain": "10/3"
+        },
+        {
+          "honest": 2,
+          "sybils": 4,
+          "budget": 100,
+          "gain": "100/3"
+        },
+        {
+          "honest": 5,
+          "sybils": 1,
+          "budget": 10,
+          "gain": "0"
+        },
+        {
+          "honest": 5,
+          "sybils": 1,
+          "budget": 100,
+          "gain": "0"
+        },
+        {
+          "honest": 5,
+          "sybils": 2,
+          "budget": 10,
+          "gain": "25/21"
+        },
+        {
+          "honest": 5,
+          "sybils": 2,
+          "budget": 100,
+          "gain": "250/21"
+        },
+        {
+          "honest": 5,
+          "sybils": 4,
+          "budget": 10,
+          "gain": "25/9"
+        },
+        {
+          "honest": 5,
+          "sybils": 4,
+          "budget": 100,
+          "gain": "250/9"
+        }
+      ],
+      "limitation": "Equal per-address allocation rewards additional identities without Sybil resistance."
+    },
+    "artificial_demand": {
+      "gross_threshold": "100",
+      "net_external": "10",
+      "creator_can_recycle": "90"
+    },
+    "revocable_liquidity": {
+      "withdrawn": "100",
+      "remaining": "0",
+      "limitation": "LP withdrawal authorization defeats lasting post-launch depth."
+    },
+    "reserve_backed_alternative": {
+      "predicate": "reserve >= floor * outstanding claims; operator withdrawals must preserve it",
+      "observations": "Solvency is distinct from fairness, fee coverage, market depth and demand. Transferable claims need authentic mint/burn and native proof.",
+      "native_proof": "UNIMPLEMENTED",
+      "minimal_counterexample": "One reserve unit withdrawn without burning a claim violates full floor backing."
+    }
+  }
+}
