@@ -474,14 +474,20 @@
       "work_order": "WO07-E2",
       "mechanism": "Exact 36-byte live-outpoint group-revocation covenant",
       "status": [
-        "Historical evidence only",
-        "Missing implementation",
+        "Reproduced with executable evidence",
         "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+      ],
       "limitations": [
-        "Historical only; ordinary A2 lacks this right; needs separate script and native validation."
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2",
       "future_reuse": "Group cancellation/issuer liquidity control",
@@ -496,14 +502,20 @@
       "work_order": "WO07-E2",
       "mechanism": "Fill/cancel ordering, owner melt after revoke and authentic lineage",
       "status": [
-        "Historical evidence only",
-        "Missing implementation",
+        "Reproduced with executable evidence",
         "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+      ],
       "limitations": [
-        "Offline note is not real ordering proof."
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2",
       "future_reuse": "Revocation semantics and recovery",
@@ -518,13 +530,20 @@
       "work_order": "WO07-E2",
       "mechanism": "Gated-vs-ordinary lifecycle bytes/cycles/capacity/code costs",
       "status": [
-        "Historical evidence only",
-        "Missing implementation"
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+      ],
       "limitations": [
-        "Old 7-vs-9 tx cost figures not newly measured."
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2",
       "future_reuse": "Cost/right comparisons",

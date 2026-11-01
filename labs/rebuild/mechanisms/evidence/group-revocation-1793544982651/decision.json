@@ -1,0 +1,9 @@
+{
+  "conclusion": "Exact live-outpoint right reconstructed in a separate native script; ordinary A2 unchanged. Group revocation is ordering dependent and adds gate transactions/occupancy/code cost.",
+  "limits": [
+    "No passive upper expiry",
+    "No guarantee revocation beats an earlier committed fill",
+    "No arbitrary-order LO-01 recovery security proof",
+    "Selected private-chain workloads and fixed fees, not old fixture counts or public pricing"
+  ]
+}

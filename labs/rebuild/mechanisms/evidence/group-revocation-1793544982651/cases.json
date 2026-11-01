@@ -1,0 +1,27 @@
+[
+  {
+    "label": "gate_mint_omission",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/bb0a0623da310fd78fdcde2e34ef809cc988e8cf6956ec15f76ea63ab18c35e0.html#21 })"
+  },
+  {
+    "label": "gate_fill_omission",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/bb0a0623da310fd78fdcde2e34ef809cc988e8cf6956ec15f76ea63ab18c35e0.html#21 })"
+  },
+  {
+    "label": "gate_exact_outpoint_substitution",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/bb0a0623da310fd78fdcde2e34ef809cc988e8cf6956ec15f76ea63ab18c35e0.html#21 })"
+  },
+  {
+    "label": "gate_successor_rebinding",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/bb0a0623da310fd78fdcde2e34ef809cc988e8cf6956ec15f76ea63ab18c35e0.html#21 })"
+  },
+  {
+    "label": "later_fill_after_group_revoke",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x674f269475efb24363cb1c71f082bf4e9b74dec80fd4a71b55f64d24aea4874500000000))"
+  }
+]

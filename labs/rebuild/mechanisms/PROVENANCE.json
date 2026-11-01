@@ -57,6 +57,28 @@
     "deps/ckb-c-stdlib/tests/ci.c": "12fe9f1313e111854e16f5e8064f7646545982ee6848fc04c3ab95b23300c2c5",
     "contracts/compact.c": "b70751cd10b78ca20e212ca97f24a894843fc376ecd04821213e8905d911f75c",
     "build/compact": "d85fc95426b1be59c728252ac330d26d0df54a316998d2911a3ab1da04c4ab9a",
-    "build/manifest.json": "26e610611ecb82a711d17f695ef54efd70e729c6ee29f43dd2e42737a839ed48"
-  }
+    "build/manifest.json": "26e610611ecb82a711d17f695ef54efd70e729c6ee29f43dd2e42737a839ed48",
+    "rust/Cargo.lock": "dca3c62e54f14a3c0ab45480f4d5b5d16d8ce674eea9a43751eb063fea71ecda",
+    "rust/Cargo.toml": "9bb6a9296fa60f96994138e2941df9c1f60e7add768271d25cd1e70f89d09f5a",
+    "rust/LICENSE": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
+    "rust/contracts/gated_order/Cargo.toml": "54cf6507b4b85e1eeef22183dfa08157964fe2e9f635cb025a2203e48ba0523a",
+    "rust/contracts/gated_order/src/entry.rs": "a807b25a5d2150a4192e83a584122e573539379f35e37649d5443b977aee992d",
+    "rust/contracts/gated_order/src/error.rs": "a96f2117ce594cb1f52dd32d753714849a1f6df420a2c02bd283f684bad2dc64",
+    "rust/contracts/gated_order/src/main.rs": "6733e3a6590c3260f858dc2cbcbbc6c1021c2f34d838e7dd080a53001afc886c",
+    "rust/contracts/limit_order/Cargo.toml": "663785ac981e438b1ef788902a5bb6db2c6425896b7c29cf169a8733acae2796",
+    "rust/contracts/limit_order/src/entry.rs": "f99eb6b4ae9eb47b06b3865a568d1d94b381b9e26b8728e4f7cd95531c310c48",
+    "rust/contracts/limit_order/src/error.rs": "a96f2117ce594cb1f52dd32d753714849a1f6df420a2c02bd283f684bad2dc64",
+    "rust/contracts/limit_order/src/main.rs": "6733e3a6590c3260f858dc2cbcbbc6c1021c2f34d838e7dd080a53001afc886c",
+    "rust/contracts/utils/Cargo.toml": "bfaf8b6f6ae092c14b29d80f96dc7d22b8e9e4a0d0f3647cd920d55845096843",
+    "rust/contracts/utils/src/c256.rs": "723022524f1e5f2d36b7cb7992af6c48c0e29ecd7dc1801da6bfde079fd5b78c",
+    "rust/contracts/utils/src/constants.rs": "e9468e4e98aec5c1d5df5e6e6c29abc55bf59e0bc34b9f63753540c6954ed073",
+    "rust/contracts/utils/src/dao.rs": "f3fc84af9cf2586ef66385bed83cb75a2a66de5bc9894f5a504ac540a5e284ff",
+    "rust/contracts/utils/src/lib.rs": "75f54fe9211a5cf9c4eeef7f0ddd7b9afb7a20185279f241d29e32205200ea50",
+    "rust/contracts/utils/src/utils.rs": "031168eb11fbd285a9505d8ac97dae7a6a9a3dde5104cdf900a96325c1822497",
+    "build/a2-optimized": "3ed493c909d7e97a292733b2d703a3344f4feaf7fd600da2313ba98096026814",
+    "build/a2-source": "28fd7efd760c182012aaa86aa44cb582a0c589418641837995935d2cd1d14747",
+    "build/gated_order": "9788767febf9714b43da3fd8bbdb7a53514c8c1d60173985766a223936d205df"
+  },
+  "rust_origin": "MIT iCKB contracts c951927e35fb5d4a13e28c5e55687d49cea7ca05, selected sources from native/vendor/ickb, standalone workspace. limit_order changes only heap macro; gated_order adds exact 36-byte outpoint dependency on mint/match, owner melt unchanged.",
+  "rust_tools": "Rust 1.74.0, ckb-std0.15.3 locked; Zig0.14.1 for C glue with explicit rv64imc target normalization. Built source baseline34528 vs published34200; no byte equivalence claimed."
 }
