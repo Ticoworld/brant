@@ -451,17 +451,19 @@
       "work_order": "WO07-E1",
       "mechanism": "Exact market snapshot/depth/fee/route import tooling",
       "status": [
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
         "labs/rebuild/models/research.py",
-        "labs/rebuild/models/strategy.py"
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/quote_routes.py"
       ],
       "evidence": [
-        "labs/rebuild/models/strategy-results.json"
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/quote-route-results.json"
       ],
       "limitations": [
-        "Exact depth/UNKNOWN exists; route selection, provenance/import validation coverage incomplete."
+        "Exact provenance-aware depth/fee/venue/delay route plans with UNKNOWN and synthetic separation; not guaranteed fills, actual executable observed quotes or consensus upper expiry."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e1",
       "future_reuse": "Executable quote comparison",
@@ -557,17 +559,19 @@
       "work_order": "WO08-E1",
       "mechanism": "Separate native/CEX/in-transit assets and obligations accounting",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/strategy.py"
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/portfolio_stress.py"
       ],
       "evidence": [
-        "labs/rebuild/models/strategy-results.json"
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
       ],
       "limitations": [
-        "Bounded scenarios; cost basis and realized/MTM accounting incomplete."
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e1",
       "future_reuse": "Maker risk accounting",
@@ -581,17 +585,20 @@
       "work_order": "WO08-E1",
       "mechanism": "Stale quotes, adverse selection, fees, idle capital, delays and exhaustion",
       "status": [
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
         "labs/rebuild/models/strategy.py",
-        "labs/rebuild/models/research.py"
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/portfolio_stress.py"
       ],
       "evidence": [
-        "labs/rebuild/models/strategy-results.json"
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
       ],
       "limitations": [
-        "Small suite; replenishment, latency, route, depth and parameter stress matrix incomplete."
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e1",
       "future_reuse": "Competitive RFQ/market-maker evaluation",
@@ -647,16 +654,19 @@
       "work_order": "WO08-E2",
       "mechanism": "DAO maker inventory/redemption/replenishment strategy economics",
       "status": [
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/models/strategy.py"
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/portfolio_stress.py"
       ],
       "evidence": [
-        "labs/rebuild/models/strategy-results.json"
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
       ],
       "limitations": [
-        "Only claim-is-not-liquid illustration; lifecycle-linked accounting and portfolio stress absent."
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2",
       "future_reuse": "Inventory and maturity-aware capital models",

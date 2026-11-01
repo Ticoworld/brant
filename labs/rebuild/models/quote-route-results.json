@@ -1,0 +1,34 @@
+{
+  "status": "PASS",
+  "direct": {
+    "status": "SYNTHETIC_PLAN",
+    "output": "46/5",
+    "delay": 0,
+    "source": "exact independent route fixture",
+    "observed_at": null,
+    "limitation": "Depth/fee plan does not guarantee fills or on-chain upper expiry."
+  },
+  "delayed_route": {
+    "status": "NOT_DELIVERABLE_IN_TIME",
+    "delay": 5
+  },
+  "delayed_plan": {
+    "status": "SYNTHETIC_PLAN",
+    "output": "1035713/125000",
+    "delay": 5,
+    "source": "exact independent route fixture",
+    "observed_at": null,
+    "limitation": "Depth/fee plan does not guarantee fills or on-chain upper expiry."
+  },
+  "source_classification": "All examples synthetic; no executable external observations.",
+  "cases": [
+    "exact depth/fees",
+    "venue-specific assets",
+    "withdrawal delay",
+    "insufficient depth",
+    "unknown fees",
+    "synthetic/observed separation",
+    "required observation timestamp"
+  ],
+  "expiry_limit": "A local plan timestamp is not a consensus-enforced passive quote expiry."
+}
