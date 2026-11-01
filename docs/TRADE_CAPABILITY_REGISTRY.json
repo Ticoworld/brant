@@ -151,13 +151,17 @@
       ],
       "implementation": [
         "labs/rebuild/native/src/recover.cjs",
-        "labs/rebuild/native/src/review-lineage.cjs"
+        "labs/rebuild/native/src/review-lineage.cjs",
+        "labs/rebuild/native/src/authenticated-recovery.cjs",
+        "labs/rebuild/native/src/run-recovery-policy.cjs"
       ],
       "evidence": [
-        "labs/rebuild/native/evidence/run-1793542987108/lineage-review.json"
+        "labs/rebuild/native/evidence/run-1793542987108/lineage-review.json",
+        "labs/rebuild/native/evidence/run-1793543880057/authenticated-recovery-validation.json"
       ],
       "limitations": [
-        "Signing worker trusts package; offline lineage covers own history only."
+        "Candidate client policy and ordinary known-fixture execution only; required arbitrary forged-lineage/LO-01 security validation blocked/unresolved after user-reported platform warning.",
+        "No on-chain fix or secure general signer claim; baseline fixture signing worker retained."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2",
       "future_reuse": "Independent owner-controlled exits",

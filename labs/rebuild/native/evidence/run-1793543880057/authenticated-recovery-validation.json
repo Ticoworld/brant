@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "positiveTraceLength": 3,
+  "negativePolicyCases": [
+    "wrong_genesis",
+    "wrong_recipient",
+    "wrong_amount",
+    "wrong_tokens",
+    "excess_fee",
+    "wrong_owner",
+    "dead_order",
+    "missing_history",
+    "altered_history_reply",
+    "altered_retained_mint"
+  ],
+  "scope": "Captured RPC policy validation, not an on-chain LO-01 reproduction/correction"
+}
