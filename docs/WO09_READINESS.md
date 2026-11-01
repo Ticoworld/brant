@@ -1,3 +1,5 @@
-# WO09 readiness
+# WO09 readiness — final clean-clone check pending
 
-NOT READY. Checkpoint A is independently executed; required bounded clearing, lower-bound commitment, quote/economic tools and authentic DAO withdrawal maturity remain missing. Continue B, C and D; do not implement a WO09 product yet. Keep launch, protection, OTX and liquidity hypotheses open.
+The native research foundation now passes bounded A–D execution and security checks. Before declaring ready, independently clone the pushed branch, bootstrap pinned dependencies, run full native execution, verify raw evidence and exact offline models, then preserve the result remotely.
+
+Remaining limitations: no fresh optimized-heap maximum capacity, no source-to-published-binary reproducibility, no optional gate proof, no production audit or external market/demand observations. These constrain claims, not the demonstrated bounded native primitives. No WO09 product implementation has started.

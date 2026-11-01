@@ -1,6 +1,6 @@
 const C=require('./lib.cjs'),{execFileSync}=require('child_process');
 const dir=process.argv[2];if(C.fs.existsSync(dir))throw Error('Fresh chain directory required');
-const bin=process.env.CKB_BIN||C.path.resolve(C.ROOT,'../../wo04-e1/tools/ckb/ckb');
+const bin=process.env.CKB_BIN||C.ROOT+'/tools/ckb';
 execFileSync(bin,['init','-C',dir,'--chain','dev','--rpc-port','19224','--p2p-port','19225']);
 let spec=C.fs.readFileSync(dir+'/specs/dev.toml','utf8'),extra='';
 for(const name of ['limit_order','xudt','ickb_logic','owned_owner']){C.fs.copyFileSync(C.ROOT+'/vendor/ickb/build/release/'+name,dir+'/'+name);extra+=`[[genesis.system_cells]]\nfile = { file = "../${name}" }\ncreate_type_id = false\ncapacity = 100_000_0000_0000\n`;}

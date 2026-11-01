@@ -1,3 +1,11 @@
-# Competitive decision
+# Competitive decision — REVISE technically / commercial UNPROVED
 
-DERIVED: reuse published upstream A2 for the native baseline. No new matching engine or compact C intent is justified by current evidence. Historical optimized A2 exceeded the compact candidate's batch count; that count is not newly reproduced. Native execution alone does not prove capital or commercial superiority.
+Reuse published upstream A2. It supports real owner authorization, funded CKB/xUDT, partial/full fills, two-owner atomic netting, authentic successor lineage and owner-controlled recovery. Shared native batching measurably reduces bytes/cycles against two serial equivalent full fills; raw layouts and fee assumptions are disclosed. No new compact intent or matching engine offers an independently measured property that warrants rebuilding it.
+
+The strongest relevant rival here is upstream A2 with native netting and shared script execution, rather than a weaker serial-only implementation. Historical optimized 2-MiB A2 reached 1,536 orders versus compact C's 1,024; those maxima remain historical. The published binary is newly tested at bounded 2/8/32 full fills. Heap optimization and saturation testing are deferred until a WO09 hypothesis requires that scale; no claim of improved maximum throughput or stronger heap variant is made.
+
+A master owner multisig lower-bound commitment costs eight extra occupied CKB bytes in this layout. It prevents early owner withdrawal while preserving customer fills, including late fills; it creates neither permanent redemption nor passive quote expiry. Ordinary A2 recovery is less encumbered. Active gate revocation has a distinct ordering-dependent right and historical cost disadvantage; no current hypothesis needs its separate script.
+
+DAO/iCKB lifecycle completion proves compatibility and real redemption mechanics, not superior liquidity returns. Prior iCKB bots already manage liquidity/maturity. Hedging does not replenish native delivery inventory; CEX assets, native holdings, in-transit assets and obligations require separate ledgers. Stale quote losses, idle capital, fees, redemption delays and exhaustion survive the rebuild. Professional RFQ rivals can hedge too. No new observed executable market snapshots, independent demand, profitable portfolio or unique business advantage are established.
+
+Keep launchpads/reserve-backed issuance, protection/leverage/fixed-term claims, OTX multi-asset exchange, liquidity commitments and treasury markets open. Compare each against the strongest plausible incumbent and its own recovery/adversarial conditions; do not choose iCKB or A2 as the product merely because they execute.

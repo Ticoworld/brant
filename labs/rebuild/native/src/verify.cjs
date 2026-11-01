@@ -1,0 +1,14 @@
+// Independent CCC and SDK serialization cross-check plus raw-RPC evidence consistency.
+const C=require('./lib.cjs'),assert=require('node:assert/strict'),{ccc}=require('@ckb-ccc/core'),zlib=require('zlib');
+const dir=process.argv[2];if(!dir)throw Error('Usage: node src/verify.cjs evidence/run-...');
+const read=f=>JSON.parse(C.fs.readFileSync(dir+'/'+f));
+const events=read('events.json'),cases=read('cases.json'),complete=read('complete.json');
+assert.equal(events.length,complete.transactions);assert.equal(cases.length,complete.cases);
+const raw=C.fs.existsSync(dir+'/raw.jsonl.gz')?zlib.gunzipSync(C.fs.readFileSync(dir+'/raw.jsonl.gz')).toString():C.fs.readFileSync(dir+'/raw.jsonl','utf8');
+const rpc=raw.trim().split('\n').map(JSON.parse);
+const seen=new Set();for(const e of events){assert(!seen.has(e.hash));seen.add(e.hash);assert.equal(C.U.rawTransactionToHash(e.tx),e.hash);assert.equal(ccc.Transaction.from(e.tx).hash(),e.hash);assert.equal(ccc.Transaction.from(e.tx).toBytes().length,e.bytes);assert.equal(e.committed.tx_status.status,'committed');assert.equal(e.committed.transaction.hash,e.hash);assert.deepEqual(C.snake(e.tx.inputs),e.committed.transaction.inputs);assert.deepEqual(C.snake(e.tx.outputs).map(o=>({...o,type:o.type||null})),e.committed.transaction.outputs);assert.deepEqual(e.tx.outputsData,e.committed.transaction.outputs_data);assert.deepEqual(e.tx.witnesses,e.committed.transaction.witnesses);assert(BigInt(e.cycles.cycles)>0n);assert(rpc.some(r=>r.method==='get_transaction'&&r.params[0]===e.hash&&r.response.result?.tx_status?.status==='committed'));}
+for(const c of cases)assert(rpc.some(r=>r.method===c.method&&r.response.error?.message===c.error));
+const environment=read('environment.json');
+for(const [name,code]of Object.entries(environment.codes)){const file=name==='a2'?'limit_order':name;const data=C.fs.readFileSync(C.ROOT+'/vendor/ickb/build/release/'+file);assert.equal(C.hash(data),code.hash);}
+if(C.fs.existsSync(dir+'/dao-lifecycle.json')){const life=read('dao-lifecycle.json');assert.equal(life.maximum,life.independentlyComputed);assert(BigInt(life.maximum)>=BigInt(life.depositCapacity));const amount=BigInt(life.issued);const ar=C.b(life.depositHeader.dao).readBigUInt64LE(8);assert.equal(amount,100000n*C.UNIT*10000000000000000n/ar);assert(events.some(e=>e.label==='actual_mature_dao_withdrawal_completion'));for(const label of ['dao_early_completion_consensus','dao_unauthorized_completion','dao_excessive_withdrawal','authentic_ickb_overissuance'])assert(cases.some(c=>c.label===label));}
+console.log(JSON.stringify({status:'PASS',transactions:events.length,rejections:cases.length,rawRPC:rpc.length,serializers:'CKB SDK and CCC',scope:'Offline evidence consistency; not a replacement for fresh chain execution'}));

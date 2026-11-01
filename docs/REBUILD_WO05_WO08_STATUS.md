@@ -1,15 +1,16 @@
-# Rebuild status — 2026-11-01
+# Rebuild WO05–WO08 status — 2026-11-01
 
-Base VERIFIED: origin/main ce7f27ec0d6657645e3198b0ea6a5831171003d0. Branch rebuild/wo05-wo08. WO01–WO04 unchanged; no Ayrvo or cross-chain continuation.
+Base VERIFIED: origin/main ce7f27ec0d6657645e3198b0ea6a5831171003d0. Branch rebuild/wo05-wo08. No main push, force push, merge, PR or public deployment. WO01–WO04 labs byte-identical; no Ayrvo edits. Root .gitignore was deliberately extended; it is the only migration-checksum difference.
 
-Checkpoint A REPRODUCED: published A2 funded CKB bid, genuine secp authorization, authentic xUDT owner-mode issuance, partial/full fills, direct customer CKB, lineage and separate-process owner recovery. Five committed transactions and five narrow rejection cases in run-1793541179061. Native receipts and raw RPC are present. This does not establish a generic exchange, multiparty batch baseline, time commitment or DAO lifecycle yet.
+| Checkpoint | New evidence | Status |
+|---|---|---|
+| A | Genuine wallet signing, funded CKB/xUDT, partial/full fills, direct payouts, lineage, separate-process recovery | REPRODUCED |
+| B | Two-owner atomic netting, 2/8/32 full-fill upstream batches, serial/shared comparison, lower-bound commitment and late fill; six synthetic launch counterexamples | REPRODUCED, bounded workload |
+| C | Exact depth/fee/UNKNOWN import and inventory ledgers, quote expiry source review; active gate revocation classified historical | REPRODUCED offline / historical gate |
+| D | Published-contract DAO deposit, receipt conversion, iCKB sale, independent successor recovery, burn/request, genuine mature withdrawal and subsequent spend | REPRODUCED |
 
-Checkpoints B–D MISSING; WO09 NOT READY pending native commitments, bounded clearing, economic/counterexample tools and authentic DAO maturity.
+Canonical run run-1793541730590: 76 commits, 18 expected rejections; offline CCC/SDK/raw consistency PASS. Historical source objects were not recovered or invented. Counts differ intentionally. Fresh GitHub-clone reproduction is the final outstanding readiness check.
 
-Historical manifest is user-reported reference, not instructions or fresh proof. No old counts or missing commits reconstructed. Remote backup verification is recorded by subsequent Git checks; this document alone is not evidence of a push.
+Remotely verified backups so far: A e91c86831fa5a7a6efb1bf290bd12c212cbefa8f; B 1766012edb80a4338858cf12538c6d48114be352; C 3f1937e70469a4565a4031e9be5b75f4a9b3c201. C was committed while D changes were in progress; its worktree was therefore not clean. That procedural exception is recorded explicitly; D preservation must close it with a clean tree.
 
-Checkpoint B REPRODUCED_BOUNDED: run-1793541393279 has 63 total committed transactions and nine rejection cases, including A regressions. Atomic two-owner netting, separate rightful recoveries, published A2 batches 2/8/32, early owner withdrawal rejection, valid pre-maturity and late customer fills, mature owner exit and invalid signature rejection. 19 synthetic model cases include all six launch attack classes. No maximum-throughput or optimized 2-MiB rebuild claimed. Source-level heap optimization remains historical; no new custom candidate needs a maximum-size contest.
-
-A backup was remotely verified as e91c86831fa5a7a6efb1bf290bd12c212cbefa8f. Checksum regression: all migration records except intentionally extended root .gitignore pass; historical labs remain byte-identical.
-
-Checkpoint C REPRODUCED (offline scope): exact depth/UNKNOWN, provenance-validated imports and separate-venue strategy ledger; pinned consensus source review. Quote upper-expiry counterexample is derived and supported by B late fill. Native gate cancellation intentionally remains historical, optional and unimplemented here. B backup remotely verified at 1766012edb80a4338858cf12538c6d48114be352.
+Not rebuilt: failed bonding curve, compact C matching engine/hybrid, optional gate covenant, historic maximum-batch/2-MiB heap variant and frozen WO04 cross-chain continuation. No omitted optional mechanism is claimed as newly reproduced. Source-to-release-binary build equivalence is still independently unproved; release bytes, hashes and runtime execution are verified.
