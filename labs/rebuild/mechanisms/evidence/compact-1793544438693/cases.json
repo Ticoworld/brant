@@ -1,0 +1,12 @@
+[
+  {
+    "label": "compact_missing_intent",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 15 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e2fee6ce55a76305f787f2aff207db82e499aa7a262bc8eceafdda1ac2811758.html#15 })"
+  },
+  {
+    "label": "compact_underpayment",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 34 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/e2fee6ce55a76305f787f2aff207db82e499aa7a262bc8eceafdda1ac2811758.html#34 })"
+  }
+]

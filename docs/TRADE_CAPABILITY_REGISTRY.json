@@ -16,13 +16,20 @@
       "work_order": "WO05-E1",
       "mechanism": "Compact C funded orders, direct payouts, partial/full execution",
       "status": [
-        "Missing implementation",
+        "Reproduced with executable evidence",
         "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+      ],
       "limitations": [
-        "Historical source inaccessible; A2 is not demonstrated equivalent in compact witness or output layout."
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1",
       "future_reuse": "Native trading/OTX clearing",
@@ -36,13 +43,20 @@
       "work_order": "WO05-E2",
       "mechanism": "Witness-recoverable compact intent commitments",
       "status": [
-        "Missing implementation",
+        "Reproduced with executable evidence",
         "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+      ],
       "limitations": [
-        "No implementation or witness-recovery proof in baseline."
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2",
       "future_reuse": "Stateless solver handoff and recovery",
@@ -106,13 +120,20 @@
       "work_order": "WO05-E2",
       "mechanism": "Atomic compact-C/A2 composition and native asset routing",
       "status": [
-        "Missing implementation",
+        "Reproduced with executable evidence",
         "Missing adversarial proof"
       ],
-      "implementation": [],
-      "evidence": [],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+      ],
       "limitations": [
-        "No hybrid implementation in baseline; separate A2 netting is not equivalent."
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2",
       "future_reuse": "Composable owner-controlled exchange",

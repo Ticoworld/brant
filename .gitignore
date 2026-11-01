@@ -27,3 +27,4 @@ node_modules/
 # Rebuild scratch clones and ephemeral node logs
 /work/
 /labs/rebuild/native/evidence/*/node.log
+/labs/rebuild/mechanisms/evidence/*/node.log
