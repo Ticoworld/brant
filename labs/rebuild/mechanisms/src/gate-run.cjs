@@ -1,5 +1,5 @@
 const {C,Engine,cell,assert}=require('./engine.cjs'),{UNIT,fee,locks,U,hx,le,b,orderData}=C;const e=new Engine('group-revocation');
-async function main(){await e.start();for(const name of ['a2-optimized','gated_order'])await e.deploy(name,e.root+'/build/'+name);const results=[];
+async function main(){await e.start();for(const name of ['a2-optimized','gated_order'])await e.deploy(name,e.build+'/'+name);const results=[];
  for(const variant of ['a2','a2-optimized','gated_order']){
   const gated=variant==='gated_order',extra=gated?36n:0n,begin=e.events.length;let gate,w=e.wallets[0],r;
   if(gated){r=await e.send('create_exact_gate',e.sign(e.tx([w],[cell(61n*UNIT,locks[0]),cell(w.capacity-61n*UNIT-fee,locks[0])]),[w],[0]));gate=r[0];e.wallets[0]=r[1];}

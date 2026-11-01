@@ -1,53 +1,20 @@
 [
   {
     "name": "a2-source",
-    "bytes": 34704,
-    "sha256": "94b915fa852ef90e6b9617a21b5c441ac37863ca99155e8a8b1b5f2bd2c30c07",
-    "command": [
-      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
-      "build",
-      "--manifest-path",
-      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
-      "--target",
-      "riscv64imac-unknown-none-elf",
-      "--release",
-      "--locked",
-      "-p",
-      "limit_order"
-    ]
+    "bytes": 34528,
+    "sha256": "28fd7efd760c182012aaa86aa44cb582a0c589418641837995935d2cd1d14747",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
   },
   {
     "name": "a2-optimized",
-    "bytes": 34704,
-    "sha256": "cca7f56eb4955d4a0fa4333859ad9935f1e0e86b2633a5de163cb42401655098",
-    "command": [
-      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
-      "build",
-      "--manifest-path",
-      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
-      "--target",
-      "riscv64imac-unknown-none-elf",
-      "--release",
-      "--locked",
-      "-p",
-      "limit_order"
-    ]
+    "bytes": 34528,
+    "sha256": "3ed493c909d7e97a292733b2d703a3344f4feaf7fd600da2313ba98096026814",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
   },
   {
     "name": "gated_order",
-    "bytes": 42248,
-    "sha256": "0c7ece502be51c73fded33322ffe5b7349ec634aab553284633aecee50bf72c3",
-    "command": [
-      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
-      "build",
-      "--manifest-path",
-      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
-      "--target",
-      "riscv64imac-unknown-none-elf",
-      "--release",
-      "--locked",
-      "-p",
-      "gated_order"
-    ]
+    "bytes": 42072,
+    "sha256": "9788767febf9714b43da3fd8bbdb7a53514c8c1d60173985766a223936d205df",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
   }
 ]

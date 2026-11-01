@@ -1,0 +1,11 @@
+{
+  "codeHash": "0xe2e391f3980d141d8a4dbabcf6d3ea81fcbfbc2f0085a73f61e3a93435292a46",
+  "issued": "9994432257408",
+  "price": "9900000000000",
+  "commitment": "0x2af097029c7e623c1bea27882518b9fd91c7c79e1c2bbb8e7c2fef7498ca6357",
+  "funding": {
+    "txHash": "0x292ef06a73459838957e1e670621a97df2d1bfeda3f1aa2e07038b48f450a37e",
+    "index": "0x0"
+  },
+  "scope": "Published receipt-issued iCKB directly pays C funded bid; subsequent signed fixture transfer resets holder for separate A2/DAO regression. Not revenue, inventory-profit or arbitrary-history recovery proof."
+}

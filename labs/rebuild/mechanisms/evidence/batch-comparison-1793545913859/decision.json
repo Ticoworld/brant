@@ -1,0 +1,10 @@
+{
+  "decision": "Measure strongest equivalent supported resource envelope; no forced historical maximum",
+  "limitations": [
+    "No source-to-published binary equivalence: same upstream contract source builds 34528 bytes vs published34200 under different compiler/libc",
+    "Compact is bid-only with O(N^2) local comparisons and direct payout; A2 bidirectional/master lifecycle differs",
+    "All fixed fees are fixture fees, not network pricing",
+    "Failure to estimate is recorded, never counted as committed settlement",
+    "Production discovery/recovery/LO-01 remain outside these tests"
+  ]
+}

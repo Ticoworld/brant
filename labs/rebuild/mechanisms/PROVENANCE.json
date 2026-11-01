@@ -1,7 +1,18 @@
 {
-  "compiler": "Zig 0.14.1 riscv64-freestanding generic_rv64+m+c O2",
-  "stdlib_origin": "Byte-for-byte copied from preserved labs/wo04-e1/deps/ckb-c-stdlib; Git upstream revision UNKNOWN, content pinned below; MIT LICENSE retained",
-  "scope": "New bounded compact bid primitive, not old C source identity",
+  "schema": 2,
+  "stdlib_origin": "MIT preserved WO04 ckb-c-stdlib content; upstream Git revision UNKNOWN, exact per-file content pinned",
+  "rust_origin": "MIT iCKB c951927e35fb5d4a13e28c5e55687d49cea7ca05, contract-source revision454cfa966052a621c4e8b67001718c29ee8191a2. Bounded heap and exact-gate adaptation disclosed in reports.",
+  "compiler": "Zig0.14.1 and Rust1.74.0, locked ckb-std0.15.3; rv64imc C glue target normalization",
+  "artifact_domains": {
+    "build": "Original deployed binaries from scratch build path, preserved for exact existing receipt comparisons",
+    "build/rebuilt": "Permanent source build with remapped paths, separately executed native gate and1536-order comparison",
+    "build/rebuilt-unmapped": "Hash/size manifest of an intermediate path-sensitive build; no native-security claim; binary snapshot retained in Git commit b824dda"
+  },
+  "limits": [
+    "Source-built artifacts differ from published34200-byte A2; no false source-to-published equivalence",
+    "Exact across-directory deterministic compilation requires its own comparison; source path remapping is explicit",
+    "No general authenticated recovery/LO-01 security fix"
+  ],
   "files": {
     "deps/ckb-c-stdlib/.github/workflows/ci.yml": "601ab7e40bf96f1bcef57c8af98ca6549bfa188409f985fb6bad0db53bf6126e",
     "deps/ckb-c-stdlib/.gitignore": "45875f16e0179fc2278ebe5c1a258a2317e17be8bc6a66d75bc49565ec45fc0e",
@@ -56,8 +67,17 @@
     "deps/ckb-c-stdlib/simulator/rsa_sighash_all_usesim.c": "20806d37ab72926ea12837ca0629c24f77e6a7b1276525fa9e9a0b9b7360c573",
     "deps/ckb-c-stdlib/tests/ci.c": "12fe9f1313e111854e16f5e8064f7646545982ee6848fc04c3ab95b23300c2c5",
     "contracts/compact.c": "b70751cd10b78ca20e212ca97f24a894843fc376ecd04821213e8905d911f75c",
-    "build/compact": "d85fc95426b1be59c728252ac330d26d0df54a316998d2911a3ab1da04c4ab9a",
-    "build/manifest.json": "26e610611ecb82a711d17f695ef54efd70e729c6ee29f43dd2e42737a839ed48",
+    "src/batch-run.cjs": "f83fce3ceebb91ad8f21619d4d7550a7157deec9481747647dd33795d05012ed",
+    "src/bootstrap.py": "66a2166c4eb31fb7541a204c506f36c8fa8bd2fee0a722ef76e14c4f25064dd4",
+    "src/build-rust.py": "11857ad55cd33141686d19760ec2aa7d2eed813165179bd8b099fb7a7950c53d",
+    "src/build.py": "5eb659a72e71c297482a6840305da911cedc196702a43b9748b5304d48ed2001",
+    "src/commitment-run.cjs": "3a3c359fe6f804b4c1c2ce9b167c48e58f8623ca1e742323ba26d52011755142",
+    "src/compact-run.cjs": "f064a26344c82317896851fd79af85db438fad7947a34035fe8a612ab0bb577f",
+    "src/engine.cjs": "06d219c63e76f5823f6c071e3a19ae42c9b4234ec42067949c24a22bc614cab0",
+    "src/gate-run.cjs": "5ecc490445b7a625c5db5784cafc34e76a5ff9b7055fb757089ffcb03a99b8d9",
+    "src/hash-provenance.py": "12ec0cb3d5d23ab999dbb8040c51ca42913b93ef27aac012b505eddd6560fdad",
+    "src/verify-source.cjs": "b0cac6bcfd813a0059358045ab0444f9b5f591d3b22903f991d6ceebcf9e6d28",
+    "src/verify.cjs": "92c82c1d5caa85c1342316b5596f522498ac4b8a8ad63230a05ea2f3d06198ad",
     "rust/Cargo.lock": "dca3c62e54f14a3c0ab45480f4d5b5d16d8ce674eea9a43751eb063fea71ecda",
     "rust/Cargo.toml": "9bb6a9296fa60f96994138e2941df9c1f60e7add768271d25cd1e70f89d09f5a",
     "rust/LICENSE": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
@@ -77,8 +97,15 @@
     "rust/contracts/utils/src/utils.rs": "031168eb11fbd285a9505d8ac97dae7a6a9a3dde5104cdf900a96325c1822497",
     "build/a2-optimized": "3ed493c909d7e97a292733b2d703a3344f4feaf7fd600da2313ba98096026814",
     "build/a2-source": "28fd7efd760c182012aaa86aa44cb582a0c589418641837995935d2cd1d14747",
-    "build/gated_order": "9788767febf9714b43da3fd8bbdb7a53514c8c1d60173985766a223936d205df"
-  },
-  "rust_origin": "MIT iCKB contracts c951927e35fb5d4a13e28c5e55687d49cea7ca05, selected sources from native/vendor/ickb, standalone workspace. limit_order changes only heap macro; gated_order adds exact 36-byte outpoint dependency on mint/match, owner melt unchanged.",
-  "rust_tools": "Rust 1.74.0, ckb-std0.15.3 locked; Zig0.14.1 for C glue with explicit rv64imc target normalization. Built source baseline34528 vs published34200; no byte equivalence claimed."
+    "build/compact": "d85fc95426b1be59c728252ac330d26d0df54a316998d2911a3ab1da04c4ab9a",
+    "build/gated_order": "9788767febf9714b43da3fd8bbdb7a53514c8c1d60173985766a223936d205df",
+    "build/manifest.json": "26e610611ecb82a711d17f695ef54efd70e729c6ee29f43dd2e42737a839ed48",
+    "build/rebuilt/a2-optimized": "8c70c28dcd60eb4a3b3f0044f4265652090137dd2b5ae8bdc22f75e44e7bfa76",
+    "build/rebuilt/a2-source": "fbbc9328eed8d3d462d57816bb28318af2f0f504b275457207e15d916d1a2bae",
+    "build/rebuilt/compact": "d85fc95426b1be59c728252ac330d26d0df54a316998d2911a3ab1da04c4ab9a",
+    "build/rebuilt/gated_order": "f26fb0aba2868316665fce12f145aa9116d47590f87148ba361efe6968e7b220",
+    "build/rebuilt/rust-manifest.json": "103221f22d88f2fe1b72e1c81a53505063bc825fefc848145d7bb7d3bc746036",
+    "build/rebuilt-unmapped/rust-manifest.json": "bbcbc03044fc073e7756bea676ecbf744b8d48119a285037ccd37f23f1ed33d1",
+    "build/rust-manifest.json": "b49688085f6709f358eec35e5b3262d3073128e9190743d8b55d1e2ee4404e6b"
+  }
 }

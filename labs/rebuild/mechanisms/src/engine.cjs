@@ -1,7 +1,7 @@
 const path=require('path'),C=require(process.env.TRADE_BASE?process.env.TRADE_BASE+'/src/lib.cjs':path.resolve(__dirname,'../../native/src/lib.cjs')),assert=require('node:assert/strict'),{spawn,execFileSync}=require('child_process'),os=require('os');
 const signGroup=require(path.join(path.dirname(require.resolve('@nervosnetwork/ckb-sdk-core',{paths:[C.ROOT]})),'signWitnessGroup.js')).default;
 class Engine{
- constructor(name){this.root=path.resolve(__dirname,'..');this.out=this.root+'/evidence/'+name+'-'+Date.now();C.fs.mkdirSync(this.out,{recursive:true});this.events=[];this.cases=[];this.wallets=[];this.codes={};}
+ constructor(name){this.root=path.resolve(__dirname,'..');this.build=process.env.MECHANISM_BUILD||this.root+'/build';this.out=this.root+'/evidence/'+name+'-'+Date.now();C.fs.mkdirSync(this.out,{recursive:true});this.events=[];this.cases=[];this.wallets=[];this.codes={};}
  async rpc(method,params=[]){const response=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await response.json();C.fs.appendFileSync(this.out+'/raw.jsonl',JSON.stringify({method,params,response:j})+'\n');if(j.error)throw Object.assign(Error(j.error.message),{rpc:j.error});return j.result;}
  async mine(n=1){for(let i=0;i<n;i++)await this.rpc('generate_block');}
  save(){C.write(this.out+'/events.json',this.events);C.write(this.out+'/cases.json',this.cases);}

@@ -21,11 +21,14 @@
       ],
       "implementation": [
         "labs/rebuild/mechanisms/contracts/compact.c",
-        "labs/rebuild/mechanisms/src/compact-run.cjs"
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
-        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json"
       ],
       "limitations": [
         "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
@@ -48,11 +51,14 @@
       ],
       "implementation": [
         "labs/rebuild/mechanisms/contracts/compact.c",
-        "labs/rebuild/mechanisms/src/compact-run.cjs"
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
-        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json"
       ],
       "limitations": [
         "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
@@ -105,7 +111,8 @@
       "evidence": [
         "labs/rebuild/mechanisms/evidence/batch-comparison-1793544998943/comparison.json",
         "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/verification.json",
-        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/comparison.json"
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/comparison.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545913859/verification.json"
       ],
       "limitations": [
         "Compared 32/256/1024/1536 full CKB bids; compact and optimized A2 settle1536, ordinary/default-heap fail at tested larger points.",
@@ -128,11 +135,14 @@
       ],
       "implementation": [
         "labs/rebuild/mechanisms/contracts/compact.c",
-        "labs/rebuild/mechanisms/src/compact-run.cjs"
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
-        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json"
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json"
       ],
       "limitations": [
         "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
@@ -490,7 +500,8 @@
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
-        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json"
       ],
       "limitations": [
         "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
@@ -518,7 +529,8 @@
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
-        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json"
       ],
       "limitations": [
         "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
@@ -546,7 +558,8 @@
       ],
       "evidence": [
         "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
-        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json"
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json"
       ],
       "limitations": [
         "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
@@ -637,12 +650,15 @@
         "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/native/src/run.cjs"
+        "labs/rebuild/native/src/run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
       ],
       "evidence": [
         "labs/rebuild/native/evidence/run-1793542987108/complete.json",
         "labs/rebuild/native/evidence/run-1793542987108/dao-lifecycle.json",
-        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json"
       ],
       "limitations": [
         "Short integration epochs are not real network waiting time; not a business proof.",
@@ -688,13 +704,16 @@
         "Missing adversarial proof"
       ],
       "implementation": [
-        "labs/rebuild/native/src/verify-provenance.cjs"
+        "labs/rebuild/native/src/verify-provenance.cjs",
+        "labs/rebuild/mechanisms/src/build-rust.py",
+        "labs/rebuild/mechanisms/src/verify-source.cjs"
       ],
       "evidence": [
         "labs/rebuild/native/evidence/run-1793542987108/provenance-verification.json"
       ],
       "limitations": [
-        "Published bytes verified; independent source-to-release build not established."
+        "Published bytes verified; independent source-to-release build not established.",
+        "Independent source variants now compile and execute; path-sensitive outputs separated from original tested bytes, source-to-published equality still unproved."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2",
       "future_reuse": "Reusable auditable experiments",
@@ -703,5 +722,12 @@
         "Missing adversarial proof"
       ]
     }
-  ]
+  ],
+  "blocked_boundary": {
+    "capability": "RECOVERY",
+    "status": "Reconstructed but not fully validated; missing required adversarial proof",
+    "scope": "General arbitrary-history/malicious successor selection and upstream LO-01 reproduction/correction security validation",
+    "reason": "User-reported cybersecurity content warnings; user instructs no bypass. Ordinary completed design/review/fixture observations preserved without security-fix claim.",
+    "independent_work": "Compact funded intent execution, C/A2 and authentic iCKB composition, batch/resource and revocation semantics, economic/launch models continue independently."
+  }
 }

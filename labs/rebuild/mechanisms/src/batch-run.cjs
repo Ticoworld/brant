@@ -1,5 +1,5 @@
 const {C,Engine,cell,assert}=require('./engine.cjs'),{UNIT,fee,locks,U,hx,le,b,hash,orderData}=C;const e=new Engine('batch-comparison');
-async function main(){await e.start();for(const code of ['compact','a2-source','a2-optimized'])await e.deploy(code,e.root+'/build/'+code);const metrics=[];
+async function main(){await e.start();for(const code of ['compact','a2-source','a2-optimized'])await e.deploy(code,e.build+'/'+code);const metrics=[];
  for(const n of (process.env.BATCH_SIZES||'32,256,1024,1536').split(',').map(Number))for(const variant of ['compact','a2','a2-source','a2-optimized']){
   const profileStart=e.events.length,compact=variant==='compact',script=e.codes[variant].script,type={...e.codes.xudt.script,args:U.scriptToHash(locks[2])};let w=e.wallets[0],funded=[],witnesses=['0x'],terms=[];
   for(let i=0;i<n;i++){if(compact){const term=hx(Buffer.concat([b(U.scriptToHash(locks[0])),b(U.scriptToHash(locks[0])),b(U.scriptToHash(type)),le(1),le(UNIT),le(i+1)]));terms.push(term);funded.push(cell(1005n*UNIT,script,null,hash(b(term))));witnesses.push(term);}else{funded.push(cell(1200n*UNIT,script,type,orderData(0n)),cell(100n*UNIT,locks[0],script));}}

@@ -1,0 +1,1 @@
+{"status":"PASS","transactions":80,"rejections":18,"rawRPC":2888,"serializers":"CKB SDK and CCC","scope":"Offline evidence consistency; not a replacement for fresh chain execution"}
