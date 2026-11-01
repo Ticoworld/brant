@@ -1,0 +1,39 @@
+{
+  "status": "PASS_FOR_STATED_REPRODUCTION_SCOPE",
+  "remote_source_commit": "411d824d846d844447517e33a5fad21db8084cb4",
+  "repository": "https://github.com/Ticoworld/trade.git",
+  "branch": "rebuild/wo05-wo08",
+  "fresh_checkout": "work/comprehensive-fresh",
+  "same_host_and_operator": true,
+  "dependencies": "Fresh npm-ci and separate checksum-verified CKB release download in clone; source builds use same pinned Rust1.74.0/Zig0.14.1 compiler cache through ignored tools symlinks, explicitly shared rather than independent compiler acquisition.",
+  "artifacts": {
+    "compact": {
+      "bytes": 15184,
+      "sha256": "d85fc95426b1be59c728252ac330d26d0df54a316998d2911a3ab1da04c4ab9a",
+      "fresh_source_build_matches": true
+    },
+    "a2-source": {
+      "bytes": 34304,
+      "sha256": "fbbc9328eed8d3d462d57816bb28318af2f0f504b275457207e15d916d1a2bae",
+      "fresh_source_build_matches": true
+    },
+    "a2-optimized": {
+      "bytes": 34304,
+      "sha256": "8c70c28dcd60eb4a3b3f0044f4265652090137dd2b5ae8bdc22f75e44e7bfa76",
+      "fresh_source_build_matches": true
+    },
+    "gated_order": {
+      "bytes": 41880,
+      "sha256": "f26fb0aba2868316665fce12f145aa9116d47590f87148ba361efe6968e7b220",
+      "fresh_source_build_matches": true
+    }
+  },
+  "native_runs": {
+    "compact": "labs/rebuild/mechanisms/evidence/compact-1793546201421/verification.json",
+    "gate": "labs/rebuild/mechanisms/evidence/group-revocation-1793546291240/verification.json"
+  },
+  "offline": "27-capability registry, exact original cases, separate-venue strategy model, stateful launch/split search, quote route checks and972 portfolio stress combinations pass; generated model outputs unchanged before compilation.",
+  "tracked_tree_note": "Only Rust build-manifest command-path metadata differs after fresh compilation; contract sources and executable binary bytes match. Raw and signed native evidence generated in new run dirs.",
+  "security_boundary": "General authenticated arbitrary-history signing and LO-01 remain unresolved/blocked. No such blocked proof was run or inferred from these checks.",
+  "published_binary_limit": "Source-built A2 is not bit-identical to published34200-byte release; published hashes are independently pinned and actual release execution remains proven."
+}
