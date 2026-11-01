@@ -1,0 +1,207 @@
+[
+  {
+    "variant": "compact",
+    "n": 32,
+    "fundingBytes": 8319,
+    "settlementBytes": 6139,
+    "codeBytes": 15184,
+    "fundingCapacity": "3216000000000",
+    "filledCKB": "3216000000000",
+    "cycles": {
+      "cycles": "0x28a046"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x8b07a5288e52c0bec7bb2810c9ea1196e83cbe83d0fbd2f02ca889a1454b1280",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 32,
+    "fundingBytes": 14025,
+    "settlementBytes": 10606,
+    "codeBytes": 34200,
+    "fundingCapacity": "4160000000000",
+    "filledCKB": "3216000000000",
+    "cycles": {
+      "cycles": "0x30c0d6"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x1b69d066f1e62432ae2d500ab40ce8115991490f5c92f2bc0a70c6d35508d33a",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2-source",
+    "n": 32,
+    "fundingBytes": 14025,
+    "settlementBytes": 10606,
+    "codeBytes": 34528,
+    "fundingCapacity": "4160000000000",
+    "filledCKB": "3216000000000",
+    "cycles": {
+      "cycles": "0x2f61f1"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xdc536f8ba1a77e4bb56d92c3ff456e24f751feef39123fe12475012513c9c95a",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 32,
+    "fundingBytes": 14025,
+    "settlementBytes": 10606,
+    "codeBytes": 34528,
+    "fundingCapacity": "4160000000000",
+    "filledCKB": "3216000000000",
+    "cycles": {
+      "cycles": "0x2f7939"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xfff82ad5e912552912201af805527dcc89597c439871f8f2072b2e63dedfa8f5",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "compact",
+    "n": 256,
+    "fundingBytes": 64095,
+    "settlementBytes": 44667,
+    "codeBytes": 15184,
+    "fundingCapacity": "25728000000000",
+    "filledCKB": "25728000000000",
+    "cycles": {
+      "cycles": "0x244c167"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x92d60488ab5b52fd458ed5db5ca8d1d98bddaddbb9ad59764520c6aaf3cc0834",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 256,
+    "fundingBytes": 109225,
+    "settlementBytes": 81166,
+    "codeBytes": 34200,
+    "fundingCapacity": "33280000000000",
+    "filledCKB": "25728000000000",
+    "cycles": {
+      "cycles": "0xf115e3"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xdfa7f048977c19c6a58e8fe1d4c556d4056ed9164f6dc4bffceb63a745f02bb0",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2-source",
+    "n": 256,
+    "fundingBytes": 109225,
+    "settlementBytes": 81166,
+    "codeBytes": 34528,
+    "fundingCapacity": "33280000000000",
+    "filledCKB": "25728000000000",
+    "cycles": {
+      "cycles": "0xe282e4"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x0289228c71c6c3375fd8b2f2d7ee915daf03062c1838e24a5d17fc41a87aa2b7",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 256,
+    "fundingBytes": 109225,
+    "settlementBytes": 81166,
+    "codeBytes": 34528,
+    "fundingCapacity": "33280000000000",
+    "filledCKB": "25728000000000",
+    "cycles": {
+      "cycles": "0xe1f95f"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x3db1b636af151c2126105e00d709315c401c754887855aa32da4a3c72e7d76cc",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "compact",
+    "n": 1024,
+    "fundingBytes": 255327,
+    "settlementBytes": 176763,
+    "codeBytes": 15184,
+    "fundingCapacity": "102912000000000",
+    "filledCKB": "102912000000000",
+    "cycles": {
+      "cycles": "0x202ae832"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xdf9a48e22c67ed68315a768f5424fb3258ae6f40dab19b16bf4fbbbc65b01025",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 1024,
+    "stage": "funding",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })",
+    "fundingBytes": 0,
+    "fundingTransactions": 0
+  },
+  {
+    "variant": "a2-source",
+    "n": 1024,
+    "stage": "funding",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5cebdbd34b8426ac7304b2ea885cc8d59854a8dcf57773ccf8474a14d004ab60.html#-1 })",
+    "fundingBytes": 0,
+    "fundingTransactions": 0
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 1024,
+    "fundingBytes": 435625,
+    "settlementBytes": 323086,
+    "codeBytes": 34528,
+    "fundingCapacity": "133120000000000",
+    "filledCKB": "102912000000000",
+    "cycles": {
+      "cycles": "0x3846268"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x2e1771232fe3313f263f3822089657ed3b50ce63101846ed9d82e18e7595ef9e",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "compact",
+    "n": 1536,
+    "fundingBytes": 382815,
+    "settlementBytes": 264827,
+    "codeBytes": 15184,
+    "fundingCapacity": "154368000000000",
+    "filledCKB": "154368000000000",
+    "cycles": {
+      "cycles": "0x47978afa"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xd9b09a9b43f74204dac0bffa4b67e74943b94f92010882d1cf1df110d2d8ece3",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 1536,
+    "stage": "funding",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })",
+    "fundingBytes": 0,
+    "fundingTransactions": 0
+  },
+  {
+    "variant": "a2-source",
+    "n": 1536,
+    "stage": "funding",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5cebdbd34b8426ac7304b2ea885cc8d59854a8dcf57773ccf8474a14d004ab60.html#-1 })",
+    "fundingBytes": 0,
+    "fundingTransactions": 0
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 1536,
+    "stage": "funding",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d14095e9214e4be63411185a05552345ae45d9cbab3d5f2b85f10862ed00ef82.html#-1 })",
+    "fundingBytes": 0,
+    "fundingTransactions": 0
+  }
+]

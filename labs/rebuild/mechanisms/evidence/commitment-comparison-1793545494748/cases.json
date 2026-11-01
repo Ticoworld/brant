@@ -1,0 +1,17 @@
+[
+  {
+    "label": "commitment_early_owner_recovery",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(Immature(Inputs[0]): the transaction is immature because of the since requirement)"
+  },
+  {
+    "label": "commitment_owner_omits_since",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -24 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8.html#-24 })"
+  },
+  {
+    "label": "commitment_wrong_owner_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8.html#-52 })"
+  }
+]

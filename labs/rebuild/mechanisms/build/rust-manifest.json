@@ -1,0 +1,53 @@
+[
+  {
+    "name": "a2-source",
+    "bytes": 34704,
+    "sha256": "94b915fa852ef90e6b9617a21b5c441ac37863ca99155e8a8b1b5f2bd2c30c07",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
+      "build",
+      "--manifest-path",
+      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
+      "--target",
+      "riscv64imac-unknown-none-elf",
+      "--release",
+      "--locked",
+      "-p",
+      "limit_order"
+    ]
+  },
+  {
+    "name": "a2-optimized",
+    "bytes": 34704,
+    "sha256": "cca7f56eb4955d4a0fa4333859ad9935f1e0e86b2633a5de163cb42401655098",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
+      "build",
+      "--manifest-path",
+      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
+      "--target",
+      "riscv64imac-unknown-none-elf",
+      "--release",
+      "--locked",
+      "-p",
+      "limit_order"
+    ]
+  },
+  {
+    "name": "gated_order",
+    "bytes": 42248,
+    "sha256": "0c7ece502be51c73fded33322ffe5b7349ec634aab553284633aecee50bf72c3",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/cargo/bin/cargo",
+      "build",
+      "--manifest-path",
+      "/workspace/trade/labs/rebuild/mechanisms/rust/Cargo.toml",
+      "--target",
+      "riscv64imac-unknown-none-elf",
+      "--release",
+      "--locked",
+      "-p",
+      "gated_order"
+    ]
+  }
+]

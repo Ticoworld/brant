@@ -96,17 +96,20 @@
       "work_order": "WO05-E1",
       "mechanism": "Large compact-vs-optimized-A2 equivalent workload comparison",
       "status": [
-        "Historical evidence only",
-        "Missing implementation"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/native/src/run.cjs"
+        "labs/rebuild/mechanisms/src/batch-run.cjs",
+        "labs/rebuild/mechanisms/src/build-rust.py"
       ],
       "evidence": [
-        "labs/rebuild/native/evidence/run-1793542987108/batch-metrics.json"
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793544998943/comparison.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/verification.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/comparison.json"
       ],
       "limitations": [
-        "Only 2/8/32 published-A2 full fills reproduced; historical 1024/1536 maxima not reproduced."
+        "Compared 32/256/1024/1536 full CKB bids; compact and optimized A2 settle1536, ordinary/default-heap fail at tested larger points.",
+        "Staged funding fixes bulk-mint resource failure; maxima are not saturation bounds. Direct compact payouts vs A2 retained-token/master lifecycle differ and are disclosed. No improved maker-inventory/profit claim."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1",
       "future_reuse": "Architecture/resource envelope comparisons",
@@ -380,17 +383,19 @@
       "work_order": "WO06-E2",
       "mechanism": "Ordinary A2 vs bounded owner commitment; valid late fill and mature recovery",
       "status": [
-        "Reproduced with executable evidence",
-        "Reconstructed but not fully validated"
+        "Reproduced with executable evidence"
       ],
       "implementation": [
-        "labs/rebuild/native/src/run.cjs"
+        "labs/rebuild/native/src/run.cjs",
+        "labs/rebuild/mechanisms/src/commitment-run.cjs"
       ],
       "evidence": [
-        "labs/rebuild/native/evidence/run-1793542987108/commitment.json"
+        "labs/rebuild/native/evidence/run-1793542987108/commitment.json",
+        "labs/rebuild/mechanisms/evidence/commitment-comparison-1793545494748/costs.json"
       ],
       "limitations": [
-        "+8-byte occupancy and lower-bound checks reproduced; matched complete lifecycle cost comparison missing."
+        "Matched native ordinary/committed profiles with immediate ordinary exit estimate, early/omitted-since/wrong-signature rejections, valid pre/late fills and mature recovery.",
+        "Minimum pair occupancy289 vs297 CKB is measured from actual layouts; no passive upper expiry, permanent redemption or market-depth guarantee."
       ],
       "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e2",
       "future_reuse": "Liquidity commitments and issuer treasury research",
