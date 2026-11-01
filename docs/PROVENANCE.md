@@ -16,3 +16,7 @@ This source migration deliberately EXCLUDES bulky raw RPC transcripts, extensive
 Files in this migration bundle have their own `MIGRATION_SHA256SUMS.txt`; the original archive's manifest is not reusable for the selective extraction. Reproduce tests against fresh isolated chains before claiming newly verified results.
 
 Contains public disposable devnet fixture keys that must never be used with real assets or public chains. Inspect any unexpected credentials before pushing to GitHub, even if the repository is private.
+
+## Comprehensive WO05–WO08 reconstruction
+
+The user-supplied recovery manifest is historical evidence only. New isolated implementations, revisions and raw private-chain evidence live in labs/rebuild; the capability registry distinguishes original reports, functional/mechanism-class reconstruction, missing proof and future reuse. Original inaccessible Git objects/files are not recovered or fabricated. Published iCKB/CKB/CCC/xUDT dependencies and licenses are pinned in the native and mechanisms provenance files; compiler variants and path effects are disclosed. Fresh-checkout artifact equality and native reruns are recorded in REBUILD_COMPREHENSIVE_REPRODUCTION.json. They do not establish published-to-source byte equality or resolve blocked arbitrary-history recovery/LO-01 security proof. WO01–WO04 lab contents remain unchanged; current README/state/provenance pointers and .gitignore intentionally differ from the original migration manifest.
