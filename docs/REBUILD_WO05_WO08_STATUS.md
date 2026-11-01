@@ -4,13 +4,17 @@ Base VERIFIED: origin/main ce7f27ec0d6657645e3198b0ea6a5831171003d0. Branch rebu
 
 | Checkpoint | New evidence | Status |
 |---|---|---|
-| A | Genuine wallet signing, funded CKB/xUDT, partial/full fills, direct payouts, lineage, separate-process recovery | REPRODUCED |
+| A | Genuine wallet signing, funded CKB/xUDT, partial/full fills, direct payouts, harness-tracked lineage, separate-process fixture recovery | REPRODUCED |
 | B | Two-owner atomic netting, 2/8/32 full-fill upstream batches, serial/shared comparison, lower-bound commitment and late fill; six synthetic launch counterexamples | REPRODUCED, bounded workload |
 | C | Exact depth/fee/UNKNOWN import and inventory ledgers, quote expiry source review; active gate revocation classified historical | REPRODUCED offline / historical gate |
 | D | Published-contract DAO deposit, receipt conversion, iCKB sale, independent successor recovery, burn/request, genuine mature withdrawal and subsequent spend | REPRODUCED |
 
-Canonical run run-1793541730590: 76 commits, 18 expected rejections; offline CCC/SDK/raw consistency PASS. Historical source objects were not recovered or invented. Counts differ intentionally. Fresh GitHub-clone reproduction is the final outstanding readiness check.
+Canonical run run-1793541730590: 76 commits, 18 expected rejections; offline CCC/SDK/raw consistency PASS. Historical source objects were not recovered or invented. Counts differ intentionally. Fresh GitHub-clone reproduction is now PASS for the same bounded fixtures. General recovery provenance remains UNPROVED.
 
 Remotely verified backups so far: A e91c86831fa5a7a6efb1bf290bd12c212cbefa8f; B 1766012edb80a4338858cf12538c6d48114be352; C 3f1937e70469a4565a4031e9be5b75f4a9b3c201. C was committed while D changes were in progress; its worktree was therefore not clean. That procedural exception is recorded explicitly; D preservation must close it with a clean tree.
 
 Not rebuilt: failed bonding curve, compact C matching engine/hybrid, optional gate covenant, historic maximum-batch/2-MiB heap variant and frozen WO04 cross-chain continuation. No omitted optional mechanism is claimed as newly reproduced. Source-to-release-binary build equivalence is still independently unproved; release bytes, hashes and runtime execution are verified.
+
+D remotely verified at ac8ebe2023bcff67e074becbf1cf0c8eb555dd91 with a clean root worktree, and fetched by a fresh private GitHub clone. The new run-1793542987108 repeated 76 committed transactions and 18 narrow rejections. Both runs pass CCC/SDK and raw evidence verification. All prior failing runs and checkpoints remain preserved.
+
+READINESS NOT ESTABLISHED: upstream A2 LO-01 order confusion remains unresolved, and current recover.cjs trusts fixture packages without validating arbitrary ancestry or intended output policy. The source review and read-only known-history checks do not correct that. No WO09 implementation begun. The next justified action is an authenticated recovery-policy specification and its independent validation, before accepting discovered orders.

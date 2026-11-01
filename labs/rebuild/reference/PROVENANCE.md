@@ -5,3 +5,5 @@
 - iCKB/A2/Owned Owner: native/vendor/ickb/PROVENANCE.json and MIT LICENSE. Release A2 hash matches manifest independently. CCC 1.23.0 official npm tarball integrity and transitive dependency licenses retained through package-lock.json/npm distribution.
 
 These selected sources are a review snapshot, not a replacement for upstream build trees. Clean dependencies can be fetched at the exact commits. No compatibility claim extends to arbitrary upstream HEAD changes.
+
+The upstream security review is copied verbatim from the same pinned iCKB commit c951927e35fb5d4a13e28c5e55687d49cea7ca05 (MIT). It reports known LO-01 order confusion; it is unexecuted upstream evidence here, not a new reproduction. This qualification is essential to interpreting the native positive fixtures.

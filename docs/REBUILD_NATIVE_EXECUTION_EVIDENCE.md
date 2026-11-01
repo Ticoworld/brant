@@ -65,3 +65,11 @@ Equivalent two-order serial vs shared settlement: ```json
 Funding is excluded from both settlement totals. Serial leaves an empty xUDT cell and separate CKB payouts; shared coalesces payout and empty-token capacity. No custom candidate or optimized heap maximum is claimed. Published unmodified upstream is used directly.
 
 Failures preserved: dep-group JSON encoding, insufficient multisig occupied capacity, malformed multisig identity, and overly narrow expected overflow error pattern. Fixed source reruns succeed. These are implementation/debugging failures, not protocol exploits. Initial partial runs and later full regressions remain independently labeled.
+
+## Independent fresh GitHub clone
+
+Fresh clone of remote ac8ebe2023bcff67e074becbf1cf0c8eb555dd91, full bootstrap and npm-ci, reran native suite: 76 committed transactions, 18 expected rejections; 2,855 raw RPC records. Evidence `run-1793542987108` includes fresh commitment hashes and all raw responses. Bootstrap used its own local downloaded CKB and new node_modules, with no dependency on the original checkout's WO04 tools. Same host and operator; this is independent checkout/environment installation, not an independent security audit. Exact model outputs reproduced unchanged. All 34 vendored hashes and four published code hashes PASS; release bytes match pinned upstream files. See REBUILD_FRESH_CLONE_REPRODUCTION.json.
+
+## Essential recovery qualification
+
+The successful standalone recoveries establish signing/execution for harness-tracked authentic fixtures. recover.cjs does not authenticate arbitrary input history or intended payouts. Known upstream A2 LO-01 is unresolved here; no reproduction or correction tested. The rewritten-lineage rejection case is narrow and must not be promoted into a general forged-lineage rejection claim. Read-only review-lineage passes only self-created recorded ancestry. See REBUILD_OWNER_RECOVERY_REVIEW.md.

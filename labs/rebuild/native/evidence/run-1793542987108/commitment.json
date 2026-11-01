@@ -1,0 +1,14 @@
+{
+  "deadline": "294",
+  "lateFill": {
+    "block_hash": "0x94eaa35fea8ccd12df006808caaa3e6054946901305e571d020a286c69712769",
+    "block_number": "0x12c",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "ordinaryMaster": "10000000000",
+  "committedMaster": "10800000000",
+  "occupiedDeltaCKB": 8,
+  "note": "Extra 8 bytes in lock args; fixture allocates 8 additional CKB to committed master."
+}

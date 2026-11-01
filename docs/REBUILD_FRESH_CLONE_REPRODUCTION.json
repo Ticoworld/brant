@@ -1,0 +1,35 @@
+{
+  "status": "PASS_FOR_TESTED_FIXTURES_ONLY",
+  "reproduced_commit": "ac8ebe2023bcff67e074becbf1cf0c8eb555dd91",
+  "repository": "https://github.com/Ticoworld/trade.git",
+  "branch": "rebuild/wo05-wo08",
+  "method": "Fresh single-branch GitHub clone, no symlinks to original dependencies; local bootstrap downloads its own verified CKB archive and npm ci installs from lockfile. Same cloud host, not a separate machine/operator.",
+  "commands": [
+    "git clone --single-branch --branch rebuild/wo05-wo08 https://github.com/Ticoworld/trade.git work/clean-reproduction",
+    "python3 src/bootstrap.py",
+    "npm ci --ignore-scripts --no-audit --no-fund",
+    "npm test",
+    "node src/verify.cjs evidence/run-1793542987108",
+    "python3 labs/rebuild/models/research.py",
+    "python3 labs/rebuild/models/strategy.py"
+  ],
+  "committed_transactions": 76,
+  "expected_rejections": 18,
+  "raw_rpc_records": 2855,
+  "evidence": "labs/rebuild/native/evidence/run-1793542987108",
+  "withdrawal": "0xc1adf342ccbdef6c0bb10466fed53629a04c18a76cfe1c48e351b92ee1c98a29",
+  "redeemed_spend": "0x81ce37f09f936237b0438ae3ef363fdf60ad1991c0cf3ca68a230b70c3a67090",
+  "additional_maturity_blocks": 1770,
+  "dependency_lock_sha256": "0318f834f5648dc5bf69422a3fcc45ef0dcd57a78d4c7c15098ef5a800d87683",
+  "ckb_release_archive_sha256": "68a94c191109bae172f8dcb71828dbdf0383e2c314e0658743db217472b27bdf",
+  "historical_preservation": "No WO01\u2013WO04 changes relative to ce7f27e; migration checksum only expected root .gitignore difference.",
+  "unresolved": [
+    "Upstream A2 LO-01 and secure recovery from arbitrary lineage not reproduced/corrected",
+    "Fixture recover.cjs trusts supplied package metadata and intent",
+    "Source-to-release-binary compilation equivalence unproved",
+    "Optimized-heap maximum throughput not reproduced",
+    "Optional gate revocation historical only",
+    "No external executable market snapshots, demand or competitive returns"
+  ],
+  "worktree_note": "Clone tracked tree unchanged after model and native runs; new evidence is untracked generated output, copied here for preservation."
+}

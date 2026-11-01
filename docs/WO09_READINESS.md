@@ -1,5 +1,13 @@
-# WO09 readiness — final clean-clone check pending
+# WO09 readiness — NOT ESTABLISHED
 
-The native research foundation now passes bounded A–D execution and security checks. Before declaring ready, independently clone the pushed branch, bootstrap pinned dependencies, run full native execution, verify raw evidence and exact offline models, then preserve the result remotely.
+Fresh private-GitHub-clone reproduction of ac8ebe2023bcff67e074becbf1cf0c8eb555dd91 PASS: 76 actual committed native transaction instances and 18 expected narrow rejection cases. Bounded native funding, signed xUDT fills, two-owner clearing, 2/8/32 full fills, lower-bound owner commitment, late fill, DAO/iCKB issuance/burn, actual mature redemption and subsequent CKB spend execute. Exact offline economics and provenance checks pass. Raw evidence and failed runs are preserved.
 
-Remaining limitations: no fresh optimized-heap maximum capacity, no source-to-published-binary reproducibility, no optional gate proof, no production audit or external market/demand observations. These constrain claims, not the demonstrated bounded native primitives. No WO09 product implementation has started.
+The remaining essential security boundary is unresolved. The pinned upstream review reports A2 order confusion LO-01. Its specific reproduction/correction was not tested here. Current recover.cjs signs trusted supplied fixture packages without authenticating arbitrary chain ancestry, current live cells, owner intent or payout policy. Self-created order recoveries and one rewritten-lineage rejection do not prove resistance to arbitrary forged lineage. Read-only lineage checks cover only known harness history and are not a signing guard.
+
+Therefore the foundation is useful for controlled experiments, but a broad WO09 readiness PASS would be unsupported. No WO09 product implementation has started. No historical checkpoint is erased or relabeled as failure merely because this broader security proof remains missing.
+
+The exact next justified action is to specify an independently authenticated recovery policy rooted in retained valid mint transactions and intended owner/asset/payout; define refusal on incomplete history; implement read-only current-cell and continuous-successor verification before signing; independently validate the policy and upstream confusion boundary in an authorized isolated workflow. A contract correction or alternate mechanism, if needed, requires its own scoped evidence. Do not treat client policy as an on-chain fix.
+
+Other explicit limitations: published binaries execute and hashes match, but source-to-release compilation equivalence is not independently established; historical 2-MiB optimized-heap maximum and optional exact-gate covenant are not newly reproduced; no mainnet/external executable quote/depth, real demand, production security audit or commercially competitive returns. Those optional/history/commercial limits must remain visible without disguising the essential recovery gap.
+
+After the recovery requirement is satisfied and remotely preserved, issue a new readiness decision. Keep launchpads, protection/leverage/fixed-term claims, OTX multi-asset exchange, liquidity commitments and treasury markets open; none wins by default.
