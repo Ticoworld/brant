@@ -72,6 +72,18 @@ Cell capacity to equal the proven balance. This establishes the current exit API
 constraint. It does not test ACP, aggregation, a solver or Fiber because this fixture supplied no
 valid ACP output arrangement, external settlement route or relevant claimant consent.
 
+Separate live-node transactions attempting ordinary secp Cells of 0.1 CKB and 1 CKB were also
+rejected as `InsufficientCellCapacity`; see
+`labs/wo09-e2-capacity/evidence/ckb-small-cell-floor-1793624676771/`. Those two transactions
+measure CKB's output floor only: they do not carry authenticated Liquid Cells proofs and are not
+claimed as valid 0.1 or 1 CKB account exits. Upstream source inspection shows why the current
+contract cannot use a larger pre-existing recipient Cell or ACP output to evade that floor:
+`has_exit_output` specifically requires a canonical secp lock and an output whose capacity equals
+the account balance. A merged output or non-secp ACP output fails that predicate. Consequently,
+the obvious sponsor/ACP/aggregation variants need a different authenticated payout representation
+or a separate settlement mechanism; they are not fixes that can be enabled by transaction
+construction alone.
+
 Committed transaction measurements are preserved in `events.json`. The four checkpoints consumed
 about 86.8 million cycles apiece and were 1,233 bytes each after genesis; the successful exit used
 about 10.0 million cycles and was 9,077 bytes, including its proof witness. The genesis anchor
