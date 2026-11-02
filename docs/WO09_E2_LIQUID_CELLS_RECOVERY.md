@@ -87,9 +87,9 @@ construction alone.
 Committed transaction measurements are preserved in `events.json`. The four checkpoints consumed
 about 86.8 million cycles apiece and were 1,233 bytes each after genesis; the successful exit used
 about 10.0 million cycles and was 9,077 bytes, including its proof witness. The genesis anchor
-started at 500 CKB, while the 100 CKB deposit was represented in the accounting state; 50,000 CKB
-remained as anchor capacity after the large exit. These figures describe this fixture and are not
-generalized cost guarantees.
+started at 500 CKB, while the 100 CKB deposit was represented in the accounting state; 500.00004
+CKB remained as anchor capacity after the large exit. These figures describe this fixture and are
+not generalized cost guarantees.
 
 ## Preservation and limits
 
