@@ -138,5 +138,61 @@
       "contracts/transferable_risk.c"
     ],
     "compiler": "0.14.1"
+  },
+  {
+    "name": "consumable_beneficiary",
+    "bytes": 13608,
+    "sha256": "5bab78eff13b01301886363501c0e11ae4c9ae3445a66203d604ae7332cdfc0e",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O2",
+      "-nostdlib",
+      "-fno-builtin",
+      "-fdata-sections",
+      "-ffunction-sections",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Icontracts",
+      "-Wl,--gc-sections",
+      "-Wl,-e,_start",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "build/consumable_beneficiary",
+      "contracts/consumable_beneficiary.c"
+    ],
+    "compiler": "0.14.1"
+  },
+  {
+    "name": "consumable_risk",
+    "bytes": 15424,
+    "sha256": "0cbfe4cc1988128aa71ce95ae830dc9fb56b48cae8d5ed69d10d3d80aa1fc80d",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O2",
+      "-nostdlib",
+      "-fno-builtin",
+      "-fdata-sections",
+      "-ffunction-sections",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Icontracts",
+      "-Wl,--gc-sections",
+      "-Wl,-e,_start",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "build/consumable_risk",
+      "contracts/consumable_risk.c"
+    ],
+    "compiler": "0.14.1"
   }
 ]

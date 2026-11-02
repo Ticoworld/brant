@@ -1,5 +1,443 @@
 [
   {
+    "directory": "evidence/consumable-outage-1793599539485",
+    "status": "COMPLETED",
+    "transactions": 7,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0xf5136f08b1000670463f8142a5a11c00ae64e4bf64b8c4418326da2ac54f883e",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x18f775"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x6d767b7f4ac246a02f833f9fb92a011dd4122fa9996468b748d8cebdf5a1b7fb",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x190175"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0xabdf65b0f111fda8eed5cea4cb6623bdf22d062daf492b03c55149a1e23fea4d",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x18eb52"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0xee9c84e5efae20dce07e4b646cdcf27bbdfd6202fae087fc03c03c8866c9c617",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195bc1"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x675df9599ad9dbe5253d2fd68639c2196a2f1c066453ef10d7004a9ace55e945",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x333f94"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x6864fcb932f7d03b807fa8087b13f9283882fccfdbb3c4031206d1cb3f9bb6bf",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x328266"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x62dc0cecac7d96181413259eee8f4e74ff22d36fe77eae328a5542a213fa2809",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b095"
+        }
+      }
+    ],
+    "raw_sha256": "6537c7b87902f5deb1d43ea5cbe387cf2274296b0bee57cff5b44621e6150608"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599429371",
+    "status": "FAILED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": {
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'unknown' !== 'dead'\n\n    at /workspace/trade/labs/wo09-open-markets/src/run-consumable-risk.cjs:16:44\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+    },
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x0b575e73df846ec9740dfd08595f442b6b16ebcf261acbac3b2a9db197befb6b",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x191a34"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0xee62a1b5093ee6a180d782bba14468c90ff02e9ae0bd5f9705758942838d30db",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x18e963"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x473d1dd9cb54d017ee5686ed553cf3c17f9b32698c20249ad64426f5721a76bf",
+        "bytes": 15856,
+        "cycles": {
+          "cycles": "0x1924f5"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x5c2a32602c917ce37ecee4ef5af83596d272b78c7f8008484bed40dac3988aa8",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19853f"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x5ebbbe94ed94d034d3d6eb3e5185564c44caf81e5bba012aa80bb274a44b3083",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x331a68"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0xaa6f1f82b9505e68f7097e0c8fe337d257df50cb06e2ea21585c0376a636a7f3",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x331e76"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0xc1c88e2cc4458dc998136cc95463bf25ea79d01a335356b753b6f9886677b0a2",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x19577c"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x4b25960a54a44b39ea2331b72395ae03dea967f3d2bea1dc74463366cf212b7a",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1be"
+        }
+      }
+    ],
+    "raw_sha256": "ca0f52e67481f7697853e7269d0c51955ed4fa253a112cae479befe5c0f9d2ea"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599475207",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0xf0896c37d568fac8e4d59583845a53eff8c04df9e812e5569e8c48f3ee6339bc",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x193211"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x7fcee807be6d012315051fd5b0c0b145c7fa8211f223ca651e2bd2a7f4bf21f7",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x187f0a"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x49af57149dfb77cf5b942d864f0845a27890836ae5e10e3a5576b354b07a373a",
+        "bytes": 15856,
+        "cycles": {
+          "cycles": "0x18aebd"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x422f8cbdfde825eed999f2189eb4a4181b1eb2fac8202091e79007fca309ee0c",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x198633"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x739d4125ad2ccfb80cba717df59c21704652f3e44db99e70a5a32e16a5f01a0f",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x32e438"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x041220782651c8d8082e47674db522d7b19928ae5ba335b2851909b304014d37",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x32ab97"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0xeaa6f226646329fba0db8cf6e72f81922367b6184348eb2c85bf61b6e1e07703",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x196d6c"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x4ef195e78ca0f7a8fb4d27e5384720bb2f39acc87c0bf6cb3fefb4ce32e457d4",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1be"
+        }
+      }
+    ],
+    "raw_sha256": "d386ee6d9db8fda6be41d98ed9b6539fa408cae0f7ae336e030d458e3c2c981c"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599534615",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0xafa895f55c0534ce40161b1ba1d71b62d18b708f6aa7d05134daa4f783c34c05",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x19004f"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x66389a19f7905d311dfd52d9e8d54a453bea83a1e5c528da0cb2d6cc389d4f1b",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x1933a6"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x36e8f09a5c1d553b4094bed9383a940cb7665d86f88b9c8f3a9c6eeaeda673af",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x190433"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x55e15d5a971f2fa7a9c636342a9e9b0c497ffeb6dc5e4f7cf07b1e7ebd0f1e65",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19853e"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x8e62aa6288dea856cfb6ff173919cd84fff3210d514e2f9e9157185d60e6044e",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x327cc4"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0xa01e2839186ec63135ddd42c0032d095f63459b8ef5d24677da8acd7bd9f38bc",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x322d08"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0xc20c368a50554fca713070badf82da0ff5d1f2e81f51775f78b161c7fc3d6c0f",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x198eae"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x286238af954c9dff8b43cc1636533f873b9a87f83df53c780a294dd3a4a7e015",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1d8"
+        }
+      }
+    ],
+    "raw_sha256": "8b2209e8db5711778f48675523cccbdb6b4f8484df13694ea6361c91809aaf6b"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599536260",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x17f75902d3484612019b116dfc4526f9c3bca68775bc2757a6363693fcd99b95",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x1919b7"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0xc8c835ced726e3c57aa34a802f34244d5ffd9e99e262e770f685c9fbc92741d0",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x1949c7"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x8a58a8e14f7f8e653dc10cd18edceb9fa2e729b1e54d1bacbd78a10faaff55c0",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x190754"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x700bc72412e270155a2d3008988b5add6c6c5c88f15f8eb983ca5176186659ff",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x196abf"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x9b421e0244d7a5e9eef0f34674353a532cfb26e9cf29983b18519395558aff18",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x335fab"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0xf87ba08ceec72b139c997c917077b2478e79a1e463baebf0b37c11abbe4ff435",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x3318ed"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0xea6852ef0a84d08f1231962bcf63f644974faf5f755409f60f520cb08972d264",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1984e1"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x4a9762f158b23b37fe0754e22200b50598417026709849fb25f73a4a564bad57",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "80fd35882fb5fd0211020a2d3deced11924fc3db1fc332d5d9594b84aeb9c176"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599537840",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x138a4dd0b24f3720c0ccd3f924180bacce5912dc7318c405503387c1e03538a1",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x1839f0"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x33af3efec0a21308358a69d8a7f92d3f2788680873a591d15179f5b3c8745dab",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x1901ff"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x258de246e3a22199337746c30a46aae85e895c1725e743d41a2e91c3e0eddc73",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x18ef20"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x212398811b40fe68ed642e30afa725643c075cd51a66b58f910525e3ce58941f",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1918b2"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x8d3746eba364cd554f7da66fc17034761fa81c2de475ffe1a9010e1facfa476e",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x32b31f"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0xd8f0556306251cbdc2de872b6d45e5629d358cd792b50160ea5bce0ad7fa16cc",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x328b5d"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x3ef0a4cc5d8dda9f4d05cd918aa11c63680dba677ac5afeec1eb8a7f53273e52",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x195d2f"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x60c7521689087bf649dd9be9cf9886eac132a76de51a4aecfe0f159eb44e626a",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "d26d7fe60eedb14da53e43001509a573460c5bf875faf2179da0fb78cdf71cd0"
+  },
+  {
     "directory": "evidence/fixed-term-risk-1793598677129",
     "status": "COMPLETED",
     "transactions": 37,
