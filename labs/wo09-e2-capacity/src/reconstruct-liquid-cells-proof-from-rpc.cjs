@@ -68,6 +68,14 @@ function witnessField(data, index) {
     nullified_root: proof.nullified_root,
     owner_key: proof.owner_key,
     balance_shannons: proof.balance_shannons,
+    da_records: Array.from({ length: da.length / 56 }, (_, index) => {
+      const record = da.subarray(index * 56, (index + 1) * 56);
+      return {
+        key: `0x${record.subarray(0, 32).toString('hex')}`,
+        balance_shannons: BigInt(`0x${record.subarray(32, 48).toString('hex')}`).toString(),
+        nonce: record.readBigUInt64BE(48).toString(),
+      };
+    }),
     witness_hex: proof.witness_hex,
     inputs: 'committed CKB RPC transaction only; no fixture, indexer, or sequencer state',
   }, null, 2));

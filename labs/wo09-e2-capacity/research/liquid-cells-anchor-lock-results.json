@@ -1,0 +1,68 @@
+{
+  "upstream": {
+    "repository": "LusoCryptoLabs/Liquid-Cells",
+    "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+    "ckb_node": "0.210.0",
+    "anchor_binary_sha256": "04a31bf62a4aff38a2e51c0aace5f2b253828424127336f64e55d29c015ce817",
+    "binary_status": "isolated experimental single-hart build; not upstream-approved"
+  },
+  "source_findings": {
+    "force_exit_preserves_last_epoch": true,
+    "force_exit_reduces_capacity_and_total_by_same_balance": true,
+    "checkpoint_advances_last_epoch": true,
+    "anchor_lock_continuity": true,
+    "genesis_lock_policy": "creator-selected; no required owner/operator lock",
+    "source_files": [
+      "crates/ckb-contract/src/escape.rs::force_exit",
+      "crates/ckb-contract/src/cells.rs::bind",
+      "crates/ckb-contract/src/main.rs::genesis and anchor continuity",
+      "crates/ckb-contract-tests/tests/redteam_drain.rs"
+    ]
+  },
+  "operator_locked_run": {
+    "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793623953122",
+    "committed_transactions": [
+      "0x2e71aec7cdabf823a3fb49b3301da999b5af4b1474a90ba0af2ee05b8f9707ac",
+      "0x145e8cd0da6a9fa3579dbce510cf27dccfcb366bbc8b6a314b11d5d93e1c85ca",
+      "0x2da356bc67773a0edfd748f29638ea0ad79c45d26fb4a367a58899898029808b",
+      "0x7e4f517ae0b7d31d8b3593aa0bc0b1db7915be7f0a50d298741828e36d7ece93"
+    ],
+    "operatorless_mature_exit": "rejected at Inputs[0].Lock, secp error -2 after the chain reached maturity",
+    "operator_signed_mature_exit": "committed",
+    "interpretation": "timeout does not bypass restrictive anchor lock"
+  },
+  "permissionless_locked_run": {
+    "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793623892164",
+    "committed_transactions": [
+      "0x11bdce2c9dc489305e91949b39f3b5d86251e3bed152c3c33d499ead3c7ebc09",
+      "0xa7592f22ac36b0a8ba1e742e826d134d822e27c37d113ae8fc31dc4b781edb6e",
+      "0xd520f78993df7d25a247ea6b8f26f4fd5a02a0f41af64911e47ad7f020558ed7",
+      "0x57e24afbd43ff143cce84ee80bf311565e17037e2278ab4d815684be2ad432a5",
+      "0x502429366066d3f69500d3aadbcd9be15ea9bbb455a4f205374dcaf1c90e604c"
+    ],
+    "anchor_lock": "separately deployed CKB-VM always-success lock",
+    "owner_leaf_payout_shannons": "9999899000",
+    "other_DA_leaf_shannons": "1000",
+    "successor_anchor_capacity_shannons": "50000001000",
+    "successor_anchor_total_shannons": "1000",
+    "successor_anchor_slack_shannons": "50000000000",
+    "last_epoch_before_and_after": "0",
+    "operator_signature_in_exit": "absent",
+    "fee_input_authorizer": "independent user role 1",
+    "rejections": {
+      "tampered_da": 59,
+      "early_exit": 66,
+      "wrong_payout": 67
+    }
+  },
+  "limitations": [
+    "Neither run tests multiple checkpoint history or complete live DA replay across checkpoints",
+    "No pair of distinct account owners has successfully exited the same anchor; the fixture second leaf pubkey remains unidentified",
+    "No same-anchor race, stale proof, reorg, or last claimant test",
+    "Permissionless checkpoint storm/censorship and fresh proof-generation availability untested",
+    "No 0.1/1 CKB exit route established",
+    "Full drain only source-commented and covered by pinned redteam_drain CKB-VM test source; not executed in the real-node lifecycle",
+    "Single-hart binary is not production-qualified"
+  ],
+  "verifier": "src/verify-liquid-cells-private-devnet.cjs"
+}

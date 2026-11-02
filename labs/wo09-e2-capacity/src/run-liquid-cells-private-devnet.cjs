@@ -8,6 +8,9 @@ const cp = require('node:child_process');
 
 const source = process.env.LIQUID_CELLS_SOURCE;
 const contractBin = process.env.LIQUID_CELLS_ANCHOR_BIN;
+const permissionlessAnchor = process.env.LIQUID_CELLS_PERMISSIONLESS_ANCHOR === '1';
+const operatorControlledAnchor = process.env.LIQUID_CELLS_OPERATOR_ANCHOR === '1';
+if (permissionlessAnchor && operatorControlledAnchor) throw new Error('Choose one anchor-lock mode');
 if (!source || !contractBin) throw new Error('Set LIQUID_CELLS_SOURCE and LIQUID_CELLS_ANCHOR_BIN');
 const pin = '47492b51673c94635ab23de2c55477625e94ccbf';
 assert.equal(cp.execFileSync('git', ['-C', source, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), pin);
@@ -24,8 +27,8 @@ assert.equal(deposit.length, 48);
 const depositAmount = BigInt('0x' + deposit.subarray(32).toString('hex'));
 const pubkey = C.U.privateKeyToPublicKey(C.keys[0]);
 
-function readU64(offset) { return pv.readBigUInt64BE(offset); }
-function readU128(offset) { return BigInt('0x' + pv.subarray(offset, offset + 16).toString('hex')); }
+function readU64(offset, bytes = pv) { return bytes.readBigUInt64BE(offset); }
+function readU128(offset, bytes = pv) { return BigInt('0x' + bytes.subarray(offset, offset + 16).toString('hex')); }
 function hx(bytes) { return '0x' + bytes.toString('hex'); }
 function absEpoch(epoch) { return '0x' + ((0x20n << 56n) | BigInt(epoch)).toString(16); }
 function anchor(root, seq, total, fee, epoch) {
@@ -52,7 +55,7 @@ function signingWitnessGroup(tx, inputs, roles) {
   return tx;
 }
 const signGroup = require(path.join(path.dirname(require.resolve('@nervosnetwork/ckb-sdk-core', { paths: [C.ROOT] })), 'signWitnessGroup.js')).default;
-function buildCheckpoint(e, anchorIn, depositIn, code, tamperDa = false) {
+function buildCheckpoint(e, anchorIn, depositIn, code, permissionlessLockDep, tamperDa = false) {
   const prevRoot = pv.subarray(40, 72);
   const newRoot = pv.subarray(80, 112);
   const prevSeq = readU64(72), newSeq = readU64(112);
@@ -62,17 +65,19 @@ function buildCheckpoint(e, anchorIn, depositIn, code, tamperDa = false) {
   const prevData = anchor(prevRoot, prevSeq, prevTotal, 0, 0);
   const nextData = anchor(newRoot, newSeq, newTotal, feeDelta - feeWithdraw, currentEpoch);
   const nextCapacity = anchorIn.capacity + depositIn.capacity - feeWithdraw;
+  const checkpointInputs = [{ ...anchorIn, since: absEpoch(currentEpoch) }, depositIn];
+  const checkpointOutputs = [cell(nextCapacity, anchorIn.lock, anchorIn.type, nextData)];
   const witnessDa = Buffer.from(da);
   if (tamperDa) witnessDa[0] ^= 1;
   const witnesses = [{ lock: '', inputType: hx(Buffer.concat([proof, pv])), outputType: hx(witnessDa) }, '0x'];
   const tx = e.tx(
-    [{ ...anchorIn, since: absEpoch(currentEpoch) }, depositIn],
-    [cell(nextCapacity, anchorIn.lock, anchorIn.type, nextData)],
-    [e.dep('anchor')],
+    checkpointInputs,
+    checkpointOutputs,
+    [e.dep('anchor'), ...(permissionlessLockDep ? [permissionlessLockDep] : [])],
     witnesses,
   );
   assert.equal(anchorIn.data, prevData, 'fixture predecessor anchor state mismatch');
-  return signingWitnessGroup(tx, [{ ...anchorIn, lock: anchorIn.lock }, depositIn], [0]);
+  return signingWitnessGroup(tx, checkpointInputs, [0, ...(operatorControlledAnchor ? [2] : [])]);
 }
 function reconstructProofFromRpc(checkpointHash, evidenceDir) {
   const outDir = path.join(evidenceDir, 'rpc-reconstruction');
@@ -102,12 +107,18 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
       script: { codeHash: C.hash(codeBytes), hashType: 'data1', args: '0x' },
     };
 
+    if (permissionlessAnchor) {
+      await e.deploy('permissionless_anchor_lock', path.resolve(__dirname, '../../wo04-partial/config/always_success'));
+    }
+
     const type = e.codes.anchor.script;
+    const anchorLock = permissionlessAnchor ? e.codes.permissionless_anchor_lock.script : operatorControlledAnchor ? C.locks[2] : C.locks[0];
+    const anchorLockDep = permissionlessAnchor ? e.dep('permissionless_anchor_lock') : null;
     const emptyRoot = pv.subarray(40, 72);
     const genesisData = anchor(emptyRoot, 0, 0, 0, 0);
     const anchorCapacity = 500n * C.UNIT;
     const genesisOutputs = [
-      cell(anchorCapacity, C.locks[0], type, genesisData),
+      cell(anchorCapacity, anchorLock, type, genesisData),
       cell(depositAmount, C.locks[0], null, hx(deposit.subarray(0, 32))),
       cell(wallet.capacity - anchorCapacity - depositAmount - C.fee, C.locks[0]),
     ];
@@ -116,11 +127,12 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
     const anchor0 = genesisCells[0];
     const deposit0 = genesisCells[1];
 
-    const badCheckpoint = buildCheckpoint(e, anchor0, deposit0, e.codes.anchor, true);
+    const badCheckpoint = buildCheckpoint(e, anchor0, deposit0, e.codes.anchor, anchorLockDep, true);
     await e.reject('tampered_published_da_rejected_by_real_anchor_script', badCheckpoint, /ValidationFailure|ScriptFailure|script/i);
-    const checkpointTx = buildCheckpoint(e, anchor0, deposit0, e.codes.anchor, false);
+    const checkpointTx = buildCheckpoint(e, anchor0, deposit0, e.codes.anchor, anchorLockDep, false);
     const checkpointCells = await e.send('commit_pinned_sp1_genesis_checkpoint_with_published_da', checkpointTx);
     const anchor1 = checkpointCells[0];
+    e.wallets[2] = checkpointCells[1];
 
     const checkpointHash = e.events.at(-1).hash;
     const proofData = reconstructProofFromRpc(checkpointHash, evidenceDir);
@@ -130,8 +142,9 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
     const nextTotal = readU128(200) - payout;
     const nullRoot = Buffer.from(proofData.nullified_root.slice(2), 'hex');
     const nextAnchor = anchor(nullRoot, readU64(112), nextTotal, readU128(216) - readU128(240), readU64(232));
-    async function forceExit(sinceEpoch, payoutAmount = payout) {
-      const feeWallet = e.wallets[2];
+    async function forceExit(sinceEpoch, payoutAmount = payout, authorizeOperator = operatorControlledAnchor) {
+      const feeRole = permissionlessAnchor || operatorControlledAnchor ? 1 : 2;
+      const feeWallet = e.wallets[feeRole];
       const change = feeWallet.capacity - C.fee - (payoutAmount === payout ? 0n : 1n);
       const witness = { lock: '', inputType: proofData.witness_hex, outputType: '' };
       const unsigned = e.tx(
@@ -141,10 +154,11 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
           cell(payoutAmount, C.locks[0]),
           cell(change, C.locks[2]),
         ],
-        [e.dep('anchor')],
+        [e.dep('anchor'), ...(anchorLockDep ? [anchorLockDep] : [])],
         [witness, '0x'],
       );
-      return signingWitnessGroup(unsigned, [anchor1, feeWallet], [0, 2]);
+      const roles = permissionlessAnchor ? [feeRole] : operatorControlledAnchor ? [...(authorizeOperator ? [2] : []), feeRole] : [0, feeRole];
+      return signingWitnessGroup(unsigned, [anchor1, feeWallet], roles);
     }
     await e.reject('force_exit_before_operator_silence_epoch_rejected', await forceExit(179), /ValidationFailure|ScriptFailure|script|Immature|since/i);
 
@@ -157,8 +171,12 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
       if (mined % 500 === 0) console.log(`maturity progress: mined ${mined} blocks`);
     }
     const matureEpoch = await e.rpc('get_current_epoch');
-    const invalidPayout = await forceExit(180, payout - 1n);
+    const invalidPayout = await forceExit(180, payout - 1n, true);
     await e.reject('force_exit_wrong_payout_amount_rejected_at_mature_epoch', invalidPayout, /ValidationFailure|ScriptFailure|script/i);
+    if (operatorControlledAnchor) {
+      const noOperatorSignature = await forceExit(180, payout, false);
+      await e.reject('mature_force_exit_blocked_by_operator_anchor_lock_without_operator_signature', noOperatorSignature, /Inputs\[0\]\.Lock|error code -2|ValidationFailure|ScriptFailure/i);
+    }
     const exitTx = await forceExit(180);
     const exitCells = await e.send('mature_owner_force_exit_after_180_private_chain_epochs', exitTx);
     e.events.at(-1).properties = {
@@ -176,8 +194,23 @@ function reconstructProofFromRpc(checkpointHash, evidenceDir) {
       rejections: e.cases,
       force_exit: { owner_key: proofData.owner_key, payout_shannons: payout.toString(), maturity_epoch: matureEpoch.number, blocks_mined_after_checkpoint: mined },
       resulting_owner_payout: exitCells[1].outPoint,
+      anchor_lock_design: permissionlessAnchor ? 'deployed CKB-VM always-success lock; user/operator signatures do not authorize anchor spends; the Liquid Cells type script validates state transitions and payout proofs' : operatorControlledAnchor ? 'operator secp lock; anchor lock continuity preserves operator control and requires its signature even after timeout' : 'owner secp lock (baseline mode)',
+      owner_payout_lock_script: C.locks[0],
+      checkpoint_authorization: permissionlessAnchor ? 'user key role 0 authorizes the input deposit; no signature is required by the permissionless anchor lock; a valid committed Groth16 proof authorizes the state transition' : operatorControlledAnchor ? 'user key role 0 authorizes the deposit and operator key role 2 authorizes spending its anchor lock; the valid Groth16 proof authorizes the state transition' : 'owner key role 0',
+      anchor_lock_script: anchorLock,
+      operator_lock_hash: C.U.scriptToHash(C.locks[2]),
+      force_exit_fee_signer: permissionlessAnchor || operatorControlledAnchor ? 'independent user key role 1' : 'operator key role 2',
+      operator_signature_required_for_mature_exit: operatorControlledAnchor,
+      successor_anchor: {
+        out_point: exitCells[0].outPoint,
+        capacity_shannons: exitCells[0].capacity.toString(),
+        root: hx(Buffer.from(exitTx.outputsData[0].slice(2), 'hex').subarray(0, 32)),
+        total_shannons: readU128(40, Buffer.from(exitTx.outputsData[0].slice(2), 'hex')).toString(),
+        last_epoch: readU64(72, Buffer.from(exitTx.outputsData[0].slice(2), 'hex')).toString(),
+        slack_shannons: (exitCells[0].capacity - readU128(40, Buffer.from(exitTx.outputsData[0].slice(2), 'hex'))).toString(),
+      },
       notes: [
-        'The anchor uses the owner secp lock in this isolated reproduction; this does not establish permissionless sequencing or arbitrary operator recovery.',
+        permissionlessAnchor ? 'The code-deployer/operator uses its key only for deployment, not for the checkpoint or exit transaction. The checkpoint consumes a user-authorized deposit cell and a valid Groth16 proof; the permissionless lock itself requires no signature. After timeout, an independent user pays and signs the exit transaction. The exiter pubkey is authenticated by the committed account proof and determines the only accepted payout lock; the exiter does not sign that transaction.' : operatorControlledAnchor ? 'The operator signs the checkpoint but disappears before the mature exit. A user-only mature exit is rejected by the operator secp lock; the same proof, timer, and payout succeed only after the operator signature is restored. This is an authorization boundary, not a timeout failure.' : 'The anchor uses the owner secp lock in this isolated reproduction; this does not establish permissionless sequencing or arbitrary operator recovery.',
         'A separate child process fetched the committed checkpoint transaction through CKB RPC and reconstructed the force-exit proof from its published DA; no fixture/sequencer files were input to that reconstruction.',
       ],
     });

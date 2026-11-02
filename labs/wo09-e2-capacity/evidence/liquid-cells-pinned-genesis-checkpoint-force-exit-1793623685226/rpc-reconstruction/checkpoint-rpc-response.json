@@ -1,0 +1,83 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "cycles": "0x54292e0",
+    "fee": null,
+    "min_replace_fee": null,
+    "time_added_to_pool": null,
+    "transaction": {
+      "cell_deps": [
+        {
+          "dep_type": "dep_group",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0xaf72c4e7e5f17449cd59bd26697c9e612605a3c688b482d0e3b6354596bc50ee"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0x9c7103ca353addcb0093468c0ef9090a28d5006cad8133325afe59a441d96bf6"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0x869b50cc760d702de7d32f3e998a488f05cd1d243c803e0f2afec07525e53a53"
+          }
+        }
+      ],
+      "hash": "0xca4040c64ec12b08afc29a046901e75a9fabf87346469572a33bafaadd0eb595",
+      "header_deps": [],
+      "inputs": [
+        {
+          "previous_output": {
+            "index": "0x0",
+            "tx_hash": "0x0bae54e0eb19d15b675aac2dc4fbf91f53b4a4fb7660a4509d9fdb56378b8c7e"
+          },
+          "since": "0x2000000000000000"
+        },
+        {
+          "previous_output": {
+            "index": "0x1",
+            "tx_hash": "0x0bae54e0eb19d15b675aac2dc4fbf91f53b4a4fb7660a4509d9fdb56378b8c7e"
+          },
+          "since": "0x0"
+        }
+      ],
+      "outputs": [
+        {
+          "capacity": "0xdf845d160",
+          "lock": {
+            "args": "0x",
+            "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+            "hash_type": "data1"
+          },
+          "type": {
+            "args": "0x",
+            "code_hash": "0x373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6",
+            "hash_type": "data1"
+          }
+        }
+      ],
+      "outputs_data": [
+        "0xf3283454dade507e46be473e99b0885b7a12abe024758171e4a8b387d46268430000000000000001000000000000000000000002540a5d60000000000000000000000000000000000000000000000000"
+      ],
+      "version": "0x0",
+      "witnesses": [
+        "0x0c030000100000001000000098020000840200004388a21c0000000000000000000000000000000000000000000000000000000000000000002f850ee998974d6cc00e50cd0814b098c05bfade466d28573240d057f25352000000000000000000000000000000000000000000000000000000000000000022b7fd1cbe22a7091bace20b4a7169f9dbe965e36bb763552415fe27cc237f4e04a671d67b17384c34f70fed780da2c1213e82dd96f9df2128a7349e2a73e82908816dfcfa1e2ffc380cd7e368fb8f863e28227f4a3c76b72dad0f5beeaf1f311a24bc7376f21d8a263b6ff5659c6cbcd26a94742c9fa62036520f0d3a5a4a73032b6cdc7c65776f431665152b607917bf86ec03b836eedc55600a956b2a2d6722ffe5690619105c505a68b56fb83904d023e2ca21dca362cc2b768e136bc72e23c32449b5120f8d39885f02976390973d5b4868a1d7683b6ce9fc8cd3aac9101733b4230fdfeb1a56e168e0bcb596811b4d73f7cfe46884ada604d9b906953c9ec3a12fb4e1f56b53a02dfacb2063d048c614408a011dd3279263a9122c4e010000000000434b42a7ff9e28ffd3def443d324547688c2c4eb98edf7da757d6bfa22bff55b9ce24a0000000000000000f3283454dade507e46be473e99b0885b7a12abe024758171e4a8b387d46268430000000000000001c214b7863e341e47ed0ba7e1a379a998aac43c2395fc745bd6756f833f70b7f7717b6eb2fd87762ea2092081f3a04b314f6ee16fd9b9300afba5bd3b1c47788200000000000000000000000000000000000000000000000000000002540a5d60000000000000000000000000000186a00000000000000000000000000000000000000000000186a00f258097004b8d942df455ca4284c43c04426ab7bb3de64c10127d9b573bf2e070000000698b048b3861120e32c16f065ff73eaeec7013c9f18f2b954cd83e33c5234b3b000000000000000000000000000003e80000000000000000aa61b794ba668ff67c7b8d037034adcca06964c0dffdb3eae70e8666faa5a63d000000000000000000000002540a59780000000000000001",
+        "0x5500000010000000550000005500000041000000d5364b9a134c89762dd58e65f5c304396bec0fadc320abae14dbbeb4d753d20b77c559783ac010ddfea889b75bec778a4a6f15d57755ada504b91265c3696f7401"
+      ]
+    },
+    "tx_status": {
+      "block_hash": "0xc25b8306c436d27e6d169c9d4e35837c55fcbdd017022426867ce18cdd65e928",
+      "block_number": "0x1c",
+      "reason": null,
+      "status": "committed",
+      "tx_index": "0x1"
+    }
+  },
+  "id": 1
+}

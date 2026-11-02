@@ -1,0 +1,3 @@
+{
+  "error": "Error: TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 51 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6.html#51 })\n    at Engine.rpc (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:5:351)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Engine.send (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:16:35)\n    at async /workspace/trade/labs/wo09-e2-capacity/src/run-liquid-cells-private-devnet.cjs:132:29"
+}

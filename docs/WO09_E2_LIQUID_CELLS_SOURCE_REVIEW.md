@@ -33,7 +33,7 @@ Every force exit consumes and replaces the shared anchor. Unrelated user exits t
 
 ## Evidence grade and unresolved questions
 
-**Grade: pinned source review, 49 host STF tests, 24 CKB-testtool cases on the single-hart build, and one actual private-devnet deposit/checkpoint/force-exit lifecycle.** The private-chain evidence is in `docs/WO09_E2_PRIVATE_DEVNET_LIFECYCLE.md` and `labs/wo09-e2-capacity/evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793616517454`.
+**Grade: pinned source review, 49 host STF tests, 24 CKB-testtool cases on the single-hart build, and actual private-devnet baseline, operator-lock, and permissionless-lock lifecycles.** The private-chain evidence is in `docs/WO09_E2_PRIVATE_DEVNET_LIFECYCLE.md` and `labs/wo09-e2-capacity/evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793616517454`.
 
 The initial CKB-testtool binary SHA-256 `dcc6bf2708fef85c0f529ff62c5f745b399d08ec81b0b08ee9c34b13973c8925`, built from unmodified source through the earlier wrapper, failed when deployed to CKB 0.210.0: the node rejected an A-extension `lr.d` instruction (`0x140b35af`). This establishes that the earlier 24/24 testtool result was not equivalent to actual-node compatibility. The exact failed native run is retained at `labs/wo09-e2-capacity/evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615089534`.
 
@@ -46,3 +46,8 @@ A fresh child process fetched the committed checkpoint transaction through live 
 The original source-review CKB-testtool runner remains at `labs/wo09-e2-capacity/scripts/run-liquid-cells-ckbvm.sh`. The single-hart private-chain build uses `labs/wo09-e2-capacity/scripts/build-liquid-cells-single-hart.sh` followed by `labs/wo09-e2-capacity/src/run-liquid-cells-private-devnet.cjs`; exact environment variables and commands are in the lifecycle report. A standalone deposit-floor script is `labs/wo09-e2-capacity/src/run-liquid-cells-fixture-deposit.cjs`.
 
 No conclusion here addresses general arbitrary-history recovery safety or upstream A2 LO-01. The WO09-E1 beneficiary-address validation remains quarantined and unresolved.
+
+
+## Anchor-lock and timer result
+
+The source review and two new CKB 0.210.0 chain runs distinguish the type-script timeout from the anchor Cell lock. `force_exit` carries `last_epoch` unchanged; a restrictive operator secp lock still rejects a mature user-only exit at the lock group (error -2), while an operator-authorized mature exit succeeds. A separately deployed `always_success` anchor lock permits a distinct fee-paying user to submit the mature proof-backed exit without an operator or owner lock signature; the type script still checks the proof, nullified root, exact amount, timeout and owner-derived payout. See [`WO09_E2_ANCHOR_LOCK_RECOVERY.md`](WO09_E2_ANCHOR_LOCK_RECOVERY.md) and its raw private-devnet evidence. The permissionless run exits one account, leaving the fixture's separate 1,000-shannon account; it does not prove full pool drain or two-owner exit.

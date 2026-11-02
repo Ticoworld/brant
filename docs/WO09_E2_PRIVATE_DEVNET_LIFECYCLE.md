@@ -49,3 +49,8 @@ This run proves one valid owner's deposit, checkpoint, proof reconstruction from
 The build adapter itself remains a material limitation: the pinned upstream binary did not execute on the actual CKB node until the dependency's atomics were adapted for the single-hart VM. The compatibility patch is isolated and tested, but upstream has not adopted or reviewed it. Preserve it as an experimental build variant, not an upstream security correction.
 
 The next decision-changing test is archival retrieval and complete multi-checkpoint history replay in a fresh environment, followed by two independent owners attempting exits from the same anchor and a last-exiter case. Keep the sub-floor egress limitation explicit. E1 beneficiary validation and A2 LO-01 remain quarantined and unresolved.
+
+
+## Paired anchor-lock experiments
+
+The original owner-locked case does not establish independent recovery. Follow-up CKB 0.210.0 runs now compare an operator secp lock with a permissionless deployed `always_success` lock. Under the operator lock, a mature user-only exit fails at the lock script (`-2`) and the same exit commits only when the operator signature is restored. Under the permissionless lock, a separate user can pay for and submit the mature exit without operator/owner lock signatures while the anchor type script validates the proof and payout. Exact hashes, conditions and limitations are in [`WO09_E2_ANCHOR_LOCK_RECOVERY.md`](WO09_E2_ANCHOR_LOCK_RECOVERY.md). The fixture has a second 1,000-shannon account: the permissionless run exits the 9,999,899,000-shannon owner leaf and preserves that residue, so it is not a full-pool drain.
