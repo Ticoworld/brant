@@ -97,10 +97,14 @@
       "mechanism": "Fresh private GitHub checkout/install/build/private-chain replay",
       "status": "Reproduced with executable evidence",
       "implementation": "labs/wo09-open-markets/src/reproduce.py",
-      "limitations": "Completed original11c87a6 nine-run141/59 reproduction; happy paths are not liveness security. New defaults exclude beneficiary experiments.",
+      "limitations": "Original11c87a6 nine-run141/59 and independent fd590ed five-run118/47 fresh-clone reproductions preserved separately; no beneficiary experiment in latter. Repeated workloads do not establish security or demand.",
       "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
       "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
-      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant",
+      "evidence": [
+        "labs/wo09-open-markets/evidence/fresh-github-reproduction/reproduction.json",
+        "labs/wo09-open-markets/evidence/independent-fresh-github-reproduction/reproduction.json"
+      ]
     }
   ]
 }

@@ -28,3 +28,9 @@ Ready to continue **independent private research**, with bounded claims/fixed-re
 Substantive remaining work: authenticated CKB maturity selection/finality and actual risk/secondary premiums; explicit refund versus usable issuer-finance customer requirements; equivalent native OTX/A2 workload if range assembly is needed; enforceable paid finite inventory only with an actual service/payer specification; reorg, fee-bump and wallet construction qualifications. A public book/reference does not supply these facts.
 
 Next decisive permitted step: compare a precisely specified fixed-term observation and contribution/refund contract against attainable cash/spot/debt/options economics, while preserving issuer-financing and finite-inventory alternatives. External solicitation requires user authorization; none was performed. Any future restricted-case validation needs an appropriate permitted context and must remain separately labeled until genuinely established.
+
+## Final independent reproduction checkpoint
+
+Independent research/source milestone **fd590ed6bca08c9d68abc897763b59dcb02eba58** was pushed and verified. Its fresh private-GitHub clone replay passed five permitted isolated jobs: **118 committed transactions /47 expected rejections**, independent npm/compiler install, seven byte-identical rebuilt artifacts, regenerated models, and exact preserved-registry checks. Report: `labs/wo09-open-markets/evidence/independent-fresh-github-reproduction/reproduction.json`; supplemental checks are alongside it.
+
+No beneficiary experiment ran, and no security/commercial status was upgraded. The final preservation commit adds this report/raw evidence and status updates; executable source is the reproduced fd590ed revision. Original nine-run11c87a6 reproduction remains separately preserved. The final exact branch SHA is verified by the accompanying Git remote check, not self-referentially embedded in this document.

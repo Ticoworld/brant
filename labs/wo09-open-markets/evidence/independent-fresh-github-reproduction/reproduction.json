@@ -1,0 +1,286 @@
+{
+  "source_commit": "fd590ed6bca08c9d68abc897763b59dcb02eba58",
+  "repository": "https://github.com/Ticoworld/trade.git",
+  "branch": "wo09-open-market-discovery",
+  "started_unix": 1793602704,
+  "steps": [
+    {
+      "label": "clone",
+      "command": [
+        "git",
+        "clone",
+        "--single-branch",
+        "--branch",
+        "wo09-open-market-discovery",
+        "https://github.com/Ticoworld/trade.git",
+        "/workspace/trade/work/wo09-independent-fresh"
+      ],
+      "exit": 0,
+      "log_sha256": "6d4eefd4dc0658f9436ca26cbcbc56b72da6060d03d6ec72d5faf36e600fb5b0"
+    },
+    {
+      "label": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "fd590ed6bca08c9d68abc897763b59dcb02eba58"
+      ],
+      "exit": 0,
+      "log_sha256": "6b162ae6b2591b885ca1936b5d1f98efc742e0408a9a285ff8afcc5b9f2bbe4b"
+    },
+    {
+      "label": "ckb",
+      "command": [
+        "python3",
+        "/workspace/trade/work/wo09-independent-fresh/labs/rebuild/native/src/bootstrap.py"
+      ],
+      "exit": 0,
+      "log_sha256": "3d53976a76bf0f342acc209cf839d3f517c48920dbcc15b47f8b7ebb18b5f19f"
+    },
+    {
+      "label": "npm",
+      "command": [
+        "npm",
+        "ci",
+        "--ignore-scripts",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "exit": 0,
+      "log_sha256": "1c1aa682b60c44d60b76c49f6d30981971f90df25e885d0f4ee39820f96199ce"
+    },
+    {
+      "label": "compiler",
+      "command": [
+        "python3",
+        "-m",
+        "pip",
+        "install",
+        "--target",
+        "/workspace/trade/work/wo09-independent-fresh/labs/rebuild/mechanisms/tools/python",
+        "ziglang==0.14.1"
+      ],
+      "exit": 0,
+      "log_sha256": "482302ec6a361b2b991bd6553e55b8aebdd9c1a9649c52d7297126eebd1f3d61"
+    },
+    {
+      "label": "published-provenance",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/rebuild/native/src/verify-provenance.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "5fdfe2290bf3cccb5010824ac9fc4f96f57fcabb3206d4b46e8e52d1634cd861"
+    },
+    {
+      "label": "new-source-provenance",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify-source.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "6f851f342c5c1b5a1f3ccf4c7d963f7589608907d3296ec474748c68e838d8fd"
+    },
+    {
+      "label": "build",
+      "command": [
+        "python3",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/build.py"
+      ],
+      "exit": 0,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "formal-models",
+      "command": [
+        "python3",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/models/discovery.py"
+      ],
+      "exit": 0,
+      "log_sha256": "a1d07bdaa6088e8bb6bbd93b5d25a58fa5610ea2326091e964b6bbd5977bcca2"
+    },
+    {
+      "label": "market-scale",
+      "command": [
+        "python3",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/models/market-scale.py"
+      ],
+      "exit": 0,
+      "log_sha256": "a6f53b295019d09e3513d01dda8c62d6435eec9a3ad040a360d07663b64b6484"
+    },
+    {
+      "label": "independent-alternatives",
+      "command": [
+        "python3",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/models/independent-alternatives.py"
+      ],
+      "exit": 0,
+      "log_sha256": "df5dd2573684e7bb0763e03babe25d5386c4fd136652e446b808cb6ca213adb1"
+    },
+    {
+      "label": "claims",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/run-claims.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "c4569b6c103702a8122f7dbe3c04351040d5693b54ddb306c7beaa65e36d5fca"
+    },
+    {
+      "label": "hybrid",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/run-claims.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "d4e6e786f9c961ec67ea44e66703eec377cc13ff30b40a5046a656154f7d51cc"
+    },
+    {
+      "label": "risk",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/run-risk.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "661d1c8c82a4efc5f905d7d7950a6c181e10c892233cda9432cb10d727c4c179"
+    },
+    {
+      "label": "market-risk",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/run-risk.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "556d768d384e01ce6d77a60556a9541b91c77142d94e03febc2268d14b6d67b4"
+    },
+    {
+      "label": "priced-fixed-risk",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/run-risk.cjs"
+      ],
+      "exit": 0,
+      "log_sha256": "0cb3c88586f814b895dd544dbc2727f4991d44da3c7a09cd78e1991f713488a8"
+    },
+    {
+      "label": "verify-fixed-term-risk-1793602769183",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify.cjs",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/evidence/fixed-term-risk-1793602769183"
+      ],
+      "exit": 0,
+      "log_sha256": "1127cd892ef4e6596eda9d55b376e8934bed42886516dc048f4ed8a5e68f5047"
+    },
+    {
+      "label": "verify-funded-claims-1793602765802",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify.cjs",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/evidence/funded-claims-1793602765802"
+      ],
+      "exit": 0,
+      "log_sha256": "b170e69fc78bf63d17d6be21cc32c50106286b4e0912fdf9b6f1d24d5eaf1b58"
+    },
+    {
+      "label": "verify-hybrid-claim-settlement-1793602767487",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify.cjs",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/evidence/hybrid-claim-settlement-1793602767487"
+      ],
+      "exit": 0,
+      "log_sha256": "eaac3808559888689f7028145099d90dc3f3aceedbb46396fac084c2f03363bc"
+    },
+    {
+      "label": "verify-market-scale-risk-1793602772303",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify.cjs",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/evidence/market-scale-risk-1793602772303"
+      ],
+      "exit": 0,
+      "log_sha256": "2b3efb32c3baa1bf540e763a469db5f9e436eb52a942ccb1a7aa7cf35acde493"
+    },
+    {
+      "label": "verify-priced-fixed-term-risk-1793602775082",
+      "command": [
+        "node",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/src/verify.cjs",
+        "/workspace/trade/work/wo09-independent-fresh/labs/wo09-open-markets/evidence/priced-fixed-term-risk-1793602775082"
+      ],
+      "exit": 0,
+      "log_sha256": "44e77887b1aacf01e1ebbb402d9f8518ed844b8bf5efcbc9e7691519ac34f6d3"
+    }
+  ],
+  "scope": "Fresh GitHub checkout/install/build/private-node execution on same host; optional explicitly verified release archive cache; not pristine OS or production security proof",
+  "ckb_cache_sha256": "68a94c191109bae172f8dcb71828dbdf0383e2c314e0658743db217472b27bdf",
+  "compiler_binary_sha256": "9df4f1d2eaa7c6ee7649d0e13853ad40deed5d94e643e9ff2a2bab52ffd9feee",
+  "recompiled_binaries": [
+    {
+      "name": "funded_claim",
+      "sha256": "e99831e9248aecff299cf5e9e8090ae18d90d73e05ddddced34f6b8156aebb08",
+      "byte_identical": true
+    },
+    {
+      "name": "maturity_event",
+      "sha256": "5202082cc8e01bea7f459608ae43b609a216f042eb45ff1b9d03f6c487b4dc84",
+      "byte_identical": true
+    },
+    {
+      "name": "risk_pool",
+      "sha256": "fe9804e50c65ea99a5466c3a5efaa6617ef23099b314914cd7bf8b23c2ab5651",
+      "byte_identical": true
+    },
+    {
+      "name": "beneficiary_record",
+      "sha256": "d058e3e44edad537123e6f4130bf020f5e0d58eed1920e29647ea5acc91d5018",
+      "byte_identical": true
+    },
+    {
+      "name": "transferable_risk",
+      "sha256": "459ea814e8c3f5bbb7250f64e6ea755a1b57cfc60eb27c99ea37dfac2b7cff25",
+      "byte_identical": true
+    },
+    {
+      "name": "consumable_beneficiary",
+      "sha256": "5bab78eff13b01301886363501c0e11ae4c9ae3445a66203d604ae7332cdfc0e",
+      "byte_identical": true
+    },
+    {
+      "name": "consumable_risk",
+      "sha256": "0cbfe4cc1988128aa71ce95ae830dc9fb56b48cae8d5ed69d10d3d80aa1fc80d",
+      "byte_identical": true
+    }
+  ],
+  "runs": [
+    {
+      "directory": "evidence/fixed-term-risk-1793602769183",
+      "transactions": 45,
+      "cases": 10
+    },
+    {
+      "directory": "evidence/funded-claims-1793602765802",
+      "transactions": 9,
+      "cases": 9
+    },
+    {
+      "directory": "evidence/hybrid-claim-settlement-1793602767487",
+      "transactions": 10,
+      "cases": 10
+    },
+    {
+      "directory": "evidence/market-scale-risk-1793602772303",
+      "transactions": 37,
+      "cases": 8
+    },
+    {
+      "directory": "evidence/priced-fixed-term-risk-1793602775082",
+      "transactions": 17,
+      "cases": 10
+    }
+  ],
+  "status": "PASS",
+  "finished_unix": 1793602778
+}
