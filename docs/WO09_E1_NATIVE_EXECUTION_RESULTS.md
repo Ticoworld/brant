@@ -1,5 +1,8 @@
 # WO09-E1 native execution results
 
+> **Restriction/status update:** Beneficiary-address settlement liveness remains **UNRESOLVED**. Original consumable-right happy paths and pre-warning observations are preserved, but the proposed correction has no native validation: its replay stopped at a JavaScript syntax error. Compiled/source-only changes are quarantined in `labs/wo09-open-markets/research/blocked-beneficiary-correction`. No security PASS or production readiness is asserted. Further restricted-case validation is paused; independent launch, fixed-risk, OTX and incentive research continues.
+
+
 ## Scope and current evidence
 
 VERIFIED on new disposable private CKB chains, CKB0.210.0 and normal published secp locks. These are new WO09 experiments; inherited A2, compact-C and DAO results are not recounted. Source in `labs/wo09-open-markets/contracts`; build commands/compiler/binary hashes in `build/manifest.json`. Raw RPC requests/responses, node logs, chain configuration, genesis metadata, transactions and rejection errors stay under `evidence`. `src/verify.cjs` independently checks transaction hashes with SDK and CCC, serialized bytes, committed RPC outputs/data/witnesses, deployed code hashes and recorded rejection errors. This checks trace consistency, not consensus independently of the local node or comprehensive security.
@@ -52,3 +55,11 @@ A unique beneficiary record now uses the same custom script as lock and type, wi
 Missing seller authorization, pool rebinding, record burning without its bound pool, old-owner payout and missing settlement rights all failed. All three cells are verified live before settlement; committed receipt inputs identify their consumption, and subsequent queries report not-live. First development trace `consumable-risk-1793599429371` remains FAILED: eight transactions committed, then the harness incorrectly expected RPC status `dead` rather than actual `unknown`. The corrected check adds pre-spend liveness and committed consumption evidence; it does not treat an arbitrary unknown outpoint as proof of spending.
 
 Peak record capital rises316->468 CKB but is returned on completion. The206 CKB immutable publisher event still remains permanently occupied; sharing an event can amortize, not reclaim, it. A current-holder record can be transferred after maturity before settlement wins, so owners bear ordinary Cell-consumption ordering; no priority market is proved. New funding clients must validate approved script identities, terms and outputs before signing; no arbitrary-history general signing client is delivered.
+
+## Saved post-checkpoint evidence and restricted-case boundary
+
+The fresh GitHub reproduction of **11c87a6141d5893e5da1b87483e2855324b1dea1** completed before the latest warning: nine isolated runs,141 committed transactions and59 expected rejections, independently installed npm/compiler, seven byte-identical rebuilt artifacts and exact model regeneration. It reproduces that revision's tested behaviors, **not** beneficiary-address settlement-liveness security. Original and reproduction iterations remain separately identified by `reproduction.json`.
+
+Pre-warning trace `consumable-risk-1793600412018` records the malformed hash-owner observation:7 transactions committed and the advertised normal settlement output failed. It is a negative finding about the original prototype. No proposed correction transaction ran. The correction attempt failed immediately because C source was accidentally written into the JavaScript runner. Original known-running source was restored; the proposed20-byte address design, compiled artifacts, broken runner and failure report remain quarantined. Default future reproduction excludes beneficiary experiments.
+
+Claim-body signature validation also caught an over-specific harness assumption about which owner script runs first. Trace `funded-claims-1793599904305` remains FAILED; corrected ordinary normal-lock regression checks the expected secp signature error on either expected owner group. This does not qualify a general signing client.

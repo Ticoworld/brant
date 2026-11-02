@@ -1,0 +1,52 @@
+[
+  {
+    "label": "publisher_before_maturity",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(Immature(Inputs[0]): the transaction is immature because of the since requirement)"
+  },
+  {
+    "label": "publisher_missing_since",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08.html#18 })"
+  },
+  {
+    "label": "incorrect_payoff",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/48f9d629736592356d8f2b39a888c68a57e044012226a9344ec41be7eb7018bb.html#21 })"
+  },
+  {
+    "label": "incorrect_recipient",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 21 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/48f9d629736592356d8f2b39a888c68a57e044012226a9344ec41be7eb7018bb.html#21 })"
+  },
+  {
+    "label": "missing_event",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 18 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/48f9d629736592356d8f2b39a888c68a57e044012226a9344ec41be7eb7018bb.html#18 })"
+  },
+  {
+    "label": "altered_terms",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/48f9d629736592356d8f2b39a888c68a57e044012226a9344ec41be7eb7018bb.html#12 })"
+  },
+  {
+    "label": "immutable_published_event",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 16 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08.html#16 })"
+  },
+  {
+    "label": "outage_refund_before_grace",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(Immature(Inputs[0]): the transaction is immature because of the since requirement)"
+  },
+  {
+    "label": "spent_event_invalidates_old_refund",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x662da71b0162718d5f8a794528f1c33c6dbea5c059ee168047f966e2f235421000000000))"
+  },
+  {
+    "label": "refunded_pool_cannot_settle_again",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x0b9e2b2bc7aeb0e469fc8f4a3c23a2355d8be0257d66351e16d9db7d385d24c700000000))"
+  }
+]

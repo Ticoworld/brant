@@ -1,5 +1,8 @@
 # Nine required combinations — distinguish shared infrastructure from collateral
 
+> **Restriction/status update:** Beneficiary-address settlement liveness remains **UNRESOLVED**. Original consumable-right happy paths and pre-warning observations are preserved, but the proposed correction has no native validation: its replay stopped at a JavaScript syntax error. Compiled/source-only changes are quarantined in `labs/wo09-open-markets/research/blocked-beneficiary-correction`. No security PASS or production readiness is asserted. Further restricted-case validation is paused; independent launch, fixed-risk, OTX and incentive research continues.
+
+
 All rows have exact accounting witnesses in evidence/discovery-models.json. They are TESTED SYNTHETIC; native rights will be separately qualified. No user demand, secondary liquidity or commercial synergy is inferred from a sum balancing.
 
 | Case | Gained right / new participant | Collateral and new risk | Current adjudication |
@@ -17,3 +20,9 @@ All rows have exact accounting witnesses in evidence/discovery-models.json. They
 A two-sided tranche shares collateral coherently because senior and junior payoffs are complementary and sum to C; unrelated launch/redemption/execution obligations cannot just pledge the same C again. Sharing an event observation is different from sharing collateral. A global reserve/price state can create contention even when independent exits would otherwise be parallel.
 
 Current conclusion: preserve separate financial contracts and common discovery/settlement primitives. A monolithic launch+DEX+protection platform has not earned its complexity. The economically important question is whether buyers value actual funded transferable rights enough to pay the additional capital, publisher and lifecycle costs.
+
+## Native adjudication update
+
+Launch+secondary trading now has actual normal-owner claim exchange, including a genuine xUDT/CKB hybrid settlement. It adds a sale right but no assured buyer. Risk+secondary trading progressed through permanent beneficiaries to consumable rights: actual sale without junior cooperation, current-owner payout, and returned record capital. Fixed-recipient settlement633 bytes/32616 cycles becomes774 bytes/111064 cycles for the consumable variant; record peak capital468 CKB is additional and refundable. A988-byte sale and an owner wallet input are also required. This is a measured rights/cost tradeoff, not proof of superior returns.
+
+The strongest new combination is distinct funded term rights with common event/discovery/execution infrastructure. Ten fixed pools could share206 rather than2060 CKB event occupancy: a derived1854 CKB observation-state saving, not a native ten-pool benchmark and not a reduction in20000 CKB principal. The immutable event's206 CKB remains permanent even after settlement. Unrelated launch protection, execution inventory and risk collateral cannot share their pledged principal. Combining all products in one covenant adds oracle exposure to otherwise oracle-free refund claims without demonstrated customer value.

@@ -66,6 +66,72 @@
     "raw_sha256": "6537c7b87902f5deb1d43ea5cbe387cf2274296b0bee57cff5b44621e6150608"
   },
   {
+    "directory": "evidence/consumable-outage-1793599748913",
+    "status": "COMPLETED",
+    "transactions": 7,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x5348d74b5d82a381a3dc63c1d87e75737b5a0a872dc161a0e37e49207a3297fe",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x193e69"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x420624b2e2e1e65278da9fb6977ab849fa0e6ce683c487fda4f1b3042e35b1df",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x18ad41"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x7330d3757a0c563b6b146b3b0c664447f748cb4e8b4c23ce57588a40bb08de64",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x1936ef"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0xf09a9118b60d4d4f293791ce6f4f46a5f89e52bca9b27b5eaf21b6edac1d20b4",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19b6a1"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0xfc91d2ea8b7eac577095e220318f259f7c3c9aef88d6957793f3c396dab2383a",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x332c49"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x78153c0fff233a70c00a585fa460326abb7a6ae01a26bae228524068e8307222",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x3275a7"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x6a06d2a473b97cf93568da2b193d3f0cc8300b9b050f5dffb6c5e9c116ef0a07",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b095"
+        }
+      }
+    ],
+    "raw_sha256": "71abb726d3c14a5ffb6eb8ff75f0e88edd327375583b9a5fdcf2c8e1f6f6bb42"
+  },
+  {
     "directory": "evidence/consumable-risk-1793599429371",
     "status": "FAILED",
     "transactions": 8,
@@ -436,6 +502,368 @@
       }
     ],
     "raw_sha256": "d26d7fe60eedb14da53e43001509a573460c5bf875faf2179da0fb78cdf71cd0"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599744022",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x5583d25222464e6216672c35653abed2a76dc1696829bd94199bca188b384615",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x1933be"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x3547aaccb0edac606f77f5e6b99ddd349b089b301fa5119c093a7e9b8864b678",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x18fb37"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x9b808996654e84ebb4e2b983941f2340812269031a4cb5b18d778f713783148a",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x18618c"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x94d766460f963ae9b69b067b4ceb5b9c4bd445dae813eb3daffb93239b4089d0",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19463b"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0xa69a7d0d9a4cf0fa2c8c65fee3d7ad8b24697a08bc2f6a9efa6086df97643932",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x32df78"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x5b4b432661e119fe7d21e05a17028fbed9b70c7e9d951f85d564eaae0ce6d80e",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x328003"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x2079d3e19ff1e1cbf1da14a9087954377a2bf871e90d33d1221c862055536344",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x192db6"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0x3803b7000d1cb8aafddb9b19180b8ac6db0c5ea4b06aba044b12555053dc3715",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "25f61720a5cf8bb512822f34db3712562cf6a8bc785118dedb92c9d670a66c3c"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599745612",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x3deb56cc769f2ddc3a5f828cd5a383b8f0ad34aa2d7f63e8c295d643eec2d8ac",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x18c318"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x3e6b6643aa245e7fb297eb32aabdf202554237e3112acab17664f521299e7f7a",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x194c7a"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x66c1c8b2fde895dc1eeae8da8c3352aee917c5e3cbbce7f9ddc2a1218638605a",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x18a599"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0xbb2d51801f5babe0d802d68f5a6ca133b55ef8b0c418d8be11b532ed7d395bff",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195e38"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x2cf371449fd9dcbc7ed0b1e4b6dc9465b3a7609e4624cbf8aa78b6cefab3a6bb",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x32b67b"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x4fd3ae8a87f6ed23830c726c37c3fc9463ff8fec8a19cc2b09b0247d25d1ecdb",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x32b4ba"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x89b4fa6cc8ec850f84ae0cbb332099228babca131885ec8b748d295aaf2bdda6",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x19521c"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0xee7250afb163d29cac2d8ed6a84d14163e31b51c319d43be4396abd043fd2800",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "f2a6f15ad9bd4c64f5a798a053aa40cffab610cfabeaa808229b7e2152f439de"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599747214",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 5,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x236d035751e5425b6b2e584a36ad1717859b8a841deceae7792862ec288dba7b",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x18d984"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x57e2aa2ed08f59cac4bc008a2e07a958bdbada17c2b24cfc5d225dd2e405481c",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x194bb7"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0xcceb97f9834bdf6207bf41912e6fb3529e4066f5f5cff4ffb85da9db733b1fda",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x193125"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x6cfafb90b7fb8f79d145fbb7e37c132daf95e167476b3ac4570b799bab109af1",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x199684"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x263a84281dfe2ebdd41cffaaf8241821a307c4934295f1407169d74a1b1c1646",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x3326e8"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x11a8b1c655c519348c625a8206a45646ec5768c74b46857937ab5762cc76920c",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x32cfc4"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0xe02194252416b85c4b109d79f06334075d58d5d1dd9ade3642046fbf95982295",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x195528"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0xa2d4a84560797ea76b9a9e729bc00d6493027b75f497d3078b0289f549456e09",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "c93013e72e5f0297459bb88a97f4b91d60368e4e5cc74c26ac4b7c186a38acf5"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793599905561",
+    "status": "COMPLETED",
+    "transactions": 8,
+    "cases": 7,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0xa59d6a8ccd4dc99e1563a79445e3064b5dd60d212c13d1cb8014834dd92f6182",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x193b9b"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0xae76c6892fd0e7dc46641d3e6b15507e25a8011bd11d50703d1f04abfb5b69fb",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x190e1b"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x2b91522639c39c8b7b1c81f821168ef9096aa126c7a0c5ccb0b902fd676b7ab6",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x18f316"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x8af997e97456149a5c3e70921e734cdc50012c6885a562211547839e90b5af2e",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1924dd"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0x3f857104facaa5e5bfbd68b3faff68bb93aeef7e26c34db3af52d7b4961c1947",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x334d70"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x5508ff0c6b0c62dd565dbcda83ec032f5c5d5ed39ba028ae7f38d80b5f4fdb0c",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x32ec2b"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x3c9c5fd67014ca9d0a5b1ab8ca0db61d04d7f4346a101406cee9a0fe7ee50f7b",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x198990"
+        }
+      },
+      {
+        "label": "unilateral_settlement_burns_rights_and_refunds_capacity",
+        "hash": "0xfd231b2452e85825e9534cb507a446213864f91be6e56bd2942f7038aa19eec8",
+        "bytes": 774,
+        "cycles": {
+          "cycles": "0x1b1c9"
+        }
+      }
+    ],
+    "raw_sha256": "f612aab0533ca10dc9d1cb4328a36a99ed0319f9369d1862883d3c38944350e2"
+  },
+  {
+    "directory": "evidence/consumable-risk-1793600412018",
+    "status": "COMPLETED",
+    "transactions": 7,
+    "cases": 8,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x0d262e8c382fd852feb3dffcd5a1e123bb15f616ba88dab6cdedcd792ad82d10",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x191c79"
+        }
+      },
+      {
+        "label": "deploy_consumable_beneficiary",
+        "hash": "0x45ee3bc6a9715dcfbcf86b42bfdb4ef728ff72e973e3c839eac644c312e58f68",
+        "bytes": 14048,
+        "cycles": {
+          "cycles": "0x18f28a"
+        }
+      },
+      {
+        "label": "deploy_consumable_risk",
+        "hash": "0x47e416deb7515c6c458e3aac700bcf0d825fc4dc90e635bbddf7965ac8d71e11",
+        "bytes": 15864,
+        "cycles": {
+          "cycles": "0x194a9f"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x518509acc3e0196662589b4eaf2377de04bc03ce4c9a74e5d808e22757dbd410",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1938d1"
+        }
+      },
+      {
+        "label": "atomic_two_party_funding_and_bound_rights",
+        "hash": "0xf0a484c6166c213c90ade52088b39b8286ae49ca36814c18fe3ec8ffc20d12ab",
+        "bytes": 1359,
+        "cycles": {
+          "cycles": "0x32da84"
+        }
+      },
+      {
+        "label": "secondary_sale_without_junior",
+        "hash": "0x0a429377a7d5cb4dd2f1cbec39489aa4c45fc7d3298abf010837b143b3ad8647",
+        "bytes": 988,
+        "cycles": {
+          "cycles": "0x332dec"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x2c97ebea5f046a6c3dfd9c23b6c6c65d36230683f90c3d404720a4aea78e7629",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1945fa"
+        }
+      }
+    ],
+    "raw_sha256": "aa10c41154344dd56587ddc2bc3a80bdb8e713355136fab7caec8b21b6813410"
   },
   {
     "directory": "evidence/fixed-term-risk-1793598677129",
@@ -1114,6 +1542,376 @@
     "raw_sha256": "0e4d31ddf6d4459e3085b1ea90f1796d1463616ec8c6ca2a68c166f9ad0a0ece"
   },
   {
+    "directory": "evidence/fixed-term-risk-1793599736464",
+    "status": "COMPLETED",
+    "transactions": 45,
+    "cases": 10,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x498cc2db56b41e1c5251842c9e7318faa20e4fbf3005e6edb51b2865fc8e196a",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x18dabd"
+        }
+      },
+      {
+        "label": "deploy_risk_pool",
+        "hash": "0x5565b566517e4bd1380622cf984b6720e8e72d732fd9d20dbff39349208fa136",
+        "bytes": 15464,
+        "cycles": {
+          "cycles": "0x190a3f"
+        }
+      },
+      {
+        "label": "scenario_0_event",
+        "hash": "0xfe6e4a61725e8d3818ce91383ca4ae00eae82c70683e4e6fa2e2cefa582e1be1",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19135c"
+        }
+      },
+      {
+        "label": "scenario_0_fund",
+        "hash": "0x28dce62acc5901c2c49a8906ad760c32fd28fdb2e14970574b345c67fc8177a3",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x3242c3"
+        }
+      },
+      {
+        "label": "scenario_0_publish",
+        "hash": "0x20df4f1e6af1dc8962b51859974ca7f57599489f08074b83c20e1bbd2baa0fdd",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x197751"
+        }
+      },
+      {
+        "label": "scenario_0_settle",
+        "hash": "0x7bd696cd2918ec7b845079f7657f92c9d92b284f8217e57078960d6072b3ea87",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_1_event",
+        "hash": "0x55b434a270bc2216c16b960cb451d13e1219b00102b41df3484f2c31318cf5c0",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x192288"
+        }
+      },
+      {
+        "label": "scenario_1_fund",
+        "hash": "0x0a6f5e4642ad6bf8c28e6a32e6e9614de301e1c1f920ee1d5249f3fd59b7d123",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31b314"
+        }
+      },
+      {
+        "label": "scenario_1_publish",
+        "hash": "0xe239784c46b57facb8129e9681220b1b1a1afb5ad4e7ef0da5d82fdf2f17df60",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x193cf9"
+        }
+      },
+      {
+        "label": "scenario_1_settle",
+        "hash": "0x11e3299f8893413c8f330ea18ad3e9ecb2bb6f57ab40d9062c7279411c504cca",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_2_event",
+        "hash": "0x77eaf5c27a149f5cd5c07aacfa713a82e706f5b4c19ac81814f6865a0b64c874",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1946bc"
+        }
+      },
+      {
+        "label": "scenario_2_fund",
+        "hash": "0xa1b57dfef622784f5838bd812aa038f55bd9cf9cf7dc29b807f1a497b5857b48",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x329627"
+        }
+      },
+      {
+        "label": "scenario_2_publish",
+        "hash": "0xf98fae301053914e868df707d6f7a58bdf3178cce8166e01386494ddbf6cac68",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1937e7"
+        }
+      },
+      {
+        "label": "scenario_2_settle",
+        "hash": "0x96e29b063296d9fb12e59f471208ccad2ceef065d013f11fa3993345f0bfc509",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f67"
+        }
+      },
+      {
+        "label": "scenario_3_event",
+        "hash": "0xfbb40df2879c33698ccd99fd7746ab5b61d5140a434838f86e2e38ec25fd6908",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1967fc"
+        }
+      },
+      {
+        "label": "scenario_3_fund",
+        "hash": "0x48abf8f63e13f9d89d9a830ae22230f857be7dcde59e43b627378f173c294771",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e71f"
+        }
+      },
+      {
+        "label": "scenario_3_publish",
+        "hash": "0xb0f397680a48becc490a899cb6bf40656fa1af6d34220bb4e31c77aa4cd78761",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x198832"
+        }
+      },
+      {
+        "label": "scenario_3_settle",
+        "hash": "0x30eb2113cef248e186c0b7bccd298d94b048986fd6b7cafe4b88e17f10bea1aa",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f67"
+        }
+      },
+      {
+        "label": "scenario_4_event",
+        "hash": "0xfb3ea635037995cbdee6c42bcdd5f7f6b8e30ded1ef103e2e53f9c4e0087beae",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19cea6"
+        }
+      },
+      {
+        "label": "scenario_4_fund",
+        "hash": "0xe6ab0ed33280d50f83fe6935e72848bb6100641e47ec331812758de91c6a7ae5",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e3d8"
+        }
+      },
+      {
+        "label": "scenario_4_publish",
+        "hash": "0x39b640a7e37f993a1b6e6c8e3ffc5c8a91baee9b0aea991ef342ff25eabc29f7",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x197901"
+        }
+      },
+      {
+        "label": "scenario_4_settle",
+        "hash": "0x0eff559cdafb84cfe3b341f47d8e626e3ae45f0ad4605885cea20292f804b61f",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_5_event",
+        "hash": "0xae61b86a643e71993a90094d46318ca124a8c9416c5fe50f32e6f3fc716ed200",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x196986"
+        }
+      },
+      {
+        "label": "scenario_5_fund",
+        "hash": "0x6c4abc3f94a7ad9634358d29048087acd2ca58c9753de6440feb7f06d08441bc",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e3f5"
+        }
+      },
+      {
+        "label": "scenario_5_publish",
+        "hash": "0x98197a8fa2ac27a3e2283908be7269aaee82c9ba3c6dbbe552d35ba0db685a6e",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1940e7"
+        }
+      },
+      {
+        "label": "scenario_5_settle",
+        "hash": "0x2a04da8fa5e783b4cd63cd3d6034dc1425f21e0fbd4f3cc2e4a0a89273c01e73",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_6_event",
+        "hash": "0xa095bdbc114fe6af24ef53615c80fe441df4c1eb2c330dd6bd8dba0633e66d42",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x193c29"
+        }
+      },
+      {
+        "label": "scenario_6_fund",
+        "hash": "0xa931b46f18a01d0b27333f0a47ab04a89b181599c6517542568d0cbe9918cd09",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31c0a6"
+        }
+      },
+      {
+        "label": "scenario_6_publish",
+        "hash": "0xfd836812f0ae922435927f7cab7a33927ba837670ca8d4b431ab7bac64aaf9fa",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x19230e"
+        }
+      },
+      {
+        "label": "scenario_6_settle",
+        "hash": "0xf16e4eb67f343fde68641ad42f52edad5a582a921c8a38cb3dc474994f6534ed",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_7_event",
+        "hash": "0xdfd2bae0e5aa9f8d2ab370725f1bc2f48396b6806820fc724a1c7ef2a85a6efc",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x193213"
+        }
+      },
+      {
+        "label": "scenario_7_fund",
+        "hash": "0x09a4f2f4fc7a37711028cf3eb738ddc7c8c03f3cdef0d7bf1eb78c83b2600cd1",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x3209bb"
+        }
+      },
+      {
+        "label": "scenario_7_publish",
+        "hash": "0x54b5bd03f93150ee16129c9260d100c042359fdfc2ba215fe1265c4a20bdad1a",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x197bc7"
+        }
+      },
+      {
+        "label": "scenario_7_settle",
+        "hash": "0xca81a453c4ddeafa6d2599e3c66f55aeddd4243fce57ffab4d5a9dc1dc9df4f0",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "outage_event",
+        "hash": "0x0202ad5c8d16c151c20323cad6e71677ef4356b5a00855357ef0f63d64dfa29e",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x196a85"
+        }
+      },
+      {
+        "label": "outage_fund",
+        "hash": "0x566891aa0bd69986a35feed180173bf50a1615cf6995fe28435b9c280b88ba8b",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31cf88"
+        }
+      },
+      {
+        "label": "outage_native_contribution_refund",
+        "hash": "0x8c8e2f362d166808028b7e75fafa0ff8dbde57954c8752e08bf073115ef3f157",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7e3b"
+        }
+      },
+      {
+        "label": "race_true_event",
+        "hash": "0x662da71b0162718d5f8a794528f1c33c6dbea5c059ee168047f966e2f2354210",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19a157"
+        }
+      },
+      {
+        "label": "race_true_fund",
+        "hash": "0x930ff23aaf86f44bdb210de544604e4a8bba6d8b05b1ab6876fae71d65828ade",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e450"
+        }
+      },
+      {
+        "label": "late_publication_before_refund",
+        "hash": "0x685c7c4ca84243a7ae668f9115e405044df6a5273505ba2b1bea277e1223b757",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x19c1dc"
+        }
+      },
+      {
+        "label": "late_publication_payoff",
+        "hash": "0xd2c19b1b01e2908e975b31be0be8379bf400ed74233527ccc9efc7743ccb0a98",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "race_false_event",
+        "hash": "0x2d5b10538782018cb1214ac6cc28f01c82bf530d109c534f3bd557203196a52d",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195306"
+        }
+      },
+      {
+        "label": "race_false_fund",
+        "hash": "0x0b9e2b2bc7aeb0e469fc8f4a3c23a2355d8be0257d66351e16d9db7d385d24c7",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31f81c"
+        }
+      },
+      {
+        "label": "refund_before_late_publication",
+        "hash": "0x51d776fbf987119ecf1b6bba5e7d1ef090c03d6b8fda3aecf07bc5e5cdf60ac2",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7e3b"
+        }
+      },
+      {
+        "label": "publication_after_pool_refund",
+        "hash": "0x78ee64022c50fa0955d11828077daae048a9716ef112fb51822d935bb07ef307",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x199bfd"
+        }
+      }
+    ],
+    "raw_sha256": "e12c8af9c3b73c7aa8a2dc92be548aaaae96f20d3c27a39ed4725cd12421ba9b"
+  },
+  {
     "directory": "evidence/funded-claims-1793598711666",
     "status": "COMPLETED",
     "transactions": 8,
@@ -1352,6 +2150,198 @@
     "raw_sha256": "e477cb990ea1b7dfa9e49135c667dba11294d248e72e312eaa63ed220d5b67ce"
   },
   {
+    "directory": "evidence/funded-claims-1793599733081",
+    "status": "COMPLETED",
+    "transactions": 9,
+    "cases": 8,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_funded_claim",
+        "hash": "0xafdbd0eb0f43aef27f133ce0e19de4c604403717e38ae360ff62c4581bae168c",
+        "bytes": 15008,
+        "cycles": {
+          "cycles": "0x18f831"
+        }
+      },
+      {
+        "label": "four_individually_funded_launch_claims",
+        "hash": "0x3a04bf051a4204588b3ec8b8acac84fb46f38f3882d614703c4d0d60a267175d",
+        "bytes": 1752,
+        "cycles": {
+          "cycles": "0x4b8ad1"
+        }
+      },
+      {
+        "label": "atomic_two_owner_claim_exchange_with_cash",
+        "hash": "0xf6a874f5a859e477238f1962e5187fac9a926b952d11d91ee57345154cddfb03",
+        "bytes": 1122,
+        "cycles": {
+          "cycles": "0x32cb10"
+        }
+      },
+      {
+        "label": "small_redemption_merged_with_holder_wallet",
+        "hash": "0x5801656c1fe39c4e9293d17bd995d18788c88024de9fe08bed3907548f8fb457",
+        "bytes": 658,
+        "cycles": {
+          "cycles": "0x195f28"
+        }
+      },
+      {
+        "label": "unsponsored_partial_redemption",
+        "hash": "0x1a3113a95c6de3cc5c985ee8268db96fb8612c3ee08dd3268dfdb0a76ad0d53d",
+        "bytes": 606,
+        "cycles": {
+          "cycles": "0x199c0f"
+        }
+      },
+      {
+        "label": "independent_final_redemption_0",
+        "hash": "0xc6b4c607f8861e697c1bd5f63ddaac70f1bb243b3198e253fd19330e9032c345",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x192720"
+        }
+      },
+      {
+        "label": "independent_final_redemption_1",
+        "hash": "0xa4e1ad4c324ae8c9212530e4264162e5cce6775282d660943c9b2b31be17a337",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x196580"
+        }
+      },
+      {
+        "label": "independent_final_redemption_2",
+        "hash": "0x350337a77511981780cce5466ac971ee00bbea781cfb138fee5c0b7bd04e71d8",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x19310a"
+        }
+      },
+      {
+        "label": "independent_final_redemption_3",
+        "hash": "0x3b21eded2d0f47ff0fae8e1ae43f0496dd52ec210ddce413fea377052b3a721c",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x19aefb"
+        }
+      }
+    ],
+    "raw_sha256": "ef27f5f7617409c553459aba2e04d9682e5732b55565a8cadf384087a0a44634"
+  },
+  {
+    "directory": "evidence/funded-claims-1793599904305",
+    "status": "FAILED",
+    "transactions": 2,
+    "cases": 1,
+    "failure": {
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Inputs\\[0\\]\\.Lock/. Input:\n\n'TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 })'\n\n    at Engine.reject (/workspace/trade/labs/wo09-open-markets/src/engine.cjs:17:249)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async /workspace/trade/labs/wo09-open-markets/src/run-claims.cjs:17:146"
+    },
+    "measurements": [
+      {
+        "label": "deploy_funded_claim",
+        "hash": "0xbf2e63027d882d9f2321b2a34b26f2c4317a5abcc65ff6ce59109738b39112bf",
+        "bytes": 15008,
+        "cycles": {
+          "cycles": "0x1957c5"
+        }
+      },
+      {
+        "label": "four_individually_funded_launch_claims",
+        "hash": "0x4d7d91e0427e9d081e1feb769a4ceae299fe870b40087c16ade8ca59d96f80ca",
+        "bytes": 1752,
+        "cycles": {
+          "cycles": "0x4c288e"
+        }
+      }
+    ],
+    "raw_sha256": "a141ddbdc1eba26d60dfac7707cd11fd75a1beeda7b3fa94643e7b2b2fd155e3"
+  },
+  {
+    "directory": "evidence/funded-claims-1793600030489",
+    "status": "COMPLETED",
+    "transactions": 9,
+    "cases": 9,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_funded_claim",
+        "hash": "0xb24099271679f14dc218ef2b588e3f93762bcc1077cf9dc6fb5a4f631ab3bc9c",
+        "bytes": 15008,
+        "cycles": {
+          "cycles": "0x19037a"
+        }
+      },
+      {
+        "label": "four_individually_funded_launch_claims",
+        "hash": "0xb7b1622cf0004a020a24d26943a25b6b65fd889f32294e35eac284c7750d1bbe",
+        "bytes": 1752,
+        "cycles": {
+          "cycles": "0x4be498"
+        }
+      },
+      {
+        "label": "atomic_two_owner_claim_exchange_with_cash",
+        "hash": "0x7a1e3cbb7ee0ab853c866eb81650e70204233848aea78ec89caa5ee66a35e05d",
+        "bytes": 1122,
+        "cycles": {
+          "cycles": "0x32d9a6"
+        }
+      },
+      {
+        "label": "small_redemption_merged_with_holder_wallet",
+        "hash": "0xa17a97ce5fb7be9d1cd3967d93995c01c24fec0af44ec151e110e2ac38a51dc4",
+        "bytes": 658,
+        "cycles": {
+          "cycles": "0x199810"
+        }
+      },
+      {
+        "label": "unsponsored_partial_redemption",
+        "hash": "0x449d1b46c18be2cc50a66dd3531e2bf94ac096d8ceff2504a8256c7d14c95382",
+        "bytes": 606,
+        "cycles": {
+          "cycles": "0x197a7c"
+        }
+      },
+      {
+        "label": "independent_final_redemption_0",
+        "hash": "0x06441b957adcc19ae3c12adc288a38a3f7e536cd2ca98d9c2d846fa4fd79a880",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x192054"
+        }
+      },
+      {
+        "label": "independent_final_redemption_1",
+        "hash": "0x0c77b6c538462f716d3d9feb1b778334c588fc520eee1dd978695abd8fcfa9cb",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x19be75"
+        }
+      },
+      {
+        "label": "independent_final_redemption_2",
+        "hash": "0x512b207585ec08b50dd026fc05029ef0bda5cdfa0f9e64928358a560cfaedd50",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x190774"
+        }
+      },
+      {
+        "label": "independent_final_redemption_3",
+        "hash": "0x30f5d5c524ae6e155fa3b9348f03191af7dcedff7d419befe5abeb58a455f266",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x19962a"
+        }
+      }
+    ],
+    "raw_sha256": "7501d2c7dc63d7a97127e325a9a647b767c7d561bb0f2684be3421dfba45a402"
+  },
+  {
     "directory": "evidence/hybrid-claim-settlement-1793599080809",
     "status": "FAILED",
     "transactions": 3,
@@ -1476,6 +2466,96 @@
       }
     ],
     "raw_sha256": "63255d6c390b26a7e757f476483dd81f266ccaed7531552538598f97e71770bb"
+  },
+  {
+    "directory": "evidence/hybrid-claim-settlement-1793599734765",
+    "status": "COMPLETED",
+    "transactions": 10,
+    "cases": 9,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_funded_claim",
+        "hash": "0x41617e60b4b0a8fea6c03dfa83e130575d39fbf7c7aad564450867dd1fc4be5a",
+        "bytes": 15008,
+        "cycles": {
+          "cycles": "0x1934ad"
+        }
+      },
+      {
+        "label": "four_individually_funded_launch_claims",
+        "hash": "0xce041d8251154f5c65aafae19a743f46398d5a915d25ce936cfa9c56a9f989c9",
+        "bytes": 1752,
+        "cycles": {
+          "cycles": "0x4c2ea0"
+        }
+      },
+      {
+        "label": "issue_separate_authority_xudt",
+        "hash": "0x549e7ebbd7aeafe208fe66adf9994e355e2b139164184ff1d225e22ddc577cdb",
+        "bytes": 598,
+        "cycles": {
+          "cycles": "0x196419"
+        }
+      },
+      {
+        "label": "atomic_claim_xudt_ckb_settlement",
+        "hash": "0x005ba3cadb0cd52bd7138de93f337a44ebd7b81f6fa7db099a1c4309f9a4c3d8",
+        "bytes": 1631,
+        "cycles": {
+          "cycles": "0x33465c"
+        }
+      },
+      {
+        "label": "small_redemption_merged_with_holder_wallet",
+        "hash": "0x9fa7ae1fd2729f2335bac6d74708aaae55ba97d7428fd9a0710b0a49ff2e2d72",
+        "bytes": 658,
+        "cycles": {
+          "cycles": "0x197d6b"
+        }
+      },
+      {
+        "label": "unsponsored_partial_redemption",
+        "hash": "0xd07c927baea822e978a29aac3164f1d2b0621f35059eb57cd989e0651a65a168",
+        "bytes": 606,
+        "cycles": {
+          "cycles": "0x1958b2"
+        }
+      },
+      {
+        "label": "independent_final_redemption_0",
+        "hash": "0xed2a811af5e74ea9195a3910b1297bea2b2ead52b9b94ac12608a20769e926cb",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x192490"
+        }
+      },
+      {
+        "label": "independent_final_redemption_1",
+        "hash": "0xb8ef330443bdc3d725aec89b409d2ffb98243f61c069311bfaa1f04abc728607",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x192425"
+        }
+      },
+      {
+        "label": "independent_final_redemption_2",
+        "hash": "0x769c0b2feda8898b9550514f3ff5e5cb4fcd00bdafca2e6eadbc48a1fd0ad016",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x193d82"
+        }
+      },
+      {
+        "label": "independent_final_redemption_3",
+        "hash": "0x875a90c194af99d79fd27084e3b4f904d30fca070f02b255817c01306bb702f7",
+        "bytes": 388,
+        "cycles": {
+          "cycles": "0x190bd8"
+        }
+      }
+    ],
+    "raw_sha256": "9cf0554fa23886047a110d65382e7c0cdb532581a91273506f8913ec468c5a08"
   },
   {
     "directory": "evidence/market-scale-risk-1793599028590",
@@ -1784,6 +2864,312 @@
     "raw_sha256": "c8f872c0b6ff70f369f1c85e9f817390df35635b174bcdf9a0578902f4a37481"
   },
   {
+    "directory": "evidence/market-scale-risk-1793599739581",
+    "status": "COMPLETED",
+    "transactions": 37,
+    "cases": 8,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x2fce8d2473fee6b6a004ead26055f020e7ce683f17972f334a93832fba5ebe4d",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x193766"
+        }
+      },
+      {
+        "label": "deploy_risk_pool",
+        "hash": "0x90b036ccbb3693a68cc411c7147f5320eda796dbdabdd782d52e94c561830659",
+        "bytes": 15464,
+        "cycles": {
+          "cycles": "0x18a37b"
+        }
+      },
+      {
+        "label": "scenario_0_event",
+        "hash": "0x48dbe0bb35b38fac64f953a4a2477df0271f4210fb0b15309903b6cc3760de4b",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x196041"
+        }
+      },
+      {
+        "label": "scenario_0_fund",
+        "hash": "0x0eb0cbdf3d323cc5738d179dd8930979797ecaed15d806f340710df68fa29b13",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e9b5"
+        }
+      },
+      {
+        "label": "scenario_0_publish",
+        "hash": "0xaaf9bd3431a048c9ec3379ceb79734e1f9538904dde8c8749908f34ea2d38c7a",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x19cd2a"
+        }
+      },
+      {
+        "label": "scenario_0_settle",
+        "hash": "0x3352dca5e4d111e36f4ff5934183db3ba02be156d0cdb014d10fec9ee4ca9232",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_1_event",
+        "hash": "0x66e942846a87529dbeb6f3323e2295c748a97250e62697591c75fdc030f4e468",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19769a"
+        }
+      },
+      {
+        "label": "scenario_1_fund",
+        "hash": "0x71260e508a86d96b64ec99ea3f04a2c7a497b6bf5620248edec47eeb273a24a2",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31cb07"
+        }
+      },
+      {
+        "label": "scenario_1_publish",
+        "hash": "0xd3c1260011fec81bf45d9fd2c28dc9c777b6d046d23af50da57378a22155fe1a",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x198442"
+        }
+      },
+      {
+        "label": "scenario_1_settle",
+        "hash": "0x917113ca95cb4b9e118ccb321878e5233dcf78689dd650808b18d5071cbbcd8a",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_2_event",
+        "hash": "0xd716df64cacc68f130159fc38cce566341438d8ebc1515839de0f7789a4523b2",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x191102"
+        }
+      },
+      {
+        "label": "scenario_2_fund",
+        "hash": "0xbc4781fc76e3892b8dfd9d20a1ffb59dddf021c4a336c6ad8be3cc9b1f095312",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31daae"
+        }
+      },
+      {
+        "label": "scenario_2_publish",
+        "hash": "0x900a7defeb2d34fcf1d6a11a8379d421694f62077283a2baf0aaa872cc28417d",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1926be"
+        }
+      },
+      {
+        "label": "scenario_2_settle",
+        "hash": "0xade810652dd3d1e6dc9dbd53f9c691aa3bc05f194bf57cb9241b7451bed45b05",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f67"
+        }
+      },
+      {
+        "label": "scenario_3_event",
+        "hash": "0xb393d017a6c89f2dfff73530dd261881ea8a839910383bee22d399537cb6fe42",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x199b6a"
+        }
+      },
+      {
+        "label": "scenario_3_fund",
+        "hash": "0x3e3854f5337844b3b2be2cff0140ea3f63bf975fc83878f52faed6a4438f9458",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x320e3d"
+        }
+      },
+      {
+        "label": "scenario_3_publish",
+        "hash": "0x3621f680b6a04beebe353b2ab9ae6c22e1995199c8d6f3ed06f91df063a14c5f",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x192e35"
+        }
+      },
+      {
+        "label": "scenario_3_settle",
+        "hash": "0x4ae734532c54454cc055b2c03aed2a9b217239b54c41c780166197c2a712f6ee",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f67"
+        }
+      },
+      {
+        "label": "scenario_4_event",
+        "hash": "0x1cb00b777b64e42b1b389f0f4aec1fd61f493a623a84479fef662828ad43820b",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x19719f"
+        }
+      },
+      {
+        "label": "scenario_4_fund",
+        "hash": "0x641b0229004b243795e65d230a7283d49e8c3070f3d9a6191d453f3f091d8b6b",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31cb18"
+        }
+      },
+      {
+        "label": "scenario_4_publish",
+        "hash": "0x658ae5b4ad89e4d7e7d8867c1fe753246842ef89c5686bc5aa906006eb35477a",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1939b4"
+        }
+      },
+      {
+        "label": "scenario_4_settle",
+        "hash": "0x04957d69dd40cc04b9e86f8ad7ee6ae9d19f27657093e6e4a35c36ae022667dd",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_5_event",
+        "hash": "0x194ae9f6b958890e72b1ed8f46d77186b146a772621f75e61a28fc418b1b7c4e",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1992d7"
+        }
+      },
+      {
+        "label": "scenario_5_fund",
+        "hash": "0xe672e7a41d046f04fd911fbf8144e0a509e1553ec84d2ba8554599ee8f523aea",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x3202c9"
+        }
+      },
+      {
+        "label": "scenario_5_publish",
+        "hash": "0xa59c8ef6a2840e6864f16bc5acd191e84140bff10d0693beb390fea92c7108cf",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x199c99"
+        }
+      },
+      {
+        "label": "scenario_5_settle",
+        "hash": "0x057289d3735b0e409afe2fc8861c17ce0ac47d07e49671624afd0d17f23003b1",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_6_event",
+        "hash": "0x161771afc61241d7a9f7273777289689299251cd67bdd1e759ae625d2bd2edd1",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195f5e"
+        }
+      },
+      {
+        "label": "scenario_6_fund",
+        "hash": "0xe72a8f57fac39fa88560b32dd4e65c2718f6f8777e67c19fc8684163c0ad408a",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31b1c9"
+        }
+      },
+      {
+        "label": "scenario_6_publish",
+        "hash": "0x2ad4c3a58bc74cec1554ea03e4c1db231913179db60ec062dc94b63a8ebe1590",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x199fc8"
+        }
+      },
+      {
+        "label": "scenario_6_settle",
+        "hash": "0x6e3d86035ac00bc8482f9282a8a89e32e20966c490e33f2a4a11d957e81e4cdf",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "scenario_7_event",
+        "hash": "0x6da6e885fa0548089f19d32ef023e2d2643d441f32520a4219d951deb3beae95",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195b9f"
+        }
+      },
+      {
+        "label": "scenario_7_fund",
+        "hash": "0xa5892bad7cc10acbbd477e99ec649c33c8958138673d825d1a9b12e44ecc1f3f",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x3213f5"
+        }
+      },
+      {
+        "label": "scenario_7_publish",
+        "hash": "0x6a3c706e88a0913ef1dfc0808720c3c38dc7ef78144f8942a5e4a876e2b18fde",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x195523"
+        }
+      },
+      {
+        "label": "scenario_7_settle",
+        "hash": "0x5fe1a87b800bf3d0ff3c86c8839b7b0c981ad4c1896d56c2ce42d286fec2b054",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "outage_event",
+        "hash": "0x085499b41d02aaeb84fb127a68d140727c8be68a9c9f165fbdd4bf458412b603",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1970a4"
+        }
+      },
+      {
+        "label": "outage_fund",
+        "hash": "0x9e72c4f0199ff03a9c1300a57405b0a5bf9b3a43f8849e6eb1d697a0ad26ee50",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x3229db"
+        }
+      },
+      {
+        "label": "outage_native_contribution_refund",
+        "hash": "0x30ea731f8cdef5fda5ec98da8e9c8547626ddd21b3b5146de5d99b2c35005340",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7e3b"
+        }
+      }
+    ],
+    "raw_sha256": "a19f517e01afc37bb5aa71beeb9b9a78dd4ca8390548c68304beac9f3713fd50"
+  },
+  {
     "directory": "evidence/transferable-risk-1793598933221",
     "status": "COMPLETED",
     "transactions": 9,
@@ -1864,5 +3250,87 @@
       }
     ],
     "raw_sha256": "d8f76b6670a9394a8571defedb902f7a9ce3410e17c98776ff3d2447a3a58d29"
+  },
+  {
+    "directory": "evidence/transferable-risk-1793599742402",
+    "status": "COMPLETED",
+    "transactions": 9,
+    "cases": 4,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x27f68867fc8d44e2be5d59cb19429e8bc8cc78f0025da25f1e2d89e8ab9e51da",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x18f562"
+        }
+      },
+      {
+        "label": "deploy_beneficiary_record",
+        "hash": "0x0bd2aafb7cdbe1481c2a892c8db6c0d67b6886c88ad5ba9a3f9a899760ee96cb",
+        "bytes": 13608,
+        "cycles": {
+          "cycles": "0x193410"
+        }
+      },
+      {
+        "label": "deploy_transferable_risk",
+        "hash": "0x7fff63fead78eeb087d4d51a28d2a78432fa5f0a7fc6a0429f311fd6028f0bae",
+        "bytes": 15816,
+        "cycles": {
+          "cycles": "0x18d2a6"
+        }
+      },
+      {
+        "label": "create_event",
+        "hash": "0x6ef801320a9b5b012b737b6c33cb37f6fe2fbbb688626837645dd6bc79d55f36",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x195594"
+        }
+      },
+      {
+        "label": "create_two_live_beneficiary_records",
+        "hash": "0xaa69629a2b7b57cd44ee7833305280b2744e841694599524decb99d3ad5caa75",
+        "bytes": 840,
+        "cycles": {
+          "cycles": "0x19a29f"
+        }
+      },
+      {
+        "label": "two_party_funding",
+        "hash": "0x285b4bb1c53140231b7a989d84f7c4e8359048dbedea00a5d74e8f9b04efddbe",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x32243c"
+        }
+      },
+      {
+        "label": "independent_secondary_sale_no_junior_cooperation",
+        "hash": "0xb35698a1185a8643f3a201db9e02d711f76a8c0bdb6f6a56c8e778f90a299a47",
+        "bytes": 860,
+        "cycles": {
+          "cycles": "0x329a84"
+        }
+      },
+      {
+        "label": "publish_maturity_price",
+        "hash": "0x17ebff2bae3f9eacfbda8b083c1f7da4cfc1c504d0fb173bd29e8b94a469cb2f",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x197627"
+        }
+      },
+      {
+        "label": "permissionless_settlement_to_current_beneficiaries",
+        "hash": "0xa6962b3b43cebe1d653704637d4713c8021560d2901db427be284d53cbe8323e",
+        "bytes": 707,
+        "cycles": {
+          "cycles": "0xbf85"
+        }
+      }
+    ],
+    "raw_sha256": "b854781f6cb8eb17e2e08df0a38075fab1363d3f825a65c2485310d25a597508"
   }
 ]
