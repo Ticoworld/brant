@@ -1,0 +1,9 @@
+# WO09-E1 research journal — 2026-11-02
+
+1. VERIFIED SOURCE / Git: fetched rebuilt branch and confirmed f72cfb4276efe2b180c69821f645168950c99e84 with clean tree. Created wo09-open-market-discovery; main and rebuilt refs remain protected. Accepted the user's uploaded WO009-E1 as this work order, superseding the earlier prohibition on starting independent WO09 research while preserving its unresolved security boundary.
+2. Read current registry/JSON, historical manifest, current reports/corrections, raw-evidence format and actual compact, harness and model source. Important correction retained: minimum pair289/297 is not single-order occupancy. Existing transaction counts will not be counted as new WO09 execution.
+3. Customer-first hypotheses: refundable issuer financing, bounded fixed-maturity protection, owner-controlled claim exchange and paid finite execution capacity. No architecture selected merely because it reuses A2 or iCKB. Generic reserve-backed launches must beat the simpler alternative of keeping protected cash and funding only the at-risk component.
+4. Primary-source discovery started: Uniswap CCA/launcher, DLCs, CoBuild, Lean Oracle and CKB exchange examples. Search hits are discovery leads, not identity/deployment/adoption proof. Remit/Sluice references currently lack an authenticated original specification; no novelty claim will rely on their absence.
+5. Public market/reference requests are one-pass with failures preserved; no repeated restriction probes, live trading, financial commitments or messages to others. The runtime skill confirms supported network policy and proxy; no credential values are read.
+
+Next decisive milestone: inspect rival mechanisms, derive all four tracks' liabilities/participant economics, preserve minimal failure witnesses, then select only native experiments that resolve actual rights/enforcement uncertainty. No production or commercial verdict yet.
