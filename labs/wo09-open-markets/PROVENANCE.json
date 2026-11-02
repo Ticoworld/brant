@@ -1,0 +1,20 @@
+{
+  "origin": "New WO09 prototype code; engine/trace verifier adapted from preserved rebuild harness. No third-party competing contract code copied.",
+  "inherited_dependencies": "labs/rebuild/native and labs/rebuild/mechanisms pinned provenance/licenses remain authoritative; build manifest identifies compiler and include paths.",
+  "files": {
+    "contracts/risk_pool.c": "76a7f96a3266e7ca116bc8aaeebb9bd0c8d1b5c74e052eb2bb10a1354de597a8",
+    "contracts/common.h": "c7633718e20592879de8020dd472c5b4d208e652fbf588ee227e39faae48a558",
+    "contracts/funded_claim.c": "f50fe8fffe3dd146934792d752391334959001305702a9fb254382e1b960f289",
+    "contracts/maturity_event.c": "aef70a0a0eef7554df8ed0f7f59a29b3dd20e021ac35806b48f9b9ab33ef99a0",
+    "src/run-risk.cjs": "6a3adcbd82e2e46451449fcfca2bf05e5a39089b3cf32b215fc155ef1179cfc9",
+    "src/run-claims.cjs": "66edfa170e7de175ca8904460cc1f6e364f431d2f4b4963007c591d291ff0735",
+    "src/engine.cjs": "9c9904b0debd96d5d4618f91643979de4c2795a801ec056dcdedcbec833de0b2",
+    "src/build.py": "fad725e19e7fe53beff34ac249c0c53e045396e85e3453296d0a0c35404a9a11",
+    "src/verify.cjs": "92c82c1d5caa85c1342316b5596f522498ac4b8a8ad63230a05ea2f3d06198ad",
+    "src/capture_web.py": "079d8d700536b8d646c5ac8f223d7332a4ac59d004980b5e247cc500de7748db",
+    "build/maturity_event": "5202082cc8e01bea7f459608ae43b609a216f042eb45ff1b9d03f6c487b4dc84",
+    "build/risk_pool": "fe9804e50c65ea99a5466c3a5efaa6617ef23099b314914cd7bf8b23c2ab5651",
+    "build/funded_claim": "e99831e9248aecff299cf5e9e8090ae18d90d73e05ddddced34f6b8156aebb08",
+    "build/manifest.json": "3267df8c94b5edfa6f7e460e69f6f7dffd0c9e55955cd215d4552cb0c629f58f"
+  }
+}
