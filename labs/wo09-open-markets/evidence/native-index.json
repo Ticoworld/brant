@@ -3170,6 +3170,152 @@
     "raw_sha256": "a19f517e01afc37bb5aa71beeb9b9a78dd4ca8390548c68304beac9f3713fd50"
   },
   {
+    "directory": "evidence/priced-fixed-term-risk-1793602387084",
+    "status": "COMPLETED",
+    "transactions": 17,
+    "cases": 10,
+    "failure": null,
+    "measurements": [
+      {
+        "label": "deploy_maturity_event",
+        "hash": "0x1a9848c043e5b491e9f09e11e302e70dd822324b0372ee8b7c057c32d0ed965d",
+        "bytes": 14352,
+        "cycles": {
+          "cycles": "0x1964e7"
+        }
+      },
+      {
+        "label": "deploy_risk_pool",
+        "hash": "0xc5c4ca65f6fb892b6b2e63ec544594bba7a8d91b11ea2c352c83a39ca4f610c4",
+        "bytes": 15464,
+        "cycles": {
+          "cycles": "0x18e68d"
+        }
+      },
+      {
+        "label": "scenario_0_event",
+        "hash": "0x68280d01042c1032610cb38e7371db636550db05718cc67aff3a0a9ec60b69a1",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1907f5"
+        }
+      },
+      {
+        "label": "scenario_0_fund",
+        "hash": "0x3b5352115955e68f346be58afe4f33ffa86265f5cc35c37a41c1ed010c4ecf52",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x320d29"
+        }
+      },
+      {
+        "label": "scenario_0_publish",
+        "hash": "0x633e215df2c1509177d6762a488efe348e43d6b2288aada6d1d86e66d92e947e",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x192945"
+        }
+      },
+      {
+        "label": "scenario_0_settle",
+        "hash": "0xbf1cffb0ab393bac534ed3e2a4df6d43df24e0501fa6b950fcb36c827646df5e",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "outage_event",
+        "hash": "0x6a4f572d35310dd6a6a6402a256cc4e545070e73748c68ac70356d1d007279f8",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1974bb"
+        }
+      },
+      {
+        "label": "outage_fund",
+        "hash": "0xf6a22a7923873cbfe80755df4b29b7fe5a61f8ad8a60b21b6bd6f5ad335dfe50",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x320fc2"
+        }
+      },
+      {
+        "label": "outage_native_contribution_refund",
+        "hash": "0xa413ceb2f1533afde6ac8bac521026d9fe9e489424dc9a81f92ba909787d8d92",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7e3b"
+        }
+      },
+      {
+        "label": "race_true_event",
+        "hash": "0x7c46b3d88483121b6c3ffd5c19a77dcc92fa0dbc31c09f667f6c30fd6206b0ad",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x1954a0"
+        }
+      },
+      {
+        "label": "race_true_fund",
+        "hash": "0x1ac84c7f31ced123d7a578fe070ef1eafb15f84809a7e510485427ffe0e427dc",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x323bab"
+        }
+      },
+      {
+        "label": "late_publication_before_refund",
+        "hash": "0xdd106ac712fb9aef703c6e9f0d582bad7543844731d17951c268d96f0a0c2813",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x1990f1"
+        }
+      },
+      {
+        "label": "late_publication_payoff",
+        "hash": "0x2246862258ce0d1d9a343788b306409a715bb32754d3af4f86dde4bafb877c8d",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7f68"
+        }
+      },
+      {
+        "label": "race_false_event",
+        "hash": "0x2462e5081b5254a900c21ed78e1669c0a23b9f90d487f6a242e4c421bb50ed1f",
+        "bytes": 662,
+        "cycles": {
+          "cycles": "0x197a27"
+        }
+      },
+      {
+        "label": "race_false_fund",
+        "hash": "0xe17fb841a2f1b2377f75da575729399911dc928be8979edd596799212102c700",
+        "bytes": 718,
+        "cycles": {
+          "cycles": "0x31e8d9"
+        }
+      },
+      {
+        "label": "refund_before_late_publication",
+        "hash": "0xe007fcf118e49f8f3f9b1895a67d3fd0ee05e529499c3eaa67d46040c83a1b87",
+        "bytes": 633,
+        "cycles": {
+          "cycles": "0x7e3b"
+        }
+      },
+      {
+        "label": "publication_after_pool_refund",
+        "hash": "0x634f9342e25295b9fd6cc5f0ace4458adc85007ed446063b55944bd351ae72fd",
+        "bytes": 714,
+        "cycles": {
+          "cycles": "0x194565"
+        }
+      }
+    ],
+    "raw_sha256": "8efd98eca35c216c8c267162796588802574f196d7520ca6246721cde9db4a68"
+  },
+  {
     "directory": "evidence/transferable-risk-1793598933221",
     "status": "COMPLETED",
     "transactions": 9,

@@ -29,8 +29,8 @@ try:
  for item in expected:
   actual=hashlib.sha256((lab/'build'/item['name']).read_bytes()).hexdigest();assert actual==item['sha256'];report['recompiled_binaries'].append({'name':item['name'],'sha256':actual,'byte_identical':True})
  before_models={str(f):hashlib.sha256(f.read_bytes()).hexdigest()for f in [lab/'evidence/discovery-models.json',lab/'evidence/market-scale-economics.json',*list((lab/'fixtures').glob('*.json'))]}
- run('formal-models',['python3',str(lab/'models/discovery.py')]);run('market-scale',['python3',str(lab/'models/market-scale.py')]);assert all(hashlib.sha256(Path(f).read_bytes()).hexdigest()==sha for f,sha in before_models.items())
- old=set((lab/'evidence').iterdir());jobs=[('claims','run-claims.cjs',{}),('hybrid','run-claims.cjs',{'WO09_HYBRID':'1'}),('risk','run-risk.cjs',{}),('market-risk','run-risk.cjs',{'WO09_CALIBRATED':'1'})]
+ run('formal-models',['python3',str(lab/'models/discovery.py')]);run('market-scale',['python3',str(lab/'models/market-scale.py')]);run('independent-alternatives',['python3',str(lab/'models/independent-alternatives.py')]);assert all(hashlib.sha256(Path(f).read_bytes()).hexdigest()==sha for f,sha in before_models.items())
+ old=set((lab/'evidence').iterdir());jobs=[('claims','run-claims.cjs',{}),('hybrid','run-claims.cjs',{'WO09_HYBRID':'1'}),('risk','run-risk.cjs',{}),('market-risk','run-risk.cjs',{'WO09_CALIBRATED':'1'}),('priced-fixed-risk','run-risk.cjs',{'WO09_ASYMMETRIC':'1'})]
  for label,script,extra in jobs:run(label,['node',str(lab/'src'/script)],env={**env,**extra})
  report['runs']=[]
  for d in sorted(set((lab/'evidence').iterdir())-old):

@@ -745,5 +745,6 @@
     "Liquidity commitments and issuer treasury markets",
     "Combinations remain open; no WO09 implementation authorized by passing this registry."
   ],
-  "comprehensive_verdict": "PARTIAL: substantial mechanism families now have isolated executable evidence, but authenticated arbitrary-history recovery and required LO-01 security proof remain unresolved/blocked; no full-recovery or WO09-ready claim."
+  "comprehensive_verdict": "PARTIAL: substantial mechanism families now have isolated executable evidence, but authenticated arbitrary-history recovery and required LO-01 security proof remain unresolved/blocked; no full-recovery or WO09-ready claim.",
+  "wo09_extension": "docs/WO09_E1_CAPABILITY_REGISTRY.json"
 }
