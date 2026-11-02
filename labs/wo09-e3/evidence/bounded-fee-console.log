@@ -1,0 +1,26 @@
+claim_0_fee_0 true 10024540
+claim_0_fee_1 true 10041726
+claim_0_fee_1000 true 10060001
+claim_0_fee_1000000 true 10010769
+claim_0_fee_over_cap false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+claim_0_missing_authorization false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }
+claim_0_invalid_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+claim_0_fee_changed_after_signing false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+claim_1_fee_0 true 10018799
+claim_1_fee_1 true 10038201
+claim_1_fee_1000 true 10020035
+claim_1_fee_1000000 true 10023368
+claim_1_fee_over_cap false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+claim_1_missing_authorization false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }
+claim_1_invalid_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+claim_1_fee_changed_after_signing false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+tiny_claim_fee_equals_claim true 10042112
+tiny_claim_fee_exceeds_claim_below_cap false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+deducted_merge_with_additional_input_and_output false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+fee_mode_with_extra_destination false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+fee_mode_altered_other_liability false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#63 } }
+fee_mode_duplicate_old_claim_proof false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 62 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#62 } }
+fee_mode_wrong_recipient false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+fee_mode_ambiguous_owner_inputs false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }
+sponsor_fallback_with_fee_extension true 11680176
+EVIDENCE /workspace/trade/labs/wo09-e3/evidence/bounded-fee-vm-1793634662957

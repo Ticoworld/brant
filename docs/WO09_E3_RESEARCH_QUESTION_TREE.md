@@ -57,3 +57,11 @@ IF recovered script/genesis Cells are available, a new CKB node is unnecessary f
 WHAT FAILED: dep_group/depGroup representation mismatch blocked SDK serialization, then was corrected without changing contract rules. No VM result was assigned to that failed serialization.
 
 NEXT QUESTION: Can a claimant with one existing Cell safely pay a bounded fee while still enforcing exact claim conservation? Current derivative rejects the tested self-paid fee case; sponsor-funded fallback stays frozen. Censorship while checkpointing, ordinary-wallet recovery, ACP and no-funded-Cell recovery remain separate unresolved research directions.
+
+## Q2b: Can the only recipient Cell fund the fee?
+
+OBSERVE: Original exact-delta merging rejects self-paid fees. WHY: It demands the whole claim as a capacity increase. ASSUMPTION TO CHANGE: An external payer is always available.
+
+WHAT IF: Restrict discounted merging to anchor+recipient only, compute actual total fee, cap it at 0.01 CKB and at the claim value, and require actual whole-transaction recipient secp authorization. EXPERIMENT: 25 VM cases plus two 10,000-shannon fee-point cases. RESULT: 0.1 and 1 CKB accept with one signer; over-cap/excess-claim fees, changed signatures, extra destinations and altered claims reject. No new native-chain result. See WO09_E3_RECIPIENT_PAID_FEES.md.
+
+COUNTEREXAMPLE: A 1,000-shannon claim can be entirely consumed by a permitted 1,000-shannon fee. Correct accounting is insufficient for useful value recovery. ELSE: Wallet net-value disclosure and product economics matter. The one-funded-Cell condition persists; freeze the successful fee mechanism and prioritize the no-funded-Cell question rather than optimizing 246 bytes.
