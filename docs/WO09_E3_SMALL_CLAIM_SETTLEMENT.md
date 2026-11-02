@@ -1,6 +1,6 @@
 # WO09-E3 existing-Cell derivative
 
-Status: RECONSTRUCTED, NOT VALIDATED. No authenticated tiny-claim settlement has passed VM or native-chain execution.
+Historical initial status: RECONSTRUCTED, NOT VALIDATED. Later recovered functional results supersede this status: see WO09_E3_RECOVERED_MILESTONE.md. The initial build-only findings below remain preserved as history.
 
 An isolated derivative adds an alternate payout predicate to force_exit only. The existing exact-value payout remains a fallback. The new predicate requires exactly one canonical owner-secp input, with no type script and empty data, and exactly one same-lock output with no type, empty data, and input capacity plus full authenticated claim amount. Capacity overflow, multiple matching owner inputs/outputs, changed type/data or missing owner input fail the predicate. All inherited SMT, nullification, total, anchor capacity and timeout checks remain unchanged. CKB must separately execute the recipient secp signature over the transaction. This dependency has not yet been tested for the new path.
 

@@ -37,3 +37,15 @@ DERIVED: Checkpoints update last_epoch, while exits preserve it. Repeated accept
 ## Q4: Can Alice act with neither a funded Cell nor a willing counterparty?
 
 UNRESOLVED: Independent ownership does not supply fee liquidity or output capacity. Reserve, claim-sale and channel alternatives must account for actual funders and refusal conditions. No E3 small-claim success or commercial winner is asserted.
+
+## Recovered functional milestone (supersedes initial Q2 implementation status)
+
+OBSERVE: All 21 saved VM cases were independently re-executed. Sponsor-funded 0.1 and 1 CKB merges pass with actual secp authorization. WHY: The derivative checks the increase in an existing owner Cell rather than demanding a tiny standalone output.
+
+NATIVE RESULT: New derivative deployment, four published Groth16 fixtures and a genuine 1,000-shannon claim merge are recorded committed. Raw-RPC evidence checks match hashes, exact delta and sponsor fee. See WO09_E3_RECOVERED_MILESTONE.md.
+
+COUNTEREXAMPLE: A recipient paying the fee from the same Cell fails the exact-delta predicate, error 67. ELSE: A separately constrained, signed fee rule needs a new experiment. Do not infer that the signature alone makes any relaxed accounting safe.
+
+MULTI-OWNER LIMIT: Root-transition VM snapshots succeed in both orders but reset input outpoints. NEXT QUESTION: Can a stateful resolver preserve all owner entitlements while rejecting the actual stale anchor, then accept rebuilt proofs and UTXOs?
+
+ENVIRONMENT: /tmp is a separate full 4.9 GiB mount. The saved startup error is ECONNREFUSED; ENOSPC is independently recorded for compilation. Resource diagnosis must distinguish those observations. Continue VM verification using saved cells without node startup.

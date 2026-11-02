@@ -1,0 +1,11 @@
+FAILED /workspace/trade/labs/wo09-e2-capacity/evidence/e3-merge-vm-1793632219946
+[TypeError: fetch failed] {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:19224
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1864:16) {
+    errno: -111,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 19224
+  }
+}

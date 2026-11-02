@@ -1,0 +1,17 @@
+{
+  "classification": "RECOVERED_EVIDENCE_VALIDATION",
+  "native_committed_transactions": 8,
+  "native_exit": "0xc7c052cf9d0071c15b3221aecd8a5159b4a0bebdf1633f9ef4c0fee634f414e1",
+  "native_claim_shannons": "1000",
+  "recipient_delta_shannons": "1000",
+  "sponsor_fee_shannons": "1000000",
+  "checkpoint_fixture_count": 4,
+  "vm_saved_results": 21,
+  "vm_reexecuted": 21,
+  "limitations": [
+    "VM context snapshots are constructed; roots evolve but outpoints are reset between cases",
+    "No 0.1 or 1 CKB native checkpoint account proved",
+    "Original self-paid fee mode rejects; no corrected mechanism yet",
+    "No funded-cell-free recovery solution proved"
+  ]
+}
