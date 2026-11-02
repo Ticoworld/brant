@@ -1,0 +1,12 @@
+FAILED /workspace/trade/labs/wo09-e2-capacity/evidence/e3-merge-vm-1793634197850
+TypeError: Dep type must be either of 'code' or 'depGroup'
+    at serializeDepType (/workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/serialization/transaction.js:24:11)
+    at serializeCellDep (/workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/serialization/transaction.js:29:60)
+    at /workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/serialization/transaction.js:38:84
+    at Array.map (<anonymous>)
+    at serializeCellDeps (/workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/serialization/transaction.js:38:44)
+    at serializeRawTransaction (/workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/serialization/transaction.js:110:62)
+    at Object.rawTransactionToHash (/workspace/trade/labs/rebuild/native/node_modules/@nervosnetwork/ckb-sdk-utils/lib/index.js:48:83)
+    at Engine.sign (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:15:228)
+    at build (/workspace/trade/labs/wo09-e3/scripts/test-recipient-merge-offline.cjs:28:146)
+    at /workspace/trade/labs/wo09-e3/scripts/test-recipient-merge-offline.cjs:31:41

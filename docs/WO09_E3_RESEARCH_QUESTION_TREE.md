@@ -49,3 +49,11 @@ COUNTEREXAMPLE: A recipient paying the fee from the same Cell fails the exact-de
 MULTI-OWNER LIMIT: Root-transition VM snapshots succeed in both orders but reset input outpoints. NEXT QUESTION: Can a stateful resolver preserve all owner entitlements while rejecting the actual stale anchor, then accept rebuilt proofs and UTXOs?
 
 ENVIRONMENT: /tmp is a separate full 4.9 GiB mount. The saved startup error is ECONNREFUSED; ENOSPC is independently recorded for compilation. Resource diagnosis must distinguish those observations. Continue VM verification using saved cells without node startup.
+
+## Stateful VM follow-up
+
+IF recovered script/genesis Cells are available, a new CKB node is unnecessary for constructed-state VM execution. Offline test now maintains a UTXO ledger with real successor transaction hashes. Both three-owner orderings and stale competing-anchor rejection/rebuild pass, with final total zero and 500 CKB cushion preserved. This supersedes the prior reset-outpoint limitation for the new stateful track, but not for genuine three-owner checkpoint creation.
+
+WHAT FAILED: dep_group/depGroup representation mismatch blocked SDK serialization, then was corrected without changing contract rules. No VM result was assigned to that failed serialization.
+
+NEXT QUESTION: Can a claimant with one existing Cell safely pay a bounded fee while still enforcing exact claim conservation? Current derivative rejects the tested self-paid fee case; sponsor-funded fallback stays frozen. Censorship while checkpointing, ordinary-wallet recovery, ACP and no-funded-Cell recovery remain separate unresolved research directions.

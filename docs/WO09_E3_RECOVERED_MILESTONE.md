@@ -31,3 +31,15 @@ Node-startup evidence: labs/wo09-e2-capacity/evidence/e3-merge-vm-1793632219946.
 Recipient merging: TECHNICAL ADVANCE for the tested sponsor-funded, pre-funded-wallet path; COMMERCIAL UNPROVED. Real tiny-claim redemption is now demonstrated for one published fixture balance. Neither funded-cell-free recovery nor self-funded fees are solved. No claim of production security, unconditional censorship resistance or comprehensive adversarial coverage.
 
 Next decision-changing experiment: use the existing saved genesis/code data to run a fully stateful three-owner UTXO sequence and same-anchor contention/rebuild tests without starting another private node. Then isolate a recipient-paid fee construction with explicit conservation and fee bounds. Preserve the sponsor-funded fallback. No new SP1 proving, WO09-E1 beneficiary work or A2 LO-01 work is needed.
+
+## Subsequent offline stateful validation
+
+Evidence: labs/wo09-e3/evidence/merge-vm-offline-1793634220350. Runner: labs/wo09-e3/scripts/test-recipient-merge-offline.cjs. This reuses recovered genesis and code Cells and starts no node. Unlike the earlier reset-outpoint snapshots, the stateful track maintains a live ledger, removes consumed inputs, derives successor outpoints from transaction hashes, and supplies only current Cells to CKB-testtool. Both three-owner orderings complete. A preconstructed competing transaction fails resolution with UNKNOWN_INPUT after the first anchor spend; a transaction reconstructed against current root/outpoints then passes. The VM runner reports UNKNOWN_INPUT before script execution by context-cell lookup; this is not claimed as a consensus-node rejection or a lock-script error. Last owner leaves zero pool accounting total and precisely 500 CKB anchor capacity.
+
+Expanded cases also reject ambiguous matching inputs and overflowing recipient capacity at type error 67, stale proofs and duplicate old proofs against the successor at type error 62. Original exact-delta self-paid-fee case still rejects. These results do not qualify a corrected fee construction.
+
+Setup failure: RPC dep_group was initially carried into the SDK field as a value rather than SDK depGroup. Transaction serialization rejected it before VM execution; correcting the representation permits testing without weakening validation. The failure console is preserved separately.
+
+Storage: the unused /tmp/liquid-cells-e2-noa derivative source/cache was reversibly moved to ignored work/e3-build-cache/previous-noa-source-and-cache, preserving its contents. /tmp then had approximately 388 MiB free and /workspace 3.6 GiB. No deletion, new build, new node or SP1 download was needed for this milestone. Avoid further node/prover work without additional resource review.
+
+The old summary's statement that contexts reset refers to its original/static cases; the separate stateful track and recorded stateful transaction hashes supersede that limitation for the bounded VM UTXO tests only.
