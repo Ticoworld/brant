@@ -1,0 +1,42 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/anchor.rs (target/debug/deps/anchor-50b56c41addb82d0)
+
+running 13 tests
+test anchor_lock_change_rejected ... ok
+test checkpoint_with_wrong_pool_args_rejected ... ok
+test fee_acc_mismatch_rejected ... ok
+test ignored_fee_draw_in_capacity_rejected ... ok
+test missing_da_blob_rejected ... ok
+test reward_exceeds_fee_withdrawal_rejected ... ok
+test checkpoint_for_a_type_id_pool_verifies ... ok
+test tampered_da_blob_rejected ... ok
+test tampered_output_root_rejected ... ok
+test sequencer_reward_accepted ... ok
+test tampered_public_values_caught_by_proof ... ok
+test wrong_new_seq_rejected ... ok
+test valid_checkpoint_verifies ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+
+     Running tests/forceexit.rs (target/debug/deps/forceexit-58d49af2a2dfaece)
+
+running 7 tests
+test force_exit_bad_total_rejected ... ok
+test force_exit_after_timeout_verifies ... ok
+test force_exit_before_timeout_rejected ... ok
+test force_exit_missing_payout_rejected ... ok
+test force_exit_unnullified_root_rejected ... ok
+test force_exit_wrong_balance_rejected ... ok
+test force_exit_wrong_payout_lock_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/withdrawal.rs (target/debug/deps/withdrawal-f597a9345f3b8351)
+
+running 4 tests
+test missing_withdrawal_output_rejected ... ok
+test wrong_withdrawal_amount_rejected ... ok
+test wrong_withdrawal_lock_rejected ... ok
+test deposit_and_withdrawal_checkpoint_verifies ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s

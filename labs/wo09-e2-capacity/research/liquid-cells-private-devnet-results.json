@@ -1,0 +1,103 @@
+{
+  "repository": "LusoCryptoLabs/Liquid-Cells",
+  "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "ckb_node": "0.210.0 (2592ddf 2026-09-17)",
+  "binary": {
+    "sha256": "04a31bf62a4aff38a2e51c0aace5f2b253828424127336f64e55d29c015ce817",
+    "build": "temporary pinned-source archive; bytes 1.11.1 single-hart refcount patch; no Send/Sync; not upstream-approved",
+    "builder": "scripts/build-liquid-cells-single-hart.sh"
+  },
+  "ckb_testtool": {
+    "version": "0.13.2",
+    "passed": 24,
+    "failed": 0,
+    "suites": {
+      "forceexit": 7,
+      "withdrawal": 4,
+      "anchor": 13
+    },
+    "log": "../evidence/liquid-cells-single-hart-ckbvm.txt",
+    "exit": 0,
+    "log_sha256": "523199036d297212afaadd387fc28961540920fb0fd45dfb4245c0563b1ecb2b"
+  },
+  "lifecycle": {
+    "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793616517454",
+    "fixture": "fixtures/genesis",
+    "status": "actual private-devnet transactions committed",
+    "transactions": [
+      {
+        "label": "deploy_pinned_upstream_anchor_binary",
+        "hash": "0x93983d6983c855e89bfc00120497004655baee65d24cabedee76d40afb918b29"
+      },
+      {
+        "label": "create_canonical_empty_anchor_and_pinned_genesis_deposit",
+        "hash": "0x481eab63e18a8a644eabb962ddb2320d5d2dad3ebd4963bfd81e2cf490692399"
+      },
+      {
+        "label": "commit_pinned_sp1_genesis_checkpoint_with_published_da",
+        "hash": "0xb65deb47d89dfc5d83627ff1636bbfc54659bb30f7245a9992696ff21c0f3041"
+      },
+      {
+        "label": "mature_owner_force_exit_after_180_private_chain_epochs",
+        "hash": "0x715be137ae5302020d547afa976a6ca744c906441751511eace8acdee4edb8e4"
+      }
+    ],
+    "payout_shannons": "9999899000",
+    "maturity_epochs": 180,
+    "mined_blocks_after_checkpoint": 1800,
+    "proof_reconstruction": "fresh child process fetched committed checkpoint transaction via live CKB RPC; extracted published DA and public values; independently rebuilt depth-256 proof and matched its root to the live anchor. No fixture, indexer, or sequencer files were inputs to reconstruction. This does not prove archival retrieval or sequencer/database-loss recovery."
+  },
+  "rejections": {
+    "tampered_da": {
+      "code": 59,
+      "result": "rejected"
+    },
+    "before_silence_window": {
+      "code": 66,
+      "result": "rejected"
+    },
+    "wrong_mature_payout": {
+      "code": 67,
+      "result": "rejected"
+    }
+  },
+  "failed_or_superseded_attempts": [
+    {
+      "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615089534",
+      "finding": "initial CKB-testtool binary fails actual CKB 0.210 VM on A-extension lr.d InvalidInstruction"
+    },
+    {
+      "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615820940",
+      "finding": "local signing helper double-serialized WitnessArgs; lock signature rejected"
+    },
+    {
+      "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615851914",
+      "finding": "anchor builder encoded u128 totals in the wrong half; contract rejected with code 39"
+    },
+    {
+      "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615864017",
+      "finding": "successful but superseded build used unnecessary Send/Sync on single-hart wrappers"
+    },
+    {
+      "evidence": "../evidence/liquid-cells-genesis-fixture-occupied-capacity-1793614920150",
+      "finding": "false below-capacity hypothesis; send_transaction acceptance surfaced as UNEXPECTED_ACCEPT"
+    },
+    {
+      "evidence": "../evidence/liquid-cells-genesis-fixture-occupied-capacity-1793614925492",
+      "finding": "same false hypothesis repeated through send_transaction; corrected by measuring actual occupied capacity"
+    }
+  ],
+  "limits": [
+    "Reconstruction used a fresh child process and live local CKB RPC, but did not test archival RPC, RPC unavailability, sequencer/database loss, or complete multi-checkpoint history replay",
+    "No competing, same-anchor, or last-exiter test",
+    "No reorg, missing signer/index, or key-loss test",
+    "Payout balance 99.99899 CKB is above the approximately 61 CKB output floor",
+    "Single-hart bytes patch is not upstream-approved and is invalid for multithreaded host use",
+    "No production-security, audit, or commercial-competitiveness claim"
+  ],
+  "production_security_pass": false,
+  "verification": {
+    "verifier": "src/verify-liquid-cells-private-devnet.cjs",
+    "checks": "four event hashes against committed RPC evidence; fresh-process fetched transaction commitment; DA bytes are present in that transaction witness; reconstructed proof root equals live anchor output root"
+  }
+}

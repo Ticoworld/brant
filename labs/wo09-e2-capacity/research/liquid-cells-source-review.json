@@ -29,13 +29,13 @@
     "contention": "Force exits mutate one shared anchor outpoint; upstream describes sharding/batching as throughput mitigation.",
     "upstream_tests": "Trade executed 49 pinned default-feature host STF tests and 24 CKB-VM tests from the upstream force-exit, withdrawal, and anchor suites with unchanged test sources and a disclosed Zig RISC-V adapter."
   },
-  "verification_status": "PINNED_SOURCE_REVIEW_PLUS_49_HOST_STF_AND_24_CKB_VM_TESTS; NO_PRIVATE_DEVNET_REPRODUCTION",
-  "execution_blocker": "Private devnet lifecycle, genuine timeout, chain-published DA reconstruction, and deployment identity are not tested.",
+  "verification_status": "PINNED_SOURCE_REVIEW_PLUS_49_HOST_STF_TESTS_24_CKB_TESTTOOL_CASES_AND_ONE_BOUNDED_PRIVATE_DEVNET_LIFECYCLE",
+  "execution_blocker": "Cold chain-RPC DA reconstruction, operator/database loss, multi/last exits and sub-floor egress remain untested. Initial pinned binary failed CKB 0.210.0 on A-extension lr.d; private lifecycle used isolated single-hart bytes 1.11.1 compatibility build, not an upstream fix.",
   "copied_or_executed_upstream_code": {
     "copied_into_trade": false,
     "host_stf_tests_executed": true,
     "upstream_ckb_vm_tests_executed": true,
-    "private_devnet_execution": false
+    "private_devnet_execution": true
   },
   "quarantined_e1_beneficiary_test_resumed": false,
   "security_or_production_pass": false,
@@ -126,5 +126,20 @@
       "../evidence/liquid-cells-ckbvm-anchor.exit"
     ]
   },
-  "private_devnet_execution": false
+  "private_devnet_execution": false,
+  "private_devnet_report": "docs/WO09_E2_PRIVATE_DEVNET_LIFECYCLE.md",
+  "private_devnet_manifest": "liquid-cells-private-devnet-results.json",
+  "superseded_initial_binary_native_failure": {
+    "binary_sha256": "dcc6bf2708fef85c0f529ff62c5f745b399d08ec81b0b08ee9c34b13973c8925",
+    "ckb_node": "0.210.0",
+    "result": "InvalidInstruction for A-extension lr.d at genesis validation",
+    "evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793615089534"
+  },
+  "successful_single_hart_binary": {
+    "binary_sha256": "04a31bf62a4aff38a2e51c0aace5f2b253828424127336f64e55d29c015ce817",
+    "build": "scripts/build-liquid-cells-single-hart.sh",
+    "private_devnet_evidence": "../evidence/liquid-cells-pinned-genesis-checkpoint-force-exit-1793616335532",
+    "ckbvm_log": "../evidence/liquid-cells-single-hart-ckbvm.txt",
+    "ckbvm_log_sha256": "97f543ae7c03a9d520ca17be7a08bd79d4d0e56eb33b7b4945da363d6d2d131c"
+  }
 }

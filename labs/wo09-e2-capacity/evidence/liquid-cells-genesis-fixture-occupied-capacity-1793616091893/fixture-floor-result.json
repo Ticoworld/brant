@@ -1,0 +1,17 @@
+{
+  "classification": "ACTUAL_PRIVATE_DEVNET_TRANSACTION",
+  "boundary": "deposit-cell creation only; the separate complete lifecycle is in the companion evidence",
+  "upstream_repository": "LusoCryptoLabs/Liquid-Cells",
+  "upstream_commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "fixture": "fixtures/genesis/deposit.bin",
+  "deposit_amount_shannons": "10000000000",
+  "deposit_data_bytes": 32,
+  "occupied_capacity_shannons": "9300000000",
+  "ckb_node_version": "0.210.0 (2592ddf 2026-09-17)",
+  "transaction": "0xe44ce5f71478fbbb722d14b97666f8338d5da28e27b4830e9ee434dda2309c9c",
+  "deposit_outpoint": {
+    "txHash": "0xe44ce5f71478fbbb722d14b97666f8338d5da28e27b4830e9ee434dda2309c9c",
+    "index": "0x0"
+  },
+  "evidence_directory": "/workspace/trade/labs/wo09-e2-capacity/evidence/liquid-cells-genesis-fixture-occupied-capacity-1793616091893"
+}

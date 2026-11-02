@@ -1,0 +1,3 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: UNEXPECTED_ACCEPT pinned_fixture_deposit_cell_below_ckb_occupied_capacity\n    at Engine.reject (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:17:201)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async /workspace/trade/labs/wo09-e2-capacity/src/run-liquid-cells-fixture-floor.cjs:36:5"
+}

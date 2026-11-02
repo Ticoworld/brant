@@ -2,6 +2,7 @@
 node_modules/
 **/node_modules/
 **/tools/
+labs/wo09-e2-capacity/build/
 **/.venv/
 **/__pycache__/
 **/target/

@@ -1,0 +1,72 @@
+{
+  "classification": "ACTUAL_PRIVATE_DEVNET_TRANSACTIONS",
+  "upstream_repository": "LusoCryptoLabs/Liquid-Cells",
+  "upstream_commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "fixture": "fixtures/genesis",
+  "anchor_binary_sha256": "b1482a9b1a170f70f83a77b536cdbc59f443f7808bcae90c3d95aba08713e692",
+  "transactions": [
+    {
+      "label": "deploy_pinned_upstream_anchor_binary",
+      "hash": "0x6c64c90e72daf39c905addf31bbf84aabc1da5aa08f06e99faa53e7d97837b56",
+      "cycles": {
+        "cycles": "0x190d49"
+      },
+      "bytes": 117108
+    },
+    {
+      "label": "create_canonical_empty_anchor_and_pinned_genesis_deposit",
+      "hash": "0x55540ef24fe2e9ada26d05a15fc663c5c9e475efa4c74a8bf5b59eda698c0bd5",
+      "cycles": {
+        "cycles": "0x1969b6"
+      },
+      "bytes": 771
+    },
+    {
+      "label": "commit_pinned_sp1_genesis_checkpoint_with_published_da",
+      "hash": "0x75f1ea0b01cb7c55f70d9ebc9cbb4635fc8b7d70b925f6bb843ad9ea0b58e652",
+      "cycles": {
+        "cycles": "0x542ceb9"
+      },
+      "bytes": 1337
+    },
+    {
+      "label": "mature_owner_force_exit_after_180_private_chain_epochs",
+      "hash": "0x726b331e23f6d9804f41300ccec27ae3396cc7e42c87c342cd80b737c5617e2c",
+      "cycles": {
+        "cycles": "0xb68c09"
+      },
+      "bytes": 9129
+    }
+  ],
+  "rejections": [
+    {
+      "label": "tampered_published_da_rejected_by_real_anchor_script",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 59 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#59 })"
+    },
+    {
+      "label": "force_exit_before_operator_silence_epoch_rejected",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 66 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#66 })"
+    },
+    {
+      "label": "force_exit_wrong_payout_amount_rejected_at_mature_epoch",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#67 })"
+    }
+  ],
+  "force_exit": {
+    "owner_key": "0xaa61b794ba668ff67c7b8d037034adcca06964c0dffdb3eae70e8666faa5a63d",
+    "payout_shannons": "9999899000",
+    "maturity_epoch": "0xb6",
+    "blocks_mined_after_checkpoint": 1800
+  },
+  "resulting_owner_payout": {
+    "txHash": "0x726b331e23f6d9804f41300ccec27ae3396cc7e42c87c342cd80b737c5617e2c",
+    "index": "0x1"
+  },
+  "notes": [
+    "The anchor uses the owner secp lock in this isolated reproduction; this does not establish permissionless sequencing or arbitrary operator recovery.",
+    "The force-exit proof is independently reconstructed from the published DA blob and checked against the fixture public-values root before signing."
+  ]
+}

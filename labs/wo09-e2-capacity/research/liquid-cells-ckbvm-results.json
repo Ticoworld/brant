@@ -93,5 +93,9 @@
     "cause": "isolated RUSTUP_HOME not propagated; corrected runner requires TRADE_RUSTUP_HOME",
     "exit_code": 1,
     "log": "../evidence/liquid-cells-ckbvm-reproduction-missing-rustup-home.log"
+  },
+  "superseded_by": {
+    "manifest": "research/liquid-cells-private-devnet-results.json",
+    "clarification": "This records the initial binary CKB-testtool result only; the binary later failed actual CKB 0.210.0 VM validation. The single-hart compatibility variant has separate CKB-testtool and actual private-devnet evidence."
   }
 }

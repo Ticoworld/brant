@@ -1,0 +1,17 @@
+[
+  {
+    "label": "tampered_published_da_rejected_by_real_anchor_script",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 59 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#59 })"
+  },
+  {
+    "label": "force_exit_before_operator_silence_epoch_rejected",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 66 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#66 })"
+  },
+  {
+    "label": "force_exit_wrong_payout_amount_rejected_at_mature_epoch",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d52c5ff43bb873f5287542f99ba7057dca54b442f717169cfc1961ff6b218902.html#67 })"
+  }
+]
