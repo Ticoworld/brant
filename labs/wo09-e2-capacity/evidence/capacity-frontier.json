@@ -1,0 +1,392 @@
+{
+  "classification": "DERIVED exact byte-capacity arithmetic + hypotheses; no user balances or fees are synthetic execution records",
+  "capacity_profiles": [
+    {
+      "id": "normal_wallet",
+      "bytes": 61,
+      "purpose": "standard secp wallet",
+      "reused_by_trade": true,
+      "occupied_ckb": "61",
+      "capital_usd": {
+        "0.00122": "3721/50000",
+        "0.1": "61/10",
+        "1": "61",
+        "10": "610",
+        "100": "6100"
+      }
+    },
+    {
+      "id": "xudt_cell",
+      "bytes": 130,
+      "purpose": "secp20 lock + xUDT type20 +16-byte amount",
+      "reused_by_trade": true,
+      "occupied_ckb": "130",
+      "capital_usd": {
+        "0.00122": "793/5000",
+        "0.1": "13",
+        "1": "130",
+        "10": "1300",
+        "100": "13000"
+      }
+    },
+    {
+      "id": "WO09_E1_claim",
+      "bytes": 150,
+      "purpose": "secp20 lock + type32 +24-byte claim data",
+      "reused_by_trade": false,
+      "occupied_ckb": "150",
+      "capital_usd": {
+        "0.00122": "183/1000",
+        "0.1": "15",
+        "1": "150",
+        "10": "1500",
+        "100": "15000"
+      }
+    },
+    {
+      "id": "WO09_E1_maturity_event",
+      "bytes": 206,
+      "purpose": "secp20 lock + type32 +80-byte event",
+      "reused_by_trade": false,
+      "occupied_ckb": "206",
+      "capital_usd": {
+        "0.00122": "6283/25000",
+        "0.1": "103/5",
+        "1": "206",
+        "10": "2060",
+        "100": "20600"
+      }
+    }
+  ],
+  "participant_and_shard_grid": [
+    {
+      "participants": 1,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 94,
+      "separate_nullifier_ckb": 61,
+      "all_users_state_ckb": 155,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 94,
+      "separate_nullifier_ckb": 61,
+      "all_users_state_ckb": 155,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 94,
+      "separate_nullifier_ckb": 61,
+      "all_users_state_ckb": 155,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 94,
+      "separate_nullifier_ckb": 61,
+      "all_users_state_ckb": 155,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 94,
+      "separate_nullifier_ckb": 61,
+      "all_users_state_ckb": 155,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 16,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 95,
+      "separate_nullifier_ckb": 976,
+      "all_users_state_ckb": 1071,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 16,
+      "root_shards": 4,
+      "root_plus_dense_bitmap_total_ckb": 380,
+      "separate_nullifier_ckb": 976,
+      "all_users_state_ckb": 1356,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 16,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 1520,
+      "separate_nullifier_ckb": 976,
+      "all_users_state_ckb": 2496,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 16,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 1520,
+      "separate_nullifier_ckb": 976,
+      "all_users_state_ckb": 2496,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 16,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 1520,
+      "separate_nullifier_ckb": 976,
+      "all_users_state_ckb": 2496,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 32,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 97,
+      "separate_nullifier_ckb": 1952,
+      "all_users_state_ckb": 2049,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 32,
+      "root_shards": 4,
+      "root_plus_dense_bitmap_total_ckb": 388,
+      "separate_nullifier_ckb": 1952,
+      "all_users_state_ckb": 2340,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 32,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 1552,
+      "separate_nullifier_ckb": 1952,
+      "all_users_state_ckb": 3504,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 32,
+      "root_shards": 32,
+      "root_plus_dense_bitmap_total_ckb": 3104,
+      "separate_nullifier_ckb": 1952,
+      "all_users_state_ckb": 5056,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 32,
+      "root_shards": 32,
+      "root_plus_dense_bitmap_total_ckb": 3104,
+      "separate_nullifier_ckb": 1952,
+      "all_users_state_ckb": 5056,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 100,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 106,
+      "separate_nullifier_ckb": 6100,
+      "all_users_state_ckb": 6206,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 100,
+      "root_shards": 4,
+      "root_plus_dense_bitmap_total_ckb": 424,
+      "separate_nullifier_ckb": 6100,
+      "all_users_state_ckb": 6524,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 100,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 1696,
+      "separate_nullifier_ckb": 6100,
+      "all_users_state_ckb": 7796,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 100,
+      "root_shards": 32,
+      "root_plus_dense_bitmap_total_ckb": 3392,
+      "separate_nullifier_ckb": 6100,
+      "all_users_state_ckb": 9492,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 100,
+      "root_shards": 100,
+      "root_plus_dense_bitmap_total_ckb": 10600,
+      "separate_nullifier_ckb": 6100,
+      "all_users_state_ckb": 16700,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1000,
+      "root_shards": 1,
+      "root_plus_dense_bitmap_total_ckb": 218,
+      "separate_nullifier_ckb": 61000,
+      "all_users_state_ckb": 61218,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1000,
+      "root_shards": 4,
+      "root_plus_dense_bitmap_total_ckb": 872,
+      "separate_nullifier_ckb": 61000,
+      "all_users_state_ckb": 61872,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1000,
+      "root_shards": 16,
+      "root_plus_dense_bitmap_total_ckb": 3488,
+      "separate_nullifier_ckb": 61000,
+      "all_users_state_ckb": 64488,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1000,
+      "root_shards": 32,
+      "root_plus_dense_bitmap_total_ckb": 6976,
+      "separate_nullifier_ckb": 61000,
+      "all_users_state_ckb": 67976,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    },
+    {
+      "participants": 1000,
+      "root_shards": 100,
+      "root_plus_dense_bitmap_total_ckb": 21800,
+      "separate_nullifier_ckb": 61000,
+      "all_users_state_ckb": 82800,
+      "marginal_per_user_ckb_asymptotic": "61 nullifier bytes*capacity per participant",
+      "concurrency": "one spender per shard/root; simultaneous requests conflict within a shard",
+      "root_only_security": "Insufficient to prevent repeat claims unless each exit changes a live root or consumes a one-time nullifier"
+    }
+  ],
+  "tiny_l1_exit": [
+    {
+      "payout_ckb": "0.01",
+      "minimum_plain_secp_output_ckb": "61",
+      "standalone_shortfall_ckb": "6099/100",
+      "with_existing_recipient_cell": "Increase recipient cell capacity/data-consistent output; no additional output Cell if script accepts exact existing format",
+      "without_existing_recipient_cell": "Someone funds >=61 CKB occupied output; capacity is reusable by recipient, but unavailable to sponsor unless separately repaid",
+      "ACP": "May permit receiver-side no-signature cell reuse under exact published script rules; script, prefix, change, fee and custody behavior must be validated per integration",
+      "proof": "Derived from inherited occupied-capacity function; ACP and sub-61 CKB L1 principal delivery not demonstrated here"
+    },
+    {
+      "payout_ckb": "0.1",
+      "minimum_plain_secp_output_ckb": "61",
+      "standalone_shortfall_ckb": "609/10",
+      "with_existing_recipient_cell": "Increase recipient cell capacity/data-consistent output; no additional output Cell if script accepts exact existing format",
+      "without_existing_recipient_cell": "Someone funds >=61 CKB occupied output; capacity is reusable by recipient, but unavailable to sponsor unless separately repaid",
+      "ACP": "May permit receiver-side no-signature cell reuse under exact published script rules; script, prefix, change, fee and custody behavior must be validated per integration",
+      "proof": "Derived from inherited occupied-capacity function; ACP and sub-61 CKB L1 principal delivery not demonstrated here"
+    },
+    {
+      "payout_ckb": "1",
+      "minimum_plain_secp_output_ckb": "61",
+      "standalone_shortfall_ckb": "60",
+      "with_existing_recipient_cell": "Increase recipient cell capacity/data-consistent output; no additional output Cell if script accepts exact existing format",
+      "without_existing_recipient_cell": "Someone funds >=61 CKB occupied output; capacity is reusable by recipient, but unavailable to sponsor unless separately repaid",
+      "ACP": "May permit receiver-side no-signature cell reuse under exact published script rules; script, prefix, change, fee and custody behavior must be validated per integration",
+      "proof": "Derived from inherited occupied-capacity function; ACP and sub-61 CKB L1 principal delivery not demonstrated here"
+    },
+    {
+      "payout_ckb": "5",
+      "minimum_plain_secp_output_ckb": "61",
+      "standalone_shortfall_ckb": "56",
+      "with_existing_recipient_cell": "Increase recipient cell capacity/data-consistent output; no additional output Cell if script accepts exact existing format",
+      "without_existing_recipient_cell": "Someone funds >=61 CKB occupied output; capacity is reusable by recipient, but unavailable to sponsor unless separately repaid",
+      "ACP": "May permit receiver-side no-signature cell reuse under exact published script rules; script, prefix, change, fee and custody behavior must be validated per integration",
+      "proof": "Derived from inherited occupied-capacity function; ACP and sub-61 CKB L1 principal delivery not demonstrated here"
+    },
+    {
+      "payout_ckb": "50",
+      "minimum_plain_secp_output_ckb": "61",
+      "standalone_shortfall_ckb": "11",
+      "with_existing_recipient_cell": "Increase recipient cell capacity/data-consistent output; no additional output Cell if script accepts exact existing format",
+      "without_existing_recipient_cell": "Someone funds >=61 CKB occupied output; capacity is reusable by recipient, but unavailable to sponsor unless separately repaid",
+      "ACP": "May permit receiver-side no-signature cell reuse under exact published script rules; script, prefix, change, fee and custody behavior must be validated per integration",
+      "proof": "Derived from inherited occupied-capacity function; ACP and sub-61 CKB L1 principal delivery not demonstrated here"
+    }
+  ],
+  "wallet_reuse_trade": {
+    "inputs": 4,
+    "outputs": 4,
+    "existing_wallet_cells": 2,
+    "existing_xudt_cells": 2,
+    "new_persistent_cells": 0,
+    "net_exchange_specific_capacity_delta_ckb": 0,
+    "ordinary_minimum_capacity_reused_ckb": 382,
+    "condition": "Both users already own compatible funded wallets and xUDT Cells; exact full-body signatures; unchanged Cell inventory/cardinality",
+    "unavoidable_costs": [
+      "transaction fee",
+      "CKB VM script cycles",
+      "wallet input availability",
+      "xUDT delivery capacity130 per recipient Cell",
+      "off-chain order discovery/indexing",
+      "liquidity/opportunity cost"
+    ],
+    "no_extra_order_cell": "An unsigned/signed off-chain intention is not live/reserved collateral; stale inputs can make it unfillable. No fill guarantee until transaction confirms."
+  },
+  "lifecycle_unknowns": [
+    "network inclusion delay",
+    "production fee rate",
+    "proof generation/indexing costs",
+    "wallet support",
+    "recipient Cell reuse for arbitrary locks"
+  ],
+  "forks": {
+    "if_root_only": "duplicate redemption possible or state never changes; enforce nullifier/depletion",
+    "else_if_separate_nullifier": "61 CKB marginal nullifier shifts the per-user Cell instead of eliminating state",
+    "what_if_static_commitment": "No balance mutation means the same immutable leaf cannot safely pay repeatedly without a consumed shared root/nullifier or one-shot independent UTXO right",
+    "what_if_channels": "Tiny repeated payments may stay off chain, but collateral/liquidity/counterparty/channel-open/close costs and unilateral state exit remain"
+  }
+}
