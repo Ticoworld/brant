@@ -1,0 +1,171 @@
+{
+  "scope": "EXTERNAL REFERENCE + SYNTHETIC SHOCKS, not premium calibration or customer evidence",
+  "reference_usd_per_ckb": "60943/50000000",
+  "small_pool_senior_target_usd": "60943/50000",
+  "ckb_principal_for_1000usd_senior_and_equal_junior": "100000000000/60943",
+  "capital_cases": [
+    {
+      "risk_principal_ckb": "2000",
+      "principal_reference_usd": "60943/25000",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "0",
+      "overhead_fraction": "41/250",
+      "capital_usd_including_overhead": "17734413/6250000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    },
+    {
+      "risk_principal_ckb": "2000",
+      "principal_reference_usd": "60943/25000",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "316",
+      "overhead_fraction": "161/500",
+      "capital_usd_including_overhead": "40283323/12500000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    },
+    {
+      "risk_principal_ckb": "20000",
+      "principal_reference_usd": "60943/2500",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "0",
+      "overhead_fraction": "41/2500",
+      "capital_usd_including_overhead": "154856163/6250000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    },
+    {
+      "risk_principal_ckb": "20000",
+      "principal_reference_usd": "60943/2500",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "316",
+      "overhead_fraction": "161/5000",
+      "capital_usd_including_overhead": "314526823/12500000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    },
+    {
+      "risk_principal_ckb": "2000000",
+      "principal_reference_usd": "60943/25",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "0",
+      "overhead_fraction": "41/250000",
+      "capital_usd_including_overhead": "15238248663/6250000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    },
+    {
+      "risk_principal_ckb": "2000000",
+      "principal_reference_usd": "60943/25",
+      "output_budget_ckb": "122",
+      "permanent_event_ckb": "206",
+      "permanent_records_ckb": "316",
+      "overhead_fraction": "161/500000",
+      "capital_usd_including_overhead": "30481311823/12500000",
+      "deployment_code_cost": "One-time per script; separately measured and potentially amortized, not included",
+      "transaction_and_oracle_service_fees": "UNKNOWN market cost; prototype uses explicitly funded chain fees"
+    }
+  ],
+  "book_walks": [
+    {
+      "ckb_requested": "1000",
+      "side": "bids",
+      "visible_filled_ckb": "1000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "6083/5000",
+      "visible_average_price": "6083/5000000",
+      "slippage_vs_best": "0",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "1000",
+      "side": "asks",
+      "visible_filled_ckb": "1000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "12199/10000",
+      "visible_average_price": "12199/10000000",
+      "slippage_vs_best": "0",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "100000",
+      "side": "bids",
+      "visible_filled_ckb": "100000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "242720193/2000000",
+      "visible_average_price": "242720193/200000000000",
+      "slippage_vs_best": "599807/243320000",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "100000",
+      "side": "asks",
+      "visible_filled_ckb": "100000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "12199/100",
+      "visible_average_price": "12199/10000000",
+      "slippage_vs_best": "0",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "1000000",
+      "side": "bids",
+      "visible_filled_ckb": "1000000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "12131549941/10000000",
+      "visible_average_price": "12131549941/10000000000000",
+      "slippage_vs_best": "4921437/1738000000",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "1000000",
+      "side": "asks",
+      "visible_filled_ckb": "1000000",
+      "unfilled_ckb": "0",
+      "visible_cash_usd": "12206864281/10000000",
+      "visible_average_price": "12206864281/10000000000000",
+      "slippage_vs_best": "7864281/12199000000",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "2000000",
+      "side": "bids",
+      "visible_filled_ckb": "1481351",
+      "unfilled_ckb": "518649",
+      "visible_cash_usd": "4491886437/2500000",
+      "visible_average_price": "4491886437/3703377500000",
+      "slippage_vs_best": "27285259/9011058133",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    },
+    {
+      "ckb_requested": "2000000",
+      "side": "asks",
+      "visible_filled_ckb": "1782777",
+      "unfilled_ckb": "217223",
+      "visible_cash_usd": "21783767829/10000000",
+      "visible_average_price": "7261255943/5942590000000",
+      "slippage_vs_best": "11890402/7249365541",
+      "classification": "Historical displayed-depth arithmetic; no fill assurance, fee, access, transfer or hedge basis qualification"
+    }
+  ],
+  "permanence_counterexample": "Beneficiary records cannot burn after settlement;316 CKB remains occupied per pool even if the event is shared",
+  "sharing_case": {
+    "ten_independent_fixed_pools_event_ckb_without_sharing": "2060",
+    "same_event_single_record_ckb": "206",
+    "savings_ckb": "1854",
+    "principal_saved": "0",
+    "proof": "Derived; same typed event dependency can be shared, but a ten-pool native batch is not claimed"
+  },
+  "limits": [
+    "No current offer to sell either tranche",
+    "No actual market-implied risk distribution or premium",
+    "No authentication of reference feed for on-chain use",
+    "A visible CEX book does not establish a native CKB replenishment route",
+    "Permanent event/record costs count even after settlement"
+  ]
+}

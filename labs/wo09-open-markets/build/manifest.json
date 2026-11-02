@@ -82,5 +82,61 @@
       "contracts/risk_pool.c"
     ],
     "compiler": "0.14.1"
+  },
+  {
+    "name": "beneficiary_record",
+    "bytes": 13168,
+    "sha256": "d058e3e44edad537123e6f4130bf020f5e0d58eed1920e29647ea5acc91d5018",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O2",
+      "-nostdlib",
+      "-fno-builtin",
+      "-fdata-sections",
+      "-ffunction-sections",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Icontracts",
+      "-Wl,--gc-sections",
+      "-Wl,-e,_start",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "build/beneficiary_record",
+      "contracts/beneficiary_record.c"
+    ],
+    "compiler": "0.14.1"
+  },
+  {
+    "name": "transferable_risk",
+    "bytes": 15376,
+    "sha256": "459ea814e8c3f5bbb7250f64e6ea755a1b57cfc60eb27c99ea37dfac2b7cff25",
+    "command": [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O2",
+      "-nostdlib",
+      "-fno-builtin",
+      "-fdata-sections",
+      "-ffunction-sections",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Icontracts",
+      "-Wl,--gc-sections",
+      "-Wl,-e,_start",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "build/transferable_risk",
+      "contracts/transferable_risk.c"
+    ],
+    "compiler": "0.14.1"
   }
 ]

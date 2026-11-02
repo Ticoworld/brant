@@ -1,0 +1,92 @@
+{
+  "a2": {
+    "hash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "outPoint": {
+      "txHash": "0x8dd0e70b463854bc485d76cb680384971a8427611656213a9d313c17db290845",
+      "index": "0x5"
+    },
+    "script": {
+      "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "xudt": {
+    "hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "outPoint": {
+      "txHash": "0x8dd0e70b463854bc485d76cb680384971a8427611656213a9d313c17db290845",
+      "index": "0x6"
+    },
+    "script": {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "ickb_logic": {
+    "hash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "outPoint": {
+      "txHash": "0x8dd0e70b463854bc485d76cb680384971a8427611656213a9d313c17db290845",
+      "index": "0x7"
+    },
+    "script": {
+      "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "owned_owner": {
+    "hash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+    "outPoint": {
+      "txHash": "0x8dd0e70b463854bc485d76cb680384971a8427611656213a9d313c17db290845",
+      "index": "0x8"
+    },
+    "script": {
+      "codeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "maturity_event": {
+    "hash": "0x340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08",
+    "outPoint": {
+      "txHash": "0x434f95edb39b2295ef6f327d898f87cdf1ab116d33f6a049e5ee98947afca81e",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 13912,
+    "occupied": "1395300000000"
+  },
+  "beneficiary_record": {
+    "hash": "0x7ee2fef5c87043960561be7cd16fe24d51231954c4ab765eb85e263e1380e743",
+    "outPoint": {
+      "txHash": "0x9ce81eee66764bb4e24e52db67ec5db023f5beb6dd1f57ca3b621f7c5e4615a3",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x7ee2fef5c87043960561be7cd16fe24d51231954c4ab765eb85e263e1380e743",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 13168,
+    "occupied": "1320900000000"
+  },
+  "transferable_risk": {
+    "hash": "0x82928b9ddf4566b185826a9081546a89b9b5fa75a128f8e2a2ae594341ec3f0c",
+    "outPoint": {
+      "txHash": "0xe03fb8aedf1abed137f6cad3b2ea14ccefd75147e5cf01f0432c7b0b747498e6",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x82928b9ddf4566b185826a9081546a89b9b5fa75a128f8e2a2ae594341ec3f0c",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 15376,
+    "occupied": "1541700000000"
+  }
+}
