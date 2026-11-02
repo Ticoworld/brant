@@ -7,7 +7,7 @@
       "read": "README.md; docs/FORCE-EXIT.md, DA.md, THREAT-MODEL.md, SPEC.md, REPRODUCE-EXIT.md; crates/ckb-contract/src/escape.rs; crates/ckb-contract-tests/tests/forceexit.rs and withdrawal.rs",
       "license": "MIT checked in pinned LICENSE; no code copied",
       "publisher_status": "Pinned docs describe Pudge pre-alpha/testnet and unaudited; client SDK incomplete",
-      "limits": "Source review only. Upstream tests and private devnet replay not run because cargo/rustc absent. Small unilateral payouts retain approx61 CKB Cell floor; smaller path depends on atomic-swap/Fiber liquidity; shared anchor contention and archival-history reconstruction remain.",
+      "limits": "Host-side default-feature STF tests pass 49/49; force-exit CKB-VM tests not run because RISC-V C compiler is missing. No private devnet exit/reconstruction. Small unilateral payouts retain approx 61 CKB Cell floor; smaller path depends on swap/Fiber liquidity; shared anchor contention and archival-history reconstruction remain.",
       "sha256": {
         "docs/FORCE-EXIT.md": "c970de780d25d0b8d352b4057fae3f7c5b577dc65591fba3e8f959c6e3ac384c",
         "docs/DA.md": "acb100fd1ebd3ac0a82df1c0fdca9bd5ac34e9996a61c070cfbf8ec0b848b48f",
@@ -16,7 +16,7 @@
         "crates/ckb-contract-tests/tests/forceexit.rs": "afd9b27634ccb4cc50cb26e74b3a8a9546a82a83c28f5c657f2e67f2290954ad",
         "crates/ckb-contract-tests/tests/withdrawal.rs": "44f48f5b7f6e39dfef3f6598c9b4c121c3547fe4b5c21dbcbda08eef94ea3024"
       },
-      "execution_status": "NOT RUN; source review and upstream test-code inspection only"
+      "execution_status": "cargo test -p liquid-cells-stf passed 49 default-feature tests at pinned commit; anchor CKB-VM build blocked by missing riscv64-unknown-elf-gcc"
     },
     {
       "repo": "Myelin-Labs/Myelin",
@@ -72,5 +72,5 @@
     "Some guessed paths for Liquid contract and Fiber channel source returned fetch errors; only successful pinned README sources are described.",
     "The pinned Liquid Cells source paths and exit implementation were subsequently found by temporary pinned checkout; the earlier fetch errors are resolved for source review, but not for execution."
   ],
-  "policy": "Competitor instructions were treated as untrusted source content. Liquid Cells was cloned to temporary /tmp for pinned source inspection only; no upstream code copied or executed."
+  "policy": "Competitor instructions were treated as untrusted source content. Liquid Cells was cloned to temporary /tmp for pinned source inspection and host STF test execution only; no upstream code copied into Trade."
 }

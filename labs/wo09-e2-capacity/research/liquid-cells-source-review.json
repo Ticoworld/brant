@@ -29,9 +29,42 @@
     "contention": "Force exits mutate one shared anchor outpoint; upstream describes sharding/batching as throughput mitigation.",
     "upstream_tests": "Test source includes positive force exit plus six negatives, and withdrawal output binding negatives; not executed by Trade."
   },
-  "verification_status": "SOURCE_REVIEW_ONLY",
-  "execution_blocker": "cargo and rustc are not installed in the current environment; upstream CKB-VM and devnet tests were not run.",
-  "copied_or_executed_upstream_code": false,
+  "verification_status": "PINNED_SOURCE_REVIEW_AND_HOST_STF_TESTS; CKB_VM_EXIT_NOT_EXECUTED",
+  "execution_blocker": "The host-side cargo test passed. Anchor contract RISC-V build is blocked because riscv64-unknown-elf-gcc is absent (clang/clang-18/lld also unavailable). No features were disabled or compiler substituted.",
+  "copied_or_executed_upstream_code": "No upstream code was copied into Trade. Pinned upstream STF tests were executed; CKB contract binary/tests were not.",
   "quarantined_e1_beneficiary_test_resumed": false,
-  "security_or_production_pass": false
+  "security_or_production_pass": false,
+  "upstream_host_stf_test": {
+    "command": "cargo test -p liquid-cells-stf --manifest-path /tmp/liquid-cells-e2/Cargo.toml",
+    "source_commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "result": "PASS; 49 tests across default-feature suites",
+    "suite_counts": {
+      "da": 2,
+      "fuzz": 4,
+      "genesis": 1,
+      "htlc": 7,
+      "properties": 13,
+      "redteam": 13,
+      "witness": 9
+    },
+    "full_log": "../evidence/liquid-cells-stf-cargo-test.log",
+    "exit_code_file": "../evidence/liquid-cells-stf-cargo-test.exit",
+    "features": "Cargo defaults only; feature-gated tests with zero selected tests are not counted as validated"
+  },
+  "contract_build_attempts": [
+    {
+      "target": "host default",
+      "exit_code": 101,
+      "reason": "no_std CKB contract requires a RISC-V target; host build reports missing panic_handler",
+      "log": "../evidence/liquid-cells-contract-host-build.log"
+    },
+    {
+      "target": "riscv64imac-unknown-none-elf",
+      "exit_code": 101,
+      "reason": "ckb-std C build cannot find riscv64-unknown-elf-gcc; no compiler substitution or feature weakening",
+      "log": "../evidence/liquid-cells-contract-riscv-build.log"
+    }
+  ]
 }

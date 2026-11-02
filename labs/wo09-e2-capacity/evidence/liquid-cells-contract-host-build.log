@@ -1,0 +1,6 @@
+   Compiling liquid-cells-ckb-contract v0.0.1 (/tmp/liquid-cells-e2/crates/ckb-contract)
+error: `#[panic_handler]` function required, but not found
+
+error: could not compile `liquid-cells-ckb-contract` (bin "liquid-cells-deposit-lock") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `liquid-cells-ckb-contract` (bin "liquid-cells-upgrade-lock") due to 1 previous error

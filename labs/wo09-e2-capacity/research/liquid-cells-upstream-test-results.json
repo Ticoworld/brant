@@ -1,0 +1,27 @@
+{
+  "repository": "LusoCryptoLabs/Liquid-Cells",
+  "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "command": "cargo test -p liquid-cells-stf --manifest-path /tmp/liquid-cells-e2/Cargo.toml",
+  "toolchain": {
+    "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "1.99.1 (5f94df478 2026-08-27)",
+    "host": "x86_64-unknown-linux-gnu"
+  },
+  "features": "Cargo defaults only. Feature-gated suites reporting zero selected tests are not treated as covered.",
+  "suite_results": {
+    "da": {"passed": 2, "failed": 0},
+    "fuzz": {"passed": 4, "failed": 0},
+    "genesis": {"passed": 1, "failed": 0},
+    "htlc": {"passed": 7, "failed": 0},
+    "properties": {"passed": 13, "failed": 0},
+    "redteam": {"passed": 13, "failed": 0},
+    "witness": {"passed": 9, "failed": 0}
+  },
+  "total": {"passed": 49, "failed": 0},
+  "exit_code": 0,
+  "log": "../evidence/liquid-cells-stf-cargo-test.log",
+  "log_sha256": "c4b03dfd8698117f81ca2ec803e54debfd56d683734bfec0cd2b57af7c0e0f70",
+  "ckb_vm_force_exit": "NOT RUN: contract target build blocked on missing riscv64-unknown-elf-gcc",
+  "private_devnet_exit": "NOT RUN",
+  "security_or_production_pass": false
+}

@@ -1,0 +1,147 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+     Running unittests src/lib.rs (/tmp/liquid-cells-e2/target/debug/deps/liquid_cells_stf-64bb873a58030787)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/compact_smt.rs (/tmp/liquid-cells-e2/target/debug/deps/compact_smt-62dfaee3e3acf3ac)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/da.rs (/tmp/liquid-cells-e2/target/debug/deps/da-790a390ed0d32f80)
+
+running 2 tests
+test tampered_da_blob_breaks_commitment ... ok
+test da_blobs_reconstruct_tree_and_prove_leaf ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/da_varint.rs (/tmp/liquid-cells-e2/target/debug/deps/da_varint-57f5a931374f55eb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ecrecover.rs (/tmp/liquid-cells-e2/target/debug/deps/ecrecover-356cdb8c40d35fd0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/fuzz.rs (/tmp/liquid-cells-e2/target/debug/deps/fuzz-c65ff678c9d54c4e)
+
+running 4 tests
+test fuzz_corrupted_authorization_is_always_rejected ... ok
+test fuzz_overdraw_and_malformed_never_panic ... ok
+test fuzz_is_deterministic_across_replays has been running for over 60 seconds
+test fuzz_valid_batches_conserve_value_and_match_shadow ... ok
+test fuzz_is_deterministic_across_replays ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 90.37s
+
+     Running tests/genesis.rs (/tmp/liquid-cells-e2/target/debug/deps/genesis-39eb31f7c061fb8c)
+
+running 1 test
+test genesis_root_is_the_empty_smt_root ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/high_s.rs (/tmp/liquid-cells-e2/target/debug/deps/high_s-b37b8ef6a35c73ea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/htlc.rs (/tmp/liquid-cells-e2/target/debug/deps/htlc-9da8f2cc86a9fa4e)
+
+running 7 tests
+test htlc_claim_after_timeout_rejected ... ok
+test htlc_id_binds_the_receiver ... ok
+test htlc_lock_removes_funds_from_spendable_balance ... ok
+test htlc_lock_then_claim_completes_the_swap ... ok
+test htlc_refund_after_timeout_returns_to_sender ... ok
+test htlc_refund_before_timeout_rejected ... ok
+test htlc_wrong_preimage_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/htlc_keyspace.rs (/tmp/liquid-cells-e2/target/debug/deps/htlc_keyspace-2f92ff2f949db4fc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/htlc_sha256.rs (/tmp/liquid-cells-e2/target/debug/deps/htlc_sha256-1bf32bfdc918ac25)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/min_fee.rs (/tmp/liquid-cells-e2/target/debug/deps/min_fee-8724c00c96d0018b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/properties.rs (/tmp/liquid-cells-e2/target/debug/deps/properties-5121018b1a13a81d)
+
+running 13 tests
+test deposits_commitment_is_order_sensitive ... ok
+test expired_intent_is_rejected ... ok
+test conservation_holds_across_a_mixed_batch ... ok
+test insufficient_balance_is_rejected ... ok
+test happy_path_transfer_moves_balance_and_advances_root ... ok
+test no_debit_without_valid_signature ... ok
+test l1_fee_withdrawal_draws_only_from_accumulated_fees ... ok
+test over_drawing_l1_fee_is_rejected ... ok
+test self_transfer_is_rejected ... ok
+test replay_is_rejected_by_nonce ... ok
+test tampering_amount_after_signing_is_rejected ... ok
+test withdrawal_leaves_pool_and_conserves_value ... ok
+test smt_proof_membership_and_nonmembership ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+     Running tests/redteam.rs (/tmp/liquid-cells-e2/target/debug/deps/redteam-a04ccb0f2abd920c)
+
+running 13 tests
+test attack_cross_pool_replay ... ok
+test attack_deposit_total_overflow ... ok
+test attack_empty_batch_fee_overdraw ... ok
+test attack_fee_draw_without_revenue ... ok
+test attack_forged_sibling_rejected ... ok
+test attack_high_s_malleability ... ok
+test attack_htlc_claim_and_refund_same_batch ... ok
+test attack_htlc_claim_then_refund_double_credit ... ok
+test attack_intra_batch_double_spend ... ok
+test attack_keyset_stability_all_ops ... ok
+test attack_transfer_credit_overflow ... ok
+test attack_withdrawal_total_underflow ... ok
+test attack_conservation_sweep ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.57s
+
+     Running tests/witness.rs (/tmp/liquid-cells-e2/target/debug/deps/witness-129fd70bf116e2ba)
+
+running 9 tests
+test batch_exceeding_leaf_cap_is_rejected ... ok
+test codec_input_round_trips ... ok
+test codec_public_values_round_trips ... ok
+test extra_sibling_is_rejected ... ok
+test missing_witness_leaf_is_rejected ... ok
+test single_isolated_key_gives_full_depth_proof ... ok
+test tampered_witness_leaf_is_rejected ... ok
+test wrong_prev_root_is_rejected ... ok
+test witness_transition_matches_full_tree ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+   Doc-tests liquid_cells_stf
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
