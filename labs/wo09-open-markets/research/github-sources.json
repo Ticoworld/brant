@@ -1,0 +1,315 @@
+[
+  {
+    "repository": "Uniswap/continuous-clearing-auction",
+    "commit": "ce78b4d94cdf94fd41f20afb6f6e495b8b83a234",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/Uniswap/continuous-clearing-auction/ce78b4d94cdf94fd41f20afb6f6e495b8b83a234/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "1c30b480ce420abc11118a03cae556fec741f3978f0d143861705772959718d8",
+    "bytes": 5806
+  },
+  {
+    "repository": "Uniswap/continuous-clearing-auction",
+    "commit": "ce78b4d94cdf94fd41f20afb6f6e495b8b83a234",
+    "path": "docs/TechnicalDocumentation.md",
+    "url": "https://raw.githubusercontent.com/Uniswap/continuous-clearing-auction/ce78b4d94cdf94fd41f20afb6f6e495b8b83a234/docs/TechnicalDocumentation.md",
+    "status": "FETCHED",
+    "captured_sha256": "b9da1e01c573c8230b1cfc3017d42f9075af5d43f98119af3d5f18a2a8bd4d43",
+    "bytes": 26752
+  },
+  {
+    "repository": "Uniswap/continuous-clearing-auction",
+    "commit": "ce78b4d94cdf94fd41f20afb6f6e495b8b83a234",
+    "path": "src/ContinuousClearingAuction.sol",
+    "url": "https://raw.githubusercontent.com/Uniswap/continuous-clearing-auction/ce78b4d94cdf94fd41f20afb6f6e495b8b83a234/src/ContinuousClearingAuction.sol",
+    "status": "FETCHED",
+    "captured_sha256": "cea17b7ecf854efc58483ae5a35bf1160961a315016281a65f6b1a6a95547856",
+    "bytes": 38294
+  },
+  {
+    "repository": "Uniswap/continuous-clearing-auction",
+    "commit": "ce78b4d94cdf94fd41f20afb6f6e495b8b83a234",
+    "path": "src/libraries/DemandLib.sol",
+    "url": "https://raw.githubusercontent.com/Uniswap/continuous-clearing-auction/ce78b4d94cdf94fd41f20afb6f6e495b8b83a234/src/libraries/DemandLib.sol",
+    "status": "FETCHED",
+    "captured_sha256": "44c85bf9f5cdce8d0b20266b38688c8dc2bc6d0848aafdd6d9d9d5629254b215",
+    "bytes": 7677
+  },
+  {
+    "repository": "Uniswap/continuous-clearing-auction",
+    "commit": "ce78b4d94cdf94fd41f20afb6f6e495b8b83a234",
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/Uniswap/continuous-clearing-auction/ce78b4d94cdf94fd41f20afb6f6e495b8b83a234/LICENSE",
+    "status": "FETCHED",
+    "captured_sha256": "762d46d8e496d0e5d49a0ce528327b2ccf4bc540b31fd4180b872348e279e4fd",
+    "bytes": 1056
+  },
+  {
+    "repository": "Uniswap/liquidity-launcher",
+    "commit": "266c18786c58822b72a7a9490f4e319294df0548",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/Uniswap/liquidity-launcher/266c18786c58822b72a7a9490f4e319294df0548/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "ede34b8b06ed9e08e25c02974caa0336fe778a84bb3b36f12e056ba108eaa871",
+    "bytes": 13779
+  },
+  {
+    "repository": "Uniswap/liquidity-launcher",
+    "commit": "266c18786c58822b72a7a9490f4e319294df0548",
+    "path": "src/LiquidityLauncher.sol",
+    "url": "https://raw.githubusercontent.com/Uniswap/liquidity-launcher/266c18786c58822b72a7a9490f4e319294df0548/src/LiquidityLauncher.sol",
+    "status": "FETCHED",
+    "captured_sha256": "b65108a0c636d3d4d4d6defe8d846cc3482d1b2e131c9d552524a8a5682d0d70",
+    "bytes": 3651
+  },
+  {
+    "repository": "Uniswap/liquidity-launcher",
+    "commit": "266c18786c58822b72a7a9490f4e319294df0548",
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/Uniswap/liquidity-launcher/266c18786c58822b72a7a9490f4e319294df0548/LICENSE",
+    "status": "FETCHED",
+    "captured_sha256": "762d46d8e496d0e5d49a0ce528327b2ccf4bc540b31fd4180b872348e279e4fd",
+    "bytes": 1056
+  },
+  {
+    "repository": "discreetlogcontracts/dlcspecs",
+    "commit": "9cd9148938c616690c79d99ec6f330e213c246c5",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/discreetlogcontracts/dlcspecs/9cd9148938c616690c79d99ec6f330e213c246c5/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "69eb73e375d67e8a39d1972c7391eb31d982935c3d25525e564d9a8b8d1d950c",
+    "bytes": 2710
+  },
+  {
+    "repository": "discreetlogcontracts/dlcspecs",
+    "commit": "9cd9148938c616690c79d99ec6f330e213c246c5",
+    "path": "Transactions.md",
+    "url": "https://raw.githubusercontent.com/discreetlogcontracts/dlcspecs/9cd9148938c616690c79d99ec6f330e213c246c5/Transactions.md",
+    "status": "FETCHED",
+    "captured_sha256": "5c21045f9ffdca71801c035f86cb5711c1c132f8c693e03507360026ab6775cb",
+    "bytes": 13457
+  },
+  {
+    "repository": "discreetlogcontracts/dlcspecs",
+    "commit": "9cd9148938c616690c79d99ec6f330e213c246c5",
+    "path": "Oracle.md",
+    "url": "https://raw.githubusercontent.com/discreetlogcontracts/dlcspecs/9cd9148938c616690c79d99ec6f330e213c246c5/Oracle.md",
+    "status": "FETCHED",
+    "captured_sha256": "5150307e5bb3f43793ab61bc264d83b2cb49d99593acd3295646633a7b39180c",
+    "bytes": 9546
+  },
+  {
+    "repository": "discreetlogcontracts/dlcspecs",
+    "commit": "9cd9148938c616690c79d99ec6f330e213c246c5",
+    "path": "MultiOracle.md",
+    "url": "https://raw.githubusercontent.com/discreetlogcontracts/dlcspecs/9cd9148938c616690c79d99ec6f330e213c246c5/MultiOracle.md",
+    "status": "FETCHED",
+    "captured_sha256": "45faec1f761dbf6ae50def563c81e9e0b243ea5d5a3e5257f5d8647c464cea7c",
+    "bytes": 29601
+  },
+  {
+    "repository": "discreetlogcontracts/dlcspecs",
+    "commit": "9cd9148938c616690c79d99ec6f330e213c246c5",
+    "path": "LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/discreetlogcontracts/dlcspecs/9cd9148938c616690c79d99ec6f330e213c246c5/LICENSE.txt",
+    "status": "FETCHED",
+    "captured_sha256": "05ab88f3f9da1d05f9c5bf0a7c45c49a9007f877dd9c237a5bf668276fe04c3b",
+    "bytes": 18651
+  },
+  {
+    "repository": "cryptape/ckb-transaction-cobuild-poc",
+    "commit": "e29514f9b1206b40f2bbc7b97e86c6f35373b0b0",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/cryptape/ckb-transaction-cobuild-poc/e29514f9b1206b40f2bbc7b97e86c6f35373b0b0/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "9288a025abccdad1c5a16367cd0eff3ad6847d11f9781188e50b739f18bfcf45",
+    "bytes": 896
+  },
+  {
+    "repository": "cryptape/ckb-transaction-cobuild-poc",
+    "commit": "e29514f9b1206b40f2bbc7b97e86c6f35373b0b0",
+    "path": "contracts/transaction-cobuild-otx-lock-demo/src/entry.rs",
+    "url": "https://raw.githubusercontent.com/cryptape/ckb-transaction-cobuild-poc/e29514f9b1206b40f2bbc7b97e86c6f35373b0b0/contracts/transaction-cobuild-otx-lock-demo/src/entry.rs",
+    "status": "FETCHED",
+    "captured_sha256": "9717c4b5e3400ab10d78e88c51d9acc80df0eb92fd74e0f410355aa2627f1f96",
+    "bytes": 1522
+  },
+  {
+    "repository": "cryptape/ckb-transaction-cobuild-poc",
+    "commit": "e29514f9b1206b40f2bbc7b97e86c6f35373b0b0",
+    "path": "ckb-transaction-cobuild/src/otx.rs",
+    "url": "https://raw.githubusercontent.com/cryptape/ckb-transaction-cobuild-poc/e29514f9b1206b40f2bbc7b97e86c6f35373b0b0/ckb-transaction-cobuild/src/otx.rs",
+    "status": "FAILED"
+  },
+  {
+    "repository": "calledAdo/lean-oracle",
+    "commit": "837ebc476b580f8c753ee18173c46161279f6f97",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/calledAdo/lean-oracle/837ebc476b580f8c753ee18173c46161279f6f97/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "0150f4407be3745a527e91c28f824bb436027a070fa0aff0abaffbbd7649140c",
+    "bytes": 17706
+  },
+  {
+    "repository": "calledAdo/lean-oracle",
+    "commit": "837ebc476b580f8c753ee18173c46161279f6f97",
+    "path": "crates/lean_oracle/contracts/oracle_script/src/main.rs",
+    "url": "https://raw.githubusercontent.com/calledAdo/lean-oracle/837ebc476b580f8c753ee18173c46161279f6f97/crates/lean_oracle/contracts/oracle_script/src/main.rs",
+    "status": "FETCHED",
+    "captured_sha256": "534e5d3d7aa0da229e7968edafbf1ef07c9029386cb33e5d221f14fe3be0eaed",
+    "bytes": 13105
+  },
+  {
+    "repository": "calledAdo/lean-oracle",
+    "commit": "837ebc476b580f8c753ee18173c46161279f6f97",
+    "path": "crates/lean_oracle/contracts/common/src/wormhole_verify.rs",
+    "url": "https://raw.githubusercontent.com/calledAdo/lean-oracle/837ebc476b580f8c753ee18173c46161279f6f97/crates/lean_oracle/contracts/common/src/wormhole_verify.rs",
+    "status": "FETCHED",
+    "captured_sha256": "3544566e30dfd34069b169900cd32480e965d6d31058f77e24d16a7158344a58",
+    "bytes": 5132
+  },
+  {
+    "repository": "calledAdo/lean-oracle",
+    "commit": "837ebc476b580f8c753ee18173c46161279f6f97",
+    "path": "deployment/README.md",
+    "url": "https://raw.githubusercontent.com/calledAdo/lean-oracle/837ebc476b580f8c753ee18173c46161279f6f97/deployment/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "5c804db8c4af7ca618bb34a7f0c623ef69c52f01a98fea4c5db3a3bb81ff8314",
+    "bytes": 8661
+  },
+  {
+    "repository": "calledAdo/lean-oracle",
+    "commit": "837ebc476b580f8c753ee18173c46161279f6f97",
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/calledAdo/lean-oracle/837ebc476b580f8c753ee18173c46161279f6f97/LICENSE",
+    "status": "FETCHED",
+    "captured_sha256": "ee7798dfd3f8189370d1a64931a094275b0d5b486742e444cee4311d488feaf5",
+    "bytes": 1066
+  },
+  {
+    "repository": "yixyxiu/ckbswap-contracts",
+    "commit": "b7cd8458a798b4386c1b401ce7dd10333a728443",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/yixyxiu/ckbswap-contracts/b7cd8458a798b4386c1b401ce7dd10333a728443/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "5394c469a9fdc541eb85794711133c9e16b16c64276909d97a6a3cb64e903114",
+    "bytes": 8796
+  },
+  {
+    "repository": "yixyxiu/ckbswap-contracts",
+    "commit": "b7cd8458a798b4386c1b401ce7dd10333a728443",
+    "path": "contracts/swap/src/main.rs",
+    "url": "https://raw.githubusercontent.com/yixyxiu/ckbswap-contracts/b7cd8458a798b4386c1b401ce7dd10333a728443/contracts/swap/src/main.rs",
+    "status": "FETCHED",
+    "captured_sha256": "3afcb87dea8d69c4184510964448b1403bc4051889639bf17773c0ca027fd117",
+    "bytes": 9719
+  },
+  {
+    "repository": "opynfinance/GammaProtocol",
+    "commit": "841f81d9d05da9d27277b5775edfbb48c4012d2a",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/opynfinance/GammaProtocol/841f81d9d05da9d27277b5775edfbb48c4012d2a/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "5c4906040b28bed1767812a7af144f95e2d2fcfab25b83ce5ed13ec54eb0d382",
+    "bytes": 4502
+  },
+  {
+    "repository": "opynfinance/GammaProtocol",
+    "commit": "841f81d9d05da9d27277b5775edfbb48c4012d2a",
+    "path": "contracts/core/Oracle.sol",
+    "url": "https://raw.githubusercontent.com/opynfinance/GammaProtocol/841f81d9d05da9d27277b5775edfbb48c4012d2a/contracts/core/Oracle.sol",
+    "status": "FETCHED",
+    "captured_sha256": "f34e7905befbf24c212de0d42dbe7beca003886f8d38a3c5778bf4449f342362",
+    "bytes": 13348
+  },
+  {
+    "repository": "opynfinance/GammaProtocol",
+    "commit": "841f81d9d05da9d27277b5775edfbb48c4012d2a",
+    "path": "contracts/core/MarginCalculator.sol",
+    "url": "https://raw.githubusercontent.com/opynfinance/GammaProtocol/841f81d9d05da9d27277b5775edfbb48c4012d2a/contracts/core/MarginCalculator.sol",
+    "status": "FETCHED",
+    "captured_sha256": "258ab01db30ac86917a8c8eab3191f89cb6ed9faa64d249d7997a08a18ff73a3",
+    "bytes": 53128
+  },
+  {
+    "repository": "opynfinance/GammaProtocol",
+    "commit": "841f81d9d05da9d27277b5775edfbb48c4012d2a",
+    "path": "LICENSE",
+    "url": "https://raw.githubusercontent.com/opynfinance/GammaProtocol/841f81d9d05da9d27277b5775edfbb48c4012d2a/LICENSE",
+    "status": "FETCHED",
+    "captured_sha256": "6b0382b16279f26ff69014300541967a356a666eb0b91b422f6862f6b7dad17e",
+    "bytes": 1211
+  },
+  {
+    "repository": "cryptape/ckb-transaction-cobuild-poc",
+    "commit": "e29514f9b1206b40f2bbc7b97e86c6f35373b0b0",
+    "path": "ckb-transaction-cobuild/src/lib.rs",
+    "url": "https://raw.githubusercontent.com/cryptape/ckb-transaction-cobuild-poc/e29514f9b1206b40f2bbc7b97e86c6f35373b0b0/ckb-transaction-cobuild/src/lib.rs",
+    "status": "FETCHED",
+    "captured_sha256": "2d1b9a9a114bf04e207f94b4698d876e75482c8711e7611dcc9335b9725fe9bc",
+    "bytes": 15020
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "README.md",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/README.md",
+    "status": "FETCHED",
+    "captured_sha256": "aa7708e3e102775acfcbb3e436eb781a1d9253e7ce1b0d6d2af7564b1f3548ed",
+    "bytes": 6615
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/campaign/src/lib.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/campaign/src/lib.rs",
+    "status": "FETCHED",
+    "captured_sha256": "da81734c4322c9d76a47350fda6d3e262bdce72fa662cd036b5fac673f17f461",
+    "bytes": 223
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/pledge/src/lib.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/pledge/src/lib.rs",
+    "status": "FETCHED",
+    "captured_sha256": "da81734c4322c9d76a47350fda6d3e262bdce72fa662cd036b5fac673f17f461",
+    "bytes": 223
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/receipt/src/lib.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/receipt/src/lib.rs",
+    "status": "FETCHED",
+    "captured_sha256": "da81734c4322c9d76a47350fda6d3e262bdce72fa662cd036b5fac673f17f461",
+    "bytes": 223
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/campaign/src/main.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/campaign/src/main.rs",
+    "status": "FETCHED",
+    "captured_sha256": "d9be6b24bb3270728316201c1aa5a9ac2218b4a75e6f505090b7302001ecdafa",
+    "bytes": 30934
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/pledge-lock/src/main.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/pledge-lock/src/main.rs",
+    "status": "FETCHED",
+    "captured_sha256": "e8bc9685d34d3a3affab0862e4f3af72351ba5b6acd358c57ab278d6dd11895c",
+    "bytes": 18727
+  },
+  {
+    "repository": "alesfer001/CrowdCell",
+    "commit": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+    "path": "contracts/receipt/src/main.rs",
+    "url": "https://raw.githubusercontent.com/alesfer001/CrowdCell/2fd13f6bae84b9beda0c5f67264c66cb7f89cd69/contracts/receipt/src/main.rs",
+    "status": "FETCHED",
+    "captured_sha256": "66c9823291adb306deac4febba6ed121e1728736c8767ae428130d63f50698e7",
+    "bytes": 14722
+  }
+]

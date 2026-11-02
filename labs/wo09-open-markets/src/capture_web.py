@@ -4,8 +4,10 @@ from concurrent.futures import ThreadPoolExecutor
 from urllib.request import Request,urlopen
 from urllib.error import HTTPError
 from datetime import datetime,timezone
-import json,hashlib,re
-root=Path(__file__).resolve().parents[1];out=root/'research/web';out.mkdir(parents=True,exist_ok=True)
+import json,hashlib,re,os
+from urllib.parse import urlparse
+root=Path(__file__).resolve().parents[1];out=root.parents[1]/'work/wo09-public-captures'/datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ');out.mkdir(parents=True,exist_ok=True)
+prior=root/'research/web/manifest.json';blocked={urlparse(x['url']).netloc for x in json.loads(prior.read_text()) if x['status'] in [403,429]} if prior.exists() else set()
 urls={
 'uniswap-launcher':'https://developers.uniswap.org/docs/liquidity/liquidity-launchpad/overview',
 'baseline':'https://www.baseline.markets/faq',
@@ -23,6 +25,7 @@ urls={
 'ckb-book':'https://api.gateio.ws/api/v4/spot/order_book?currency_pair=CKB_USDT&limit=10'}
 def fetch(item):
  name,url=item;r={'id':name,'url':url,'requested_at':datetime.now(timezone.utc).isoformat(),'source_role':'Public reference or market snapshot; no customer-demand inference'}
+ if urlparse(url).netloc in blocked:return {**r,'status':'SKIPPED_PRIOR_RESTRICTION'}
  try:
   with urlopen(Request(url,headers={'User-Agent':'TradeResearch/WO09 public-source audit'}),timeout=25) as response:
    data=response.read(3*1024*1024);r.update(status=response.status,final_url=response.url,content_type=response.headers.get('Content-Type'),sha256=hashlib.sha256(data).hexdigest(),bytes=len(data));(out/(name+'.raw')).write_bytes(data)
@@ -32,4 +35,5 @@ def fetch(item):
  return r
 with ThreadPoolExecutor(max_workers=6) as executor:results=list(executor.map(fetch,urls.items()))
 (out/'manifest.json').write_text(json.dumps(results,indent=2)+'\n')
+(root/'research/web'/('manifest-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')+'.json')).write_text(json.dumps(results,indent=2)+'\n')
 for r in results:print(r['id'],r['status'],r.get('bytes',0))
