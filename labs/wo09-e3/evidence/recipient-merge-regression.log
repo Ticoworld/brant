@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running tests/forceexit.rs (/tmp/liquid-cells-e2/crates/ckb-contract-tests/target/debug/deps/forceexit-392355466fbb9be0)
+
+running 7 tests
+test force_exit_bad_total_rejected ... ok
+test force_exit_after_timeout_verifies ... ok
+test force_exit_missing_payout_rejected ... ok
+test force_exit_before_timeout_rejected ... ok
+test force_exit_wrong_balance_rejected ... ok
+test force_exit_unnullified_root_rejected ... ok
+test force_exit_wrong_payout_lock_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
