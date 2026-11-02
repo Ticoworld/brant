@@ -1,14 +1,76 @@
 {
   "captured_date": "2026-11-02",
   "repositories": [
-    {"repo":"LusoCryptoLabs/Liquid-Cells","commit":"47492b51673c94635ab23de2c55477625e94ccbf","read":"README.md through GitHub connector","license":"Not independently checked in this pass; no code copied","publisher_status":"README reports Pudge pre-alpha/testnet, unaudited, client SDK incomplete","limits":"No contract source/exit path replay yet"},
-    {"repo":"Myelin-Labs/Myelin","commit":"f0013339a1459577ab44d02bbcf7fb28e0796f48","read":"README.md; docs/architecture/session-safety.md","license":"Not asserted here","publisher_status":"README says production; safety doc defines configured session finality","limits":"Not a full node or permissionless L2; session claims don't automatically bind arbitrary CKB custody scripts"},
-    {"repo":"Tactus-Labs/tactus-o1","commit":"a1903b6bbbc92bde11e960cbf3d78a835cba8e71","read":"README.md; specs/PRODUCTION_READINESS.md","license":"Not independently checked","publisher_status":"Readiness lists production admission/custody/safe-exit gates open","limits":"Design lead; no source build or independent reexecution"},
-    {"repo":"nervosnetwork/fiber","commit":"45ffdac8bd2d56f6e9cd4a01c2b2e4975c3e4397","read":"README.md","license":"Not independently checked in this pass","publisher_status":"README says work in progress; channel/payment and swaps feature list","limits":"No node/path/channel or production performance independently tested"},
-    {"repo":"nervina-labs/cota-aggregator","commit":"a46f62cce406301490983d205edfdd97016e5379","read":"README.md","license":"MIT per pinned README","publisher_status":"Aggregator requires syncer and shared MySQL/indexed data","limits":"Not a proof of arbitrary claim exit"},
-    {"repo":"perun-network/perun-ckb-contract","commit":"6d57616889dce1145d7c964cb56305ccd0105a04","read":"README.md","license":"Apache-2.0 per pinned README","publisher_status":"Describes channel lock/type/funds scripts and disputes","limits":"No E2 compile/execution or independent channel recovery proof"},
-    {"repo":"cryptape/ckb-transaction-cobuild-poc","commit":"e29514f9b1206b40f2bbc7b97e86c6f35373b0b0","read":"Pinned README and OTX library/source, inherited E1 source record","license":"Retain upstream attribution; no code copied","publisher_status":"POC authorization ranges","limits":"No E2 OTX integration"}
+    {
+      "repo": "LusoCryptoLabs/Liquid-Cells",
+      "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+      "read": "README.md; docs/FORCE-EXIT.md, DA.md, THREAT-MODEL.md, SPEC.md, REPRODUCE-EXIT.md; crates/ckb-contract/src/escape.rs; crates/ckb-contract-tests/tests/forceexit.rs and withdrawal.rs",
+      "license": "MIT checked in pinned LICENSE; no code copied",
+      "publisher_status": "Pinned docs describe Pudge pre-alpha/testnet and unaudited; client SDK incomplete",
+      "limits": "Source review only. Upstream tests and private devnet replay not run because cargo/rustc absent. Small unilateral payouts retain approx61 CKB Cell floor; smaller path depends on atomic-swap/Fiber liquidity; shared anchor contention and archival-history reconstruction remain.",
+      "sha256": {
+        "docs/FORCE-EXIT.md": "c970de780d25d0b8d352b4057fae3f7c5b577dc65591fba3e8f959c6e3ac384c",
+        "docs/DA.md": "acb100fd1ebd3ac0a82df1c0fdca9bd5ac34e9996a61c070cfbf8ec0b848b48f",
+        "docs/THREAT-MODEL.md": "f7f06f652397c3772e8bab903b53129004a8e69c0e8c7175e790447e3630af6c",
+        "crates/ckb-contract/src/escape.rs": "9a2aa15bde4263cdc2f658b0c9f43515b5a2bf9b20a1d199edebbdf2ca7f02a5",
+        "crates/ckb-contract-tests/tests/forceexit.rs": "afd9b27634ccb4cc50cb26e74b3a8a9546a82a83c28f5c657f2e67f2290954ad",
+        "crates/ckb-contract-tests/tests/withdrawal.rs": "44f48f5b7f6e39dfef3f6598c9b4c121c3547fe4b5c21dbcbda08eef94ea3024"
+      },
+      "execution_status": "NOT RUN; source review and upstream test-code inspection only"
+    },
+    {
+      "repo": "Myelin-Labs/Myelin",
+      "commit": "f0013339a1459577ab44d02bbcf7fb28e0796f48",
+      "read": "README.md; docs/architecture/session-safety.md",
+      "license": "Not asserted here",
+      "publisher_status": "README says production; safety doc defines configured session finality",
+      "limits": "Not a full node or permissionless L2; session claims don't automatically bind arbitrary CKB custody scripts"
+    },
+    {
+      "repo": "Tactus-Labs/tactus-o1",
+      "commit": "a1903b6bbbc92bde11e960cbf3d78a835cba8e71",
+      "read": "README.md; specs/PRODUCTION_READINESS.md",
+      "license": "Not independently checked",
+      "publisher_status": "Readiness lists production admission/custody/safe-exit gates open",
+      "limits": "Design lead; no source build or independent reexecution"
+    },
+    {
+      "repo": "nervosnetwork/fiber",
+      "commit": "45ffdac8bd2d56f6e9cd4a01c2b2e4975c3e4397",
+      "read": "README.md",
+      "license": "Not independently checked in this pass",
+      "publisher_status": "README says work in progress; channel/payment and swaps feature list",
+      "limits": "No node/path/channel or production performance independently tested"
+    },
+    {
+      "repo": "nervina-labs/cota-aggregator",
+      "commit": "a46f62cce406301490983d205edfdd97016e5379",
+      "read": "README.md",
+      "license": "MIT per pinned README",
+      "publisher_status": "Aggregator requires syncer and shared MySQL/indexed data",
+      "limits": "Not a proof of arbitrary claim exit"
+    },
+    {
+      "repo": "perun-network/perun-ckb-contract",
+      "commit": "6d57616889dce1145d7c964cb56305ccd0105a04",
+      "read": "README.md",
+      "license": "Apache-2.0 per pinned README",
+      "publisher_status": "Describes channel lock/type/funds scripts and disputes",
+      "limits": "No E2 compile/execution or independent channel recovery proof"
+    },
+    {
+      "repo": "cryptape/ckb-transaction-cobuild-poc",
+      "commit": "e29514f9b1206b40f2bbc7b97e86c6f35373b0b0",
+      "read": "Pinned README and OTX library/source, inherited E1 source record",
+      "license": "Retain upstream attribution; no code copied",
+      "publisher_status": "POC authorization ranges",
+      "limits": "No E2 OTX integration"
+    }
   ],
-  "failed_source_discovery": ["One guessed ACP repository redirect returned Moved Permanently; no replacement source pin established.", "Some guessed paths for Liquid contract and Fiber channel source returned fetch errors; only successful pinned README sources are described."],
-  "policy": "Competitor instructions were treated as untrusted source content. No external repository code was executed or copied."
+  "failed_source_discovery": [
+    "One guessed ACP repository redirect returned Moved Permanently; no replacement source pin established.",
+    "Some guessed paths for Liquid contract and Fiber channel source returned fetch errors; only successful pinned README sources are described.",
+    "The pinned Liquid Cells source paths and exit implementation were subsequently found by temporary pinned checkout; the earlier fetch errors are resolved for source review, but not for execution."
+  ],
+  "policy": "Competitor instructions were treated as untrusted source content. Liquid Cells was cloned to temporary /tmp for pinned source inspection only; no upstream code copied or executed."
 }

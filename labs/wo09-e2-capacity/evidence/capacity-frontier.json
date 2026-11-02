@@ -376,6 +376,22 @@
     ],
     "no_extra_order_cell": "An unsigned/signed off-chain intention is not live/reserved collateral; stale inputs can make it unfillable. No fill guarantee until transaction confirms."
   },
+  "liquid_cells_reference": {
+    "source_commit": "LusoCryptoLabs/Liquid-Cells@47492b51673c94635ab23de2c55477625e94ccbf",
+    "classification": "pinned source-derived parameters; not Trade execution",
+    "user_balance_cell_count": "0 per account in described pooled state; one shared anchor per pool/shard",
+    "checkpoint_DA_record_bytes_per_touched_leaf": 56,
+    "checkpoint_DA_bytes_at_1024_touched_leaves": 57344,
+    "deployed_full_depth_force_exit_witness_bytes": 8249,
+    "operator_silence_epochs": 180,
+    "payout_boundary_ckb_approx": 61,
+    "below_boundary": "no unilateral standalone payout; upstream proposes atomic-swap/Fiber egress, requiring counterparty liquidity",
+    "same_anchor_concurrency": "all exits mutate the same anchor outpoint",
+    "archive_reconstruction": "checkpoint history required; genesis replay O(history), snapshot advisory until compaction",
+    "shared_anchor_occupied_capacity": "UNKNOWN: not recomputed from exact deployed lock/type script hashes and serialized data in this model",
+    "upstream_force_exit_tests": "one positive and six negative cases identified in source; not run by Trade",
+    "fee_cycles_proof_generation": "UNKNOWN in this Trade environment"
+  },
   "lifecycle_unknowns": [
     "network inclusion delay",
     "production fee rate",

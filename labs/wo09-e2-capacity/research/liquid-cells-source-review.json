@@ -1,0 +1,37 @@
+{
+  "repository": "https://github.com/LusoCryptoLabs/Liquid-Cells",
+  "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "review_date": "2026-11-02",
+  "license": "MIT (pinned upstream LICENSE; no source copied)",
+  "review_scope": [
+    "docs/FORCE-EXIT.md",
+    "docs/DA.md",
+    "docs/THREAT-MODEL.md",
+    "docs/SPEC.md",
+    "docs/REPRODUCE-EXIT.md",
+    "crates/ckb-contract/src/escape.rs",
+    "crates/ckb-contract-tests/tests/forceexit.rs",
+    "crates/ckb-contract-tests/tests/withdrawal.rs"
+  ],
+  "sha256": {
+    "docs/FORCE-EXIT.md": "c970de780d25d0b8d352b4057fae3f7c5b577dc65591fba3e8f959c6e3ac384c",
+    "docs/DA.md": "acb100fd1ebd3ac0a82df1c0fdca9bd5ac34e9996a61c070cfbf8ec0b848b48f",
+    "docs/THREAT-MODEL.md": "f7f06f652397c3772e8bab903b53129004a8e69c0e8c7175e790447e3630af6c",
+    "crates/ckb-contract/src/escape.rs": "9a2aa15bde4263cdc2f658b0c9f43515b5a2bf9b20a1d199edebbdf2ca7f02a5",
+    "crates/ckb-contract-tests/tests/forceexit.rs": "afd9b27634ccb4cc50cb26e74b3a8a9546a82a83c28f5c657f2e67f2290954ad",
+    "crates/ckb-contract-tests/tests/withdrawal.rs": "44f48f5b7f6e39dfef3f6598c9b4c121c3547fe4b5c21dbcbda08eef94ea3024"
+  },
+  "source_findings": {
+    "exit": "SMT inclusion, nullified output root, exact total/capacity deltas, 180-epoch silence delay, and canonical secp lock derived from leaf pubkey are checked by the force-exit script.",
+    "data_availability": "Checkpoint witnesses publish 56-byte post-state records per touched leaf; user reconstruction requires checkpoint history and root comparison.",
+    "exit_witness": "8,249-byte full-depth proof format in the deployed force-exit documentation.",
+    "small_balance": "Unilateral standalone L1 payout is subject to approximately 61 CKB occupied-capacity floor. Smaller egress relies on atomic swap/Fiber liquidity; not an independent unilateral exit.",
+    "contention": "Force exits mutate one shared anchor outpoint; upstream describes sharding/batching as throughput mitigation.",
+    "upstream_tests": "Test source includes positive force exit plus six negatives, and withdrawal output binding negatives; not executed by Trade."
+  },
+  "verification_status": "SOURCE_REVIEW_ONLY",
+  "execution_blocker": "cargo and rustc are not installed in the current environment; upstream CKB-VM and devnet tests were not run.",
+  "copied_or_executed_upstream_code": false,
+  "quarantined_e1_beneficiary_test_resumed": false,
+  "security_or_production_pass": false
+}
