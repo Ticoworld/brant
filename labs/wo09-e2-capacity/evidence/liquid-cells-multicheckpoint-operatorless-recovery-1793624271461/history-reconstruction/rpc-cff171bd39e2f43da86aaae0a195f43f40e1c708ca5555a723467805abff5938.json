@@ -1,0 +1,88 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "cycles": "0x19a7dd",
+    "fee": null,
+    "min_replace_fee": null,
+    "time_added_to_pool": null,
+    "transaction": {
+      "cell_deps": [
+        {
+          "dep_type": "dep_group",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0xc0f5f7bc2953b29216fa618269baa0d17b73dddc0d26ecbdf662cce2426e3780"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0x3c68d3cfad522b451492fe9224b7014838e5520ab0771c2755551471b8c91220"
+          }
+        }
+      ],
+      "hash": "0xcff171bd39e2f43da86aaae0a195f43f40e1c708ca5555a723467805abff5938",
+      "header_deps": [],
+      "inputs": [
+        {
+          "previous_output": {
+            "index": "0xa",
+            "tx_hash": "0x9a3b8ede55030ab81ed200686be7e6b555c706c030b24969d01c3540defe4da5"
+          },
+          "since": "0x0"
+        }
+      ],
+      "outputs": [
+        {
+          "capacity": "0xba43b7400",
+          "lock": {
+            "args": "0x",
+            "code_hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+            "hash_type": "data1"
+          },
+          "type": {
+            "args": "0x",
+            "code_hash": "0x373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6",
+            "hash_type": "data1"
+          }
+        },
+        {
+          "capacity": "0x2540be400",
+          "lock": {
+            "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        },
+        {
+          "capacity": "0x2386e4776a65c0",
+          "lock": {
+            "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "outputs_data": [
+        "0xa7ff9e28ffd3def443d324547688c2c4eb98edf7da757d6bfa22bff55b9ce24a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "0xaa61b794ba668ff67c7b8d037034adcca06964c0dffdb3eae70e8666faa5a63d",
+        "0x"
+      ],
+      "version": "0x0",
+      "witnesses": [
+        "0x550000001000000055000000550000004100000060cf94c4f82d734430f3b4e76e77de13d8e7cc03a87357d5358fed35262e144c039d9ea8ead0d15349d73771f5adf32c1da75ffdd124be636cca3b944c81fb2e01"
+      ]
+    },
+    "tx_status": {
+      "block_hash": "0xa883e824e8f01a48725070ffc5212a7c0578dd6a97203b3b785a3e805007c996",
+      "block_number": "0x18",
+      "reason": null,
+      "status": "committed",
+      "tx_index": "0x1"
+    }
+  },
+  "id": 1
+}
