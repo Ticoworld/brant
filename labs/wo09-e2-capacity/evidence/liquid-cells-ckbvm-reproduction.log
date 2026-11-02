@@ -1,0 +1,196 @@
+     Removed 865 files, 248.4MiB total
+   Compiling version_check v0.9.5
+   Compiling autocfg v1.5.1
+   Compiling proc-macro2 v1.0.106
+   Compiling num-traits v0.2.19
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling generic-array v0.14.7
+   Compiling syn v1.0.109
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling ppv-lite86 v0.2.21
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling rand_core v0.6.4
+   Compiling rand_chacha v0.3.1
+   Compiling digest v0.10.7
+   Compiling rand v0.8.6
+   Compiling num-integer v0.1.46
+   Compiling syn v2.0.117
+   Compiling ahash v0.8.12
+   Compiling paste v1.0.15
+   Compiling num-bigint v0.4.6
+   Compiling ark-std v0.4.0
+   Compiling ark-serialize-derive v0.4.2
+   Compiling once_cell v1.21.4
+   Compiling either v1.16.0
+   Compiling itertools v0.10.5
+   Compiling zeroize_derive v1.4.3
+   Compiling ark-serialize v0.4.2
+   Compiling zeroize v1.8.2
+   Compiling ark-ff-macros v0.4.2
+   Compiling ark-ff-asm v0.4.2
+   Compiling derivative v2.2.0
+   Compiling hashbrown v0.13.2
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.63
+   Compiling ark-ff v0.4.2
+   Compiling bytes v1.11.1
+   Compiling blake2b-ref v0.3.1
+   Compiling ckb-hash v0.119.0
+   Compiling molecule v0.8.0
+   Compiling ckb-std v0.16.4
+   Compiling ckb-gen-types v0.119.0
+   Compiling ark-poly v0.4.2
+   Compiling ark-ec v0.4.2
+   Compiling ark-bn254 v0.4.0
+   Compiling sha2 v0.10.9
+   Compiling buddy-alloc v0.6.0
+   Compiling gcd v2.3.0
+   Compiling keccak v0.1.6
+   Compiling sha3 v0.10.8
+   Compiling liquid-cells-groth16 v0.0.1 (/tmp/liquid-cells-e2/crates/groth16)
+   Compiling liquid-cells-ckb-contract v0.0.1 (/tmp/liquid-cells-e2/crates/ckb-contract)
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/upgrade_lock.rs:35:1
+   |
+35 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/upgrade_lock.rs:35:1
+   |
+35 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/main.rs:73:1
+   |
+73 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/main.rs:73:1
+   |
+73 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: constant `CHECKPOINT_WITNESS_LEN` is never used
+  --> src/protocol.rs:14:11
+   |
+14 | pub const CHECKPOINT_WITNESS_LEN: usize = 644;
+   |           ^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `liquid-cells-ckb-contract` (bin "liquid-cells-upgrade-lock") generated 3 warnings
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/deposit_lock.rs:44:1
+   |
+44 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: `#[warn(unexpected_cfgs)]` on by default
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unexpected `cfg` condition value: `native-simulator`
+  --> src/deposit_lock.rs:44:1
+   |
+44 | ckb_std::entry!(program_entry);
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: expected values for `feature` are: `compact_smt` and `htlc_keyspace`
+   = note: using a cfg inside a macro will use the cfgs from the destination crate and not the ones from the defining crate
+   = help: try referring to `$crate::debug` crate for guidance on how handle this unexpected cfg
+   = note: see <https://doc.rust-lang.org/nightly/rustc/check-cfg/cargo-specifics.html> for more information about checking conditional configuration
+   = note: this warning originates in the macro `$crate::debug` which comes from the expansion of the macro `ckb_std::entry` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: constant `FORCE_EXIT_TIMEOUT_EPOCHS` is never used
+  --> src/protocol.rs:20:11
+   |
+20 | pub const FORCE_EXIT_TIMEOUT_EPOCHS: u64 = 180;
+   |           ^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `liquid-cells-ckb-contract` (bin "liquid-cells-deposit-lock") generated 3 warnings
+warning: `liquid-cells-ckb-contract` (bin "liquid-cells-anchor") generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 21.11s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+     Running tests/forceexit.rs (/tmp/liquid-cells-e2/crates/ckb-contract-tests/target/debug/deps/forceexit-392355466fbb9be0)
+
+running 7 tests
+test force_exit_bad_total_rejected ... ok
+test force_exit_after_timeout_verifies ... ok
+test force_exit_before_timeout_rejected ... ok
+test force_exit_missing_payout_rejected ... ok
+test force_exit_wrong_balance_rejected ... ok
+test force_exit_unnullified_root_rejected ... ok
+test force_exit_wrong_payout_lock_rejected ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests/withdrawal.rs (/tmp/liquid-cells-e2/crates/ckb-contract-tests/target/debug/deps/withdrawal-60c1aa56a7fbc8b8)
+
+running 4 tests
+test missing_withdrawal_output_rejected ... ok
+test wrong_withdrawal_amount_rejected ... ok
+test wrong_withdrawal_lock_rejected ... ok
+test deposit_and_withdrawal_checkpoint_verifies ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running tests/anchor.rs (/tmp/liquid-cells-e2/crates/ckb-contract-tests/target/debug/deps/anchor-177688e4041a53f2)
+
+running 13 tests
+test anchor_lock_change_rejected ... ok
+test checkpoint_with_wrong_pool_args_rejected ... ok
+test fee_acc_mismatch_rejected ... ok
+test ignored_fee_draw_in_capacity_rejected ... ok
+test missing_da_blob_rejected ... ok
+test reward_exceeds_fee_withdrawal_rejected ... ok
+test checkpoint_for_a_type_id_pool_verifies ... ok
+test tampered_da_blob_rejected ... ok
+test tampered_output_root_rejected ... ok
+test sequencer_reward_accepted ... ok
+test tampered_public_values_caught_by_proof ... ok
+test wrong_new_seq_rejected ... ok
+test valid_checkpoint_verifies ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s
+

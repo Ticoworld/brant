@@ -389,7 +389,7 @@
     "same_anchor_concurrency": "all exits mutate the same anchor outpoint",
     "archive_reconstruction": "checkpoint history required; genesis replay O(history), snapshot advisory until compaction",
     "shared_anchor_occupied_capacity": "UNKNOWN: not recomputed from exact deployed lock/type script hashes and serialized data in this model",
-    "upstream_force_exit_tests": "one positive and six negative cases identified in source; not run by Trade",
+    "upstream_force_exit_tests": "7 pass in CKB-VM; 4 withdrawal and 13 anchor tests also pass using checksum-pinned Zig adapter; no private devnet execution",
     "fee_cycles_proof_generation": "UNKNOWN in this Trade environment"
   },
   "lifecycle_unknowns": [

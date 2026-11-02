@@ -9,19 +9,82 @@
   },
   "features": "Cargo defaults only. Feature-gated suites reporting zero selected tests are not treated as covered.",
   "suite_results": {
-    "da": {"passed": 2, "failed": 0},
-    "fuzz": {"passed": 4, "failed": 0},
-    "genesis": {"passed": 1, "failed": 0},
-    "htlc": {"passed": 7, "failed": 0},
-    "properties": {"passed": 13, "failed": 0},
-    "redteam": {"passed": 13, "failed": 0},
-    "witness": {"passed": 9, "failed": 0}
+    "da": {
+      "passed": 2,
+      "failed": 0
+    },
+    "fuzz": {
+      "passed": 4,
+      "failed": 0
+    },
+    "genesis": {
+      "passed": 1,
+      "failed": 0
+    },
+    "htlc": {
+      "passed": 7,
+      "failed": 0
+    },
+    "properties": {
+      "passed": 13,
+      "failed": 0
+    },
+    "redteam": {
+      "passed": 13,
+      "failed": 0
+    },
+    "witness": {
+      "passed": 9,
+      "failed": 0
+    }
   },
-  "total": {"passed": 49, "failed": 0},
+  "total": {
+    "passed": 49,
+    "failed": 0
+  },
   "exit_code": 0,
   "log": "../evidence/liquid-cells-stf-cargo-test.log",
   "log_sha256": "c4b03dfd8698117f81ca2ec803e54debfd56d683734bfec0cd2b57af7c0e0f70",
-  "ckb_vm_force_exit": "NOT RUN: contract target build blocked on missing riscv64-unknown-elf-gcc",
+  "ckb_vm_force_exit": "PASS in 7 upstream CKB-VM tests using adapted Zig RISC-V compile; this is not private-devnet execution",
   "private_devnet_exit": "NOT RUN",
-  "security_or_production_pass": false
+  "security_or_production_pass": false,
+  "ckb_vm_suites": {
+    "harness": "ckb-testtool 0.13.2; upstream tests unchanged; locally built RISC-V contract",
+    "compiler_adapter": {
+      "name": "Zig",
+      "version": "0.14.1",
+      "archive_sha256": "24aeeec8af16c381934a6cd7d95c807a8cb2cf7df9fa40d359aa884195c4716c",
+      "deviation": "Zig 0.14.1 compatibility wrapper; C ISA matched to rv64imc_zba_zbb_zbc_zbs, no F/D. Clean build required. Still differs from upstream CI clang."
+    },
+    "contract_binary_sha256": "dcc6bf2708fef85c0f529ff62c5f745b399d08ec81b0b08ee9c34b13973c8925",
+    "suites": {
+      "forceexit": {
+        "passed": 7,
+        "failed": 0,
+        "log": "../evidence/liquid-cells-ckbvm-forceexit.log",
+        "exit": "../evidence/liquid-cells-ckbvm-forceexit.exit",
+        "log_sha256": "518812250a71e75befd44fa422cef5263fd9504d5299ae2b301622a3d7d3807d"
+      },
+      "withdrawal": {
+        "passed": 4,
+        "failed": 0,
+        "log": "../evidence/liquid-cells-ckbvm-withdrawal.log",
+        "exit": "../evidence/liquid-cells-ckbvm-withdrawal.exit",
+        "log_sha256": "c9de7efc645484983f1ff349ddf6f647e37485db1ceed78230338459e592f19e"
+      },
+      "anchor": {
+        "passed": 13,
+        "failed": 0,
+        "log": "../evidence/liquid-cells-ckbvm-anchor.log",
+        "exit": "../evidence/liquid-cells-ckbvm-anchor.exit",
+        "log_sha256": "094376fa8b4cf4312de876f5bbfe488e226a42190e15fa954d7e1a302d43f5e8"
+      }
+    },
+    "total": {
+      "passed": 24,
+      "failed": 0
+    },
+    "private_devnet_execution": false,
+    "elf_inspection": "../evidence/liquid-cells-contract-elf-inspection.txt"
+  }
 }
