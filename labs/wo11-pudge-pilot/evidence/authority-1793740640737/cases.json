@@ -1,0 +1,52 @@
+[
+  {
+    "label": "original_minted_id_rejects_even_signed_ACP_funder",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code 20 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#20 })"
+  },
+  {
+    "label": "unchanged_market_rejects_signed_ACP_enrollment",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 50 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#50 })"
+  },
+  {
+    "label": "changed_terms_after_seller_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 })"
+  },
+  {
+    "label": "duplicate_wallet_group_inputs",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Dead(OutPoint(0x18d8446a4e3d38a67750b890381c8f188a5dc8b7c261792800996dc044bd310101000000))"
+  },
+  {
+    "label": "extra_witness_framing",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 43 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#43 })"
+  },
+  {
+    "label": "extra_output_group",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 60 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#60 })"
+  },
+  {
+    "label": "extra_input_group",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 60 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#60 })"
+  },
+  {
+    "label": "missing_covenant_dependency",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ScriptNotFound: code_hash: Byte32(0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f) })"
+  },
+  {
+    "label": "native_insufficient_replacement_capacity",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[1]): expected occupied capacity (0x16b969d00) <= capacity (0x5f5e100))"
+  },
+  {
+    "label": "stale_vault_input",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xc4ef5f40deb55225ca6bea003f1cd74e84387e8b79862ce3123380e9be7b937a00000000))"
+  }
+]

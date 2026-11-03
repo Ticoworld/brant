@@ -1,0 +1,34 @@
+{
+  "qualification": "UNCHANGED_SECP_MARKET_PLUS_GENUINE_PERMISSIONLESS_CONTROLS",
+  "market_candidate_created": false,
+  "omni_native_pass": false,
+  "joyid_native_pass": false,
+  "acp_relocated_binary": {
+    "hash": "0xcd69ba816f7471e59110058aa37387c362ed9a240cd178f7bb1ecee386cb31e6",
+    "outPoint": {
+      "txHash": "0xcc3bad56cf200e8c7efdf013e58cb68f54924e85c81fa08d10522a0628c19030",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0xcd69ba816f7471e59110058aa37387c362ed9a240cd178f7bb1ecee386cb31e6",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 66048,
+    "occupied": "6608900000000"
+  },
+  "always_success_fixture": {
+    "hash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+    "outPoint": {
+      "txHash": "0x2bf9a5e3787554b587e60ec553944f234202c7bc1f689253d4c97f5e14f24143",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x28e83a1277d48add8e72fadaa9248559e1b632bab2bd60b27955ebc4c03800a5",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 344,
+    "occupied": "38500000000"
+  }
+}

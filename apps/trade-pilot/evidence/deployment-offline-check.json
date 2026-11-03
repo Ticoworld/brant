@@ -1,0 +1,9 @@
+{
+  "classification": "SYNTHETIC_OFFLINE_UNSIGNED_PLAN_NOT_FUNDED_OR_BROADCAST",
+  "serialized_bytes": 18288,
+  "code_capacity_ckb": "17889",
+  "change_capacity_ckb": "61",
+  "selected_fee_ckb": "0.01",
+  "input_ckb": "17950.01",
+  "funding_live_verified": false
+}
