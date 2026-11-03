@@ -20,3 +20,11 @@ Primary full reads: `evidence/read-1793695361962` and `read-1793695599555` from 
 `other-asset.mjs` independently reads the documented RUSD mainnet code Cell and samples100 live Cells under its type-code hash. Exact script and incomplete-scan status are recorded. It does not establish executable market depth or a dollar peg. UTXOSwap pools/config endpoints return403 with no API key. A separate app/site tunnel denial was respected without route changes. Third-party sunset reports are not upgraded to independently verified shutdown facts.
 
 Earlier exploratory reads and failed requests remain evidence. First local import path and urllib Request.method defects were corrected; neither was a liquidity failure. Final read uses exact rational notional conversion; earlier exploratory snapshots are not the final economics basis.
+
+Offline comparison/checks, without network:
+
+```sh
+python3 labs/wo09-unified/inventory-discovery/src/analyze.py
+```
+
+Final classification and numerical caveats: `docs/WO09_NATIVE_INVENTORY_DECISION.md`, `WO09_NATIVE_INVENTORY_COMPARISON.md`, `WO09_NATIVE_MAKER_ECONOMICS.md`. No adapter is justified by the observed data.
