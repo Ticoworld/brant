@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-03 Africa/Lagos",
+  "method": "Live public web searches, primary forum/provider docs, authorized GitHub read-only metadata/files. No messaging, service signup, purchase or competitor execution.",
+  "representative_queries": [
+    "CKB DripFund crowdfunding milestones",
+    "site.talk.nervos.org budget funding proposal USD 2025 2026",
+    "CKB RPC API pricing paid service Nervos developer",
+    "site.talk.nervos.org FiberLatch Access",
+    "site.talk.nervos.org Ohrex Protocol",
+    "site.talk.nervos.org Cellora pricing customers",
+    "site.talk.nervos.org FiberNuts $6000",
+    "site.talk.nervos.org API prepaid",
+    "site.docs.uniswap.org continuous clearing auction liquidity launch",
+    "site.docs.juicebox.money cash out project payouts"
+  ],
+  "source_registry": "sources.json",
+  "discarded_or_qualified_results": [
+    "Unrelated scryve.io legal terms were not used as CKB Scryve evidence",
+    "Search snippets/mirrors only used to locate primary sources; not treated as customer validation",
+    "Guessed CoBuild docs URL unavailable; used actual author reference repository/thread",
+    "ickb/order README at master/main returned404; no deprecation/security inference",
+    "Initial fetch updated FETCH_HEAD, not a local origin tracking ref; actual fetched SHA matched verified baseline",
+    "CrowdCell repository snapshot and later forum claims kept separate",
+    "Ticoworld-related FiberLatch excluded from independent demand"
+  ],
+  "loop": [
+    "Observe real grant budgets; distinguish historical/completed from genuinely pending need",
+    "Ask why larger nominal raises do not increase usable creator fraction; test reserve identity",
+    "Compare unconditional returned-cash service with equal-priced direct purchase; equivalence conditional on available terms",
+    "Model exclusive cash-or-asset package against retained cash plus actual available call; pricing not presumed",
+    "Falsify arbitrary objective delivery using identical chain observations/different real outcomes",
+    "Investigate earned merchant liabilities and channel leases; reject reserve double-counting",
+    "Keep A2/D1 as discovery alternatives, with no pilot/implementation gate passed"
+  ],
+  "limitations": "Bounded public-source search is not proof no customers exist; demand, actual prices and contracts require separately authorized validation."
+}

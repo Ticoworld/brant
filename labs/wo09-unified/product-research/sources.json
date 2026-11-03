@@ -145,8 +145,8 @@
   {
     "id": "S14",
     "title": "CoBuild OTX reference source",
-    "url": "https://github.com/xcshuan/cobuild-otx-contracts",
-    "published_or_version": "retrieved2026-11-03",
+    "url": "https://github.com/xcshuan/cobuild-otx-contracts/tree/f18eeaf22f29820ecd9a089481ab45b78b2b7454",
+    "published_or_version": "commit2026-06-24, fetched2026-11-03",
     "publisher": "xcshuan",
     "retrieved_date": "2026-11-03",
     "timezone": "Africa/Lagos",
@@ -251,5 +251,38 @@
     "timezone": "Africa/Lagos",
     "verified_public_content": "Testnet CKB/fiat desk over Fiber/Nostr uses human fiat confirmation/dispute help. Intro mentions zeroCKB while detailed buyer steps require99CKB; onboarding condition needs clarification.",
     "qualification": "Not proof of fiat atomicity, executed commercial orders or free funded capacity; no restricted validation attempted."
+  },
+  {
+    "id": "S24",
+    "title": "Infern compute-serving announcement",
+    "url": "https://talk.nervos.org/t/introducing-infern-serve-an-ai-model-from-your-own-machine-and-get-paid-per-request-over-fiber/10408/1",
+    "published_or_version": "2026-06-21",
+    "publisher": "truthixify",
+    "retrieved_date": "2026-11-03",
+    "timezone": "Africa/Lagos",
+    "verified_public_content": "Testnet compute-serving/pay-per-request experiment, provider-set pricing and proposed balance/channel paths.",
+    "qualification": "No published priced reservation order, quantified funding request or paid adoption found; quality/slashing/atomic-delivery statements not independently qualified."
+  },
+  {
+    "id": "S25",
+    "title": "FiberPass prepaid session announcement",
+    "url": "https://talk.nervos.org/t/fiberpass-prepaid-revocable-payment-sessions-for-fiber-network/10491",
+    "published_or_version": "2026-07-15",
+    "publisher": "XBeach; knmo reply",
+    "retrieved_date": "2026-11-03",
+    "timezone": "Africa/Lagos",
+    "verified_public_content": "Testnet scheduled/prepaid payment beta; asks use-case feedback. A reply raises shutdown of centralized services.",
+    "qualification": "No commercial subscriber evidence or independent custody/settlement qualification performed."
+  },
+  {
+    "id": "S26",
+    "title": "iCKB order utilities listing",
+    "url": "https://www.npmjs.com/package/%40ickb/order",
+    "published_or_version": "retrieved2026-11-03",
+    "publisher": "iCKB",
+    "retrieved_date": "2026-11-03",
+    "timezone": "Africa/Lagos",
+    "verified_public_content": "Public listing identifies CCC-based UDT order utilities; preserved Trade native exchange baseline remains the execution source.",
+    "qualification": "Current GitHub README fetches at master/main returned404. This is a fetch limitation, not proof of deprecation or a new security finding."
   }
 ]

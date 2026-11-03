@@ -49,3 +49,5 @@ python3 labs/wo09-unified/src/model-merkle-lifecycle-economics.py
 ```
 
 Known negative baseline: `test-dust-boundary.cjs` demonstrates the old framed binary's admitted 2-shannon contribution, script-valid but relay-inadequate tiny refund, and blocked closure. It intentionally tests that preserved old admission policy. It is not a passing configured-policy lifecycle or a claim of consensus impossibility. Earlier witness/transaction-builder/cycle-policy failed predictions remain under evidence and research; do not delete them or count unintended errors as security passes.
+
+Subsequent product-value discovery is isolated in `product-research/`. It preserves this technical baseline and rejects the undifferentiated cash-only commercial offer. Read `docs/WO09_MASTER_PRODUCT_SELECTION_GATE.md` for the current MORE CUSTOMER EVIDENCE REQUIRED decision and the seven product-discovery deliverables. No new native payoff qualification is implied by its analytical models.

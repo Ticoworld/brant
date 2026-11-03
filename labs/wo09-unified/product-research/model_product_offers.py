@@ -57,7 +57,9 @@ for archive_monthly in [D(50),D(300),D(1000)]:
    raise_= (D(5000)+total)/D('.19') # 80% backing,1%gross fee, issuer funds these separate expenses
    operations.append(dict(archive_monthly_assumed_usd=str(archive_monthly),buyer_acquisition_each_assumed_usd=str(acquisition_each),buyers=n,support_assumed_usd='800',additional_operating_cost_usd=str(total),raise_to_net_5000_after_costs_usd=str(raise_)))
 # Every successfully withdrawn funded minimum exhausts equal capacity; no reserve magic.
-check('no_free_floor_from_fully_backed_redemption',D(100)-D(10)==D(100)-D(10),{'before':'B=L=100','after':'B=L=90','new_surplus':'0'})
+old_backing,old_liabilities,paid=D(100),D(100),D(10)
+new_backing,new_liabilities=old_backing-paid,old_liabilities-paid
+check('no_free_floor_from_fully_backed_redemption',new_backing-new_liabilities==old_backing-old_liabilities,{'before':'B=L=100','after':'B=L=90','new_surplus':'0'})
 result=dict(classification='EXECUTABLE_EXACT_ARITHMETIC_PRODUCT_MODELS_NOT_VM_OR_CUSTOMER_VALIDATION',as_of='2026-11-03 Africa/Lagos',checks=checks,call_replication=option,financing_scenarios=rows,operating_cost_stress=operations,unpriced=['independent security review','legal/compliance','mainnet conversion/offramp spread','real LP quotes','service-delivery costs not in stated creator budget','contract changes/deployment capacity','archival SLA engineering'],scope='Published asks are references. All hypothetical prices, floors, conversion, option availability, financing acceptance, counts, CAC, support and operations scenarios are assumptions; no solicitation or paid service.')
 (OUT/'model-results.json').write_text(json.dumps(result,indent=2)+'\n')
 print(json.dumps({'model_assertions':len(checks),'financing_rows':len(rows),'operating_stress_rows':len(operations),'classification':result['classification']}))

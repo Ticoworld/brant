@@ -1,0 +1,183 @@
+[
+  {
+    "classification": "HYPOTHETICAL_FINANCIAL_OFFER_NOT_AN_ISSUER_QUOTE",
+    "demand": "No independent Trade order, price preference or LP commitment",
+    "capacity": "Existing experimental baseline:17889CKBcode+322vault+funded wallets; new payoff binary/extra assets/capacity NOT measured",
+    "archive": "Who operates/pays/retains witnesses and exit service:unassigned; real quote/SLA required",
+    "concurrency": "Shared vault serializes; root changes can require rebuilding/resigning",
+    "paid_market": "No actual available secondary bid or promised liquidity",
+    "id": "A2",
+    "creator": {
+      "target_usd": 25000,
+      "immediate_gross_usd": 5000,
+      "locked_usd_at_entry": 20000,
+      "costs": "Development goal5000illustrative; variable service costs, acquisition, support and Trade expenses additional/unquoted",
+      "runway": "90-day proposed service window, not measured operating runway",
+      "obligation": "100 provider-approved allocations of1M API calls; terms, quality, cancellations and resale authorization required",
+      "continued_participation": "Provider serves and recognizes current owners; buyer acceptance/arbiter required for release",
+      "failure": "At-risk5000not recoverable from20000reserve; unconsumed escrow refunds under specified rules"
+    },
+    "buyer": {
+      "entry_usd": 250,
+      "benefit": "One specified90-day1M-call allocation, hypothetical",
+      "protected_usd_at_entry": 200,
+      "initial_at_risk_usd": 50,
+      "upside": "Discount/priority/resale only if provider offers and buyers value it; no return guarantee",
+      "redemption": "Unconsumed refund, reduced only through accepted consumption; NOT implemented in baseline",
+      "transfer": "Whole remaining allocation+cash fallback; host must stop honoring old owner",
+      "liquidity": "Eligible willing buyer required; none identified",
+      "risk": "CKB/USD loss, service failure, acceptance dispute, archive/network availability"
+    },
+    "market": {
+      "capital": "Buyer cash; provider capacity/working capital; separate deployer code/cushion",
+      "fees": "Actual signers/recipient fund miner fee; platform/LP/archive fees unquoted",
+      "external": "Merchant terms, quality, capacity, customer acceptance/dispute, wallet integration"
+    },
+    "counterfactual": "Deposit+staged escrow/pay-per-use wins unless documented scarcity/discount/portability has incremental value"
+  },
+  {
+    "classification": "HYPOTHETICAL_FINANCIAL_OFFER_NOT_AN_ISSUER_QUOTE",
+    "demand": "No independent Trade order, price preference or LP commitment",
+    "capacity": "Existing experimental baseline:17889CKBcode+322vault+funded wallets; new payoff binary/extra assets/capacity NOT measured",
+    "archive": "Who operates/pays/retains witnesses and exit service:unassigned; real quote/SLA required",
+    "concurrency": "Shared vault serializes; root changes can require rebuilding/resigning",
+    "paid_market": "No actual available secondary bid or promised liquidity",
+    "id": "B",
+    "creator": {
+      "target_usd": 25000,
+      "immediate_gross_usd": 5000,
+      "locked_usd_at_entry": 20000,
+      "asset_inventory": "1M exact hypothetical xUDT units separately escrowed; no assumed token price",
+      "costs": "Creator development5000illustrative plus real inventory, delivery/product and Trade expenses",
+      "runway": "90-day modeled maturity, not measured working-capital adequacy",
+      "obligation": "1000 indivisible cash-or-1000-token-unit packages",
+      "continued_participation": "No signature should be needed for funded on-chain settlement; token business value remains external",
+      "failure": "Cash or token inventory remains if correctly funded; creator usefulness/revenue not guaranteed"
+    },
+    "buyer": {
+      "entry_usd": 25,
+      "protected_usd_at_entry": 20,
+      "initial_at_risk_usd": 5,
+      "benefit": "Exclusive choice of cash minimum or1000units, not both",
+      "upside": "Only token market/utility; no equity/revenue right inferred",
+      "redemption": "Mutually exclusive cash/asset settlement; expiry semantics require separate qualification",
+      "transfer": "One authoritative package owner, actual consideration, no detached cash/token legs",
+      "liquidity": "No actual token/call/LP quote",
+      "risk": "Native price risk, worthless token, liquidity and new-contract risk"
+    },
+    "market": {
+      "capital": "Buyers cash plus creator/other supplier exact token inventory and code/cushion",
+      "fees": "Buyer/owner signed fees; LP and archive costs unknown",
+      "external": "Token utility, market pricing, legal rights if claimed"
+    },
+    "counterfactual": "Retain strike cash plus a genuinely available collateralized call; availability/premium unknown, not assumed"
+  },
+  {
+    "classification": "HYPOTHETICAL_FINANCIAL_OFFER_NOT_AN_ISSUER_QUOTE",
+    "demand": "No independent Trade order, price preference or LP commitment",
+    "capacity": "Existing experimental baseline:17889CKBcode+322vault+funded wallets; new payoff binary/extra assets/capacity NOT measured",
+    "archive": "Who operates/pays/retains witnesses and exit service:unassigned; real quote/SLA required",
+    "concurrency": "Shared vault serializes; root changes can require rebuilding/resigning",
+    "paid_market": "No actual available secondary bid or promised liquidity",
+    "id": "C",
+    "creator": {
+      "target_usd": 5000,
+      "immediate_gross_usd": 1000,
+      "locked_usd_at_entry": 4000,
+      "costs": "5000illustrative public-good work budget; governance/admin additional",
+      "runway": "Three-month project scenario; immediate1000may be insufficient",
+      "obligation": "Defined deliverables accepted by named reviewers/buyers",
+      "continued_participation": "Build and seek acceptance; review/refusal/dispute process remains outside trust",
+      "failure": "Unspent4000refundable; spent1000not automatically insured"
+    },
+    "buyer": {
+      "entry_usd": 50,
+      "protected_usd_at_entry": 40,
+      "initial_at_risk_usd": 10,
+      "benefit": "Deliverable/public good, not an invented profit share",
+      "upside": "None promised",
+      "redemption": "Unreleased amount; each accepted payment reduces protection",
+      "transfer": "Requires terms; limited value for nonexclusive public goods",
+      "liquidity": "No resale market observed",
+      "risk": "Acceptance quality, collusion, dispute, lost initial grant"
+    },
+    "market": {
+      "capital": "Supporters/treasury; code/cushion funded separately",
+      "fees": "Payer/reviewer operation and recipient fees specified before use",
+      "external": "Reviewer/committee acceptance; no operatorless arbitrary milestone"
+    },
+    "counterfactual": "Existing staged grant/ordinary escrow or CrowdCell for narrower goal/deadline job"
+  },
+  {
+    "classification": "HYPOTHETICAL_FINANCIAL_OFFER_NOT_AN_ISSUER_QUOTE",
+    "demand": "No independent Trade order, price preference or LP commitment",
+    "capacity": "Existing experimental baseline:17889CKBcode+322vault+funded wallets; new payoff binary/extra assets/capacity NOT measured",
+    "archive": "Who operates/pays/retains witnesses and exit service:unassigned; real quote/SLA required",
+    "concurrency": "Shared vault serializes; root changes can require rebuilding/resigning",
+    "paid_market": "No actual available secondary bid or promised liquidity",
+    "id": "D1",
+    "creator": {
+      "target": "100CKB genuine merchant earnings; NOT new financing",
+      "immediate_usable": "100CKB claim may withdraw;0CKBof reserve is operator development runway",
+      "locked": "100CKBuntil authorized settlement",
+      "costs": "Hosting/proof/wallet/service costs unquoted",
+      "runway": "No runway supplied by owed balances",
+      "obligation": "Record authentic payment and fully fund each earned liability",
+      "continued_participation": "Funding/registration integration needed; later cash exit seeks no operator signature",
+      "failure": "Already funded merchant claim survives only under qualified chain/archive/wallet assumptions"
+    },
+    "buyer": {
+      "entry": "Service purchaser pays100CKB plus separately disclosed0.5CKBhypothetical fee; merchant then owns100CKBreceivable",
+      "benefit": "Delivered service for purchaser; unilateral recovery of earned money for merchant",
+      "protected": "100CKBmerchant liability, not80",
+      "at_risk": "Merchant service cost and unpaid/unregistered receivables not magically protected",
+      "upside": "None; fee/service business only",
+      "redemption": "Full-backed earned-cash withdrawal, not implemented by unchanged80/20covenant",
+      "transfer": "Merchant cash claim can assign if valued; privacy and counterparty eligibility need specification",
+      "liquidity": "No guaranteed claim buyer; direct cash withdrawal is control",
+      "risk": "Unfunded credits, adapter/authenticity, privacy, archive, wallet cost"
+    },
+    "market": {
+      "capital": "Actual service payer funds cash reserve; provider fees separate; code/cushion funder needed",
+      "fees": "0.5CKBillustrative service fee not measured willingness; miner/archive/LPfees separate",
+      "external": "Real service payment, integration, independent privacy/security qualification"
+    },
+    "counterfactual": "Direct merchant payment/self-custodial Fiber, frequent withdrawals, individual Cells or Liquid Cells"
+  },
+  {
+    "classification": "HYPOTHETICAL_FINANCIAL_OFFER_NOT_AN_ISSUER_QUOTE",
+    "demand": "No independent Trade order, price preference or LP commitment",
+    "capacity": "Existing experimental baseline:17889CKBcode+322vault+funded wallets; new payoff binary/extra assets/capacity NOT measured",
+    "archive": "Who operates/pays/retains witnesses and exit service:unassigned; real quote/SLA required",
+    "concurrency": "Shared vault serializes; root changes can require rebuilding/resigning",
+    "paid_market": "No actual available secondary bid or promised liquidity",
+    "id": "D2",
+    "creator": {
+      "target": "500000CKBactive channel capacity",
+      "usable": "500000only if genuinely deployable under agreed lease controls",
+      "locked": "Cannot also promise400000liquid cash in another vault without400000extra capital",
+      "costs": "Operational rent/route/inventory cost unknown",
+      "runway": "90-day lease scenario",
+      "obligation": "Supply actual directional capacity, maintain service, return enforceable capital",
+      "continued_participation": "Channel operation/availability/recovery rules matter",
+      "failure": "No promise unrelated vault controls channel recovery"
+    },
+    "buyer": {
+      "entry": "LP supplies500000CKBcapital; operator hypothetically pays5000CKB rent/90days",
+      "benefit": "Actual funded channel capacity, not earmarked idle vault cash",
+      "protected": "Defined channel rights, not an assumed80%liquid reserve",
+      "at_risk": "Up to committed channel capital under unqualified controls",
+      "upside": "Rent only if genuinely paid;1%example not quote",
+      "redemption": "Channel-specific recovery not implemented by current market",
+      "transfer": "Channel assignment compatibility unproved",
+      "liquidity": "No demand/rent/exit bid",
+      "risk": "Operational loss, directionality, control and recovery assumptions"
+    },
+    "market": {
+      "capital": "Named LP, not simultaneously refund backing; grant is not channel capital",
+      "fees": "Operator rent plus channel/open/close/route/archive expenses",
+      "external": "Actual Fiber lease/control semantics, operator quote and privacy"
+    },
+    "counterfactual": "Operator own capital or existing channel funding arrangements; published self-funding plan is not a Trade lease order"
+  }
+]
