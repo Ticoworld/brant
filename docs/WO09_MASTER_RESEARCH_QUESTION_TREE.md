@@ -31,3 +31,13 @@ Comparative capacity/witness economics justify stopping global explicit-array ex
 ## Integrated Merkle acceptance gate
 
 OBSERVE: Full financial Merkle lifecycle committed on the native node with 298 CKB live vault, 17,408-byte binary. WHY: each published old/new leaf and path validates a specific permitted transition, while global counters track exact deltas from funded creation. No full unrelated records are republished for individual actions. COUNTEREXAMPLE TESTS: wrong sibling and superficially valid totals with arbitrary root reject. NEXT: fund and authorize large batches, rebuild current proofs from public transactions in a fresh process, and test genuinely funded optional increases before claiming scalability or a ratchet.
+
+## Funded increases and archival counterexample
+
+Native sale-funded increase passes: buyer separately pays seller, adds 0.001 CKB to Carol's backing and pays miner fee. Unfunded increase rejects. No global ratio is needed; original minima and exact remaining shannons are conserved. A heterogeneous-units ratio model underpays a promised minimum; keep fixed default and optional explicit funded additions only.
+
+Fresh child retrieves Bob's right and current proof after unrelated updates using public committed history. Controlled withholding of one enrollment prevents recovery. This confirms a history availability dependency, not a private-indexer requirement or universal archive guarantee.
+
+## Scaling debug findings
+
+Duplicated funding inputs are rejected by the native resolver as Dead rather than a literal Duplicate error. The corrected negative test asserts the outpoints are identical and that the real funding Cell remains live before/after rejection. A separate full 16-owner run completed but the next market's builder used the consumed pre-closure funder Cell. Fix: adopt the returned funder wallet successor. Preserve both failed-run logs and the valid 16-owner transactions; neither failure is classified as a covenant exploit or successful wrong-error negative case.

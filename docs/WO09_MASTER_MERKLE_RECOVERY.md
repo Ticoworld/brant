@@ -1,0 +1,9 @@
+# Independent Merkle reconstruction
+
+Native recovery evidence: merkle-financial-1793667979970. A fresh child process receives only latest transaction hash, expected code hash, market identifier and slot index. It follows committed vault input lineage to valid empty creation, then replays published old/new leaves and paths. Each historical old record is checked against reconstructed state; path/root, successor commitment and aggregate liabilities are verified. The final live Cell must match the reconstructed latest root. No original receipts, cached proofs, keys, local tree or private indexer are supplied.
+
+Alice's remaining entitlement is reconstructed after partial redemption; after paid assignment the child identifies Bob as current owner and supplies his current proof. After another holder redeems, Bob's refreshed proof still matches the latest live root. A final replay confirms complete closure and zero backing. Sample three-owner recovery times were about 67–90 milliseconds, including local RPC retrieval and reconstruction; these are local measurements, not remote archive SLAs or portable performance guarantees.
+
+Controlled withholding of one historical enrollment transaction causes explicit recovery failure. This is a deliberately filtered historical source, not observed chain pruning. It shows the required archive dependency rather than proving data can always be obtained. The snapshot fallback needs the current authenticated snapshot witness, whereas this Merkle representation needs sufficient historical updates or a separately authenticated snapshot to reconstruct missing untouched records. A root by itself is insufficient.
+
+Scale results and memory/recovery measurements will be added only after the scaled run completes. No private indexer availability, arbitrary RPC honesty, header-light-client correctness, reorg resilience or paid archival service is established by the local validating-node experiment.

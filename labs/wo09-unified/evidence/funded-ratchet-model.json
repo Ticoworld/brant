@@ -1,0 +1,55 @@
+{
+  "classification": "INTEGER_MODEL_ONLY",
+  "heterogeneous_minimum_counterexample": {
+    "units": [
+      1,
+      9
+    ],
+    "minimum": [
+      9,
+      1
+    ],
+    "naive_ratio_payout": [
+      1,
+      9
+    ]
+  },
+  "funded_exact_entitlement_orders": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      1,
+      0
+    ]
+  ],
+  "surplus_policy": "zero unallocated surplus; donated capital is immediately assigned to named outstanding liabilities",
+  "rounding_policy": "floor initial 80 percent per claim; partial settlement subtracts exact shannons; no global ratio",
+  "limitations": [
+    "model is not a new native result",
+    "does not establish rational fee willingness or uniform token-price floor"
+  ]
+}

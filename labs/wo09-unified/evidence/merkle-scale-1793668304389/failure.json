@@ -1,0 +1,3 @@
+{
+  "error": "Error: TransactionFailedToResolve: Unknown(OutPoint(0x39fe54250160cf0139ab313a18de2d5c8975ef6adb18b221cf3868690ff287e901000000))\n    at Engine.rpc (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:5:351)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Engine.send (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:16:35)\n    at async /workspace/trade/labs/wo09-unified/src/run-merkle-scale.cjs:15:97"
+}
