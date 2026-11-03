@@ -1,0 +1,17 @@
+{
+  "classification": "ACTUAL_PRIVATE_CHAIN_TWO_INDEPENDENT_MARKETS",
+  "same_committed_block": "0x7442cc11e110f8a363b41eb88c9623a55bd0518f15803fc7b7c22cf6f091f105",
+  "transactions": [
+    "0x82f2b3aded26bc2ea6504012f677c4cfbb80bd4f68aef999423527a0d5158933",
+    "0xdc208f5efb32cfae83354cb5221151aa2819d76946ad283e3e3e7b8b5dffbe25"
+  ],
+  "markets": [
+    "0x9b8989dfaa2fcce64fc09f9ca64dda94e903c173817e0ceb9e0fa16b4a5b4d78",
+    "0x89749786b4ce2d4e4f8e385ba5ebc5e57223326bcdc56ab802ad3a56820bb4f6"
+  ],
+  "limitations": [
+    "Two disjoint wallet/market input sets only; not a throughput benchmark",
+    "Same-vault contention remains",
+    "Two vaults cannot currently compose inside one transaction"
+  ]
+}

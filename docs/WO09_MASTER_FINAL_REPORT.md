@@ -31,3 +31,7 @@ Product classification: END-TO-END RESEARCH DEMONSTRATION for a fixed three-owne
 27. Git: exact checkpoint SHAs are recorded by verified non-force pushes in the execution history. Protected refs remain untouched; no PR or public deployment.
 
 Technical: ADVANCE for bounded financial lifecycle; REVISE global/high-volume representation. Commercial: UNPROVED. These qualifications are intentional; passing a native lifecycle does not settle the product question.
+
+Additional qualifications: maturity was subsequently executed at block 100 with real waiting and early-consensus/script rejections; pre-activation refund was exercised. Two distinct native markets' enrollment transactions committed in the same block, with independent refunds/closures. Total run count across preserved new native directories is 76 committed transactions (12 v1 + 12 v2 + 12 snapshot + 14 maturity + 17 kernels + 9 independent markets); their rights/workloads are explicitly different. This number is not a security score.
+
+Stopping decision is comparative: do not extend the explicit-array architecture as a global vault, and do not select this cold-deployment prototype as a flagship. Preserve bounded implementations and evidence. A full financial Merkle/bitmap rival and customer-relevant large-cohort qualification are still research tasks, not completed gates or proven-impossible mechanisms.

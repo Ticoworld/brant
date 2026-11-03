@@ -15,3 +15,15 @@ Example contributions total 21.1 CKB; 16.88 remains backing and 4.22 gross is cr
 ## Q1 native follow-up
 
 Direct three-record covenant now compiles to 15,136 bytes and committed a full bounded native lifecycle: funded formation, three separately signed enrollments, reserve-preserving creator release, partial redemption, paid assignment, new-owner redemption and designated-funder closure. No Groth16, always-success vault lock or operator checkpoint is used. Nine intended negative cases reject. This supports direct validation for this narrow market; it does not qualify mutable-root/bitmap versions or commercial economics. Code Cell 15,177 CKB and vault 378 CKB are real additional capital costs. NEXT: preserve baseline; expand refund/fee/identity tests; reconstruct current state from committed RPC in a fresh process; compare bounded records against root representations and smaller financial products.
+
+## Snapshot and availability experiment
+
+WHAT IF a full authenticated snapshot replaces both explicit live records and Merkle proofs? Native lifecycle succeeds with the same financial transitions. WHY: bounded deterministic state can be hashed and fully validated directly. RESULT: 208 CKB saved per three-member vault; 248 CKB more code publication; 280 more bytes per ordinary transition. Fresh process reconstructs after another holder's redemption and after paid assignment using the latest transaction witness. COUNTEREXAMPLE: without that witness, the 32-byte root does not reveal the records. Explicit live state remains the availability fallback.
+
+## Maturity, refunds and independent markets
+
+Actual early script and future-since node submissions reject; after real block maturity the same financial request executes. Pre-activation refund and re-enrollment succeed without creator cooperation. Two disjoint markets commit independently signed entries in the same block, then separately refund/close. Same-market UTXO conflicts remain. These bounded observations do not establish adversarial network throughput or universal censorship resistance.
+
+## Stop/revise decision
+
+Comparative capacity/witness economics justify stopping global explicit-array expansion. Freeze successful bounded financial variants; no commercial winner or omnibus market is selected. Further kernel polishing or feature accumulation is not a substitute for creator budget, buyer preference, availability and liquidity evidence. The full financial Merkle alternative and realistic large-user workloads remain unproved.
