@@ -27,3 +27,7 @@ Actual early script and future-since node submissions reject; after real block m
 ## Stop/revise decision
 
 Comparative capacity/witness economics justify stopping global explicit-array expansion. Freeze successful bounded financial variants; no commercial winner or omnibus market is selected. Further kernel polishing or feature accumulation is not a substitute for creator budget, buyer preference, availability and liquidity evidence. The full financial Merkle alternative and realistic large-user workloads remain unproved.
+
+## Integrated Merkle acceptance gate
+
+OBSERVE: Full financial Merkle lifecycle committed on the native node with 298 CKB live vault, 17,408-byte binary. WHY: each published old/new leaf and path validates a specific permitted transition, while global counters track exact deltas from funded creation. No full unrelated records are republished for individual actions. COUNTEREXAMPLE TESTS: wrong sibling and superficially valid totals with arbitrary root reject. NEXT: fund and authorize large batches, rebuild current proofs from public transactions in a fresh process, and test genuinely funded optional increases before claiming scalability or a ratchet.
