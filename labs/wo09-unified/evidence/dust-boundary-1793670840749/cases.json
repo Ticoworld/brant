@@ -1,0 +1,12 @@
+[
+  {
+    "label": "ordinary_refund_fee_exceeds_dust_amount",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 61 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/6fa59308ec2dcb1addc52b3437e6a7793067f427b6d2afea189ffc87b6175e88.html#61 })"
+  },
+  {
+    "label": "cushion_cannot_close_with_dust_obligation",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 32 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/6fa59308ec2dcb1addc52b3437e6a7793067f427b6d2afea189ffc87b6175e88.html#32 })"
+  }
+]

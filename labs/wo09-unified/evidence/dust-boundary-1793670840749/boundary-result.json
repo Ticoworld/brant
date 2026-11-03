@@ -1,0 +1,16 @@
+{
+  "classification": "ACTUAL_NATIVE_DUST_ENROLLMENT_AND_FEE_POLICY_TEST",
+  "claim_shannons": "1",
+  "contribution_shannons": "2",
+  "one_shannon_fee_vm": {
+    "cycles": "0x1b9642"
+  },
+  "node": {
+    "error": "PoolRejectedTransactionByMinFeeRate: The min fee rate is 1000 shannons/KW, requiring a transaction fee of at least 1002 shannons, but the fee provided is only 1"
+  },
+  "limitations": [
+    "Relay observation for this local configuration, not a consensus impossibility",
+    "No real third-party funds",
+    "Original holder signature still required for refund; no claim of unconditional cushion recovery"
+  ]
+}
