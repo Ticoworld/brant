@@ -1,0 +1,18 @@
+{
+  "verified_implementation_commit": "774c77496a252fdd52acbcdb4ce4889908a691e0",
+  "remote": "private Ticoworld/trade",
+  "branch": "wo13-trade-experience",
+  "verification": "git ls-remote returned the exact local implementation commit after non-force retry",
+  "first_push": {
+    "status": "REJECTED",
+    "remote_message": "fatal error in commit_refs",
+    "cause": "Not established; not an application or test failure"
+  },
+  "retry": {
+    "method": "ordinary non-force git push, no authorization or network change",
+    "status": "SUCCESS"
+  },
+  "protected_wo09_wo12_remote_heads": "Byte-identical before and after; verified with git ls-remote/cmp",
+  "public_deployment": false,
+  "public_signing_enabled": false
+}
