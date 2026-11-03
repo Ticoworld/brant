@@ -17,7 +17,11 @@ static int depth_for(uint64_t n){int d=0;while((1ULL<<d)<n)d++;return d;}
 static int valid(const uint8_t*d,uint64_t c){uint64_t n=rd(d+120);return !memcmp(d,"TCM0001",8)&&rd(d+80)<=1&&!(rd(d+88)>>56)&&n>0&&n<=1024&&rd(d+112)<=n&&(__uint128_t)rd(d+72)+rd(d+(rd(d+80)?104:96))==c;}
 int main(void){uint8_t script[85],self[32],a[STATE],b[STATE];if(script32(script,self))return 10;int ni=count_cells(CKB_SOURCE_INPUT),no=count_cells(CKB_SOURCE_OUTPUT);if(ni<1||no<1)return 11;int vi=-1,vo=-1;
  for(int side=0;side<2;side++){int n=side?no:ni;size_t s=side?CKB_SOURCE_OUTPUT:CKB_SOURCE_INPUT;for(int i=0;i<n;i++){int t=type_is(i,s,self),l=lock_is(i,s,self);if(t!=l)return 12;if(t){if((side?vo:vi)!=-1)return 13;if(side)vo=i;else vi=i;}}}
- uint64_t wn=MAX_WITNESS;if(ckb_load_witness(witness,&wn,0,ni,CKB_SOURCE_INPUT)||wn<16)return 14;uint64_t op=rd(witness),m=rd(witness+8);if(m>MAX_UPDATES)return 15;
+ uint64_t wn=0;int ended=0;
+ // Standard secp hashes all extra witnesses, each bounded to 32 KiB. Preserve full payload by framing it in up to four signed chunks.
+ for(int chunk=0;chunk<4;chunk++){uint64_t size=MAX_WITNESS-wn;int r=ckb_load_witness(witness+wn,&size,0,ni+chunk,CKB_SOURCE_INPUT);if(r==CKB_INDEX_OUT_OF_BOUND){ended=1;break;}if(r||size>32768||size>MAX_WITNESS-wn)return 14;wn+=size;}
+ if(!ended){uint64_t size=0;if(ckb_load_witness(0,&size,0,ni+4,CKB_SOURCE_INPUT)!=CKB_INDEX_OUT_OF_BOUND)return 14;}
+ if(wn<16)return 14;uint64_t op=rd(witness),m=rd(witness+8);if(m>MAX_UPDATES)return 15;
  if(vi<0){if(vo!=0||op||m||wn!=16||minted_id(script+53,0)||bytes(b,STATE,0,CKB_SOURCE_OUTPUT)||!valid(b,cap(0,CKB_SOURCE_OUTPUT)))return 20;if(rd(b+80)||rd(b+96)||rd(b+104)||rd(b+112)||!lock_is(0,CKB_SOURCE_INPUT,b+8))return 21;uint8_t h[32]={0};for(int d=0;d<depth_for(rd(b+120));d++){uint8_t t[32];branch(h,h,t);memcpy(h,t,32);}return memcmp(h,b+128,32)?22:0;}
  if(vi!=0||bytes(a,STATE,0,CKB_SOURCE_INPUT)||!valid(a,cap(0,CKB_SOURCE_INPUT)))return 30;if(!fees(ni,no))return 31;
  if(vo<0){if(op!=7||m||wn!=16||rd(a+(rd(a+80)?104:96))||rd(a+112)||ni!=2||no!=1||!wallet(1,CKB_SOURCE_INPUT,a+8)||!wallet(0,CKB_SOURCE_OUTPUT,a+8)||cap(0,CKB_SOURCE_OUTPUT)<cap(1,CKB_SOURCE_INPUT))return 32;return 0;}

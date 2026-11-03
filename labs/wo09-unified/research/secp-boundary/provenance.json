@@ -1,0 +1,15 @@
+{
+  "repository": "nervosnetwork/ckb-system-scripts",
+  "tag": "v0.5.4",
+  "resolved_commit": "e08e6016f16072fc2f44cf889ae063fa5b7e10c7",
+  "tag_ref": {
+    "sha": "e08e6016f16072fc2f44cf889ae063fa5b7e10c7",
+    "type": "commit",
+    "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/commits/e08e6016f16072fc2f44cf889ae063fa5b7e10c7"
+  },
+  "retrieved_files": {
+    "secp256k1_blake160_sighash_all.c": "a32784cc495764095cea9b0a8314c4ccefe380c4a2347d5a415cb798c9506eb5",
+    "common.h": "8fa8c5b087008423af29d5535d58e41f2743411737ef9ac8185f9d1f9c9aaddb"
+  },
+  "qualification": "official source explains observed -22; no claim of newly reproducing system binary build"
+}

@@ -41,3 +41,11 @@ Fresh child retrieves Bob's right and current proof after unrelated updates usin
 ## Scaling debug findings
 
 Duplicated funding inputs are rejected by the native resolver as Dead rather than a literal Duplicate error. The corrected negative test asserts the outpoints are identical and that the real funding Cell remains live before/after rejection. A separate full 16-owner run completed but the next market's builder used the consumed pre-closure funder Cell. Fix: adopt the returned funder wallet successor. Preserve both failed-run logs and the valid 16-owner transactions; neither failure is classified as a covenant exploit or successful wrong-error negative case.
+
+## Scale result and unexpected witness boundary
+
+Complete financial Merkle lifecycles now execute natively for 16,100,1,000 actual funded owners, including every remaining redemption and final closure. Ordinary individual actions publish paths and old/new leaf only; 1,000-owner payload is 440 bytes, complete redemption 1,254 bytes / about 2.04M cycles.
+
+WHY the first 100 batch failed: standard secp error -22 is a 32,768-byte per-witness bound. The 32,816-byte payload exceeded it. REDESIGN: bounded signed chunk framing; covenant concatenates up to four chunks and validates exact payload. No root/owner/funding check removed. Further false assumption: configured max_tx_verify_cycles 70M is not demonstrated to be a hard admission cutoff; larger batches actually commit without changing config. Official CKB source queues larger work. Preserve both failed predictions and successful commitments.
+
+WHAT IF smaller batches win? Same-target native test shows seven <=16-owner batches use about 209M cycles vs315.5M for one100 batch, with6% more bytes and seven shared-state transitions. Select batch size by coordination, latency and fee/cycle trade-offs; no universal100 batch optimum.

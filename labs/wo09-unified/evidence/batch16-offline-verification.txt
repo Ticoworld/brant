@@ -1,0 +1,16 @@
+{
+  "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+  "committed_transactions": 115,
+  "leaf_updates": 202,
+  "total_paid_fees_shannons": "2410000",
+  "markets": [
+    {
+      "id": "0x2f29f6aea773500eaba649baf3001918e485a05ee0743173adcd584cccd096b9",
+      "n": 100,
+      "closed": true,
+      "transactions": 112,
+      "market_fees_shannons": "1210000",
+      "remaining_backing": "0"
+    }
+  ]
+}

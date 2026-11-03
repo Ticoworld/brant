@@ -15,4 +15,5 @@ function data(m){const t=metadata(m);return C.hx(Buffer.concat([Buffer.from('TCM
 function capacity(m){const t=metadata(m);return m.k+(m.phase?t.B:t.P);}
 function update(m,op,changes=[],phase=m.phase){const next={...m,tree:m.tree.clone(),phase};const parts=[C.le(op),C.le(changes.length)];for(const {i,r}of changes){parts.push(C.le(i),encodeLeaf(next.tree.records[i]),encodeLeaf(r),...next.tree.proof(i).map(C.b));next.tree.set(i,r);}return {next,witness:C.hx(Buffer.concat(parts))};}
 function proofRoot(id,i,r,proof){let h=leaf(id,i,r),j=i;for(const p of proof){h=(j&1)?branch(p,h):branch(h,p);j>>=1;}return h;}
-module.exports={C,ZERO,empty,Tree,metadata,data,capacity,update,encodeLeaf,decodeLeaf,branch,proofRoot};
+function chunks(hex){const b=C.b(hex),out=[];for(let i=0;i<b.length;i+=16384)out.push(C.hx(b.subarray(i,i+16384)));return out;}
+module.exports={chunks,C,ZERO,empty,Tree,metadata,data,capacity,update,encodeLeaf,decodeLeaf,branch,proofRoot};

@@ -1,0 +1,22 @@
+const fs=require('fs'),z=require('zlib'),path=require('path'),assert=require('assert/strict'),M=require('./merkle-lib.cjs'),{C}=M;
+const dir=path.resolve(process.argv[2]);function read(name){const p=dir+'/'+name;return JSON.parse(fs.existsSync(p)?fs.readFileSync(p):z.gunzipSync(fs.readFileSync(p+'.gz')));}
+const ev=read('events.json'),raw=z.gunzipSync(fs.readFileSync(dir+'/raw.jsonl.gz')).toString().trim().split('\n').map(JSON.parse),markets=new Map(),cells=new Map();const genesis=raw.find(r=>r.method==='get_block_by_number'&&r.params[0]==='0x0'&&r.response.result)?.response.result;assert(genesis);
+const key=(hash,index)=>hash+':'+Number(BigInt(index));for(const t of genesis.transactions)t.outputs.forEach((o,i)=>cells.set(key(t.hash,i),{output:C.camel(o),data:t.outputs_data[i]}));
+function decode(hex){const b=C.b(hex),u=o=>b.readBigUInt64LE(o);assert.equal(b.length,160);assert.equal(b.subarray(0,8).toString(),'TCM0001\0');return {phase:u(80),P:u(96),B:u(104),count:u(112),n:Number(u(120)),root:C.hx(b.subarray(128)),k:u(72),funder:C.hx(b.subarray(8,40))};}
+const committed=new Set(raw.filter(r=>r.method==='get_transaction'&&r.response.result?.tx_status.status==='committed').map(r=>r.params[0]));let totalFees=0n,updates=0;const rows=[];
+for(const event of ev){assert(committed.has(event.hash),event.label);assert.equal(event.committed.tx_status.status,'committed');const tx=event.tx;let totalInput=0n;const inputs=tx.inputs.map(i=>{const k=key(i.previousOutput.txHash,i.previousOutput.index),c=cells.get(k);assert(c,'missing/spent input '+k);totalInput+=BigInt(c.output.capacity);cells.delete(k);return c;});const outputs=tx.outputs.reduce((s,c)=>s+BigInt(c.capacity),0n);assert(totalInput>=outputs);const fee=totalInput-outputs;totalFees+=fee;
+ const outputMarket=tx.outputs[0].type?.codeHash===tx.outputs[0].lock.codeHash;
+ const inputMarket=inputs[0].output.type?.codeHash===inputs[0].output.lock.codeHash;
+ if(outputMarket||inputMarket){const script=outputMarket?tx.outputs[0].type:inputs[0].output.type,id=script.args;const w=Buffer.concat(tx.witnesses.slice(tx.inputs.length).map(C.b));assert(w.length>=16);const op=Number(w.readBigUInt64LE(0)),n=Number(w.readBigUInt64LE(8));let m=markets.get(id);
+  if(!m){assert.equal(op,0);const d=decode(tx.outputsData[0]);m={tree:new M.Tree(d.n,id),last:null,closed:false,transactions:0,fees:0n};markets.set(id,m);assert.equal(m.tree.root,d.root);}
+  else {assert(!m.closed);assert.equal(tx.inputs[0].previousOutput.txHash,m.last);}
+  const tree=m.tree,stride=104+32*tree.depth;assert.equal(w.length,16+n*stride);
+  for(let j=0;j<n;j++){const item=w.subarray(16+j*stride),i=Number(item.readBigUInt64LE(0)),old=M.decodeLeaf(item.subarray(8,56)),next=M.decodeLeaf(item.subarray(56,104)),proof=Array.from({length:tree.depth},(_,d)=>C.hx(item.subarray(104+32*d,136+32*d)));assert.deepEqual(tree.records[i],old);assert.equal(M.proofRoot(id,i,old,proof),tree.root);tree.set(i,next);updates++;}
+  if(outputMarket){const d=decode(tx.outputsData[0]),t=M.metadata({tree,phase:d.phase});assert.equal(d.root,tree.root);assert.equal(d.P,t.P);assert.equal(d.B,t.B);assert.equal(d.count,BigInt(t.count));assert.equal(BigInt(tx.outputs[0].capacity),d.k+(d.phase?d.B:d.P));assert.deepEqual(tx.outputs[0].lock,tx.outputs[0].type);m.state=d;}
+  else {assert.equal(op,7);assert.equal(M.metadata({tree,phase:m.state.phase}).count,0);assert.equal(C.U.scriptToHash(tx.outputs[0].lock),m.state.funder);assert.equal(BigInt(tx.outputs[0].capacity),BigInt(inputs[1].output.capacity)+m.state.k-fee);m.closed=true;}
+  m.last=event.hash;m.transactions++;m.fees+=fee;
+  rows.push({label:event.label,market:id,n:tree.n,op,updates:n,bytes:event.bytes,cycles:Number(BigInt(event.cycles.cycles)),fee_shannons:fee.toString(),inputs:tx.inputs.length,outputs:tx.outputs.length,extra_witness_bytes:w.length,witness_chunks:tx.witnesses.slice(tx.inputs.length).map(w=>(w.length-2)/2)});
+ }
+ tx.outputs.forEach((output,i)=>cells.set(key(event.hash,i),{output,data:tx.outputsData[i]}));
+}
+const report={classification:'INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY',committed_transactions:ev.length,leaf_updates:updates,total_paid_fees_shannons:totalFees.toString(),markets:[...markets].map(([id,m])=>({id,n:m.tree.n,closed:m.closed,transactions:m.transactions,market_fees_shannons:m.fees.toString(),remaining_backing:M.metadata({tree:m.tree,phase:1n}).B.toString()})),rows};fs.writeFileSync(dir+'/independent-verification.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({...report,rows:undefined},null,2));

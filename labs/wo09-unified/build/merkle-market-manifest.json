@@ -1,6 +1,6 @@
 {
-  "bytes": 17408,
-  "sha256": "bded5a8fac6347be17834e3204b5f3d94828977c759d41c628ea257e95634366",
+  "bytes": 17488,
+  "sha256": "925f4c387f34d8c0f2129dfa9cd3587ce6601158b18cdf5d1bbf2684cd2f5a7a",
   "command": [
     "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
     "cc",

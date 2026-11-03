@@ -1,0 +1,57 @@
+[
+  {
+    "classification": "COMPLETE_NATIVE_FINANCIAL_MERKLE_LIFECYCLE",
+    "N": 100,
+    "market": "0x2f29f6aea773500eaba649baf3001918e485a05ee0743173adcd584cccd096b9",
+    "transactions": 113,
+    "initial_backing": "1000000000",
+    "creator_gross": "250000000",
+    "final_backing": "0",
+    "cushion_returned": "29800000000",
+    "enrollment_recovery": {
+      "classification": "FRESH_PROCESS_COMMITTED_RPC_MERKLE_REPLAY",
+      "tip": "0x98af06cfc4527487d0fbb75561afeedf647bf7bd6f83fe8c2a68f4c187073507",
+      "closed": false,
+      "target": 100,
+      "history_transactions": 9,
+      "rpc_calls": 10,
+      "root": "0x876ec0381d6163871e239a9ea95ae57936d48141ee502e114f47cf538232645f",
+      "owner": "0x05814ed3287977b05cea79db2461f61292c2815c2b19514d5e8a5ca695eb4f9b",
+      "claim": {
+        "p": "12500000",
+        "b": "10000000"
+      },
+      "index": 0,
+      "proof": [
+        "0x5f7469c02bd41f6cefea96d4653c01f73c0fe84223136d7692310beee764534d",
+        "0x9f3475922a031633e04cfa0b5fdf7ca2d9acf9660b3cf006efca9955e0161bff",
+        "0xf78e1ec5240541cd37b0fef88c7914a066b3efcff45400fe8e339231e256af06",
+        "0xf87c2b621ccae57c04f42190a4f405df9be85ceb1139c680e6707135674dcdc5",
+        "0x20e411f538d1b448163812385d004688c4b6b1d99762258d8953ace2d803c83f",
+        "0xf5092ee9972211964fe5cf4c018fb22a2cbbb91591b341310aeab0e39ad6e7ec",
+        "0x74e67aea5ac5afd83cbefee1887cbd48f76ed25ee0552da2cddabbf434d554af"
+      ],
+      "elapsed_ms": 91.925217,
+      "rss_bytes": 69427200,
+      "remaining_backing": "1000000000",
+      "history": [
+        "0xbf89200b01aa11e6cac516648b80b1154a2bc2b72cc827471955944afbd10101",
+        "0x68894f5db1ae3e2fc5c51743969f2be8c3b95dd7a6f8dbb6dea8c504058e12ac",
+        "0x46b682ce9722aab0f115e39d1dbafc4dfbcd0d008805fea985de9de025a95bd0",
+        "0xf74235a5f7e4dd6eb0002aaa2a9b459f850b5f82afda9f7a89e790e3faab5184",
+        "0xe7afb2d17d49fa2af5798a226a58dbb85e58ee69592cba4b94128c4f24844431",
+        "0xa5de7ffd311665cfe10b792fd226cece87fec550341499fb5f056e49bd3caf74",
+        "0x08993018521bb55f1cd3ab1454c0388cba2d3342c7ce56cc4b1d35a0e6d74a5a",
+        "0xcefd3e1280acc1bc87e6983e9c2dd2129ee8ec26fa993c813f1d9d7377f5b8dc",
+        "0x98af06cfc4527487d0fbb75561afeedf647bf7bd6f83fe8c2a68f4c187073507"
+      ],
+      "dependencies": "archival committed transaction witnesses plus latest live Cell; no local receipts or private indexer"
+    },
+    "wall_ms": 6700.348771,
+    "host_peak_rss_bytes": 159559680,
+    "configured_pool_cycle_value": 70000000,
+    "configuration_changed": false,
+    "batch_size": 16,
+    "enrollment_fee_each": "10000"
+  }
+]
