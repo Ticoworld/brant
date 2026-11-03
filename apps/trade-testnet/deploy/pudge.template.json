@@ -1,0 +1,11 @@
+{
+  "network": "pudge",
+  "genesis": null,
+  "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+  "code": null,
+  "secp": null,
+  "status": "NOT_DEPLOYED_SIGNING_DISABLED",
+  "binary_bytes": 17848,
+  "code_capacity_ckb": 17889,
+  "vault_capacity_ckb": 322
+}

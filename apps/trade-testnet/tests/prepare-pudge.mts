@@ -1,0 +1,5 @@
+// Read-only preparation. Does not create/sign/send a deployment transaction.
+import fs from 'node:fs';import {ccc} from '@ckb-ccc/core';
+const client=new ccc.ClientPublicTestnet({url:'https://testnet.ckb.dev/',fallbacks:[]});
+const raw=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'get_block_by_number',params:['0x0']})}).then(r=>r.json());if(raw.error)throw Error(raw.error.message);
+const d=JSON.parse(fs.readFileSync(new URL('../deploy/pudge.template.json',import.meta.url),'utf8'));d.genesis=raw.result.header.hash;const info=await client.getKnownScript(ccc.KnownScript.Secp256k1Blake160);d.secp=info.cellDeps[0].cellDep;d.status='GENESIS_AND_SECP_READ_CODE_NOT_DEPLOYED';const json=JSON.stringify(d,(_,v)=>typeof v==='bigint'?v.toString():v,2)+'\n';fs.writeFileSync(new URL('../public/pudge.json',import.meta.url),json);fs.writeFileSync(new URL('../deploy/pudge.prepared.json',import.meta.url),json);console.log(json);
