@@ -108,3 +108,9 @@ Next human action:
 4. After actual approval and checks, let the real wallet sign; broadcast only under the stated gates, wait for commitment, verify live code and identity, and then propose the exact manifest before the two-owner lifecycle. Nothing in this blocked report grants that approval.
 
 No deployment approval was requested prematurely because there is no actual funded, reviewable transaction. No production/mainnet readiness, commercial success or real-user adoption is asserted. Stop this attempt at the external-wallet gate; resume from the preserved branch when the human signer/access requirement is resolved.
+
+## Owner-browser continuation, 2026-11-03 UTC
+
+The owner explicitly confirmed no UTXO Global CKB testnet wallet is connected to this cloud environment and authorized only read-only checks and preparation. No deployment or spending is authorized. The focused [owner-browser handoff](WO12_OWNER_BROWSER_HANDOFF.md) gives the local preserved-app route, public-address intake, funding boundaries and later transaction approval sequence. It does not qualify an external wallet or invent funded transactions. Verdict remains C. EXTERNAL WALLET BLOCKED; public transaction counts remain zero. The next required human action is connection from the owner's physical browser and provision of two public testnet addresses, not a private key or deployment approval.
+
+Read-only refresh at 22:21 UTC is preserved in `labs/wo12-pudge-live-acceptance/evidence/preflight-1793744489418` and `relay-1793744495473.json`: expected genesis, indexer/historical retrieval and configured live dependencies resolved again; relay minimum remained 1000 shannons/1000bytes. Frozen binary SHA256 was rechecked unchanged. These reads are not Trade lifecycle transactions or wallet ownership evidence. No prior source or manifest was modified.
