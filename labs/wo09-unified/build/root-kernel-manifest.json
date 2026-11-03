@@ -1,0 +1,25 @@
+{
+  "bytes": 11576,
+  "sha256": "5493ac8a35dc70329ab6169b4783265ecad758bacd33795ea67edc9b144c3320",
+  "command": [
+    "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+    "cc",
+    "-target",
+    "riscv64-freestanding",
+    "-mcpu=generic_rv64+m+c",
+    "-Oz",
+    "-nostdlib",
+    "-fno-builtin",
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+    "-Wl,--gc-sections",
+    "-Wl,-e,_start",
+    "-Wl,--strip-all",
+    "-Wl,--image-base=0x10000",
+    "-o",
+    "/workspace/trade/labs/wo09-unified/build/root_kernel",
+    "/workspace/trade/labs/wo09-unified/contracts/root_kernel.c"
+  ]
+}

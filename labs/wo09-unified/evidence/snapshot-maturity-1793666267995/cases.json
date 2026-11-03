@@ -1,0 +1,87 @@
+[
+  {
+    "label": "reject_unfunded_entitlement_during_enrollment",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 33 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#33 })"
+  },
+  {
+    "label": "reject_creator_taking_protected_shannon",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 33 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#33 })"
+  },
+  {
+    "label": "reject_script_redemption_before_promised_maturity",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 71 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#71 })"
+  },
+  {
+    "label": "reject_node_submission_with_future_absolute_since",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(Immature(Inputs[0]): the transaction is immature because of the since requirement)"
+  },
+  {
+    "label": "reject_excess_fee_deduction",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#31 })"
+  },
+  {
+    "label": "reject_fee_exceeding_one_shannon_redemption",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 74 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#74 })"
+  },
+  {
+    "label": "reject_malformed_state_data",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 33 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#33 })"
+  },
+  {
+    "label": "reject_covenant_lock_replacement",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 12 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#12 })"
+  },
+  {
+    "label": "reject_redemption_redirected_to_other_owner",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 70 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#70 })"
+  },
+  {
+    "label": "reject_redemption_without_owner_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 })"
+  },
+  {
+    "label": "reject_closure_with_outstanding_rights",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 32 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#32 })"
+  },
+  {
+    "label": "bob_stale_shared_input",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x97e98052a7fb28f9f3d581517b5c0a526e06d8da4fbbed995157433795fec15600000000))"
+  },
+  {
+    "label": "reject_assignment_without_positive_consideration",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 61 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#61 })"
+  },
+  {
+    "label": "reject_missing_seller_authorization",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 })"
+  },
+  {
+    "label": "reject_former_owner_after_paid_assignment",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 70 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#70 })"
+  },
+  {
+    "label": "reject_cushion_return_to_final_claimant_instead_of_funder",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 32 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e.html#32 })"
+  },
+  {
+    "label": "reject_reuse_of_closed_market_input",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x46d4e23c6f2d4fa2b6b066c1cec760cd3add45373d0ae3ee4f3c94b9818c674b00000000))"
+  }
+]

@@ -4,6 +4,22 @@
 #define COHORT 3
 #endif
 #define SIZE (96+48*COHORT)
+#ifdef SNAPSHOT
+// Authenticated full old/new snapshots in an extra transaction witness.
+// No Merkle membership, succinct prover or hidden state database is used.
+static int snapshot_bytes(void *dest,uint64_t size,size_t index,size_t src){
+ if(size!=SIZE)return 95;
+ uint8_t committed[32],w[2*SIZE],h[32];
+ if(bytes(committed,32,index,src))return 96;
+ uint64_t n=sizeof(w);int inputs=count_cells(CKB_SOURCE_INPUT);
+ if(inputs<1||ckb_load_witness(w,&n,0,(size_t)inputs,CKB_SOURCE_INPUT)||n!=sizeof(w))return 97;
+ const uint8_t *state=w+(src==CKB_SOURCE_OUTPUT?SIZE:0);
+ blake2b_state st;blake2b_init(&st,32);blake2b_update(&st,state,SIZE);blake2b_final(&st,h,32);
+ if(memcmp(committed,h,32))return 98;memcpy(dest,state,SIZE);return 0;
+}
+#define bytes snapshot_bytes
+#endif
+
 static int pure(int i,size_t src){uint64_t n=0;return plain(i,src)&&standard_owner(i,src)&&ckb_load_cell_data(0,&n,0,i,src)==0&&n==0;}
 static uint64_t cap(int i,size_t src){uint64_t v=0;return field(&v,8,i,src,CKB_CELL_FIELD_CAPACITY)?0:v;}
 static int wallet(int i,size_t src,const uint8_t*h){return pure(i,src)&&lock_is(i,src,h);}
@@ -36,5 +52,6 @@ int main(void){uint8_t script[85],self[32],a[SIZE],b[SIZE];if(script32(script,se
  if(rd(a+80)){if(memcmp(x,y,40)||rd(y+40)>=rd(x+40)||!absolute_since(0,rd(a+88)))return 71;}
  else {for(int j=0;j<48;j++)if(y[j])return 72;}
  if(cap(0,CKB_SOURCE_OUTPUT)>=cap(0,CKB_SOURCE_INPUT))return 73;
+ if(cap(1,CKB_SOURCE_OUTPUT)<cap(1,CKB_SOURCE_INPUT))return 74;
  return 0;
 }

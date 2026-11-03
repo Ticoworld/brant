@@ -1,0 +1,30 @@
+{
+  "classification": "ACTUAL_CKB_0210_PRIVATE_CHAIN",
+  "creator_gross_shannons": "2527500000",
+  "protected_initial_shannons": "10110000000",
+  "cushion_shannons": "17000000000",
+  "representation": "blake2b_full_snapshot_commitment",
+  "snapshots": "authenticated 240-byte old and new state in extra witness",
+  "wallet_fee_each_shannons": "10000",
+  "remaining_liability": "0",
+  "binary": {
+    "hash": "0x7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e",
+    "outPoint": {
+      "txHash": "0x7b0cdb0156704bc145f99ee8728491314cefd282fd28c661075ed27f71b1d6c4",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 15424,
+    "occupied": "1546500000000"
+  },
+  "notes": [
+    "Fixed three-record directly validated cohort; no Merkle tree or SP1",
+    "All financial transitions committed; all code roles use covenant identity",
+    "Record owners and transfers authenticated by actual secp input scripts",
+    "No claim of production security, competing native market throughput or commercial demand"
+  ]
+}

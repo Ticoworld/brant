@@ -1,0 +1,55 @@
+{
+  "classification": "FRESH_PROCESS_CURRENT_PUBLIC_CELL_RECOVERY",
+  "transaction": "0xb612cb64729af9796e051bb673326a2ea82997cec56463164b569b4e626b894a",
+  "phase": "1",
+  "k": "37800000000",
+  "r": [
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "p": "12500000",
+      "b": "5000000"
+    },
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "p": "125000000",
+      "b": "100000000"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "12500000000",
+      "b": "10000000000"
+    }
+  ],
+  "total": "10105000000",
+  "live": {
+    "block_hash": "0xfd362ec5e84bfcbeeffc48e26e006dd51fbbd5327a87d39a079c01952d07f338",
+    "cell": {
+      "data": {
+        "content": "0x54435730303031000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7aed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d003a0ecd0800000001000000000000000000000000000000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e3820bcbe0000000000404b4c0000000000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38405973070000000000e1f5050000000059297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b00dd0ee90200000000e40b5402000000",
+        "hash": "0xef415a66a191a6c63fffd2edd2cbffa71d52b98304a58bdfd0176fff157a0f56"
+      },
+      "output": {
+        "capacity": "0xb275c4a40",
+        "lock": {
+          "args": "0x008b67a17b75b0efaa1478f75d3f37cfe7a9fe9f7ce215636f660a564a7f5f88",
+          "code_hash": "0x0b4fd2f2307f86f4ca2ba8854f785b856eb361c2b652378907f690c21336331f",
+          "hash_type": "data1"
+        },
+        "type": {
+          "args": "0x008b67a17b75b0efaa1478f75d3f37cfe7a9fe9f7ce215636f660a564a7f5f88",
+          "code_hash": "0x0b4fd2f2307f86f4ca2ba8854f785b856eb361c2b652378907f690c21336331f",
+          "hash_type": "data1"
+        }
+      }
+    },
+    "status": "live"
+  },
+  "committed": {
+    "block_hash": "0xfd362ec5e84bfcbeeffc48e26e006dd51fbbd5327a87d39a079c01952d07f338",
+    "block_number": "0x2b",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "elapsed_source": "two live local full-node RPC calls; no historical database or fixture"
+}
