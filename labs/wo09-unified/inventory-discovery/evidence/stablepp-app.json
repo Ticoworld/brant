@@ -1,0 +1,8 @@
+{
+  "at_utc": "2026-11-03T08:42:19.840072+00:00",
+  "url": "https://app.stablepp.xyz",
+  "method": "GET",
+  "request_body": null,
+  "classification": "PUBLIC_READ_ONLY_RESPONSE_NOT_EXECUTION",
+  "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+}

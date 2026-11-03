@@ -1,0 +1,17 @@
+{
+  "classification": "DOCUMENTED_RUSD_CODE_DEP_AND_NATIVE_CELLS_NOT_EXECUTABLE_MARKET_QUOTE",
+  "source": "UTXOSwap SDK3912cb61ed1f4d9882f4ba14b87f1eb665c7b845 getRUSDCellDeps(true)",
+  "at_utc": "2026-11-03T08:44:55.694Z",
+  "code_hash": "0x26a33e0815888a4a0614a0b7d09fa951e0993ff21e55905510104a0b1312032b",
+  "code_data_hash": "0xec32ad0c478ab011f9d089a900f3d06c91338a1954e45d9d8152c74859f99945",
+  "tip": "0x6ed8e892d5e7888e7e4e16f4facf25908ca3bed662675e1e15c6f662617e4765",
+  "sample_count": 100,
+  "complete_scan": false,
+  "distinct_scripts": [
+    {
+      "args": "0x360c9d87b2824c357958c23e8878f686001e88e9527a08ea229e7d9ba7fe39a7",
+      "code_hash": "0x26a33e0815888a4a0614a0b7d09fa951e0993ff21e55905510104a0b1312032b",
+      "hash_type": "type"
+    }
+  ]
+}

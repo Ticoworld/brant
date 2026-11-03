@@ -1,0 +1,74 @@
+[
+  {
+    "outpoint": {
+      "tx_hash": "0xd7309191381f5a8a2904b8a79958a9be2752dbba6871fa193dab6aeb29dc8f44",
+      "index": "0x0"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "bytes": 54656
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xd7309191381f5a8a2904b8a79958a9be2752dbba6871fa193dab6aeb29dc8f44",
+      "index": "0x1"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "bytes": 34200
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xd7309191381f5a8a2904b8a79958a9be2752dbba6871fa193dab6aeb29dc8f44",
+      "index": "0x2"
+    },
+    "status": "live",
+    "ckb_data_hash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+    "bytes": 27920
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xc07844ce21b38e4b071dd0e1ee3b0e27afd8d7532491327f39b786343f558ab7",
+      "index": "0x0"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "bytes": 33696
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xe2fb199810d49a4d8beec56718ba2593b665db9d52299a0f9e6e75416d73ff5c",
+      "index": "0x1"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x709f3fda12f561cfacf92273c57a98fede188a3f1a59b1f888d113f9cce08649",
+    "bytes": 52048
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xe2fb199810d49a4d8beec56718ba2593b665db9d52299a0f9e6e75416d73ff5c",
+      "index": "0x2"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x32064a14ce10d95d4b7343054cc19d73b25b16ae61a6c681011ca781a60c7923",
+    "bytes": 8096
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xe2fb199810d49a4d8beec56718ba2593b665db9d52299a0f9e6e75416d73ff5c",
+      "index": "0x3"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x9799bee251b975b82c45a02154ce28cec89c5853ecc14d12b7b8cccfc19e0af4",
+    "bytes": 1048576
+  },
+  {
+    "outpoint": {
+      "tx_hash": "0xe2fb199810d49a4d8beec56718ba2593b665db9d52299a0f9e6e75416d73ff5c",
+      "index": "0x4"
+    },
+    "status": "live",
+    "ckb_data_hash": "0x43400de165f0821abf63dcac299bbdf7fd73898675ee4ddb099b0a0d8db63bfb",
+    "bytes": 52424
+  }
+]

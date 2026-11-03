@@ -1,0 +1,20 @@
+{
+  "name": "@ickb/node",
+  "version": "9002.0.0",
+  "description": "iCKB bot, testnet stimulus generator, and rate sampler",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bot": "node src/bot.ts",
+    "stimulus": "node src/stimulus.ts",
+    "sampler": "node src/sampler.ts",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@ckb-ccc/core": "catalog:"
+  },
+  "devDependencies": {
+    "@ickb/testkit": "workspace:*",
+    "@types/node": "catalog:"
+  }
+}

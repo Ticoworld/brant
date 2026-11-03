@@ -1,0 +1,11 @@
+{
+  "at_utc": "2026-11-03T08:41:01.214190+00:00",
+  "url": "https://mainnet-api.utxoswap.xyz/utxo-swap/api/v1/sequencer/configurations",
+  "method": "GET",
+  "request_body": null,
+  "classification": "PUBLIC_READ_ONLY_RESPONSE_NOT_EXECUTION",
+  "status": 403,
+  "body": {
+    "message": "Forbidden"
+  }
+}
