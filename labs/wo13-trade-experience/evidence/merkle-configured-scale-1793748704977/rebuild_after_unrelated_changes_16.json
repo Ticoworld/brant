@@ -1,0 +1,48 @@
+{
+  "classification": "FRESH_PROCESS_COMMITTED_RPC_MERKLE_REPLAY",
+  "tip": "0xc55ca45e014b0fa83b205ef1218c6deedbe344f680d0fe0451bb2041db57dd9d",
+  "closed": false,
+  "target": 16,
+  "history_transactions": 20,
+  "rpc_calls": 21,
+  "root": "0x0aa9ae9e2cac81d46efae60f3d22f3c9aecc8a3ffc03164fbd5400800bb299db",
+  "owner": "0x5679d6e29eeca27034a97f7aeed8a2a799e524ad743b665258d34ada3b5e9a63",
+  "claim": {
+    "p": "12500000",
+    "b": "5000000"
+  },
+  "index": 0,
+  "proof": [
+    "0x5c55797577a099de87ab974118b6c4c26ab95c104bd83dd9401b04131ba554e1",
+    "0xa10e9b4a846ae7c85712b52b5223c849afd984576c8cfb85d28904de5802475a",
+    "0xba36239d4bdb4fb56f6dfd9f3979cab8c76903c11ea3e9dcc6aea2db277c5896",
+    "0x5af3430522df9cacae40e01b01ef978cade536681bed6358eb277c3d382484cc"
+  ],
+  "elapsed_ms": 97.185673,
+  "rss_bytes": 65699840,
+  "peak_rss_bytes": 74600448,
+  "remaining_backing": "5000000",
+  "history": [
+    "0x66f1c8dc6b13576b020afc6afdbc5a5a9e8c3b618f7644d047e6bb3158d08df1",
+    "0xa00ae919ab4bec960b16d81939ce3dcc52f66706b58ca009e3b680a9f2f54836",
+    "0xf08f5d332cc7b40163dc71cfe651ebf7a4ed013978875e0d379beff28ee5120b",
+    "0xebb7ca768747313c069c9339f023a94b86fd3fe735b14b3e894d44c19265ba5d",
+    "0xb77c7f02b7798dad2cd9143e385964dfe312205a97563016c1295832076a6bba",
+    "0x5d2cae6dd8cf5820804867cbbf97e58afc8f129f4bda01620749fe67b14e8cae",
+    "0x1201bd94086df287a937f537b1009619e34b3a7ac7fcb9f65cf6997666c1f408",
+    "0xc2922cca82b3b716feaaed5e7cb4e77a51ff43e088e0d5947ccd514b3b9fdd80",
+    "0xc2dac70cebea35c63dd469f4927f1ab1e53a7a3bdad52b6c43c3ebbcc0b9082a",
+    "0x48ad692657e185e88802fb0841c21783f69926d65e4c1ba074d821cb5620a5e2",
+    "0xa4a78e072e10cc142eed713a486ac57213f7edae9e8ea51385627c1003ec587b",
+    "0x3eb004fb02876b11c580353b97350d51b3760b3b4c11a7c936ee66d09d6d7fd1",
+    "0xd885613bd13d4dd59baf72e17e870f13bf1a77ba946308459b4093e13b2d0e09",
+    "0xe7dfbb2396529331258e4deed67cb88dd7f01f2e1fb915fb411a60d8575b2089",
+    "0x674f9aa6935675c142d0edccc16ff757f08695585785eb7685ac41b2f1ba365d",
+    "0x941d37dc0d89897a028390bf77e61bd95ded45b6804cba0131eabee21f8834c2",
+    "0x29af1ea14288032c25a3c9669da67e9f9ba96803ac798b5f30118e12ff2e82ab",
+    "0x5684743c66fca365a32e6f7c5a3ab385692ec62f0e2506cf26ac99f6264194a4",
+    "0xe2b950be8b3164d09be8f8d80b74563dc9908bdf019d482a7c49a47b2c1169bb",
+    "0xc55ca45e014b0fa83b205ef1218c6deedbe344f680d0fe0451bb2041db57dd9d"
+  ],
+  "dependencies": "archival committed transaction witnesses plus latest live Cell; no local receipts or private indexer"
+}

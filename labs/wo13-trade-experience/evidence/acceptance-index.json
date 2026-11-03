@@ -1,0 +1,59 @@
+{
+  "baseline": "58ab7777e6388ab1cefc36a68aeb17617bb18380",
+  "branch": "wo13-trade-experience",
+  "verdict": "A. CLOUD EXPERIENCE READY FOR LOCAL WALLET ACCEPTANCE",
+  "canonical_app": "apps/trade-testnet",
+  "browser": {
+    "directory": "browser-1793749086527",
+    "checks": 41,
+    "axe_scans": 16,
+    "automated_violations": 0,
+    "incomplete_checks": 10,
+    "qualification": "Presentation fixtures are not wallet or chain execution"
+  },
+  "native": [
+    {
+      "directory": "browser-native-1793748678569",
+      "transactions": 10,
+      "cases": 5,
+      "offline_replay": true,
+      "original_output_directory": "apps/trade-testnet/evidence/browser-native-1793748678569"
+    },
+    {
+      "directory": "merkle-configured-security-1793748485591",
+      "transactions": 22,
+      "cases": 30,
+      "offline_replay": true,
+      "original_output_directory": "labs/wo09-unified/evidence/merkle-configured-security-1793748485591"
+    },
+    {
+      "directory": "merkle-configured-scale-1793748704977",
+      "transactions": 25,
+      "cases": 5,
+      "offline_replay": true,
+      "original_output_directory": "labs/wo09-unified/evidence/merkle-configured-scale-1793748704977"
+    }
+  ],
+  "public_pudge_transactions": 0,
+  "external_wallet_accepted": false,
+  "windows_executed": false,
+  "protected_heads": "protected-remote-heads-before-push.txt",
+  "failed_browser_runs": [
+    "browser-1793748557026",
+    "browser-1793748756223"
+  ],
+  "superseded_successful_browser_runs": [
+    "browser-1793748839287",
+    "browser-1793748930791"
+  ],
+  "interrupted_run": "merkle-configured-scale-1793748571298",
+  "source_checks": {
+    "unchanged": [
+      "apps/trade-testnet/lib/market.ts",
+      "labs/wo09-unified/build/merkle_market_configured",
+      "labs/wo09-unified/contracts",
+      "apps/trade-testnet/public/pudge.json",
+      "apps/trade-pilot/public/pudge.json"
+    ]
+  }
+}

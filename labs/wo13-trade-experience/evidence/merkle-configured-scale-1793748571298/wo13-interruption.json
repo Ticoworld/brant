@@ -1,0 +1,5 @@
+{
+  "classification": "INTERRUPTED_EXTRA_SCALE_RUN_NOT_A_COMPLETE_PASS",
+  "reason": "Runner defaults included 100 and 1000 in addition to intended 16-holder regression. Stopped unnecessary remaining scale workload; preserved completed and partial evidence. Future command must set MARKET_SIZES=16.",
+  "public_transactions": 0
+}

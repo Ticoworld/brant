@@ -1,3 +1,11 @@
+# Canonical Trade frontend — WO13
+
+Use this directory for local development. Start with `npm ci` then `npm run dev` on Node24.19.0/npm11.9.0. See [Windows handoff](../../docs/WO13_WINDOWS_HANDOFF.md) and [WO13 evidence](../../docs/WO13_TRADE_EXPERIENCE_EVIDENCE.md). No trade-pilot symlink, WSL, local CKB node or keys are needed for connection. Public signing stays disabled pending separate deployment approval.
+
+The original WO10 instructions and evidence below are retained as historical context; the new interface shares/imports offer files with exact revalidation instead of displaying JSON by default.
+
+---
+
 # Trade WO10 — backed-claim testnet slice
 
 **LOCAL VERTICAL SLICE WORKS, PUDGE BLOCKED.** This is a bounded research UI, not a commercially validated offer or production service. Original WO09 code/evidence remains frozen at a267ff6e73772bd8a3d58e2d746395276fddceb6.

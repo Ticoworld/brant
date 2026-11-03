@@ -1,3 +1,9 @@
+# WO13 canonical frontend
+
+Use **apps/trade-testnet** for local development and Windows wallet connection. No symlink, WSL, second dependency installation or local CKB node is needed. See `docs/WO13_WINDOWS_HANDOFF.md`. The WO11 overlay and deployment tools below remain historical fallbacks, not a second recommended frontend.
+
+---
+
 # WO11 Trade pilot overlay
 
 Decision **B: PARTIAL WALLET SUPPORT, KEEP ORIGINAL FALLBACK**. No new covenant; no public signing/deployment/funding. Read `docs/WO11_WALLET_COMPATIBILITY_DECISION.md` and `WO11_NATIVE_AND_PUDGE_EVIDENCE.md` from repository root.
