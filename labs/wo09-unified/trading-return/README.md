@@ -19,3 +19,11 @@ node labs/wo09-unified/trading-return/src/verify-rivals.cjs labs/wo09-unified/tr
 Provenance: CKB0.210.0; Zig0.14.1 Ed25519 adapter copied from `../capacity-access/contracts/auth.zig` (its pinned upstream/license research remains applicable); CKB C stdlib from `labs/rebuild/mechanisms/deps/ckb-c-stdlib`; shared MIT helper `labs/wo09-open-markets/contracts/common.h`; engine `labs/wo09-e2-capacity/src/engine.cjs`. Dependencies and licenses are retained in their existing locations. Actual published xUDT binary is `labs/rebuild/native/vendor/ickb/build/release/xudt`, provenance `labs/rebuild/native/vendor/ickb/PROVENANCE.json`. A2 binaries come from the existing published genesis fixture and frozen rebuilt optimized baseline. No source-equivalence claim is made for the published xUDT binary.
 
 See `docs/WO09_TRADING_TWO_ASSET_NATIVE.md` and subsequent comparison/decision reports. The first failed run is not a successful lifecycle. Live market snapshots are dated observations, not executed orders or firm liquidity promises.
+
+Exact-decimal analytical comparison (offline, no orders):
+
+```sh
+python3 labs/wo09-unified/trading-return/src/economics.py
+```
+
+`research/economics.json` labels modeled scale, assumed capital rates, observed public exchange filters and controlled-maker counterexamples separately. Additional reports: `WO09_TRADING_OPPORTUNITY_RETURN.md`, `WO09_TRADING_EXECUTION_COMPARISON.md`, `WO09_TRADING_LIQUIDITY_ECONOMICS.md`, `WO09_TRADING_MARKET_DECISION.md`.
