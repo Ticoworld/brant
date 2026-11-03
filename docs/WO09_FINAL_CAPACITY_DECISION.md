@@ -1,0 +1,45 @@
+# Final capacity decision — WO09
+
+**Outcome: PARTIAL ADVANCE. Recommendation: preserve as an optional integration/fallback, freeze this bounded capacity investigation, and return to Trade's broader trading, execution and liquidity opportunity. Do not replace the established contracts yet.**
+
+3 November 2026. Starting remote baseline `b94684fdd8c18701fb0facc8ab7080c85924ac2a` was fetched and matched. The isolated experiment proves that a key-only customer can own and move genuinely backed claims without a personal61CKB input. It does not eliminate output occupied capacity, market inventory, fee funding, historical availability or counterparties.
+
+## The three guarantees
+
+| Guarantee | Best tested mechanism | Qualification |
+|---|---|---|
+| A: zero customer-funded storage | **Yes**, native key-only enrollment and trading | Actual third-party deposits and sponsor-funded shared capacity; no free principal or storage |
+| B: enforceable independent trading control | **Yes within tested rules**, direct owner witness authorization and proved Merkle transitions | No operator/funder signing authority over customer claims. Independent audit, wallet integration, broader cryptographic/parser tests and network liveness remain unqualified |
+| C: independently spendable withdrawal after Trade/provider disappearance | **Conditional**, not universal | Large claim creates/spends its own ordinary Cell. Requested small positions need existing capacity, a willing funded buyer/recipient/channel, or separately funded exit capacity. Tiny standalone output rejects |
+
+## Requested answers
+
+1. **Best tested mechanism:** fully funded CKB claim pool, immutable sponsor cushion, Merkle owner/balance/nonce records, direct domain-bound Ed25519 transaction witnesses. Claim balances can pay actual fees without another Cell input.
+2. **Does a new user need61CKB?** No for tested entry and internal funded-claim transfer. Yes, someone must fund the occupied capacity of any new ordinary61CKB receiving Cell; the customer need not be that funder. Alternative locks have their own positive occupied capacity;61is not universal.
+3. **Who owns/funds shared capacity?** Designated sponsor owns the282CKB cushion and unused optional fee subsidy. Code publication occupies48,793CKB and is unspendable in this fixture. Customers own authenticated principal rights, not an implicit gift of all sponsor capacity.
+4. **Who pays fees?** Genuine deposit sponsor, signed external payer, pre-funded subsidy or the affected owners' backed claims. Tested fee10,000shannons; exact transaction/deltas are owner-authorized. Subsidy exhaustion does not prevent claim-paid trading; zero-fee scripts can fail relay policy.
+5. **Who supplies principal/liquidity?** Real external standard-secp funding inputs seed claims; liabilities increase by actual deposited CKB. No customer fiat/onramp sale, LP quote, xUDT inventory or active two-asset DEX is demonstrated. Inventory/counterparty capital must be supplied separately.
+6. **Do users control their rights?** Tested signatures, public-key identity, transition proofs, actual amounts, nonces and spent inputs enforce the authorized changes. Invalid/substituted/cross-market/different-change signatures, stale attempts, capacity reduction and closure with claims reject. This is bounded research evidence, not an audit.
+7. **Trade disappears?** No Trade service is required by the contract. A fresh process rebuilds from public committed witnesses and latest live vault. Operator receipt/database possession is not necessary. Missing public history stops recovery; archive/reorg/censorship assumptions remain.
+8. **Original capacity provider disappears?** Existing funded rights still transfer with user-paid fees; its key is absent. New funding/gifts can stop, and provider's own cushion may remain locked. Restore of a provider key for a cooperative gift or final provider-owned closure is explicitly distinguished from the operatorless stages.
+9. **$1 positions at$1/$2CKB practical?** Technically yes for funded in-pool rights:1CKB and0.5CKB were separately executed with no personal Cells. Fee examples are$0.0001/$0.0002. Commercially conditional on shared deployment/capacity, genuine funding/trading demand, wallet/archive operations and a settlement route. Cold code capital is$48,793/$97,586, so a tiny standalone market is not made commercially practical merely by a low transaction fee.
+10. **Native evidence?** Final default run `native-1793681058034`:26committed transactions,25 independently verified user signatures, two fully settled/closed markets. Separate0.5CKB run `native-1793682981911`:26transactions,25signatures, both closed. Previous successful/failed runs retained; no cumulative count is treated as a security score.
+11. **Capital economics?** All requested100/1000/10000counts,$0.50/$1/$2/$10prices,$1/$5/$20positions, code reuse and sponsor-exit/lost-key stresses are modeled in `WO09_HIGH_PRICE_CAPITAL_ECONOMICS.md` and `capacity-access/evidence/capital-economics.json`. Shared storage is282CKB per bounded cohort, not61per new customer; ordinary fresh exits can still require linear separate funding. No new native scale qualification is claimed.
+12. **Strongest competing alternative?** For existing L1-wallet traders, preserved funded native orders/financial cohorts avoid the new custom signing/wallet integration and may be simpler. For high-frequency activity, actual Fiber/channel and Liquid Cells mechanisms deserve equivalent rights, capacity, availability and workload comparisons. ACP/existing recipients are strong cooperative settlement routes. No one alternative has been newly shown to satisfy unconditional small standalone C.
+13. **Preservation?** Native milestone `a92a1cc0eae330429598991262c2017b878e9f77` was non-force pushed and verified. Final reporting/requalification commit is reported with its remotely verified SHA in the task response; a commit cannot embed its own hash. Only `wo09-unified-breakthrough` advances; protected branches and quarantined research stay unchanged.
+
+## Decision-changing findings
+
+The wallet-input requirement was application design, not consensus. Real witness verification separates storage funding from claim ownership. User-paid in-pool fees further remove dependence on a continuing fee sponsor. These are useful reusable capabilities and invalidate the blanket assumption that each small trader must start with a personally funded61CKB Cell.
+
+But exact-value independent ordinary withdrawal is a different promise. Every requested dollar/price pair represents at most40CKB, below even the41CKB structural minimum. A sponsor gift makes a withdrawal work but gives away real additional capital. A safe lease cannot both guarantee unrestricted user spending and assume unilateral sponsor recovery of that same capacity. Shared backing cannot be spent by multiple owners twice.
+
+The new prototype also increases code/cycle cost and needs custom-key wallet integration. Three-owner native success is not1,000-user signing throughput, production cryptography, matching liquidity or an economically priced archival service. A shared input still serializes conflicting actions; paid root churn and lost-key storage lockup remain.
+
+## Next justified action
+
+Carry **A+B without mandatory personal Cells** into the Trade capability inventory as an optional settlement design. Keep the current qualified financial covenant and other native trading fallbacks frozen. Resume WO09's main trading/liquidity comparison with explicit settlement guarantees: existing-wallet/on-chain, reusable shared-right pool, and funded channel/LP routes. Compare a real trading workload, actual inventory, counterparties and all-in costs before choosing an integration. Do not start another capacity work order, service/crowdfunding product or WO10, and do not promise unconditional small cash exits.
+
+A future production integration would first need independent review of this authorization adapter/fee policy, wallet support, multi-asset settlement and conservative archive/exit operations. Those are conditions for adoption, not claims this task completed them.
+
+Final recovery-driven qualification: `native-1793683642752` completes26committed transactions and25 independently verified owner signatures with0.5CKB initial Alice funding. Before recovery the runner deliberately deletes its tree and vault cache. A fresh process discovers the latest matching live vault by scanning canonical public blocks (market code/ID only), reconstructs records/configuration/proofs from committed history, and supplies the actual next transaction builder state. Owner-authorized transfers then commit with original funding key absent. This supersedes the weaker earlier observation that a child could return proofs while the builder still retained cached state. Controlled missing-history failure applies to this implemented reconstruction routine; it is not deletion of all public copies or proof that another archive/block retrieval could never recover them.

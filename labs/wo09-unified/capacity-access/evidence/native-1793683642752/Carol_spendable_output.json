@@ -1,0 +1,13 @@
+{
+  "capacity": "6999990000",
+  "lock": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0xa61ff5a83b2cd5c3c709036e067e095e957697ec"
+  },
+  "data": "0x",
+  "outPoint": {
+    "txHash": "0x04af223472ed3fb2c76fc85c9aeff97ffe31bdd8b76a5d86c881c48a2d1f81ee",
+    "index": "0x1"
+  }
+}
