@@ -30,3 +30,22 @@ Individual funded Cells: derived 150 CKB state/claim capacity under the preserve
 Liquid Cells offers off-chain batch execution; this contract executes every financial transition on-chain with no Groth16 or silence window. That is a different throughput/availability trade-off, not proof of universal superiority. Root/bitmap kernel numbers remain separate non-financial benchmarks. Immutable commitments simplify proof freshness but need another ownership/remaining-balance mechanism for equivalent paid transfers and partial redemptions.
 
 No public-liquidity quote, commercial user demand, arbitrary censorship resistance, reorg/archival SLA, standard-wallet integration or external security qualification follows from these results.
+
+## Subsequent configured-policy qualification (current preferred variant)
+
+The unconfigured measurements above remain historical. The configured 17,848-byte binary actually executes the same complete scale workloads, while adding immutable minimum contribution, funding goal and optional-feature controls. Code Cell is 17,889 CKB; live vault is 322 CKB, with 184-byte data. These are measured occupied capacities, not fees.
+
+| Owners | Individual update bytes | Complete partial redemption bytes / cycles | Paid assignment bytes / cycles | First enrollment batch count / bytes / cycles |
+|---:|---:|---:|---:|---:|
+| 3 | 184 | 1,022 / 1,800,126 | 1,268 / 3,449,953 | 3 / 1,850 / 5,373,998 |
+| 16 | 248 | 1,086 / 1,874,846 | 1,332 / 3,560,787 | 16 / 8,256 / 31,198,255 |
+| 100 | 344 | 1,182 / 1,948,109 | 1,428 / 3,618,480 | 100 / 58,024 / 315,167,022 |
+| 1,000 | 440 | 1,278 / 2,058,451 | 1,524 / 3,724,711 | 100 / 67,624 / 360,655,109 |
+
+All entries are committed native CKB 0.210.0 transactions, including actual standard secp authorization and both covenant roles. They are not standalone testtool or model estimates. Three-owner row uses the funding-goal/refund fixture; larger rows use `merkle-configured-scale-1793671317288`. The 3-owner fixture has 14 committed transactions including refund/re-enrollment; the combined larger run has 1,156, every market closed. Individual redemption: 2 inputs/2 outputs; assignment: 3/3; closure: 2/1 and 464 bytes. Complete market fees: 0.004 / 0.0124 / 0.1114 CKB at 16/100/1,000, excluding shared code/wallet setup. Full run total fees 0.1498 CKB. Fees are actual chosen fees, not claimed minima.
+
+At 1,000 owners a complete enrollment batch of 100 publishes 42,416 update bytes in signed chunks, and costs about 360.7M cycles. One hundred distinct secp groups really execute. A 101-update batch is outside this contract's explicit 100-update envelope and rejects. A 1,000-person single batch was not executed and is not supported by this binary; ten batches are native evidence. No funding-input reuse is allowed.
+
+Configured full run wall time was about 2.00 / 9.61 / 121.48 seconds, host runner peak RSS 118.9 / 219.8 / 386.0 MB. Post-restart closed-market recovery: 1,015 archived transactions, 2.45 seconds, 172.7 MB peak RSS. This measures a local controlled node and child process, not public-network latency or total system peak.
+
+Immutable-root/bitmap kernels retain genuine earlier native measurements but remain limited kernels. An immutable root alone cannot represent changed owners and partially spent minima. A spent bitmap alone cannot express the actual paid mutable ownership lifecycle; adding replacement claim Cells or another mutable map changes capital/proof costs. No equivalent complete financial bitmap implementation was executed. Bounded sharding is the strongest existing direct rival when shared-input contention dominates: disjoint cohorts need separate cushions and histories but can avoid the single shared UTXO. Existing independent-market native evidence demonstrates that bounded distinction, not an arbitrary throughput guarantee.

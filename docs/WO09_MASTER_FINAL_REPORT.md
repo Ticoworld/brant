@@ -1,3 +1,5 @@
+> Historical pre-integration report. Subsequent verified financial Merkle native results and current decision are in [WO09_MASTER_MERKLE_DECISION.md](WO09_MASTER_MERKLE_DECISION.md). Earlier statements that this complete Merkle workload is unproved describe that earlier checkpoint.
+
 # WO09 master bounded implementation status
 
 Product classification: END-TO-END RESEARCH DEMONSTRATION for a fixed three-owner, existing-wallet financing cohort; not a complete production financial market. Broader architecture comparison and commercial selection remain incomplete.

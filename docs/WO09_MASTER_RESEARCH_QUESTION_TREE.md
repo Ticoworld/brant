@@ -49,3 +49,13 @@ Complete financial Merkle lifecycles now execute natively for 16,100,1,000 actua
 WHY the first 100 batch failed: standard secp error -22 is a 32,768-byte per-witness bound. The 32,816-byte payload exceeded it. REDESIGN: bounded signed chunk framing; covenant concatenates up to four chunks and validates exact payload. No root/owner/funding check removed. Further false assumption: configured max_tx_verify_cycles 70M is not demonstrated to be a hard admission cutoff; larger batches actually commit without changing config. Official CKB source queues larger work. Preserve both failed predictions and successful commitments.
 
 WHAT IF smaller batches win? Same-target native test shows seven <=16-owner batches use about 209M cycles vs315.5M for one100 batch, with6% more bytes and seven shared-state transitions. Select batch size by coordination, latency and fee/cycle trade-offs; no universal100 batch optimum.
+
+## Integrated scale resolved; new economic/availability gate
+
+OBSERVE: configured complete 3/16/100/1,000-owner native financial markets close after all liabilities are paid. WHY: leaf transitions and exact capacity deltas jointly enforce ownership and funding; archive replay updates stale paths. WHAT IF dust remains? Actual 2-shannon admission yields a script-valid refund that cannot meet observed relay fee without wallet-principal loss. CORRECT: isolated immutable minimum contribution/goal/residual policy; all scaled lifecycles re-executed, old binary/evidence retained. New concern: no owner-compulsion rule exists, so lost keys/refusal can still hold cushion indefinitely.
+
+WHAT IF outsider-funded gifts churn proofs? Default configured flags prohibit donations and sale-topup extras. Optional explicitly enabled version executes real funded increases and preserves rejection of substituted owners, resurrection and unpaid increases. Enabled mode still permits paid root churn; no starvation guarantee.
+
+WHAT IF the cash floor has no incremental buyer value? Keeping 80% cash and making a 20% at-risk grant offers the same cash protection without vault/code/archive overhead. A valuable differentiated creator benefit or conditional financial payoff must justify this architecture. No launched token/equity/upside is presently authenticated. NEXT: specify and economically falsify that benefit, buyer/LP incentives and archive costs before another product implementation. Do not substitute more small fee optimizations for this gate.
+
+Current classifications and all twenty requested answers: `WO09_MASTER_MERKLE_DECISION.md`. No WO10 started. Quarantined beneficiary/LO-01 work remains unresolved and untouched.
