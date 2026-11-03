@@ -1,0 +1,32 @@
+[
+  {
+    "label": "missing_maker_authorization",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7.html#82 })"
+  },
+  {
+    "label": "quote_price_changed_without_signers",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7.html#82 })"
+  },
+  {
+    "label": "unbacked_xUDT_claim_total",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 34 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7.html#34 })"
+  },
+  {
+    "label": "reserve_cannot_escape_without_state",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7.html#11 })"
+  },
+  {
+    "label": "configured_asset_cannot_be_substituted",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 34 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7.html#34 })"
+  },
+  {
+    "label": "filled_quote_replay",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x121d4feff8c5327459c5882a816cda94e88ea4dd5a8b035885cb9d33150ca39b00000000))"
+  }
+]

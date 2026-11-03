@@ -1,0 +1,36 @@
+{
+  "classification": "NATIVE_TWO_ASSET_BACKED_RIGHTS_EXCHANGE_AND_ACTUAL_xUDT_WITHDRAWAL",
+  "market": "0x46e84096d8b73abb333baf8a729c1b3eb1329489659e50650e60a846645b64f7",
+  "owners": [
+    {
+      "name": "Alice customer",
+      "owner": "0x79891ba641fea0665210ad96503030f7b91600bc82bcbcc556857ad4395b4070",
+      "public_key": "0xbe9a4f792f6f2ecd9ef8fc325bae69697ed53bae93f60937c79bd07070d9dc94"
+    },
+    {
+      "name": "Bob maker",
+      "owner": "0x42922d63a77c5293db1b293f1c2b03de6affe12b69d51b53d7be25a69ba4373d",
+      "public_key": "0xafa73b05668debca8b551f618d79203d4920551f389f0fd1193ba51b48003488"
+    }
+  ],
+  "token": {
+    "args": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1"
+  },
+  "scope": "Local funded quote, not public liquidity/asset price/commercial DEX; conditional exit capacity explicitly funded",
+  "binary": {
+    "hash": "0x64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7",
+    "outPoint": {
+      "txHash": "0xfe67045f17677c0a19f2d1b2c207d3c72a0459e2fb1dc11d7a1a7ebd8f64a825",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x64c95c4000185fab9959c9010cea62e38689171312138c557482240c2bdafef7",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 50400,
+    "occupied": "5044100000000"
+  }
+}
