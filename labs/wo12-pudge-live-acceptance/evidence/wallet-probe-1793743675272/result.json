@@ -1,0 +1,19 @@
+{
+  "at_utc": "2026-11-03T22:08:19.855Z",
+  "browser": "154.0.8037.57",
+  "context": "fresh diagnostic Chromium; not a user wallet profile or external-wallet acceptance",
+  "injected": {
+    "utxoGlobalPresent": false,
+    "ckbSignerPresent": false,
+    "ethProviderPresent": false
+  },
+  "extensionTargets": [],
+  "actual_external_wallet_qualified": false,
+  "public_address": null,
+  "lock_profile": null,
+  "signing_attempted": false,
+  "funding_checked": false,
+  "transactions_constructed": 0,
+  "transactions_broadcast": 0,
+  "blocker": "No real UTXO Global CKB provider/user-controlled wallet available in accessible browser; user browser route and two public Pudge addresses required"
+}

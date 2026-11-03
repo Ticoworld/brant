@@ -1,0 +1,36 @@
+{
+  "verdict": "C. EXTERNAL WALLET BLOCKED",
+  "wallet_probes": [
+    {
+      "directory": "labs/wo12-pudge-live-acceptance/evidence/wallet-probe-1793743675272",
+      "at_utc": "2026-11-03T22:08:19.855Z",
+      "external_wallet_qualified": false,
+      "context": "fresh diagnostic Chromium; not a user wallet profile or external-wallet acceptance"
+    },
+    {
+      "directory": "labs/wo12-pudge-live-acceptance/evidence/wallet-probe-1793743814567",
+      "at_utc": "2026-11-03T22:10:17.561Z",
+      "external_wallet_qualified": false,
+      "context": "fresh diagnostic Chromium; not a user wallet profile or external-wallet acceptance"
+    }
+  ],
+  "actual_owner_addresses": null,
+  "funding_balances": null,
+  "specific_deployment_approved": false,
+  "our_committed_pudge_transactions": [],
+  "constructed": 0,
+  "signed": 0,
+  "broadcast": 0,
+  "manifest_changed": false,
+  "binary_changed": false,
+  "source_tools_reused": {
+    "preflight.mjs": {
+      "parent": "labs/wo11-pudge-pilot/src/preflight.mjs",
+      "sha256": "6d0db555c42d50ca4a52f51b894b2420e0e99af4b61097af9a6dfceb1aa90f04"
+    },
+    "relay-read.mjs": {
+      "parent": "labs/wo11-pudge-pilot/src/relay-read.mjs",
+      "sha256": "7dba333eb7359011e78c8080d8732dd22dba9c1235fd38cc34d73acfbcc25d2a"
+    }
+  }
+}

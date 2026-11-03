@@ -1,0 +1,26 @@
+{
+  "read_only": true,
+  "profiles": [
+    {
+      "name": "Secp256k1Blake160",
+      "resolved": true
+    },
+    {
+      "name": "OmniLock",
+      "resolved": true
+    },
+    {
+      "name": "JoyId",
+      "resolved": true
+    },
+    {
+      "name": "AnyoneCanPay",
+      "resolved": true
+    },
+    {
+      "name": "PWLock",
+      "resolved": true
+    }
+  ],
+  "at_utc": "2026-11-03T22:08:40.967Z"
+}

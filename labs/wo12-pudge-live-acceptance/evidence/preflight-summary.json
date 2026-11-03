@@ -1,0 +1,48 @@
+{
+  "classification": "REFRESHED_READ_ONLY_PUDGE_NOT_LIFECYCLE",
+  "at_utc": "2026-11-03T22:08:36.004Z",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "get_cells_supported": true,
+  "historical_transaction": "0xc308fa563867cb891e5c18adb95fcb8045f7a12054fdb60258770fd0cedf941f",
+  "historical_status": "committed",
+  "historical_witness_count": 7,
+  "historical_transaction_is_ours": false,
+  "fee_statistics": {
+    "mean": "0x3e8",
+    "median": "0x3e8"
+  },
+  "relay": {
+    "last_txs_updated_at": "0x1a1a374df3c",
+    "max_tx_pool_size": "0xaba9500",
+    "min_fee_rate": "0x3e8",
+    "min_rbf_rate": "0x5dc",
+    "orphan": "0x0",
+    "pending": "0x2c6b",
+    "proposed": "0x0",
+    "tip_hash": "0xd86bc31708b3fbcc784fd6828d2d1b32720d0d62cc3922b81d89df02d003e4c3",
+    "tip_number": "0x15e5554",
+    "total_tx_cycles": "0x66c929942",
+    "total_tx_size": "0x61991b",
+    "tx_size_limit": "0x7d000",
+    "verify_queue_size": "0x0"
+  },
+  "one_input_deployment_bytes_reference": 18288,
+  "median_sized_deployment_fee_shannons": "18288",
+  "selected_old_budget_deployment_test_ckb": "17950.01",
+  "selected_old_budget_two_owner_test_ckb": "18333.274",
+  "budgets_qualified_against_actual_owner_cells": false,
+  "owner_addresses": null,
+  "owner_balances": null,
+  "actual_shortfall": null,
+  "faucet_url": "https://faucet.nervos.org/",
+  "faucet_request_made": false,
+  "faucet_receiving_address": null,
+  "public_actions": {
+    "constructed": 0,
+    "signed": 0,
+    "broadcast": 0,
+    "pending": 0,
+    "committed": 0,
+    "rejected": 0
+  }
+}
