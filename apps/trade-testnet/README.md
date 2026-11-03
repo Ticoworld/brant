@@ -21,7 +21,7 @@ The dev UI is localhost:3000. `test:native` starts its own Next server on3100 an
 2. Once an approved deployment is configured, create an empty market:322CKB shared cushion; minimum contribution0.125CKB; fixed80% backing; minimum monetary goal number-of-slots times0.125CKB; immutable maturity; features0. Creator may be a different consenting funded ordinary-secp address.
 3. Each slot owner contributes from one adequately funded plain Cell. After all slots/goal are funded, creator signs activation and receives exactly20% gross, minus selected fee. Pre-activation owner refunds are exposed.
 4. Inspect live owner lock hashes, backing, root and transaction status. This right is not an xUDT/token or a proven financial business.
-5. Paid assignment uses seller and buyer funded Cells in the **same transaction**. Share the proposal JSON out of band, set the selected market/index/price, review, and add both real wallet signatures without changing raw terms. Missing signatures fail on chain. Whoever submits must still review their role/intent; a source-level check is not a security audit.
+5. Paid assignment uses seller and buyer funded Cells in the **same transaction**. Share the proposal JSON out of band, set the selected market/index/price/buyer address, review, and add both real wallet signatures without changing raw terms. Missing signatures fail on chain. Whoever submits must still review their role/intent; a source-level check is not a security audit.
 6. Current owner may redeem partially/fully under exact maturity/dust conditions. Fee comes from gross payout; replacement wallet retains61CKB minimum. Small standalone/unfunded exits are not promised. Final funder closure requires zero obligations.
 7. Recovery rebuilds every historical leaf/path/accounting state from committed witnesses, checks transaction hashes and current live Cell. No private receipts/indexer database is required, but public archival witnesses and trustworthy chain/RPC access are. Stale transactions must be rebuilt/re-signed.
 
@@ -38,3 +38,13 @@ The selected fixed pilot miner fee is100000sh=0.001CKB, below the covenant100000
 `/fixture` and the read-only `/api/local-rpc` adapter work only with `NEXT_PUBLIC_LOCAL_FIXTURE=1`, used by the native test runner. Default production build disables both fixture exposure and local proxy access. No signing API exists. Do not publish a fixture-enabled build.
 
 Pudge preparation: [deploy/README.md](deploy/README.md). Evidence summary: `docs/WO10_TESTNET_VERTICAL_SLICE_EVIDENCE.md` from repository root. No mainnet, production-security, universal rug-protection or active secondary-liquidity claim.
+
+Bounded original regression commands (from repository root; they create new evidence directories and do not overwrite prior evidence):
+
+```sh
+MARKET_SIZES=16 TEST_CONFIGURED_POLICY=1 node labs/wo09-unified/src/run-merkle-configured-scale.cjs
+node labs/wo09-unified/src/run-merkle-configured-security.cjs
+node labs/wo09-unified/src/verify-merkle-scale.cjs apps/trade-testnet/evidence/browser-native-1793737248546
+```
+
+The two-wallet connector flow is prepared but still needs manual acceptance with actual external supported wallets after an approved Pudge deployment. Its intent guards include buyer address as well as market/index/price; automated native evidence qualifies the shared builder and Node signers, not these external-device interactions.

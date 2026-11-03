@@ -1,0 +1,16 @@
+{
+  "classification": "FINAL_SOURCE_AND_BUILD_RECORD",
+  "shared_browser_builder_native_run": "browser-native-1793737248546",
+  "native_transactions": 10,
+  "independent_replay": "evidence/browser-native-1793737248546/independent-verification.json",
+  "typecheck": "passed",
+  "production_build": "passed; see production-build.txt",
+  "external_wallet_pudge_round_trip": "NOT_PERFORMED",
+  "public_pudge_deployment": "NOT_PERFORMED_CODE_OUTPOINT_NULL",
+  "source_sha256": {
+    "lib/market.ts": "d91785c38b6cfb9d4fc6227fcdc68c67370dc33656e663d71cb6e83c78d132d8",
+    "app/wallet-app.tsx": "5944490a6153a53aa1deb8aae20e00ac0579b8103b47b195d456e1bb944e9e97",
+    "tests/native.mts": "25b3e1dca61248fa383deb3d7cb6753d8f0956ef1421ac7d0f93d6164bd3b369",
+    "package-lock.json": "c18660bb2ba6128172f66fca5edad4854865855de809462ccc0a4a5672a42770"
+  }
+}
