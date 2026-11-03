@@ -11,3 +11,7 @@ ASSUMPTION TO REJECT: The last holder receives leftover vault capital. MODEL: K 
 
 ## Q4: Is protected creator funding useful?
 Example contributions total 21.1 CKB; 16.88 remains backing and 4.22 gross is creator-usable before fees. This is financial consistency, not creator demand. Strong rival: simple escrow/staged finance/cash retention. Commercial evidence remains absent. NEXT: measure real full lifecycle before selecting flagship.
+
+## Q1 native follow-up
+
+Direct three-record covenant now compiles to 15,136 bytes and committed a full bounded native lifecycle: funded formation, three separately signed enrollments, reserve-preserving creator release, partial redemption, paid assignment, new-owner redemption and designated-funder closure. No Groth16, always-success vault lock or operator checkpoint is used. Nine intended negative cases reject. This supports direct validation for this narrow market; it does not qualify mutable-root/bitmap versions or commercial economics. Code Cell 15,177 CKB and vault 378 CKB are real additional capital costs. NEXT: preserve baseline; expand refund/fee/identity tests; reconstruct current state from committed RPC in a fresh process; compare bounded records against root representations and smaller financial products.

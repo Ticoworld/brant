@@ -1,0 +1,23 @@
+# WO09 master native explicit-cohort baseline
+
+VERIFIED bounded private-chain lifecycle, CKB 0.210.0; commercial UNPROVED. Source contracts/cohort.c and src/run-cohort.cjs under labs/wo09-unified. Build with python labs/wo09-unified/src/build.py; execute node labs/wo09-unified/src/run-cohort.cjs. Source reuses non-quarantined WO09 common syscall helpers; CKB C standard library remains under its preserved license. No E1 beneficiary or A2 LO-01 work was resumed.
+
+Evidence: labs/wo09-unified/evidence/cohort-1793665580642. Twelve real transactions committed; nine recorded rejection cases. Raw RPC logs include complete accepted/rejected transaction bodies and committed statuses. Offline verifier replays input capacities and checks recorded fees, lineage, pool accounting, paid ownership assignment and final closure. This is not a synthetic VM anchor or Groth16 fixture replay.
+
+The same script is the vault lock and type. Type identity includes a market identifier derived from the first creation input and output index. Genesis must contain no rights and capacity equals designated cushion. Each later contribution is a separately signed transaction, credits one empty slot, and increases vault capacity by its exact contribution. No dedicated claim Cells are created. Both covenant roles validate subsequent transitions; no always-success vault lock or exchange operator signature is used.
+
+Actual contributions: Alice 0.125 CKB, Bob 1.25 CKB, Carol 125 CKB. Protected rights: 0.1, 1 and 100 CKB. Total paid 126.375 CKB = 101.1 protected backing + 25.275 gross creator proceeds. Distinct creator key owns an initially funded ordinary wallet Cell. The creator's receipt increases by 25.275 CKB minus its explicit 0.0001 CKB transaction fee. The 378 CKB vault cushion is separately paid by Alice and does not count as backing or creator funds. Its exact capacity matches actual occupied bytes (240-byte state, 32-byte lock/type args). A separate 100 CKB creator-wallet funding in the fixture is disclosed, not counted as proceeds.
+
+The native run accepts partial Alice redemption of 0.05 CKB, atomic sale of her remaining 0.05 CKB right to Bob for 0.01 CKB consideration, Bob's own 1 CKB redemption, Bob's purchased-right redemption, Carol's final 100 CKB redemption, and closure returning the 378 CKB cushion to Alice rather than to last claimant Carol. Recipient fee is 0.0001 CKB for each lifecycle transaction, with two inputs/two outputs for redemption. The creator activation and sale are also capacity-conserving within the fee cap. Code deployment pays 0.01 CKB and locks 15,177 CKB in the permanent code Cell, funded separately by Carol's disposable genesis wallet. These large pre-funded wallets are test resources, not a retail cost advantage.
+
+Exact notable transactions:
+- Creator release: 0x83c269f9b09bb7a5b58d965274deebdc54a9830f28adc4c0bd1a01450e44b018.
+- Small partial redemption: 0x7076ca54a8d763b9c566fa304485c6d135b6416a8c33e01ad48d729360ef25ff.
+- Paid assignment: 0xb86cfc15ed15f2b4cd5822f79e5b77be80c7634cceb61d45c5a66be038b4e415.
+- Final closure: 0x24551590ba576bf6630039b82825104efeb1c63c4cb478c71243f6db42a2a035.
+
+Measured release binary: 15,136 bytes, SHA-256 e82519ff13ce2c1c8291aee7014d1b8d34a6931f4c82cb9ca1beff7335b31bd0. Entry/redemption transactions: 886 bytes, about 1.71–1.73 million total VM cycles including actual standard secp authorization and both covenant roles. Sale: 1,132 bytes, 3,360,335 cycles. Closure: 440 bytes, 1,691,987 cycles. Every figure is for the fixed three-record implementation and this fixture.
+
+Rejected: unbacked enrollment, creator taking an extra protected shannon, excess fee deduction, closing while claims remain, unpaid assignment, missing seller authorization, former-owner redemption after sale, Bob's transaction against a consumed vault, reusing the closed input. Stale-input failures occur in real-node resolution; other cases record intended script errors. No old claimant loses the underlying claim because a stale transaction fails; Bob subsequently redeems from current state.
+
+Limits: fixed cohort of three; no native Merkle/bitmap comparison yet; no ordinary-wallet integration; maturity parameter is zero in this fixture; no guarantee against arbitrarily sustained contention; no fresh-process public-chain recovery test yet. Original E3 recipient-merge results do not qualify this contract—the native small redemption here is separate evidence. The covenant currently bounds total fee at 0.01 CKB; further fee-vs-claim, malformed-state, identity-change, refund and closure cases remain needed. No production qualification or complete commercial product is asserted.

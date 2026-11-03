@@ -1,6 +1,6 @@
 # WO09 master architecture decision — preliminary
 
-ARCHITECTURE NOT YET VALIDATED. Commercial UNPROVED. No unified covenant has executed in CKB-VM or on a private chain yet.
+Updated: bounded explicit-cohort native lifecycle now VERIFIED; see WO09_MASTER_NATIVE_EXECUTION.md. Root/bitmap rivals remain analytical candidates. Commercial UNPROVED. Initial design rationale below remains preserved.
 
 | Architecture | Principal advantage | Decisive unresolved issue |
 |---|---|---|
