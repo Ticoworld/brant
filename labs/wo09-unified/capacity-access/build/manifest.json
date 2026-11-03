@@ -1,0 +1,47 @@
+{
+  "bytes": 48752,
+  "sha256": "5097f45ba10565837ee7ef7d82b31bc8dbb332272c19255f8da9466f6f19d81e",
+  "commands": [
+    [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "build-obj",
+      "/workspace/trade/labs/wo09-unified/capacity-access/contracts/auth.zig",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O",
+      "ReleaseSmall",
+      "-femit-bin=/workspace/trade/labs/wo09-unified/capacity-access/build/auth.o"
+    ],
+    [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-Oz",
+      "-nostdlib",
+      "-fno-builtin",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Wl,-e,_start",
+      "-Wl,--gc-sections",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "/workspace/trade/labs/wo09-unified/capacity-access/build/pool",
+      "/workspace/trade/labs/wo09-unified/capacity-access/contracts/pool.c",
+      "/workspace/trade/labs/wo09-unified/capacity-access/build/auth.o"
+    ]
+  ],
+  "signature_library": "Zig0.14.1 std.crypto.sign.Ed25519",
+  "qualification": "Executed native CKB0.210.0 with independent Node/OpenSSL Ed25519 verification; experimental, not audited",
+  "source_sha256": {
+    "contracts/pool.c": "0cc5a3e2e57011a9edbdc8b78202db3a7e24cdf98ae6e36cef7c83fadd6b5018",
+    "contracts/auth.zig": "1618402e37369de3f836984872bc91fe0b1012ad269568b10aa523f96e652293",
+    "research/CKB_STDLIB_LICENSE": "a42d8409d606ff41334eef4073f942c2ae524a5929dd953e89371562634e97ab",
+    "research/zig-0.14.1-ed25519.zig": "dde0ea4594024ad27deb249ec8c45c82197ce366ae984181899966c787340848",
+    "research/ZIG_LICENSE": "5c537d6853e005298a285d508cff9ac7192cea23576c840d485b2b586a7ff177",
+    "research/ckb-v0.210.0-capacity.rs": "e52c37b22603b8fe698d89a3f7d2484ae5cc39b2bcc038ca3ce49fea84ef45cb"
+  }
+}

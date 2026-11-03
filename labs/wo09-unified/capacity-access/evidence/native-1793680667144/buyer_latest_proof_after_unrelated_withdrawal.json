@@ -1,0 +1,28 @@
+{
+  "classification": "FRESH_PUBLIC_RPC_FUNDED_RIGHT_RECONSTRUCTION",
+  "root": "0x8683821f369964b5caeccd5b9b58f6e5f284cc62c1c559fb86674115156097c0",
+  "index": 1,
+  "record": {
+    "owner": "0xdb1626968202cb871ed85f53078e89d523a6d17eda4b32912e48087462649beb",
+    "balance": "490990000",
+    "nonce": "3"
+  },
+  "path": [
+    "0xa07b007d843fefe66ecdfbdf871817dc447c31aa117124516abc16e563b81e4d",
+    "0x54fee6bf36d132d89e1c4fb71e2122bc31be5003eae4d57156b585c2fe11d1b0"
+  ],
+  "transactions": 9,
+  "rpc_calls": 10,
+  "elapsed_ms": 75,
+  "history": [
+    "0x65b0a5901aa12c1f27c198d4a6b9668bd1ca755704c9c85da4b2c602d2697408",
+    "0xf43bbb76430869e715c5cd652d4c4a015b1f014af79c6eed2e43c2f795b44a61",
+    "0x59db924bf1f23ee1496824ab4f85752c3b2a45fb4d835c9a59631506defbc7d4",
+    "0xa4c30c0c05789a7a45c60600842e8901eed9abba0c3364fb6cd170363642b753",
+    "0xcf2b0e897c855110f6b1bf32d5e5397ba8354d233d0b197f6dd84d4199c0f280",
+    "0xad35efdeb2372adeda021b7c54b9f67402e69762f36b847dbf1ae4756eb3fc77",
+    "0xda1282d7e469e277b4d5fc7041e69300c8b2711168a49464e60e7a43a972f1aa",
+    "0xfa8b82cf61d09816296a7ca362206f75313fb7ef40e9eec43e12d77248cb0dd6",
+    "0xe30a11b1ab1b826c265ac95d55b31b474cdf4458d2a613e8e65ad2151a126c49"
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Alice",
+    "lock": {
+      "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      "hashType": "type",
+      "args": "0x0480807058d64f57ce0001b9b48a9e8487fbb5fd"
+    },
+    "personal_live_cells": 0,
+    "owner": "0x8a91e79cb4c76ab676f1ea038539d46fe0b7b9159dd563a2b547a2e8f24a52e1",
+    "ed25519_public_key": "0xd30e57f693447de001aa617613ca4e989b14c08442df2e56b7653c3db51eeedb",
+    "scanned_through_height": 16
+  },
+  {
+    "name": "Bob",
+    "lock": {
+      "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      "hashType": "type",
+      "args": "0x23e9d1a9004062f309599df3d8e0e4e153200e01"
+    },
+    "personal_live_cells": 0,
+    "owner": "0x1f80c77261a28df00211c215b7ee9a57331d7e0ee76cbdedd6e3cc216af33142",
+    "ed25519_public_key": "0xd8190f184232ef75ad426be75ccb00b2a5bf52258dcbc89ddfb179bbdae59c4b",
+    "scanned_through_height": 16
+  },
+  {
+    "name": "Carol",
+    "lock": {
+      "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      "hashType": "type",
+      "args": "0x29bab595c1ec5b42e55e4e8f0f73d669affc7126"
+    },
+    "personal_live_cells": 0,
+    "owner": "0x69d91d65750ab0488b6e9de1c0386f6c9d4cc481c35063434295ca575ae2443d",
+    "ed25519_public_key": "0x116d38775dc654db2b3d829617056f692e786ba517881d66de844707ffaa855a",
+    "scanned_through_height": 16
+  }
+]
