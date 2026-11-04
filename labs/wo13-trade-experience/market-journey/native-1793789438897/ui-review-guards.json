@@ -1,0 +1,5 @@
+{
+  "unapproved_manifest": "rejected even with code outpoint",
+  "altered_fee": "rejected using actual native live inputs",
+  "altered_body": "requires fresh consent"
+}

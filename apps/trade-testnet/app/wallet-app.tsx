@@ -8,6 +8,14 @@ import {
   requireUnchanged,
   reviewLiveInputs,
 } from "../lib/approval";
+import {
+  marketIdentity,
+  routeFromUrl,
+  routeUrl,
+  marketView,
+  discoverMarkets,
+  type PageRoute,
+} from "../lib/market-reader";
 import Experience, {
   type Fields,
   type Activity,
@@ -38,18 +46,22 @@ const sh = (s: string) => {
 };
 const fmt = (n: bigint) =>
   (n < 0n ? "−" : "") + M.formatCkb(n < 0n ? -n : n).replace(/\.?0+$/, "");
-export default function WalletApp() {
+export default function WalletApp({
+  initialMarketId,
+}: {
+  initialMarketId?: string;
+}) {
   return (
     <Provider
       name="Trade testnet"
       defaultClient={client}
       clientOptions={[{ name: "CKB Pudge (testnet)", client }]}
     >
-      <Journey />
+      <Journey initialMarketId={initialMarketId} />
     </Provider>
   );
 }
-function Journey() {
+function Journey({ initialMarketId }: { initialMarketId?: string }) {
   const conn = useCcc(),
     signer = useSigner();
   const [fields, setFields] = useState<Fields>(initial),
@@ -68,6 +80,26 @@ function Journey() {
     >("Checking"),
     [activity, setActivity] = useState<Activity[]>([]),
     [review, setReview] = useState<Review | null>(null);
+  const [route, setRoute] = useState<PageRoute>(
+      initialMarketId
+        ? { view: "Market", id: initialMarketId }
+        : { view: "Markets" },
+    ),
+    [known, setKnown] = useState<Record<string, M.Market>>({}),
+    [reading, setReading] = useState(false),
+    [refreshKey, setRefreshKey] = useState(0),
+    [discovery, setDiscovery] = useState<{
+      state: "idle" | "complete" | "partial" | "unavailable";
+      message: string;
+      scanned: number;
+      next?: string;
+    }>({
+      state: "idle",
+      message: "Search the verified deployment or open a market link.",
+      scanned: 0,
+    });
+  const routeRef = useRef(route);
+  routeRef.current = route;
   const execute = useRef<null | (() => Promise<void>)>(null),
     inFlight = useRef(false);
   useEffect(() => {
@@ -100,10 +132,138 @@ function Journey() {
     setReview(null);
     execute.current = null;
   }, [signer]);
+  function navigate(next: PageRoute, replace = false) {
+    setReview(null);
+    execute.current = null;
+    if (next.view === "Market") {
+      setMarket(null);
+      setFields((f) => ({
+        ...f,
+        id: next.id ?? "",
+        index: String(next.claim ?? 0),
+        envelope: "",
+      }));
+    }
+    setRoute(next);
+    window.history[replace ? "replaceState" : "pushState"](
+      {},
+      "",
+      routeUrl(next),
+    );
+  }
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("market");
-    if (id) setFields((f) => ({ ...f, id }));
+    const sync = () => {
+      try {
+        const next = routeFromUrl(window.location.href);
+        setReview(null);
+        execute.current = null;
+        setMarket(null);
+        setRoute(next);
+        if (next.id)
+          setFields((f) => ({
+            ...f,
+            id: next.id!,
+            index: String(next.claim ?? 0),
+            envelope: "",
+          }));
+      } catch (e) {
+        setStatus(String(e));
+        setError(true);
+      }
+    };
+    sync();
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
   }, []);
+  useEffect(() => {
+    if (route.view !== "Market" || !route.id) {
+      setReading(false);
+      return;
+    }
+    let active = true;
+    setReading(true);
+    setError(false);
+    setTip(null);
+    const id = route.id;
+    (async () => {
+      try {
+        const d = await fetch("/pudge.json").then((r) => {
+          if (!r.ok) throw Error("Deployment manifest unavailable.");
+          return r.json();
+        });
+        if (d.network !== "pudge")
+          throw Error("Read-only workspace requires Pudge.");
+        await M.verifyDeployment(rpc, d);
+        const m = await M.recover(rpc, d, marketIdentity(id));
+        let height: string | null = null;
+        try {
+          height = BigInt((await rpc("get_tip_header", [])).number).toString();
+        } catch {}
+        if (active) {
+          setMarket(m);
+          const i = routeRef.current.claim,
+            r = i !== undefined ? m.tree.records[i] : undefined;
+          if (r)
+            setFields((f) => ({
+              ...f,
+              index: String(i),
+              amount: fmt(m.phase ? r.b : r.p || m.minimum),
+            }));
+          setKnown((xs) => ({ ...xs, [m.id]: m }));
+          setTip(height);
+          setStatus(
+            "Market reconstructed from committed history and its live Cell.",
+          );
+        }
+      } catch (e) {
+        if (active) {
+          setMarket(null);
+          setKnown((xs) => {
+            const next = { ...xs };
+            delete next[id];
+            return next;
+          });
+          setStatus(e instanceof Error ? e.message : String(e));
+          setError(true);
+        }
+      } finally {
+        if (active) setReading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [route.view, route.id, refreshKey]);
+  useEffect(() => {
+    if (!signer || !ownerHash) return;
+    let active = true;
+    const recheck = async () => {
+      try {
+        const a = await signer.getRecommendedAddressObj();
+        if (active && a.script.hash() !== ownerHash) {
+          setAddress("");
+          setOwnerHash("");
+          setReview(null);
+          execute.current = null;
+          setStatus(
+            "Wallet account changed. Check compatibility again before managing positions.",
+          );
+        }
+      } catch {
+        if (active) {
+          setAddress("");
+          setOwnerHash("");
+          setReview(null);
+          execute.current = null;
+        }
+      }
+    };
+    window.addEventListener("focus", recheck);
+    return () => {
+      active = false;
+      window.removeEventListener("focus", recheck);
+    };
+  }, [signer, ownerHash]);
   const record = (a: Activity) => setActivity((xs) => [a, ...xs]);
   const run = async (f: () => Promise<void>) => {
     if (inFlight.current) return;
@@ -153,19 +313,17 @@ function Journey() {
     return a.script;
   }
   function identity() {
-    let id = fields.id.trim();
-    if (id.includes("://")) id = new URL(id).searchParams.get("market") ?? "";
-    if (!/^0x[0-9a-fA-F]{64}$/.test(id))
-      throw Error(
-        "Enter a 32-byte market identity or a Trade link containing ?market=0x…",
-      );
-    return id as ccc.Hex;
+    const id = marketIdentity(fields.id);
+    if (route.view === "Market" && route.id && marketIdentity(route.id) !== id)
+      throw Error("Selected market changed; recover and review again.");
+    return id;
   }
   async function current() {
     const d = await deployment(),
       id = identity(),
       m = await M.recover(rpc, d, id);
     setMarket(m);
+    setKnown((xs) => ({ ...xs, [m.id]: m }));
     setActivity((xs) =>
       xs.some(
         (x) =>
@@ -311,12 +469,66 @@ function Journey() {
         "Wallet lock matches the ordinary CKB secp profile. Complete external-wallet signing is not yet accepted.",
       );
     });
-  const refresh = () =>
+  const refresh = () => {
+    setReview(null);
+    execute.current = null;
+    setMarket(null);
+    setRefreshKey((x) => x + 1);
+  };
+  const open = (value: string) => {
+    try {
+      const id = marketIdentity(value);
+      const linked =
+        value.includes("://") || value.startsWith("/")
+          ? routeFromUrl(value)
+          : undefined;
+      navigate({
+        view: "Market",
+        id,
+        ...(linked?.claim !== undefined ? { claim: linked.claim } : {}),
+      });
+    } catch (e) {
+      setError(true);
+      setStatus(e instanceof Error ? e.message : String(e));
+    }
+  };
+  const discover = (more = false) =>
     run(async () => {
-      await current();
-      setStatus(
-        "Ownership reconstructed from committed history and the latest live market.",
-      );
+      try {
+        const d = await fetch("/pudge.json").then((r) => r.json());
+        if (d.network !== "pudge") throw Error("Discovery requires Pudge.");
+        const result = await discoverMarkets(
+          rpc,
+          d,
+          more ? discovery.next : undefined,
+        );
+        setKnown((xs) => ({
+          ...(more ? xs : {}),
+          ...Object.fromEntries(result.markets.map((m) => [m.id, m])),
+        }));
+        setDiscovery({
+          state: result.failures.length ? "partial" : "complete",
+          message:
+            result.markets.length +
+            " markets independently reconstructed" +
+            (result.failures.length
+              ? "; " + result.failures.length + " cells could not be verified."
+              : "."),
+          scanned: result.scanned,
+          next: result.next,
+        });
+        setStatus(
+          result.markets.length +
+            " markets verified. Discovery is limited to this deployment and the inspected page.",
+        );
+      } catch (e) {
+        setDiscovery({
+          state: "unavailable",
+          message: e instanceof Error ? e.message : String(e),
+          scanned: 0,
+        });
+        throw e;
+      }
     });
   const create = () =>
     run(async () => {
@@ -360,7 +572,9 @@ function Journey() {
         async () => {
           await send(b.tx, "Market creation");
           setFields((f) => ({ ...f, id: b.next.id }));
-          setMarket(await M.recover(rpc, d, b.next.id));
+          const m = await M.recover(rpc, d, b.next.id);
+          setKnown((xs) => ({ ...xs, [m.id]: m }));
+          navigate({ view: "Market", id: m.id });
         },
       );
     });
@@ -401,7 +615,7 @@ function Journey() {
         }[kind],
         [
           { label: "Market", value: m.id },
-          { label: "Claim index", value: fields.index },
+          { label: "Position", value: "#" + (Number(fields.index) + 1) },
           {
             label:
               kind === "activate"
@@ -433,6 +647,12 @@ function Journey() {
           await send(b.tx, kind);
           if (kind !== "close") await current();
           else {
+            setKnown((xs) => {
+              const next = { ...xs };
+              delete next[m.id];
+              return next;
+            });
+            navigate({ view: "Markets" });
             setMarket(null);
             setStatus(
               "Market closed. Permitted cushion returned, less the transaction fee.",
@@ -507,7 +727,8 @@ function Journey() {
           : "Submit paid assignment",
         [
           { label: "Market", value: r.market.id },
-          { label: "Claim", value: String(p.index) },
+          { label: "Position", value: "#" + (Number(p.index) + 1) },
+          { label: "Buyer address", value: fields.buyer },
           { label: "Seller receives", value: fmt(BigInt(p.price)) + " CKB" },
           {
             label: "Buyer pays",
@@ -554,41 +775,55 @@ function Journey() {
         kind === "sign" ? "Add signature in wallet" : "Sign & submit in wallet",
       );
     });
-  const view: MarketView | null = market
-    ? {
-        id: market.id,
-        phase: market.phase ? "Active" : "Funding",
-        backing: fmt(M.totals(market).B),
-        capacity: fmt(market.k),
-        minimum: fmt(market.minimum),
-        maturity: market.maturity.toString(),
-        tip,
-        creatorIsMe: market.creator === ownerHash,
-        funderIsMe: market.funder === ownerHash,
-        allFunded:
-          M.totals(market).count === BigInt(market.tree.n) &&
-          M.totals(market).P >= market.goal,
-        settled:
-          (market.phase ? M.totals(market).B : M.totals(market).P) === 0n,
-        root: market.tree.root,
-        positions: market.tree.records.map((r, index) => ({
-          index,
-          owner: r.owner,
-          contribution: fmt(r.p),
-          backing: fmt(r.b),
-          mine: r.owner === ownerHash,
-          empty: r.p === 0n,
-          remaining: r.b > 0n,
-        })),
-      }
-    : null;
+  const view =
+    market && route.id === market.id
+      ? marketView(market, ownerHash, tip)
+      : null;
   return (
     <Experience
+      fixture={process.env.NEXT_PUBLIC_LOCAL_FIXTURE === "1"}
+      route={route}
+      readAvailable={Boolean(manifest?.code && manifest.genesis)}
+      onNavigate={(view) => navigate({ view })}
+      onOpenMarket={open}
+      onSelectPosition={(index) => {
+        if (!view) return;
+        const r = view.positions[index];
+        if (!r) return;
+        setReview(null);
+        execute.current = null;
+        setFields((f) => ({
+          ...f,
+          index: String(index),
+          amount:
+            view.phase === "Funding"
+              ? r.empty
+                ? view.minimum
+                : r.contribution
+              : r.backing,
+          buyer: r.mine ? f.buyer : address,
+          envelope: "",
+        }));
+        const next = { ...route, claim: index };
+        setRoute(next);
+        window.history.replaceState({}, "", routeUrl(next));
+      }}
+      onClearPosition={() => {
+        setReview(null);
+        execute.current = null;
+        const next = { ...route, claim: undefined };
+        setRoute(next);
+        window.history.replaceState({}, "", routeUrl(next));
+      }}
+      markets={Object.values(known).map((m) => marketView(m, ownerHash, null))}
+      discovery={discovery}
+      onDiscover={discover}
+      loadingMarket={reading}
       fields={fields}
       update={update}
       address={address}
       connected={!!signer}
-      busy={busy}
+      busy={busy || reading}
       deployment={deploymentState}
       status={status}
       error={error}

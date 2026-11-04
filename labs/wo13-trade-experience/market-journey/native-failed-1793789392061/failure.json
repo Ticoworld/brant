@@ -1,0 +1,3 @@
+{
+  "error": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'tree')\n    at Module.build (webpack-internal:///(app-pages-browser)/./lib/market.ts:220:17)\n    at eval (eval at evaluate (:290:30), <anonymous>:18:19)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at prepare (/workspace/trade/apps/trade-testnet/tests/native.mts:123:12)\n    at /workspace/trade/apps/trade-testnet/tests/native.mts:428:15"
+}

@@ -1,11 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-export type Tab =
-  | "Trade"
-  | "Markets"
-  | "My Positions"
-  | "Create Market"
-  | "Activity";
+import type { PageRoute } from "../lib/market-reader";
+export type Tab = PageRoute["view"];
 export type Fields = {
   id: string;
   creator: string;
@@ -30,6 +26,10 @@ export type MarketView = {
   id: string;
   phase: "Funding" | "Active";
   backing: string;
+  contributed: string;
+  goal: string;
+  initialBacking: string;
+  creatorAllocation: string;
   capacity: string;
   minimum: string;
   maturity: string;
@@ -62,6 +62,21 @@ export type Review = {
   button: string;
 };
 export type ExperienceProps = {
+  route: PageRoute;
+  onNavigate: (view: PageRoute["view"]) => void;
+  onOpenMarket: (value: string) => void;
+  onSelectPosition: (index: number) => void;
+  onClearPosition: () => void;
+  markets: MarketView[];
+  discovery: {
+    state: "idle" | "complete" | "partial" | "unavailable";
+    message: string;
+    scanned: number;
+    next?: string;
+  };
+  onDiscover: (more?: boolean) => void;
+  loadingMarket: boolean;
+  readAvailable: boolean;
   fields: Fields;
   update: (name: keyof Fields, value: string) => void;
   address: string;
@@ -194,19 +209,29 @@ function ReviewDialog({
         </button>
       </div>
       <dl className="review-lines">
-        {review.lines.map((x) => (
-          <div key={x.label}>
-            <dt>{x.label}</dt>
-            <dd>{x.value}</dd>
-          </div>
-        ))}
+        {review.lines
+          .filter((x) => !/^0x[0-9a-fA-F]{64}$/.test(x.value))
+          .map((x) => (
+            <div key={x.label}>
+              <dt>{x.label}</dt>
+              <dd>{x.value}</dd>
+            </div>
+          ))}
         <div>
           <dt>Network fee</dt>
           <dd>{review.fee} CKB</dd>
         </div>
       </dl>
       <details>
-        <summary>Transaction details</summary>
+        <summary>Transaction details & identities</summary>
+        {review.lines
+          .filter((x) => /^0x[0-9a-fA-F]{64}$/.test(x.value))
+          .map((x) => (
+            <div key={x.label}>
+              <p>{x.label}</p>
+              <code>{x.value}</code>
+            </div>
+          ))}
         <code>{review.hash}</code>
         {review.outputs.map((o, i) => (
           <div className="output" key={i}>
@@ -279,48 +304,151 @@ function net(value: string) {
     (n % 100000000n).toString().padStart(8, "0")
   ).replace(/\.?0+$/, "");
 }
-export default function Experience(p: ExperienceProps) {
-  const [tab, setTab] = useState<Tab>("Trade"),
-    [action, setAction] = useState<"redeem" | "sell" | "import">("redeem"),
-    [shareError, setShareError] = useState("");
-  const f = p.fields,
-    m = p.market,
-    locked = p.busy || !p.address || p.deployment !== "Configured",
-    selected = m?.positions.find((r) => r.index === Number(f.index));
-  const mature =
-    !!m &&
-    (m.maturity === "0" ||
-      (m.tip !== null && BigInt(m.tip) >= BigInt(m.maturity)));
-  const change =
-    (key: keyof Fields) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      p.update(key, e.target.value);
-  const initialStatus = /^Connect a supported|^Controlled local view/.test(
-    p.status,
+function shannons(value: string) {
+  if (!/^\d+(\.\d{1,8})?$/.test(value)) return null;
+  const [a, b = ""] = value.split(".");
+  return BigInt(a) * 100000000n + BigInt(b.padEnd(8, "0"));
+}
+function money(value: bigint) {
+  return (
+    value / 100000000n +
+    "." +
+    (value % 100000000n).toString().padStart(8, "0")
+  ).replace(/\.?0+$/, "");
+}
+function ratio(value: string, total: string) {
+  const n = shannons(value),
+    d = shannons(total);
+  return n !== null && d && d > 0n
+    ? Math.min(100, Number((n * 10000n) / d) / 100)
+    : 0;
+}
+function MarketSearch({ p }: { p: ExperienceProps }) {
+  return (
+    <form
+      className="market-search"
+      onSubmit={(e) => {
+        e.preventDefault();
+        p.onOpenMarket(p.fields.id);
+      }}
+    >
+      <Icon name="search" />
+      <label className="sr-only" htmlFor="market-id">
+        Market link or identity
+      </label>
+      <input
+        id="market-id"
+        value={p.fields.id}
+        onChange={(e) => p.update("id", e.target.value)}
+        placeholder="Open market by link or ID"
+        disabled={p.busy}
+        autoComplete="off"
+        spellCheck={false}
+      />
+      <button aria-label="Open market" disabled={p.busy || !p.fields.id.trim()}>
+        <Icon name="arrow" />
+      </button>
+    </form>
   );
-  const eligible =
-    m?.positions.filter(
-      (r) => r.mine && !r.empty && (m.phase === "Funding" || r.remaining),
-    ) ?? [];
-  function select(r: Position) {
-    setTab("Trade");
-    p.update("index", String(r.index));
-    if (window.matchMedia("(max-width:720px)").matches)
-      requestAnimationFrame(() => {
-        const panel = document.getElementById("position-actions");
-        panel?.scrollIntoView({
-          behavior: window.matchMedia("(prefers-reduced-motion:reduce)").matches
-            ? "instant"
-            : "smooth",
-          block: "start",
-        });
-        panel?.focus({ preventScroll: true });
-      });
-    p.update(
-      "amount",
-      m?.phase === "Active" ? r.backing : (m?.minimum ?? "0.125"),
-    );
-  }
+}
+function PositionTable({
+  p,
+  m,
+  onlyMine = false,
+}: {
+  p: ExperienceProps;
+  m: MarketView;
+  onlyMine?: boolean;
+}) {
+  const rows = onlyMine
+    ? m.positions.filter((r) => r.mine && !r.empty)
+    : m.positions;
+  return (
+    <div className="table-wrap">
+      <table className="position-table">
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Owner</th>
+            <th className="number optional-col">Contributed · CKB</th>
+            <th className="number">Backing · CKB</th>
+            <th>
+              <span className="sr-only">Action</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length ? (
+            rows.map((r) => (
+              <tr
+                key={r.index}
+                className={p.route.claim === r.index ? "selected-row" : ""}
+              >
+                <td>
+                  <b>#{r.index + 1}</b>
+                  <small>
+                    {r.empty
+                      ? "Available"
+                      : m.phase === "Funding"
+                        ? "Funding"
+                        : !r.remaining
+                          ? "Settled"
+                          : m.maturity === "0" ||
+                              (m.tip !== null &&
+                                BigInt(m.tip) >= BigInt(m.maturity))
+                            ? "Redeemable"
+                            : "Before maturity"}
+                  </small>
+                </td>
+                <td>{r.empty ? "—" : r.mine ? "You" : "Another wallet"}</td>
+                <td className="number optional-col">
+                  {r.empty ? "—" : r.contribution}
+                </td>
+                <td className="number">{r.backing}</td>
+                <td>
+                  <button
+                    className="row-action"
+                    disabled={p.busy}
+                    aria-label={"Open position " + (r.index + 1)}
+                    onClick={() => p.onSelectPosition(r.index)}
+                  >
+                    {r.empty && m.phase === "Funding"
+                      ? "Contribute"
+                      : r.mine && r.remaining
+                        ? "Manage"
+                        : "View"}
+                    <Icon name="arrow" />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5}>
+                <p>No positions belonging to this checked wallet.</p>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+function Offer({
+  p,
+  m,
+  r,
+  buy,
+}: {
+  p: ExperienceProps;
+  m: MarketView;
+  r: Position;
+  buy: boolean;
+}) {
+  const [error, setError] = useState(""),
+    [importing, setImporting] = useState(buy);
+  const f = p.fields,
+    locked = p.busy || p.deployment !== "Configured";
   function download() {
     const url = URL.createObjectURL(
       new Blob([f.envelope], { type: "application/json" }),
@@ -331,84 +459,447 @@ export default function Experience(p: ExperienceProps) {
     a.click();
     URL.revokeObjectURL(url);
   }
-  const blocker = locked ? (
-    <p className="blocker">
-      {!p.address
-        ? "Connect and verify your wallet."
-        : "Contract deployment pending approval."}
-    </p>
-  ) : null;
-  const terms = (
-    <details className="terms-disclosure">
-      <summary>Market terms</summary>
-      <dl>
+  return (
+    <>
+      <div className="offer-mode">
+        {!buy && (
+          <>
+            <button
+              aria-pressed={!importing}
+              onClick={() => setImporting(false)}
+            >
+              Create offer
+            </button>
+            <button aria-pressed={importing} onClick={() => setImporting(true)}>
+              Import offer
+            </button>
+          </>
+        )}
+      </div>
+      <label htmlFor="buyer-address">
+        {buy ? "Receiving wallet" : "Buyer address"}
+        <input
+          id="buyer-address"
+          value={f.buyer}
+          onChange={(e) => p.update("buyer", e.target.value)}
+          placeholder="ckt1…"
+          disabled={p.busy}
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </label>
+      <Amount
+        id="sale-price"
+        label={buy ? "Agreed purchase price" : "Sale price"}
+        value={f.price}
+        onChange={(v) => p.update("price", v)}
+        disabled={p.busy}
+      />
+      <dl className="action-accounting">
         <div>
-          <dt>Initial CKB backing</dt>
-          <dd>80% of contributions</dd>
+          <dt>Backing transferred</dt>
+          <dd>{r.backing} CKB</dd>
         </div>
         <div>
-          <dt>Creator proceeds</dt>
-          <dd>20% gross at activation</dd>
+          <dt>Buyer pays network fee</dt>
+          <dd>0.001 CKB</dd>
         </div>
+      </dl>
+      {!importing && !buy ? (
+        <button
+          className="primary wide"
+          disabled={locked || !f.buyer}
+          onClick={() => p.onOffer("prepare")}
+        >
+          Prepare offer
+        </button>
+      ) : (
+        <>
+          <label className="file-label" htmlFor="offer-file">
+            <Icon name="file" />
+            Import offer file
+            <input
+              id="offer-file"
+              type="file"
+              accept="application/json,.json"
+              disabled={p.busy}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (file.size > 2000000) {
+                  setError("Offer exceeds 2 MB.");
+                  return;
+                }
+                p.update("envelope", await file.text());
+                setError("");
+              }}
+            />
+          </label>
+          <details>
+            <summary>Paste offer JSON</summary>
+            <label className="sr-only" htmlFor="offer-json">
+              Assignment proposal
+            </label>
+            <textarea
+              id="offer-json"
+              value={f.envelope}
+              onChange={(e) => p.update("envelope", e.target.value)}
+              rows={5}
+              disabled={p.busy}
+            />
+          </details>
+          <button
+            className="wide"
+            disabled={locked || !f.envelope}
+            onClick={() => p.onOffer("sign")}
+          >
+            Review & add signature
+          </button>
+          <button
+            className="primary wide"
+            disabled={locked || !f.envelope}
+            onClick={() => p.onOffer("submit")}
+          >
+            Review & submit
+          </button>
+        </>
+      )}
+      {error && <p role="alert">{error}</p>}
+      {f.envelope && (
+        <div className="offer-ready">
+          <span>Offer file ready</span>
+          <button onClick={download}>Save offer file</button>
+        </div>
+      )}
+      <p className="material-note">
+        A sale requires a consenting buyer and both signatures. Signed files are
+        not settlement. Changed inputs require fresh review.
+      </p>
+    </>
+  );
+}
+function PositionAction({
+  p,
+  m,
+  r,
+}: {
+  p: ExperienceProps;
+  m: MarketView;
+  r: Position;
+}) {
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    panel.current?.focus();
+  }, []);
+  const [mode, setMode] = useState<"redeem" | "sell">(
+    r.mine ? "redeem" : "sell",
+  );
+  const f = p.fields,
+    locked = p.busy || p.deployment !== "Configured";
+  const mature =
+    m.maturity === "0" ||
+    (m.tip !== null && BigInt(m.tip) >= BigInt(m.maturity));
+  const active = m.phase === "Active";
+  const value = shannons(f.amount),
+    remaining = shannons(r.backing) ?? 0n;
+  const valid =
+    value !== null &&
+    value > 100000n &&
+    value <= remaining &&
+    (remaining - value === 0n || remaining - value > 1000000n);
+  return (
+    <section
+      ref={panel}
+      className="position-action"
+      id="position-actions"
+      tabIndex={-1}
+      aria-label="Selected position"
+    >
+      <div className="position-action-head">
         <div>
-          <dt>Maturity</dt>
+          <span className="subtle">Position</span>
+          <h2>#{r.index + 1}</h2>
+        </div>
+        <button
+          className="icon-button"
+          aria-label="Close position"
+          onClick={() => {
+            p.onClearPosition();
+            requestAnimationFrame(() =>
+              document
+                .querySelector<HTMLButtonElement>(
+                  '[aria-label="Open position ' + (r.index + 1) + '"]',
+                )
+                ?.focus(),
+            );
+          }}
+          disabled={p.busy}
+        >
+          <Icon name="close" />
+        </button>
+      </div>
+      <dl className="ownership-lines">
+        <div>
+          <dt>Owner</dt>
           <dd>
-            {m?.maturity === "0"
-              ? "No added delay"
-              : m
-                ? "Block " + m.maturity
-                : "Set at creation"}
+            {r.empty
+              ? "Unfunded"
+              : r.mine
+                ? "Your checked wallet"
+                : "Another wallet"}
           </dd>
         </div>
         <div>
-          <dt>Receiving capacity</dt>
-          <dd>61 CKB retained in a plain secp Cell</dd>
-        </div>
-        <div>
-          <dt>Recovery</dt>
-          <dd>Public history + live market Cell</dd>
+          <dt>{active ? "Remaining backing" : "Contribution"}</dt>
+          <dd>{active ? r.backing : r.contribution} CKB</dd>
         </div>
       </dl>
-      <p>
-        CKB backing does not protect the USD value. No guaranteed buyer,
-        immediate settlement or unconditional small withdrawal.
+      {!p.address ? (
+        <div className="connect-position">
+          <p>
+            {r.empty
+              ? "Connect a supported wallet to contribute."
+              : "Connect a supported wallet to manage or acquire this position."}
+          </p>
+          <button
+            className="primary wide"
+            disabled={p.busy}
+            onClick={p.connected ? p.onCheck : p.onConnect}
+          >
+            {p.connected ? "Check wallet compatibility" : "Connect wallet"}
+          </button>
+        </div>
+      ) : !active ? (
+        r.empty ? (
+          <>
+            <Amount
+              id="claim-amount"
+              label="Contribution"
+              value={f.amount}
+              onChange={(v) => p.update("amount", v)}
+              disabled={p.busy}
+            />
+            <dl className="action-accounting">
+              <div>
+                <dt>Reserved backing · 80%</dt>
+                <dd>{value !== null ? money((value * 4n) / 5n) : "—"} CKB</dd>
+              </div>
+              <div>
+                <dt>Creator gross · 20%</dt>
+                <dd>
+                  {value !== null ? money(value - (value * 4n) / 5n) : "—"} CKB
+                </dd>
+              </div>
+              <div>
+                <dt>Network fee · additional</dt>
+                <dd>0.001 CKB</dd>
+              </div>
+              <div>
+                <dt>Minimum contribution</dt>
+                <dd>{m.minimum} CKB</dd>
+              </div>
+            </dl>
+            <button
+              className="primary wide"
+              disabled={
+                locked || value === null || value < (shannons(m.minimum) ?? 0n)
+              }
+              onClick={() => p.onAction("contribute")}
+            >
+              Review contribution
+            </button>
+            <p className="material-note">
+              20% is allocated to the creator at activation. You may refund
+              before activation.
+            </p>
+          </>
+        ) : r.mine ? (
+          <>
+            <p className="material-note">
+              Funding is still open. You can refund this full contribution
+              before activation.
+            </p>
+            <dl className="action-accounting">
+              <div>
+                <dt>Gross refund</dt>
+                <dd>{r.contribution} CKB</dd>
+              </div>
+              <div>
+                <dt>Network fee · deducted</dt>
+                <dd>0.001 CKB</dd>
+              </div>
+              <div className="total">
+                <dt>You receive</dt>
+                <dd>{net(r.contribution)} CKB</dd>
+              </div>
+            </dl>
+            <button
+              className="primary wide"
+              disabled={locked}
+              onClick={() => p.onAction("refund")}
+            >
+              Review refund
+            </button>
+          </>
+        ) : (
+          <p className="material-note">
+            Only this position's current owner can refund it. Secondary
+            assignment is available only after activation.
+          </p>
+        )
+      ) : !r.remaining ? (
+        <p className="material-note">
+          This position is fully settled. No backing remains to redeem or
+          transfer.
+        </p>
+      ) : (
+        <>
+          {r.mine && (
+            <div className="action-tabs">
+              <button
+                aria-pressed={mode === "redeem"}
+                onClick={() => setMode("redeem")}
+              >
+                Redeem
+              </button>
+              <button
+                aria-pressed={mode === "sell"}
+                onClick={() => setMode("sell")}
+              >
+                Sell
+              </button>
+            </div>
+          )}
+          {r.mine && mode === "redeem" ? (
+            <>
+              <Amount
+                id="claim-amount"
+                label="Gross redemption"
+                value={f.amount}
+                onChange={(v) => p.update("amount", v)}
+                disabled={p.busy}
+              />
+              <dl className="action-accounting">
+                <div>
+                  <dt>Network fee · deducted</dt>
+                  <dd>0.001 CKB</dd>
+                </div>
+                <div className="total">
+                  <dt>You receive</dt>
+                  <dd>{net(f.amount)} CKB</dd>
+                </div>
+              </dl>
+              {mature ? (
+                <button
+                  className="primary wide"
+                  disabled={locked || !valid}
+                  onClick={() => p.onAction("redeem")}
+                >
+                  Review redemption
+                </button>
+              ) : (
+                <p className="maturity-notice">
+                  Redemption opens at block {m.maturity}.{" "}
+                  {m.tip === null
+                    ? "Current height could not be checked."
+                    : "Current height: " + m.tip + "."}{" "}
+                  Sale remains possible.
+                </p>
+              )}
+              <p className="material-note">
+                Fee comes from the gross amount. Any remaining backing must be
+                zero or greater than 0.01 CKB.
+              </p>
+            </>
+          ) : (
+            <>
+              <h3>{r.mine ? "Sell this position" : "Acquire with an offer"}</h3>
+              <Offer
+                key={r.mine ? "seller" : "buyer"}
+                p={p}
+                m={m}
+                r={r}
+                buy={!r.mine}
+              />
+            </>
+          )}
+        </>
+      )}
+      {p.address && p.deployment !== "Configured" && (
+        <p className="blocker">
+          Public signing is disabled pending deployment approval.
+        </p>
+      )}
+      <p className="receiving-note">
+        Settlement needs a plain wallet Cell retaining at least 61 CKB. Recovery
+        requires public transaction history.
       </p>
-    </details>
+      <details>
+        <summary>Position identity</summary>
+        <p>On-chain slot: {r.index}</p>
+        <p>Market</p>
+        <code>{m.id}</code>
+        <p>Owner lock</p>
+        <code>{r.owner}</code>
+        <p>Current commitment</p>
+        <code>{m.root}</code>
+      </details>
+    </section>
   );
+}
+export default function Experience(p: ExperienceProps) {
+  const f = p.fields,
+    m = p.market;
+  const selected =
+    m && p.route.claim !== undefined
+      ? m.positions.find((r) => r.index === p.route.claim)
+      : undefined;
+  const initial = /^Connect a supported|^Controlled local view/.test(p.status);
+  const update =
+    (key: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement>) =>
+      p.update(key, e.target.value);
   return (
     <div className="app-shell">
       <a className="skip" href="#workspace">
         Skip to workspace
       </a>
       <header className="topbar">
-        <a href="/" className="brand" aria-label="Trade home">
+        <a
+          className="brand"
+          href="/"
+          aria-label="Trade home"
+          onClick={(e) => {
+            e.preventDefault();
+            p.onNavigate("Markets");
+          }}
+        >
           <CellMark />
           trade<span className="network">CKB TESTNET</span>
         </a>
         <nav className="navigation" aria-label="Main navigation">
           {(
-            [
-              "Trade",
-              "My Positions",
-              "Markets",
-              "Activity",
-              "Create Market",
-            ] as Tab[]
-          ).map((t) => (
+            ["Markets", "My Positions", "Activity", "Create Market"] as const
+          ).map((v) => (
             <button
-              key={t}
-              aria-current={t === tab ? "page" : undefined}
-              onClick={() => setTab(t)}
+              key={v}
+              disabled={p.busy}
+              aria-current={
+                p.route.view === v ||
+                (v === "Markets" && p.route.view === "Market")
+                  ? "page"
+                  : undefined
+              }
+              onClick={() => p.onNavigate(v)}
             >
-              {t === "My Positions" ? (
+              {v === "My Positions" ? (
                 "Positions"
-              ) : t === "Create Market" ? (
+              ) : v === "Create Market" ? (
                 <>
                   <Icon name="plus" />
                   Create market
                 </>
               ) : (
-                t
+                v
               )}
             </button>
           ))}
@@ -423,18 +914,7 @@ export default function Experience(p: ExperienceProps) {
           </button>
         </div>
       </header>
-      <main
-        id="workspace"
-        className={
-          tab === "Trade"
-            ? "trade-mode"
-            : tab === "My Positions"
-              ? "positions-mode"
-              : ""
-        }
-        tabIndex={-1}
-        aria-busy={p.busy}
-      >
+      <main id="workspace" tabIndex={-1} aria-busy={p.busy}>
         {p.fixture && (
           <div className="fixture-banner">
             CONTROLLED LOCAL UI FIXTURE · no wallet, liquidity or Pudge
@@ -444,123 +924,130 @@ export default function Experience(p: ExperienceProps) {
         {p.connected && !p.address && (
           <div className="wallet-check">
             <span>Wallet verification required</span>
-            <button onClick={p.onCheck} disabled={p.busy}>
+            <button disabled={p.busy} onClick={p.onCheck}>
               Check wallet compatibility
             </button>
           </div>
         )}
         <div
+          role={p.error ? "alert" : "status"}
           className={
             "status-bar " +
             (p.error ? "status-error" : "") +
-            (initialStatus && !p.busy && !p.error ? " sr-only" : "")
+            (initial && !p.busy && !p.error ? " sr-only" : "")
           }
-          role={p.error ? "alert" : "status"}
         >
           {p.busy && <span className="spinner" aria-hidden="true" />}
           <p>{p.status}</p>
         </div>
-        {tab === "Markets" && (
+        {p.route.view === "Markets" && (
           <>
             <div className="page-heading">
               <div>
                 <h1>Markets</h1>
+                <span className="subtle">Verified CKB-backed claims</span>
               </div>
-              <form
-                className="market-search"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  p.onRecover();
-                }}
+              <MarketSearch p={p} />
+            </div>
+            <div className="directory-tools">
+              <span>{p.markets.length} verified in this session</span>
+              <button
+                disabled={p.busy || !p.readAvailable}
+                onClick={() => p.onDiscover(false)}
               >
-                <Icon name="search" />
-                <label className="sr-only" htmlFor="market-id">
-                  Market link or identity
-                </label>
-                <input
-                  id="market-id"
-                  disabled={p.busy}
-                  value={f.id}
-                  onChange={change("id")}
-                  placeholder="Paste market link or ID"
-                  autoComplete="off"
-                  spellCheck={false}
-                />
-                <button
-                  className="search-submit"
-                  disabled={p.busy || !f.id.trim()}
-                  aria-label="Open market"
-                >
-                  <Icon name="arrow" />
-                </button>
-              </form>
+                <Icon name="refresh" />
+                Find markets
+              </button>
             </div>
-            <div className="market-toolbar">
-              <span className="filter-selected">Backed claims</span>
-            </div>
+            {!p.readAvailable && (
+              <p className="material-note">
+                The public contract is not configured. Discovery and signing
+                remain unavailable until deployment is verified.
+              </p>
+            )}
             <div className="table-wrap">
               <table className="market-table">
                 <thead>
                   <tr>
                     <th>Market</th>
-                    <th>Status</th>
-                    <th className="number">CKB backing</th>
-                    <th className="number optional-col">Participants</th>
+                    <th>Phase</th>
+                    <th className="number">Backing · CKB</th>
+                    <th className="number optional-col">Funded slots</th>
                     <th className="optional-col">Maturity</th>
                     <th>
-                      <span className="sr-only">Action</span>
+                      <span className="sr-only">Open</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {m ? (
-                    <tr>
-                      <td>
-                        <span className="market-name">
-                          <span className="market-token" aria-hidden="true">
-                            <CellMark seed={m.positions.length} />
-                          </span>
-                          <span>
-                            <b>CKB claim market</b>
-                            <small>{short(m.id)}</small>
-                          </span>
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={
-                            "phase " + (m.phase === "Active" ? "positive" : "")
-                          }
-                        >
-                          {m.phase}
-                        </span>
-                      </td>
-                      <td className="number">{m.backing}</td>
-                      <td className="number optional-col">
-                        {m.positions.filter((r) => !r.empty).length} /{" "}
-                        {m.positions.length}
-                      </td>
-                      <td className="optional-col">
-                        {m.maturity === "0"
-                          ? "No delay"
-                          : "Block " + m.maturity}
-                      </td>
-                      <td>
-                        <button
-                          className="row-action"
-                          onClick={() => setTab("My Positions")}
-                          aria-label="View positions"
-                        >
-                          <Icon name="arrow" />
-                        </button>
-                      </td>
-                    </tr>
+                  {p.markets.length ? (
+                    p.markets.map((x) => (
+                      <tr key={x.id}>
+                        <td>
+                          <a
+                            className="market-name"
+                            href={"/market/" + x.id}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              p.onOpenMarket(x.id);
+                            }}
+                          >
+                            <span className="market-token" aria-hidden="true">
+                              <img
+                                src="/assets/ckb.svg"
+                                alt=""
+                                width="14"
+                                height="14"
+                              />
+                            </span>
+                            <span>
+                              <b>CKB-backed claims</b>
+                              <small>{x.positions.length} positions</small>
+                            </span>
+                          </a>
+                        </td>
+                        <td>
+                          <span className="phase">{x.phase}</span>
+                        </td>
+                        <td className="number">{x.backing}</td>
+                        <td className="number optional-col">
+                          {x.positions.filter((r) => !r.empty).length} /{" "}
+                          {x.positions.length}
+                        </td>
+                        <td className="optional-col">
+                          {x.maturity === "0"
+                            ? "No added delay"
+                            : "Block " + x.maturity}
+                        </td>
+                        <td>
+                          <button
+                            className="row-action"
+                            disabled={p.busy}
+                            aria-label={"Open market " + x.id}
+                            onClick={() => p.onOpenMarket(x.id)}
+                          >
+                            <Icon name="arrow" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan={6}>
                         <div className="empty">
                           <Icon name="search" />
-                          <h2>No market selected</h2>
+                          <h2>No verified markets yet</h2>
+                          <p>
+                            Open a market link, or search the configured
+                            deployment.
+                          </p>
+                          <button
+                            onClick={() =>
+                              document.getElementById("market-id")?.focus()
+                            }
+                          >
+                            Open a market link
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -568,545 +1055,338 @@ export default function Experience(p: ExperienceProps) {
                 </tbody>
               </table>
             </div>
-            <div className="table-foot">
-              <span>
-                {m
-                  ? p.fixture
-                    ? "Controlled presentation state"
-                    : "Verified from committed history"
-                  : "No public market directory connected"}
-              </span>
-              {m && (
-                <button
-                  className="text-button"
-                  disabled={p.busy}
-                  onClick={p.onRecover}
-                >
-                  <Icon name="refresh" />
-                  Refresh
+            <div className="discovery-result" role="status">
+              {p.discovery.message}
+              {p.discovery.next && (
+                <button disabled={p.busy} onClick={() => p.onDiscover(true)}>
+                  Load next page
                 </button>
               )}
             </div>
+            <p className="directory-scope">
+              Discovery checks 20 live Cells per page from this contract. Every
+              listed market is independently reconstructed; an indexer result
+              alone is not accepted.
+            </p>
           </>
         )}
-        {(tab === "My Positions" || tab === "Trade") && (
+        {p.route.view === "Market" && (
           <>
-            <div
-              className={"page-heading " + (tab === "Trade" ? "sr-only" : "")}
-            >
-              <div>
-                <h1>{tab === "Trade" ? "Trade" : "Positions"}</h1>
-                {m && (
-                  <span className="subtle">
-                    {short(m.id)} <span className="separator">/</span> {m.phase}
-                  </span>
-                )}
-              </div>
-              {m && (
-                <button
-                  className="text-button"
-                  onClick={p.onRecover}
-                  disabled={p.busy}
-                >
-                  <Icon name="refresh" />
-                  Refresh
-                </button>
-              )}
-            </div>
-            {!m ? (
-              tab === "Trade" ? (
-                <section
-                  className="trade-empty action-panel"
-                  aria-label="Open a market"
-                >
-                  <div className="action-tabs">
-                    <span className="selected-tab">Redeem</span>
-                    <span>Sell</span>
-                    <span>Import offer</span>
-                  </div>
-                  <form
-                    className="market-search"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      p.onRecover();
-                    }}
+            {p.loadingMarket ? (
+              <section className="workspace-loading" role="status">
+                <span className="spinner" />
+                <h1>Opening market</h1>
+                <p>Checking its live state and committed history.</p>
+              </section>
+            ) : !m ? (
+              <section className="workspace-error">
+                <h1>Market unavailable</h1>
+                <p>
+                  No verified state is loaded. No position actions are enabled.
+                </p>
+                <div className="actions">
+                  <button onClick={() => p.onNavigate("Markets")}>
+                    Back to Markets
+                  </button>
+                  <button
+                    className="primary"
+                    disabled={p.busy}
+                    onClick={p.onRecover}
                   >
-                    <Icon name="search" />
-                    <label className="sr-only" htmlFor="market-id">
-                      Market link or identity
-                    </label>
-                    <input
-                      id="market-id"
-                      value={f.id}
-                      onChange={change("id")}
-                      placeholder="Open market by link or ID"
-                      disabled={p.busy}
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
+                    Retry recovery
+                  </button>
+                </div>
+              </section>
+            ) : (
+              <>
+                <div className="market-heading">
+                  <div>
                     <button
-                      className="search-submit"
-                      aria-label="Open market"
-                      disabled={p.busy || !f.id.trim()}
+                      className="breadcrumb"
+                      disabled={p.busy}
+                      onClick={() => p.onNavigate("Markets")}
                     >
-                      <Icon name="arrow" />
+                      Markets /
                     </button>
-                  </form>
-                  <Amount
-                    id="empty-amount"
-                    label="Redeem amount"
-                    value=""
-                    onChange={() => {}}
-                    disabled
-                  />
-                  <span className="settlement-direction" aria-hidden="true">
-                    <Icon name="arrow" />
-                  </span>
-                  <div className="empty-receive">
-                    <span>You receive</span>
+                    <h1>CKB-backed claims</h1>
+                    <p>
+                      Transferable CKB claims, not launched tokens. Resale
+                      requires a buyer.
+                    </p>
+                  </div>
+                  <div className="market-heading-actions">
+                    <span className="phase">{m.phase}</span>
+                    <button
+                      className="text-button"
+                      disabled={p.busy}
+                      onClick={p.onRecover}
+                    >
+                      <Icon name="refresh" />
+                      Refresh
+                    </button>
+                  </div>
+                </div>
+                <section
+                  className="market-ledger"
+                  aria-label="Market financial state"
+                >
+                  <dl>
                     <div>
-                      <strong>—</strong>
-                      <span className="asset">
-                        <span className="asset-mark" aria-hidden="true">
-                          <img
-                            src="/assets/ckb.svg"
-                            alt=""
-                            width="12"
-                            height="12"
-                          />
-                        </span>
+                      <dt>Contributed</dt>
+                      <dd>
+                        {m.contributed}
+                        <small>CKB</small>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Backing remaining</dt>
+                      <dd>
+                        {m.backing}
+                        <small>CKB</small>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Creator gross allocation</dt>
+                      <dd>
+                        {m.creatorAllocation}
+                        <small>CKB</small>
+                      </dd>
+                    </div>
+                    <div>
+                      <dt>Redemption maturity</dt>
+                      <dd>
+                        {m.maturity === "0"
+                          ? "No added delay"
+                          : "Block " + m.maturity}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="financial-proportion">
+                    <div>
+                      <span>
+                        {m.phase === "Funding"
+                          ? "Funding target"
+                          : "Backing remaining / initial"}
+                      </span>
+                      <b>
+                        {m.phase === "Funding"
+                          ? m.contributed + " / " + m.goal
+                          : m.backing + " / " + m.initialBacking}{" "}
                         CKB
+                      </b>
+                    </div>
+                    <div
+                      className="proportion-track"
+                      role="progressbar"
+                      aria-label={
+                        m.phase === "Funding"
+                          ? "Funding progress"
+                          : "Backing remaining"
+                      }
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={ratio(
+                        m.phase === "Funding" ? m.contributed : m.backing,
+                        m.phase === "Funding" ? m.goal : m.initialBacking,
+                      )}
+                    >
+                      <span
+                        style={{
+                          width:
+                            ratio(
+                              m.phase === "Funding" ? m.contributed : m.backing,
+                              m.phase === "Funding" ? m.goal : m.initialBacking,
+                            ) + "%",
+                        }}
+                      />
+                    </div>
+                    <small>
+                      {m.phase === "Funding"
+                        ? "80% initial backing; 20% gross creator proceeds at activation. Owner refunds remain possible until then."
+                        : "Initial backing: 80% of contributions. The creator’s 20% was released at activation. CKB backing, not a USD guarantee."}
+                    </small>
+                  </div>
+                </section>
+                <div
+                  className={
+                    "market-workspace " + (selected ? "with-selection" : "")
+                  }
+                >
+                  <section
+                    className="positions-section"
+                    aria-label="Authenticated market positions"
+                  >
+                    <div className="section-line">
+                      <h2>Positions</h2>
+                      <span>
+                        {m.positions.filter((r) => !r.empty).length} /{" "}
+                        {m.positions.length} funded
                       </span>
                     </div>
-                  </div>
-                  <button
-                    className="primary wide"
-                    disabled={p.busy}
-                    onClick={
-                      !p.connected
-                        ? p.onConnect
-                        : !p.address
-                          ? p.onCheck
-                          : p.onRecover
-                    }
-                  >
-                    {!p.connected
-                      ? "Connect wallet"
-                      : !p.address
-                        ? "Check wallet"
-                        : "Open market"}
-                  </button>
-                  <p className="card-footnote">Open a market to continue.</p>
-                </section>
-              ) : (
-                <div className="standalone-empty">
-                  <Icon name="wallet" />
-                  <h2>No market selected</h2>
-                  <button onClick={() => setTab("Markets")}>Open market</button>
-                </div>
-              )
-            ) : (
-              <div className="position-workspace">
-                <section
-                  className="position-book"
-                  aria-label="Market positions"
-                >
-                  <div className="table-wrap">
-                    <table className="position-table">
-                      <thead>
-                        <tr>
-                          <th>Claim</th>
-                          <th>Owner</th>
-                          <th className="number optional-col">Contributed</th>
-                          <th className="number">Backing</th>
-                          <th>
-                            <span className="sr-only">Select</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {m.positions.map((r) => (
-                          <tr
-                            key={r.index}
-                            className={
-                              r.index === Number(f.index) ? "selected-row" : ""
-                            }
-                          >
-                            <td>
-                              <span className="claim-identity">
-                                <span className="claim-glyph">
-                                  <CellMark seed={r.index} />
-                                </span>
-                                <b>#{r.index}</b>
-                              </span>
-                              <small>
-                                {r.empty
-                                  ? "Open"
-                                  : m.phase === "Funding"
-                                    ? "Funding"
-                                    : !r.remaining
-                                      ? "Redeemed"
-                                      : mature
-                                        ? "Ready"
-                                        : "Locked"}
-                              </small>
-                            </td>
-                            <td>
-                              {r.empty ? (
-                                "—"
-                              ) : r.mine ? (
-                                <span className="owner-you">You</span>
-                              ) : (
-                                <span title={r.owner}>Other owner</span>
-                              )}
-                            </td>
-                            <td className="number optional-col">
-                              {r.empty ? "—" : r.contribution}
-                            </td>
-                            <td className="number">{r.backing}</td>
-                            <td>
-                              <button
-                                className="row-action"
-                                aria-label={"Select claim " + r.index}
-                                aria-pressed={Number(f.index) === r.index}
-                                onClick={() => select(r)}
-                              >
-                                <Icon name="arrow" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="book-foot">
-                    <span>
-                      {p.address
-                        ? totalBacking(eligible) + " CKB your backing"
-                        : m.backing + " CKB reserved"}
-                    </span>
-                    <span>{m.positions.length} slots</span>
-                  </div>
-                  {terms}
-                  {(m.creatorIsMe || m.funderIsMe) && (
-                    <details>
-                      <summary>Market controls</summary>
-                      <div className="actions">
-                        <button
-                          disabled={
-                            locked ||
-                            !m.creatorIsMe ||
-                            m.phase !== "Funding" ||
-                            !m.allFunded
-                          }
-                          onClick={() => p.onAction("activate")}
-                        >
-                          Review activation
+                    <PositionTable p={p} m={m} />
+                    {p.route.claim !== undefined && !selected && (
+                      <p role="alert">
+                        This position does not exist in the current market.{" "}
+                        <button onClick={p.onClearPosition}>
+                          Clear selection
                         </button>
+                      </p>
+                    )}
+                    <div className="market-permissions">
+                      {p.address &&
+                        m.creatorIsMe &&
+                        m.phase === "Funding" &&
+                        (m.allFunded ? (
+                          <button
+                            className="primary"
+                            disabled={p.busy || p.deployment !== "Configured"}
+                            onClick={() => p.onAction("activate")}
+                          >
+                            Review activation
+                          </button>
+                        ) : (
+                          <p>
+                            As creator, you can activate once every slot and the
+                            funding goal are met.
+                          </p>
+                        ))}
+                      {p.address && m.funderIsMe && m.settled && (
                         <button
-                          disabled={locked || !m.funderIsMe || !m.settled}
+                          disabled={p.busy || p.deployment !== "Configured"}
                           onClick={() => p.onAction("close")}
                         >
                           Review closure
                         </button>
-                      </div>
-                    </details>
-                  )}
-                </section>
-                <section
-                  id="position-actions"
-                  tabIndex={-1}
-                  className="action-panel"
-                  aria-label="Position actions"
-                >
-                  <div className="ticket-heading">
-                    <label className="sr-only" htmlFor="claim-selector">
-                      Claim
-                    </label>
-                    <select
-                      id="claim-selector"
-                      value={f.index}
-                      disabled={p.busy}
-                      onChange={(e) => {
-                        const r = m.positions.find(
-                          (x) => x.index === Number(e.target.value),
-                        );
-                        if (r) select(r);
-                      }}
-                    >
-                      {m.positions.map((r) => (
-                        <option key={r.index} value={r.index}>
-                          Claim #{r.index}
-                          {r.empty ? " · Open" : r.mine ? " · You" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {m.phase === "Active" ? (
-                    <div className="action-tabs">
-                      <button
-                        aria-pressed={action === "redeem"}
-                        onClick={() => setAction("redeem")}
-                      >
-                        Redeem
-                      </button>
-                      <button
-                        aria-pressed={action === "sell"}
-                        onClick={() => setAction("sell")}
-                      >
-                        Sell
-                      </button>
-                      <button
-                        aria-pressed={action === "import"}
-                        onClick={() => setAction("import")}
-                      >
-                        Import offer
-                      </button>
+                      )}
                     </div>
-                  ) : (
-                    <div className="ticket-label">Contribution</div>
-                  )}
-                  {m.phase === "Funding" || action === "redeem" ? (
-                    <>
-                      <Amount
-                        id="claim-amount"
-                        label={
-                          m.phase === "Funding"
-                            ? "You contribute"
-                            : "Redeem amount"
-                        }
-                        value={f.amount}
-                        onChange={(v) => p.update("amount", v)}
-                        disabled={p.busy}
-                      />
-                      {m.phase === "Active" && (
-                        <span
-                          className="settlement-direction"
-                          aria-hidden="true"
-                        >
-                          <Icon name="arrow" />
-                        </span>
-                      )}
-                      <dl className="ticket-summary">
+                    <details className="market-terms">
+                      <summary>Terms & receiving requirements</summary>
+                      <dl>
                         <div>
-                          <dt>Available backing</dt>
-                          <dd>{selected?.backing ?? "—"} CKB</dd>
+                          <dt>Fixed initial backing</dt>
+                          <dd>80% of contributions</dd>
                         </div>
                         <div>
-                          <dt>Network fee</dt>
-                          <dd>0.001 CKB</dd>
-                        </div>
-                        {m.phase === "Active" ? (
-                          <div className="total">
-                            <dt>You receive</dt>
-                            <dd>{net(f.amount)} CKB</dd>
-                          </div>
-                        ) : (
-                          <>
-                            <div>
-                              <dt>Minimum contribution</dt>
-                              <dd>{m.minimum} CKB</dd>
-                            </div>
-                            <div>
-                              <dt>Initial backing</dt>
-                              <dd>80%</dd>
-                            </div>
-                          </>
-                        )}
-                      </dl>
-                      {m.phase === "Funding" ? (
-                        <>
-                          <button
-                            className="primary wide"
-                            disabled={locked || !selected?.empty}
-                            onClick={() => p.onAction("contribute")}
-                          >
-                            Review contribution
-                          </button>
-                          {selected?.mine && !selected.empty && (
-                            <button
-                              className="wide"
-                              disabled={locked}
-                              onClick={() => p.onAction("refund")}
-                            >
-                              Review refund
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            className="primary wide"
-                            disabled={
-                              locked ||
-                              !selected?.mine ||
-                              !selected.remaining ||
-                              !mature
-                            }
-                            onClick={() => p.onAction("redeem")}
-                          >
-                            Review redemption
-                          </button>
-                          {!mature && (
-                            <p className="blocker">
-                              Available after block {m.maturity}.
-                            </p>
-                          )}
-                        </>
-                      )}
-                      {blocker}
-                      <details>
-                        <summary>Settlement details</summary>
-                        <p>
-                          Fee deducted from gross redemption. Remaining backing
-                          must be zero or greater than 0.01 CKB. A funded
-                          receiving Cell and committed history are required.
-                        </p>
-                        <dl>
-                          <div>
-                            <dt>Maturity block</dt>
-                            <dd>{m.maturity}</dd>
-                          </div>
-                          <div>
-                            <dt>Observed height</dt>
-                            <dd>{m.tip ?? "Not checked"}</dd>
-                          </div>
-                        </dl>
-                      </details>
-                    </>
-                  ) : (
-                    <>
-                      <label htmlFor="buyer-address">
-                        Buyer address
-                        <input
-                          disabled={p.busy}
-                          id="buyer-address"
-                          value={f.buyer}
-                          onChange={change("buyer")}
-                          placeholder="ckt1…"
-                          autoComplete="off"
-                          spellCheck={false}
-                        />
-                      </label>
-                      <Amount
-                        id="sale-price"
-                        label="Sale price"
-                        value={f.price}
-                        onChange={(v) => p.update("price", v)}
-                        disabled={p.busy}
-                      />
-                      <dl className="ticket-summary">
-                        <div>
-                          <dt>Backing transferred</dt>
-                          <dd>{selected?.backing ?? "—"} CKB</dd>
+                          <dt>Creator proceeds</dt>
+                          <dd>20% gross at activation</dd>
                         </div>
                         <div>
-                          <dt>Buyer pays network fee</dt>
-                          <dd>0.001 CKB</dd>
+                          <dt>Shared capacity</dt>
+                          <dd>
+                            {m.capacity} CKB, returned only at lawful closure
+                          </dd>
+                        </div>
+                        <div>
+                          <dt>Wallet receiving capacity</dt>
+                          <dd>A plain secp Cell must retain 61 CKB</dd>
+                        </div>
+                        <div>
+                          <dt>Action fee</dt>
+                          <dd>0.001 CKB; exact source shown in review</dd>
                         </div>
                       </dl>
-                      {action === "sell" ? (
-                        <button
-                          className="primary wide"
-                          disabled={
-                            locked ||
-                            !selected?.mine ||
-                            !selected.remaining ||
-                            !f.buyer
-                          }
-                          onClick={() => p.onOffer("prepare")}
-                        >
-                          Prepare offer
-                        </button>
-                      ) : (
-                        <>
-                          <label className="file-label" htmlFor="offer-file">
-                            <Icon name="file" />
-                            Choose offer file
-                            <input
-                              id="offer-file"
-                              type="file"
-                              disabled={p.busy}
-                              accept="application/json,.json"
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (!file) return;
-                                if (file.size > 2000000) {
-                                  setShareError("Offer exceeds 2 MB.");
-                                  return;
-                                }
-                                p.update("envelope", await file.text());
-                                setShareError("");
-                              }}
-                            />
-                          </label>
-                          <details>
-                            <summary>Paste offer instead</summary>
-                            <label htmlFor="offer-json" className="sr-only">
-                              Assignment proposal
-                            </label>
-                            <textarea
-                              id="offer-json"
-                              disabled={p.busy}
-                              value={f.envelope}
-                              onChange={change("envelope")}
-                              rows={5}
-                              spellCheck={false}
-                            />
-                          </details>
-                          <button
-                            className="wide"
-                            disabled={locked || !f.envelope}
-                            onClick={() => p.onOffer("sign")}
-                          >
-                            Review & add signature
-                          </button>
-                          <button
-                            className="primary wide"
-                            disabled={locked || !f.envelope}
-                            onClick={() => p.onOffer("submit")}
-                          >
-                            Review & submit
-                          </button>
-                        </>
-                      )}
-                      {shareError && (
-                        <p role="alert" className="error-text">
-                          {shareError}
-                        </p>
-                      )}
-                      {f.envelope && (
-                        <div className="offer-ready">
-                          <span>Offer file ready</span>
-                          <button onClick={download}>Save offer file</button>
-                        </div>
-                      )}
-                      {blocker}
-                      <details>
-                        <summary>How assignment works</summary>
-                        <p>
-                          Agree a price with a buyer. Save and share the offer
-                          file. Both owners review and sign the same
-                          transaction. Return the signed file to submit. No
-                          guaranteed buyer.
-                        </p>
-                        <p>
-                          A changed root or spent input requires a new offer and
-                          both signatures. Importing or signing a file does not
-                          complete a sale.
-                        </p>
-                      </details>
-                    </>
+                      <p>
+                        No guaranteed buyer, USD floor or immediate settlement.
+                        Redemption needs actual maturity; recovery needs
+                        committed history and the current live Cell.
+                      </p>
+                    </details>
+                    <details>
+                      <summary>Advanced market identity</summary>
+                      <p>Market identifier</p>
+                      <code>{m.id}</code>
+                      <p>Current root</p>
+                      <code>{m.root}</code>
+                      <a href={"/market/" + m.id}>Market permalink</a>
+                      <p>
+                        {p.fixture
+                          ? "Controlled presentation state."
+                          : "Reconstructed from committed history and a live Cell."}
+                      </p>
+                    </details>
+                  </section>
+                  {selected && (
+                    <PositionAction
+                      key={m.id + ":" + selected.index + ":" + p.address}
+                      p={p}
+                      m={m}
+                      r={selected}
+                    />
                   )}
-                </section>
-              </div>
+                </div>
+              </>
             )}
           </>
         )}
-        {tab === "Create Market" && (
+        {p.route.view === "My Positions" && (
+          <>
+            <div className="page-heading">
+              <div>
+                <h1>Positions</h1>
+                <span className="subtle">
+                  In markets verified during this session
+                </span>
+              </div>
+            </div>
+            {!p.address ? (
+              <div className="empty">
+                <Icon name="wallet" />
+                <h2>Connect and check your wallet</h2>
+                <p>
+                  Ownership is matched against the authenticated owner lock.
+                </p>
+                <button onClick={p.connected ? p.onCheck : p.onConnect}>
+                  {p.connected
+                    ? "Check wallet compatibility"
+                    : "Connect wallet"}
+                </button>
+              </div>
+            ) : !p.markets.some((x) =>
+                x.positions.some((r) => r.mine && !r.empty),
+              ) ? (
+              <div className="empty">
+                <h2>No positions in opened markets</h2>
+                <button onClick={() => p.onNavigate("Markets")}>
+                  Open a market
+                </button>
+              </div>
+            ) : (
+              p.markets
+                .filter((x) => x.positions.some((r) => r.mine && !r.empty))
+                .map((x) => (
+                  <section className="owned-market" key={x.id}>
+                    <div className="section-line">
+                      <h2>CKB-backed claims</h2>
+                      <button onClick={() => p.onOpenMarket(x.id)}>
+                        Open market
+                      </button>
+                    </div>
+                    <div className="owned-positions">
+                      {x.positions
+                        .filter((r) => r.mine && !r.empty)
+                        .map((r) => (
+                          <button
+                            key={r.index}
+                            onClick={() =>
+                              p.onOpenMarket(
+                                "/market/" + x.id + "?claim=" + r.index,
+                              )
+                            }
+                          >
+                            Position #{r.index + 1}
+                            <span>{r.backing} CKB backing</span>
+                            <Icon name="arrow" />
+                          </button>
+                        ))}
+                    </div>
+                  </section>
+                ))
+            )}
+          </>
+        )}
+        {p.route.view === "Create Market" && (
           <div className="creation">
             <div className="creation-heading">
-              <span className="subtle">New market</span>
               <h1>Create Market</h1>
             </div>
             <div className="creation-grid">
@@ -1114,69 +1394,72 @@ export default function Experience(p: ExperienceProps) {
                 <label htmlFor="slots">
                   Participant slots
                   <input
-                    disabled={p.busy}
                     id="slots"
                     type="number"
                     min="1"
                     max="1024"
                     value={f.slots}
-                    onChange={change("slots")}
+                    onChange={update("slots")}
+                    disabled={p.busy}
                   />
                 </label>
-                <p className="hint">0.125 CKB minimum per slot.</p>
+                <p className="hint">
+                  0.125 CKB minimum per slot; all slots must fund before
+                  activation.
+                </p>
                 <label htmlFor="maturity">
                   Maturity block
                   <input
-                    disabled={p.busy}
                     id="maturity"
                     type="number"
                     min="0"
                     value={f.maturity}
-                    onChange={change("maturity")}
+                    onChange={update("maturity")}
+                    disabled={p.busy}
                   />
                 </label>
-                <p className="hint">0 adds no redemption delay.</p>
+                <p className="hint">
+                  0 adds no block delay. The condition is fixed at creation.
+                </p>
                 <label htmlFor="creator">
                   Creator address <span className="subtle">Optional</span>
                   <input
-                    disabled={p.busy}
                     id="creator"
                     value={f.creator}
-                    onChange={change("creator")}
-                    placeholder="Your connected wallet"
-                    autoComplete="off"
-                    spellCheck={false}
+                    onChange={update("creator")}
+                    placeholder="Use my checked wallet"
+                    disabled={p.busy}
                   />
                 </label>
-                <div
-                  className="allocation-bar"
-                  role="img"
-                  aria-label="80% reserved backing, 20% gross creator proceeds"
-                >
-                  <span />
-                  <span />
-                </div>
                 <div className="fixed-policy">
                   <div>
                     <span>Initial backing</span>
                     <b>80%</b>
                   </div>
                   <div>
-                    <span>Creator proceeds</span>
-                    <b>20% gross</b>
+                    <span>Creator gross proceeds</span>
+                    <b>20%</b>
                   </div>
                 </div>
                 <button
                   className="primary wide"
-                  disabled={locked}
+                  disabled={
+                    p.busy || !p.address || p.deployment !== "Configured"
+                  }
                   onClick={p.onCreate}
                 >
                   Review market creation
                 </button>
-                {blocker}
+                <p className="blocker">
+                  {!p.address
+                    ? "Connect and verify a supported wallet."
+                    : p.deployment !== "Configured"
+                      ? "Deployment approval is required before signing."
+                      : ""}
+                </p>
               </section>
               <aside className="funding-summary">
-                <h2>Required funding</h2>
+                <h2>Required suitable input</h2>
                 <strong>
                   383.001 <span>CKB</span>
                 </strong>
@@ -1194,50 +1477,37 @@ export default function Experience(p: ExperienceProps) {
                     <dd>0.001 CKB</dd>
                   </div>
                 </dl>
-                <details>
-                  <summary>Funding & terms</summary>
-                  <p>
-                    Capacity is not a spent fee. Market capacity returns only at
-                    lawful closure. Code deployment separately requires 17,889
-                    CKB of occupied capacity.
-                  </p>
-                  <p>
-                    All slots must be funded before activation. The creator
-                    receives 20% gross; 80% stays reserved in CKB. Creator
-                    activation requires a funded plain Cell. No USD protection
-                    or guaranteed buyer.
-                  </p>
-                </details>
+                <p>
+                  Code deployment is separate: 17,889 CKB occupied capacity.
+                  Market capacity returns only after all obligations are
+                  settled.
+                </p>
+                <p>
+                  Contributions fund the backing and creator allocation
+                  separately. CKB backing is not USD protection; no resale
+                  liquidity is guaranteed.
+                </p>
               </aside>
             </div>
           </div>
         )}
-        {tab === "Activity" && (
+        {p.route.view === "Activity" && (
           <>
             <div className="page-heading">
               <h1>Activity</h1>
-              <span className="subtle">This session</span>
+              <span className="subtle">This session · clears on refresh</span>
             </div>
             <div className="activity-table">
               <div className="activity-table-head">
                 <span>Transaction</span>
                 <span>Status</span>
               </div>
-              {!p.activity.length ? (
-                <div className="empty">
-                  <Icon name="refresh" />
-                  <h2>No activity yet</h2>
-                  <p>Transactions from this session appear here.</p>
-                </div>
-              ) : (
+              {p.activity.length ? (
                 p.activity.map((a, i) => (
                   <article key={i}>
                     <div>
                       <b>{a.label}</b>
-                      <details>
-                        <summary>Details</summary>
-                        <p>{a.detail}</p>
-                      </details>
+                      <p>{a.detail}</p>
                       {a.hash && (
                         <a
                           href={
@@ -1247,20 +1517,19 @@ export default function Experience(p: ExperienceProps) {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          View transaction on explorer <Icon name="arrow" />{" "}
+                          View transaction on explorer <Icon name="arrow" />
                           <span className="sr-only">{a.hash}</span>
                         </a>
                       )}
                     </div>
-                    <span
-                      className={
-                        "phase " + (a.state === "Committed" ? "positive" : "")
-                      }
-                    >
-                      {a.state}
-                    </span>
+                    <span className="phase">{a.state}</span>
                   </article>
                 ))
+              ) : (
+                <div className="empty">
+                  <Icon name="refresh" />
+                  <h2>No activity yet</h2>
+                </div>
               )}
             </div>
           </>
@@ -1281,11 +1550,11 @@ export default function Experience(p: ExperienceProps) {
                   : p.deployment === "Checking"
                     ? "Checking configuration…"
                     : "Configuration unavailable"}
-              . Signing requires an approved, verified code Cell.
+              . Signing requires an approved and verified code Cell.
             </p>
             <p>
-              Ordinary CKB secp256k1 only. Other locks are unsupported for this
-              covenant.
+              Ordinary CKB secp256k1 only. OmniLock, JoyID and alternative
+              authority modes are not qualified for this covenant.
             </p>
             <code>{p.address || "Wallet not checked"}</code>
             {p.connected && (
@@ -1293,19 +1562,9 @@ export default function Experience(p: ExperienceProps) {
                 Check wallet compatibility
               </button>
             )}
-            {m && (
-              <>
-                <p>Market / current root</p>
-                <code>{m.id}</code>
-                <code>{m.root}</code>
-                <p>Selected owner</p>
-                <code>{selected?.owner ?? "None"}</code>
-              </>
-            )}
             <p>
               Public history and receiving capacity are required for recovery.
-              Session activity clears on refresh. No real liquidity or
-              production readiness is claimed.
+              No production readiness or actual liquidity is claimed.
             </p>
           </details>
         </footer>

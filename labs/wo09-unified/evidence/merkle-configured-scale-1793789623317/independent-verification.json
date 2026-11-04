@@ -1,0 +1,402 @@
+{
+  "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+  "committed_transactions": 27,
+  "leaf_updates": 36,
+  "total_paid_fees_shannons": "1620000",
+  "markets": [
+    {
+      "id": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "closed": true,
+      "transactions": 24,
+      "market_fees_shannons": "420000",
+      "remaining_backing": "0"
+    }
+  ],
+  "rows": [
+    {
+      "label": "create_market_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 0,
+      "updates": 0,
+      "bytes": 802,
+      "cycles": 1703296,
+      "fee_shannons": "100000",
+      "inputs": 1,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "batch_enroll_16_0_count_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 1,
+      "updates": 16,
+      "bytes": 8256,
+      "cycles": 31308694,
+      "fee_shannons": "100000",
+      "inputs": 17,
+      "outputs": 17,
+      "extra_witness_bytes": 3728,
+      "witness_chunks": [
+        3728
+      ]
+    },
+    {
+      "label": "pre_activation_owner_refund_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 6,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1845478,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "reenroll_after_actual_refund_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1832346,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "activate_market_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 2,
+      "updates": 0,
+      "bytes": 854,
+      "cycles": 1700226,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "partial_redemption_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1853286,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "paid_assignment_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 4,
+      "updates": 1,
+      "bytes": 1332,
+      "cycles": 3540924,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_1",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1877351,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_2",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1853716,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_3",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1855421,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_4",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1871363,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_5",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1871040,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_6",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1880994,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_7",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1874513,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_8",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1862501,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_9",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1874623,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_10",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1880381,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_11",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1899216,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_12",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1864319,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_13",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1873473,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_14",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1875622,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_16_slot_15",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1872694,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "redeem_purchased_residual_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1086,
+      "cycles": 1887515,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 248,
+      "witness_chunks": [
+        248
+      ]
+    },
+    {
+      "label": "final_closure_16",
+      "market": "0x349f668504f59202b81b412f9963c594bc5be80409ef01eac01af0cad2872314",
+      "n": 16,
+      "op": 7,
+      "updates": 0,
+      "bytes": 464,
+      "cycles": 1712198,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 1,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    }
+  ]
+}

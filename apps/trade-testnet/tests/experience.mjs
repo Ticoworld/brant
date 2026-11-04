@@ -8,7 +8,7 @@ import crypto from "node:crypto";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.resolve(
     root,
-    "../../labs/wo13-trade-experience/revision-04/browser-" + Date.now(),
+    "../../labs/wo13-trade-experience/market-journey/browser-" + Date.now(),
   );
 fs.mkdirSync(out, { recursive: true });
 const axeURL =
@@ -121,6 +121,7 @@ try {
     args: ["--no-sandbox"],
   });
   const p = await browser.newPage();
+  p.setDefaultTimeout(15000);
   p.on("pageerror", (e) => {
     evidence.pageErrors.push(String(e));
     save();
@@ -133,144 +134,232 @@ try {
       } catch {}
     }
   });
+  const id = "0x" + "12".repeat(32);
   for (const width of [1440, 768, 375]) {
     await p.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
     await p.goto(base);
-    await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
-    await p.screenshot({ path: out + `/trade-${width}.png`, fullPage: true });
-    await reflow(p, "trade " + width);
-    await scan(p, "trade " + width);
-    await p
-      .getByRole("navigation")
-      .getByRole("button", { name: "Markets", exact: true })
-      .click();
     await p.getByRole("heading", { name: "Markets", exact: true }).waitFor();
-    await p
-      .locator("footer .advanced")
-      .getByText(/Deployment not approved/)
-      .waitFor({ state: "attached" });
-    await p.screenshot({ path: out + `/markets-${width}.png`, fullPage: true });
-    await reflow(p, "markets " + width);
-    await scan(p, "markets " + width);
-    for (const tab of ["My Positions", "Create Market", "Activity"]) {
+    assert.equal(
       await p
         .getByRole("navigation")
-        .getByRole("button", {
-          name:
-            tab === "My Positions"
-              ? "Positions"
-              : tab === "Create Market"
-                ? "Create market"
-                : tab,
-          exact: true,
-        })
-        .click();
+        .getByRole("button", { name: "Trade", exact: true })
+        .count(),
+      0,
+    );
+    await p.getByRole("heading", { name: "No verified markets yet" }).waitFor();
+    assert(
       await p
-        .getByRole("heading", {
-          name: tab === "My Positions" ? "Positions" : tab,
-          exact: true,
-        })
-        .waitFor();
-      await reflow(p, tab + " " + width);
-      await scan(p, tab + " " + width);
-      await p.screenshot({
-        path:
-          out + "/" + tab.replaceAll(" ", "-").toLowerCase() + `-${width}.png`,
-        fullPage: true,
-      });
-      if (tab === "Create Market")
+        .getByRole("button", { name: "Find markets", exact: true })
+        .isDisabled(),
+    );
+    await p.screenshot({
+      path: out + `/production-markets-${width}.png`,
+      fullPage: true,
+    });
+    await reflow(p, "production markets " + width);
+    await scan(p, "production markets " + width);
+    for (const [tab, title] of [
+      ["Positions", "Positions"],
+      ["Create market", "Create Market"],
+      ["Activity", "Activity"],
+    ]) {
+      await p
+        .getByRole("navigation")
+        .getByRole("button", { name: tab, exact: true })
+        .click();
+      await p.getByRole("heading", { name: title, exact: true }).waitFor();
+      await reflow(p, tab + width);
+      await scan(p, tab + width);
+      if (tab === "Create market")
         assert(
           await p
-            .getByRole("button", {
-              name: "Review market creation",
-              exact: true,
-            })
+            .getByRole("button", { name: "Review market creation" })
             .isDisabled(),
         );
     }
   }
-  await p.goto(base);
-  await p.getByLabel("Market link or identity").fill("0x" + "12".repeat(32));
-  await p.getByRole("button", { name: "Open market", exact: true }).click();
-  await p
-    .getByRole("alert")
-    .filter({ hasText: "Deployment is not approved" })
-    .waitFor();
+  await p.goto(base + "/market/" + id + "?claim=0");
+  await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
+  assert.equal(
+    await p.getByRole("region", { name: "Selected position" }).count(),
+    0,
+  );
+  await p.reload();
+  await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
   check(
-    "Unapproved manifest rejects recovery/signing before any wallet request",
+    "Real dynamic market route and reload fail closed without a deployment; Markets is default, no Trade tab",
   );
   await p.goto(base + "/experience-fixture");
   await p.getByRole("heading", { name: "Local UI fixture disabled" }).waitFor();
-  check("Production UI fixtures disabled");
-  assert(!evidence.rpcMethods.includes("send_transaction"));
+  check(
+    "Production fixtures disabled; creation and discovery unavailable without deployment",
+  );
   await stop();
   await start("fixture");
-  for (const state of [
-    "active",
-    "funding",
-    "unsupported",
-    "maturity",
-    "pending",
-    "committed",
-    "rpc",
-    "stale",
-    "loading",
-    "nodeploy",
-  ]) {
-    await p.setViewportSize({ width: 375, height: 812 });
-    await p.goto(base + "/experience-fixture?state=" + state);
+  const fixture = async (state = "active", query = "") => {
+    await p.goto(base + "/experience-fixture?state=" + state + query);
     await p
       .getByText("CONTROLLED LOCAL UI FIXTURE", { exact: false })
       .waitFor();
-    if (["active", "funding", "maturity"].includes(state)) {
-      await p
-        .getByRole("navigation")
-        .getByRole("button", { name: "Positions", exact: true })
-        .click();
-      await p
-        .getByRole("heading", { name: "Positions", exact: true })
-        .waitFor();
-      if (state === "active") {
-        assert.match(await p.locator(".book-foot").innerText(), /0.1/);
+  };
+  const firstMarket = () =>
+    p.getByRole("button", { name: "Open market " + id, exact: true });
+  const position = (n) =>
+    p.getByRole("button", { name: "Open position " + n, exact: true });
+  for (const width of [1440, 768, 375]) {
+    await p.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
+    await fixture();
+    assert.equal(await p.locator(".market-table tbody tr").count(), 2);
+    await p.screenshot({ path: out + `/markets-${width}.png`, fullPage: true });
+    await scan(p, "fixture directory " + width);
+    await firstMarket().click();
+    await p
+      .getByRole("heading", { name: "CKB-backed claims", exact: true })
+      .waitFor();
+    assert.equal(
+      await p.getByRole("region", { name: "Selected position" }).count(),
+      0,
+    );
+    await p.screenshot({ path: out + `/market-${width}.png`, fullPage: true });
+    await reflow(p, "market " + width);
+    await scan(p, "market " + width);
+    await position(1).click();
+    await p.waitForFunction(
+      () => document.activeElement?.id === "position-actions",
+    );
+    assert(
+      !(await p
+        .getByRole("button", { name: "Review redemption" })
+        .isDisabled()),
+    );
+    assert.equal(
+      await p.locator(".action-accounting .total dd").innerText(),
+      "0.099 CKB",
+    );
+    await p.screenshot({
+      path: out + `/position-${width}.png`,
+      fullPage: true,
+    });
+    await reflow(p, "selected position " + width);
+    await scan(p, "selected position " + width);
+    assert(!(await p.locator("main").innerText()).includes(id));
+    await position(2).click();
+    await p.getByRole("heading", { name: "Acquire with an offer" }).waitFor();
+    assert.equal(
+      await p.getByRole("button", { name: "Review redemption" }).count(),
+      0,
+    );
+    assert.equal(
+      await p.getByRole("button", { name: "Sell", exact: true }).count(),
+      0,
+    );
+    await p.getByRole("button", { name: "Close position" }).click();
+    assert.equal(
+      await p.getByRole("region", { name: "Selected position" }).count(),
+      0,
+    );
+    check(
+      "Market → own position / other owner, exact fee, focus and reflow " +
+        width,
+    );
+  }
+  await fixture();
+  await p
+    .getByRole("button", {
+      name: "Open market 0x" + "ab".repeat(32),
+      exact: true,
+    })
+    .click();
+  assert.match(
+    await p.getByRole("region", { name: "Market financial state" }).innerText(),
+    /0\.025/,
+  );
+  await position(1).click();
+  await p.getByRole("button", { name: "Review refund" }).waitFor();
+  assert.equal(
+    await p.getByRole("button", { name: "Review redemption" }).count(),
+    0,
+  );
+  await position(2).click();
+  await p.getByRole("button", { name: "Review contribution" }).waitFor();
+  check(
+    "Distinct market uses its own funding state; owner refund and empty-slot contribution are contextual",
+  );
+  for (const state of [
+    "disconnected",
+    "unsupported",
+    "nodeploy",
+    "empty",
+    "loading",
+    "rpc",
+    "stale",
+    "missing-history",
+    "pending",
+    "committed",
+    "funding-ready",
+    "settled",
+    "maturity",
+    "partial",
+  ]) {
+    await p.setViewportSize({ width: 375, height: 812 });
+    await fixture(state, state === "loading" ? "&view=market" : "");
+    if (
+      ["disconnected", "unsupported", "maturity", "partial"].includes(state)
+    ) {
+      await firstMarket().click();
+      await position(1).click();
+      if (["disconnected", "unsupported"].includes(state))
+        assert.equal(
+          await p.getByRole("button", { name: "Review redemption" }).count(),
+          0,
+        );
+      if (state === "maturity") {
+        assert.equal(
+          await p.getByRole("button", { name: "Review redemption" }).count(),
+          0,
+        );
         await p
-          .getByRole("button", { name: "Select claim 1", exact: true })
-          .click();
-        await p.waitForFunction(
-          () => document.activeElement?.id === "position-actions",
-        );
-        assert(
-          await p
-            .getByRole("button", { name: "Review redemption", exact: true })
-            .isDisabled(),
-        );
-        await p.getByLabel("Claim", { exact: true }).selectOption("0");
-        await p.waitForFunction(
-          () => document.activeElement?.id === "position-actions",
-        );
-        assert(
-          !(await p
-            .getByRole("button", { name: "Review redemption", exact: true })
-            .isDisabled()),
-        );
-        check(
-          "Mobile claim selection focuses controls without enabling another owner redemption",
-        );
+          .getByText("Redemption opens at block", { exact: false })
+          .waitFor();
+        await p.getByRole("button", { name: "Sell", exact: true }).click();
+        await p.getByRole("button", { name: "Prepare offer" }).waitFor();
       }
-      if (state !== "active")
-        await p
-          .getByRole("navigation")
-          .getByRole("button", { name: "Trade", exact: true })
-          .click();
-      await reflow(p, state);
-      await scan(p, state);
-      if (state === "maturity")
-        assert(
+      if (state === "partial")
+        assert.match(
           await p
-            .getByRole("button", { name: "Review redemption" })
-            .isDisabled(),
+            .getByRole("region", { name: "Market financial state" })
+            .innerText(),
+          /0\.05/,
         );
     }
-    if (["pending", "committed", "stale"].includes(state)) {
+    if (["rpc", "stale", "missing-history"].includes(state)) {
+      await firstMarket().click();
+      await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
+      assert.equal(
+        await p.getByRole("region", { name: "Selected position" }).count(),
+        0,
+      );
+    }
+    if (state === "nodeploy") {
+      assert(
+        await p
+          .getByRole("button", { name: "Find markets", exact: true })
+          .isDisabled(),
+      );
+      await p.getByLabel("Market link or identity").fill(id);
+      await p.getByRole("button", { name: "Open market", exact: true }).click();
+      await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
+    }
+    if (state === "empty") {
+      await p
+        .getByRole("heading", { name: "No verified markets yet" })
+        .waitFor();
+      await p
+        .getByRole("button", { name: "Find markets", exact: true })
+        .click();
+      assert.equal(await p.locator(".market-table tbody tr").count(), 2);
+    }
+    if (["pending", "committed"].includes(state)) {
       await p
         .getByRole("navigation")
         .getByRole("button", { name: "Activity", exact: true })
@@ -285,36 +374,47 @@ try {
         0,
       );
     }
-    if (["unsupported", "rpc", "stale"].includes(state))
-      assert(await p.locator(".status-bar[role=alert]").isVisible());
+    if (state === "funding-ready") {
+      await firstMarket().click();
+      await p.getByRole("button", { name: "Review activation" }).waitFor();
+      assert.equal(
+        await p.getByRole("button", { name: "Review closure" }).count(),
+        0,
+      );
+    }
+    if (state === "settled") {
+      await firstMarket().click();
+      await p.getByRole("button", { name: "Review closure" }).waitFor();
+      await position(1).click();
+      assert.equal(
+        await p.getByRole("button", { name: "Review redemption" }).count(),
+        0,
+      );
+    }
     if (state === "loading")
       assert.equal(await p.locator("main").getAttribute("aria-busy"), "true");
-    await reflow(p, state + " fixture");
+    await reflow(p, state);
+    await scan(p, state);
     await p.screenshot({
-      path: out + "/fixture-" + state + "-375.png",
+      path: out + `/state-${state}-375.png`,
       fullPage: true,
     });
-    check(state + " labelled presentation state");
+    check(state + " bounded presentation state");
   }
-  await p.goto(base + "/experience-fixture?state=active");
-  await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
-  assert.equal(
-    await p.locator(".ticket-summary .total dd").innerText(),
-    "0.099 CKB",
-  );
+  await fixture();
+  await firstMarket().click();
+  await position(1).click();
   await p.getByRole("button", { name: "Sell", exact: true }).click();
-  assert.equal(
-    await p.getByRole("button", { name: "Review redemption" }).count(),
-    0,
-  );
+  await p.getByLabel("Buyer address").fill("ckt1_controlled_buyer_fixture");
   await p.getByRole("button", { name: "Prepare offer", exact: true }).click();
   await p.getByText("Offer file ready", { exact: true }).waitFor();
   const download = p.waitForEvent("download");
   await p.getByRole("button", { name: "Save offer file" }).click();
-  const dl = await download;
-  const file = await dl.path();
-  assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).neverSubmit, true);
-  check("Offer file export (nontransaction fixture)");
+  assert.equal(
+    JSON.parse(fs.readFileSync(await (await download).path(), "utf8"))
+      .neverSubmit,
+    true,
+  );
   await p.getByRole("button", { name: "Import offer", exact: true }).click();
   await p.locator("input[type=file]").setInputFiles({
     name: "offer.json",
@@ -325,7 +425,7 @@ try {
     .getByRole("button", { name: "Review & add signature", exact: true })
     .click();
   await p.getByRole("dialog").waitFor();
-  await scan(p, "assignment review dialog");
+  await scan(p, "paid assignment review");
   await p.screenshot({
     path: out + "/assignment-review-375.png",
     fullPage: false,
@@ -342,29 +442,12 @@ try {
       .getByRole("button", { name: "Review & add signature" })
       .evaluate((el) => el === document.activeElement),
   );
-  check("Native dialog Escape and focus return");
   await p.getByRole("button", { name: "Review & submit", exact: true }).click();
   await p.getByRole("button", { name: "Confirm UI fixture" }).click();
   await p.getByText("Fixture review confirmed.", { exact: false }).waitFor();
-  check("Assignment review confirmation (no signing)");
-  await p.setViewportSize({ width: 1440, height: 1000 });
-  await p.goto(base + "/experience-fixture?state=active");
-  await p.getByText("CONTROLLED LOCAL UI FIXTURE", { exact: false }).waitFor();
-  await p.screenshot({ path: out + "/trade-open-1440.png", fullPage: true });
-  // Fresh captures avoid leaving axe's temporary focus styling in presentation screenshots.
-  await p.goto(base + "/experience-fixture?state=active");
-  await p
-    .getByRole("navigation")
-    .getByRole("button", { name: "Positions", exact: true })
-    .click();
-  await p.setViewportSize({ width: 1440, height: 1000 });
-  await p.screenshot({ path: out + "/positions-1440.png", fullPage: true });
-  await p
-    .getByRole("navigation")
-    .getByRole("button", { name: "Trade", exact: true })
-    .click();
-  await p.getByRole("button", { name: "Sell", exact: true }).click();
-  await p.screenshot({ path: out + "/sell-1440.png", fullPage: true });
+  check(
+    "Offer file exchange and exact review dialog/focus (labelled fixture, no signing)",
+  );
   await p
     .getByRole("navigation")
     .getByRole("button", { name: "Create market", exact: true })
@@ -372,17 +455,9 @@ try {
   await p
     .getByRole("button", { name: "Review market creation", exact: true })
     .click();
-  await p.getByRole("dialog").waitFor();
   await p.getByRole("dialog").getByText("322 CKB", { exact: true }).waitFor();
-  await p.screenshot({
-    path: out + "/create-review-1440.png",
-    fullPage: false,
-  });
+  await p.screenshot({ path: out + "/create-review-375.png", fullPage: false });
   await p.keyboard.press("Escape");
-  await p.setViewportSize({ width: 1920, height: 1080 });
-  await p.goto(base + "/experience-fixture?state=active");
-  await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
-  await p.screenshot({ path: out + "/trade-1920.png", fullPage: true });
   assert.equal(evidence.pageErrors.length, 0);
   assert(!evidence.rpcMethods.includes("send_transaction"));
   check("No page errors or public broadcast");

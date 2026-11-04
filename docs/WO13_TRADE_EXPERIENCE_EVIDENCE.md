@@ -1,5 +1,7 @@
 # WO13: Trade experience and local handoff
 
+Latest continuation: [Markets → position → action evidence](WO13_MARKET_JOURNEY.md). This supersedes earlier navigation descriptions; prior results below remain historical.
+
 **Current owner-directed UI:** revision04 follows the supplied trading screenshots: neutral surfaces, one default Trade action card, functional tabs, claim selector, and a separate compact positions list. It supersedes revision03’s green treatment. See `labs/wo13-trade-experience/revision-04/README.md` and `result-summary.json`; settlement engine and approval boundaries remain unchanged.
 
 **Latest visual identity:** revision03 adds the Trade cell mark, forest/mint palette, local licensed typography, official CKB asset symbol and mobile claim-to-controls navigation. See `labs/wo13-trade-experience/revision-03/README.md` and `result-summary.json`. The compact revision02 structure remains; the transaction engine and approval gates are unchanged.

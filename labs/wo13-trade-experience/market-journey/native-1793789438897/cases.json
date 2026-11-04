@@ -1,0 +1,27 @@
+[
+  {
+    "label": "native_missing_seller_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 })"
+  },
+  {
+    "label": "native_unpaid_assignment",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 71 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#71 })"
+  },
+  {
+    "label": "native_former_owner_denial",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 60 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f.html#60 })"
+  },
+  {
+    "label": "native_wrong_owner_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -11 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-11 })"
+  },
+  {
+    "label": "stale_consumed_vault",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xdedc4348959e5568d16a0a11804b43c710cd47c0f0c87413bd1e8d060d195d6900000000))"
+  }
+]
