@@ -8,7 +8,7 @@ import crypto from "node:crypto";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.resolve(
     root,
-    "../../labs/wo13-trade-experience/evidence/browser-" + Date.now(),
+    "../../labs/wo13-trade-experience/revision-02/browser-" + Date.now(),
   );
 fs.mkdirSync(out, { recursive: true });
 const axeURL =
@@ -137,16 +137,32 @@ try {
     await p.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
     await p.goto(base);
     await p.getByRole("heading", { name: "Markets", exact: true }).waitFor();
-    await p.getByText("Deployment not approved", { exact: true }).waitFor();
+    await p
+      .locator("footer .advanced")
+      .getByText(/Deployment not approved/)
+      .waitFor({ state: "attached" });
     await p.screenshot({ path: out + `/markets-${width}.png`, fullPage: true });
     await reflow(p, "markets " + width);
     await scan(p, "markets " + width);
     for (const tab of ["My Positions", "Create Market", "Activity"]) {
       await p
         .getByRole("navigation")
-        .getByRole("button", { name: tab, exact: true })
+        .getByRole("button", {
+          name:
+            tab === "My Positions"
+              ? "Positions"
+              : tab === "Create Market"
+                ? "Create market"
+                : tab,
+          exact: true,
+        })
         .click();
-      await p.getByRole("heading", { name: tab, exact: true }).waitFor();
+      await p
+        .getByRole("heading", {
+          name: tab === "My Positions" ? "Positions" : tab,
+          exact: true,
+        })
+        .waitFor();
       await reflow(p, tab + " " + width);
       await scan(p, tab + " " + width);
       await p.screenshot({
@@ -201,10 +217,10 @@ try {
     if (["active", "funding", "maturity"].includes(state)) {
       await p
         .getByRole("navigation")
-        .getByRole("button", { name: "My Positions", exact: true })
+        .getByRole("button", { name: "Positions", exact: true })
         .click();
       await p
-        .getByRole("heading", { name: "My Positions", exact: true })
+        .getByRole("heading", { name: "Positions", exact: true })
         .waitFor();
       await reflow(p, state);
       await scan(p, state);
@@ -244,8 +260,17 @@ try {
   await p.goto(base + "/experience-fixture?state=active");
   await p
     .getByRole("navigation")
-    .getByRole("button", { name: "My Positions", exact: true })
+    .getByRole("button", { name: "Positions", exact: true })
     .click();
+  assert.equal(
+    await p.locator(".ticket-summary .total dd").innerText(),
+    "0.099 CKB",
+  );
+  await p.getByRole("button", { name: "Sell", exact: true }).click();
+  assert.equal(
+    await p.getByRole("button", { name: "Review redemption" }).count(),
+    0,
+  );
   await p.getByRole("button", { name: "Prepare offer", exact: true }).click();
   await p.getByText("Offer file ready", { exact: true }).waitFor();
   const download = p.waitForEvent("download");
@@ -254,9 +279,7 @@ try {
   const file = await dl.path();
   assert.equal(JSON.parse(fs.readFileSync(file, "utf8")).neverSubmit, true);
   check("Offer file export (nontransaction fixture)");
-  await p
-    .getByRole("button", { name: "2. Import & sign", exact: true })
-    .click();
+  await p.getByRole("button", { name: "Import offer", exact: true }).click();
   await p.locator("input[type=file]").setInputFiles({
     name: "offer.json",
     mimeType: "application/json",
@@ -288,17 +311,34 @@ try {
   await p.getByRole("button", { name: "Confirm UI fixture" }).click();
   await p.getByText("Fixture review confirmed.", { exact: false }).waitFor();
   check("Assignment review confirmation (no signing)");
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await p.goto(base + "/experience-fixture?state=active");
+  await p.getByText("CONTROLLED LOCAL UI FIXTURE", { exact: false }).waitFor();
+  await p.screenshot({ path: out + "/market-open-1440.png", fullPage: true });
   // Fresh captures avoid leaving axe's temporary focus styling in presentation screenshots.
-  await p.goto(base + '/experience-fixture?state=active');
-  await p.getByRole('navigation').getByRole('button',{name:'My Positions',exact:true}).click();
-  await p.setViewportSize({width:1440,height:1000});
-  await p.screenshot({path:out+'/positions-1440.png',fullPage:true});
-  await p.getByRole('navigation').getByRole('button',{name:'Create Market',exact:true}).click();
-  await p.getByRole('button',{name:'Review market creation',exact:true}).click();
-  await p.getByRole('dialog').waitFor();
-  await p.getByRole('dialog').getByText('322 CKB',{exact:true}).waitFor();
-  await p.screenshot({path:out+'/create-review-1440.png',fullPage:false});
-  await p.keyboard.press('Escape');
+  await p.goto(base + "/experience-fixture?state=active");
+  await p
+    .getByRole("navigation")
+    .getByRole("button", { name: "Positions", exact: true })
+    .click();
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await p.screenshot({ path: out + "/positions-1440.png", fullPage: true });
+  await p.getByRole("button", { name: "Sell", exact: true }).click();
+  await p.screenshot({ path: out + "/sell-1440.png", fullPage: true });
+  await p
+    .getByRole("navigation")
+    .getByRole("button", { name: "Create market", exact: true })
+    .click();
+  await p
+    .getByRole("button", { name: "Review market creation", exact: true })
+    .click();
+  await p.getByRole("dialog").waitFor();
+  await p.getByRole("dialog").getByText("322 CKB", { exact: true }).waitFor();
+  await p.screenshot({
+    path: out + "/create-review-1440.png",
+    fullPage: false,
+  });
+  await p.keyboard.press("Escape");
   assert.equal(evidence.pageErrors.length, 0);
   assert(!evidence.rpcMethods.includes("send_transaction"));
   check("No page errors or public broadcast");

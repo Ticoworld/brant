@@ -31,7 +31,7 @@ Do not create `.env.local` for ordinary connection. In particular, leave `NEXT_P
 
 1. On your physical Chrome browser, install UTXO Global through its official site **https://utxo.global/** and its Chrome download link. Independently compare its listing at **https://www.nervos.org/wallets**. Create disposable testnet accounts under two independent, consenting owners. Do not import a production seed or share a wallet backup.
 2. Select **CKB testnet / Pudge** in the extension. This pilot requires its native CKB signing path, not BTC, EVM, JoyID or OmniLock. If that path or testnet selection is unavailable, stop and report the extension version and visible error.
-3. Open Trade, click **Connect testnet wallet**, choose the genuine installed CKB connector and approve **account connection only**. Then click **Check wallet compatibility**. Reject any unexpected transaction-signing request at this stage.
+3. Open Trade, click **Connect wallet**, choose the genuine installed CKB connector and approve **account connection only**. Then click **Check wallet compatibility**. Reject any unexpected transaction-signing request at this stage.
 4. Confirm each address starts `ckt…`. Exact required lock: code hash `0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8`, hash type `type`, 20-byte args. The application checks the full script profile; `ckt…` by itself is insufficient. Advanced shows the checked public address. A successful profile check still does not qualify complete transaction signing.
 5. Repeat for the second consenting wallet/account. Verify that switching/disconnecting removes the previous checked ownership and requires a new compatibility check. Record browser and extension versions, each public address labelled Alice or Bob, and any error screenshots without secrets.
 6. Inspect Markets' honest empty state, My Positions, Create Market's funding breakdown and Activity. Creation must remain disabled without an approved code Cell. No Pudge market, liquidity, balance or transaction should appear merely because a wallet connects.
@@ -49,7 +49,7 @@ A mismatch stops deployment. Code capacity 17,889 CKB is distinct from the 322 C
 
 ## Once separately authorized: paid-assignment handoff
 
-Seller opens the verified market, selects their claim, enters the consenting buyer's public address and agreed CKB price, then prepares an offer. Save the offer file and send it privately to the buyer. The buyer opens the same market, chooses the same claim, enters the same buyer address and price, selects **Import & sign**, and imports the file. Import does not accept its terms.
+Seller opens Positions in the verified market, selects their claim and the **Sell** tab, then enters the consenting buyer's public address and agreed CKB price, then prepares an offer. Save the offer file and send it privately to the buyer. The buyer opens the same market, chooses the same claim, enters the same buyer address and price, selects **Import offer**, and imports the file. Import does not accept its terms.
 
 Each side uses **Review & add signature**, reviews the amounts/fee/identities and exact outputs in the dialog, and separately consents in their real wallet. Save and return the signed file; do not edit the JSON. The final consenting participant uses **Review & submit** on the same fully reviewed transaction. The buyer pays the 0.001 CKB fee in addition to the seller's consideration. A locally signed file is not settlement or guaranteed liquidity.
 

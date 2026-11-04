@@ -1,5 +1,7 @@
 # WO13: Trade experience and local handoff
 
+**Visual revision:** the owner rejected the first interface. The compact trading layout and current screenshots supersede that visual direction: see `labs/wo13-trade-experience/revision-02/README.md` and `result-summary.json`. Earlier evidence below is preserved; it is not owner approval of the former design.
+
 4 November 2026, Africa/Lagos. Baseline: `58ab7777e6388ab1cefc36a68aeb17617bb18380`; branch `wo13-trade-experience`. Verdict: **A. CLOUD EXPERIENCE READY FOR LOCAL WALLET ACCEPTANCE**. Real Windows execution, external-wallet signing and Pudge lifecycle acceptance remain human/external gates, not PASS results.
 
 ## Implemented experience
