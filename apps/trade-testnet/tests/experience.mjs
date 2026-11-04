@@ -8,7 +8,7 @@ import crypto from "node:crypto";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.resolve(
     root,
-    "../../labs/wo13-trade-experience/revision-02/browser-" + Date.now(),
+    "../../labs/wo13-trade-experience/revision-03/browser-" + Date.now(),
   );
 fs.mkdirSync(out, { recursive: true });
 const axeURL =
@@ -222,6 +222,37 @@ try {
       await p
         .getByRole("heading", { name: "Positions", exact: true })
         .waitFor();
+      if (state === "active") {
+        assert.match(
+          await p.locator(".inventory-value strong").innerText(),
+          /0.1/,
+        );
+        await p
+          .getByRole("button", { name: "Select claim 1", exact: true })
+          .click();
+        await p.waitForFunction(
+          () => document.activeElement?.id === "position-actions",
+        );
+        assert(
+          await p
+            .getByRole("button", { name: "Review redemption", exact: true })
+            .isDisabled(),
+        );
+        await p
+          .getByRole("button", { name: "Select claim 0", exact: true })
+          .click();
+        await p.waitForFunction(
+          () => document.activeElement?.id === "position-actions",
+        );
+        assert(
+          !(await p
+            .getByRole("button", { name: "Review redemption", exact: true })
+            .isDisabled()),
+        );
+        check(
+          "Mobile claim selection focuses controls without enabling another owner redemption",
+        );
+      }
       await reflow(p, state);
       await scan(p, state);
       if (state === "maturity")

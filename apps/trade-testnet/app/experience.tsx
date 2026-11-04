@@ -82,6 +82,40 @@ export type ExperienceProps = {
 };
 const short = (s: string) =>
   s.length > 24 ? s.slice(0, 8) + "…" + s.slice(-6) : s;
+function CellMark({ seed = 0 }: { seed?: number }) {
+  return (
+    <svg
+      className="cell-mark"
+      width="32"
+      height="34"
+      viewBox="0 0 34 36"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M3 2h9l3 3v10H3V2Z" fill="currentColor" />
+      <path
+        d="M21 2h9l3 3v10H21V2Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill={seed % 2 ? "currentColor" : "none"}
+      />
+      <path d="M12 22h9l3 3v10H12V22Z" fill="currentColor" opacity=".65" />
+      <path d="M9 17v2h18v-2M18 19v2" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+function totalBacking(rows: Position[]) {
+  let n = 0n;
+  for (const r of rows) {
+    const [a, b = ""] = r.backing.split(".");
+    n += BigInt(a) * 100000000n + BigInt(b.padEnd(8, "0"));
+  }
+  return (
+    n / 100000000n +
+    "." +
+    (n % 100000000n).toString().padStart(8, "0")
+  ).replace(/\.?0+$/, "");
+}
 function Icon({
   name,
 }: {
@@ -220,7 +254,7 @@ function Amount({
         />
         <span className="asset">
           <span className="asset-mark" aria-hidden="true">
-            <Icon name="arrow" />
+            <img src="/assets/ckb.svg" alt="" width="12" height="12" />
           </span>
           CKB
         </span>
@@ -258,9 +292,23 @@ export default function Experience(p: ExperienceProps) {
   const initialStatus = /^Connect a supported|^Controlled local view/.test(
     p.status,
   );
-  const eligible = m?.positions.filter((r) => r.mine && !r.empty) ?? [];
+  const eligible =
+    m?.positions.filter(
+      (r) => r.mine && !r.empty && (m.phase === "Funding" || r.remaining),
+    ) ?? [];
   function select(r: Position) {
     p.update("index", String(r.index));
+    if (window.matchMedia("(max-width:720px)").matches)
+      requestAnimationFrame(() => {
+        const panel = document.getElementById("position-actions");
+        panel?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion:reduce)").matches
+            ? "instant"
+            : "smooth",
+          block: "start",
+        });
+        panel?.focus({ preventScroll: true });
+      });
     p.update(
       "amount",
       m?.phase === "Active" ? r.backing : (m?.minimum ?? "0.125"),
@@ -327,16 +375,8 @@ export default function Experience(p: ExperienceProps) {
       </a>
       <header className="topbar">
         <a href="/" className="brand" aria-label="Trade home">
-          <svg
-            width="24"
-            height="26"
-            viewBox="0 0 24 26"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path d="M2 5h20v4H2zm7 7h13v4H9zm0 7h6v5H9z" fill="currentColor" />
-          </svg>
-          trade<span className="network">TESTNET</span>
+          <CellMark />
+          trade<span className="network">CKB TESTNET</span>
         </a>
         <nav className="navigation" aria-label="Main navigation">
           {(
@@ -454,7 +494,7 @@ export default function Experience(p: ExperienceProps) {
                       <td>
                         <span className="market-name">
                           <span className="market-token" aria-hidden="true">
-                            <Icon name="arrow" />
+                            <CellMark seed={m.positions.length} />
                           </span>
                           <span>
                             <b>CKB claim market</b>
@@ -507,7 +547,9 @@ export default function Experience(p: ExperienceProps) {
             <div className="table-foot">
               <span>
                 {m
-                  ? "Verified from committed history"
+                  ? p.fixture
+                    ? "Controlled presentation state"
+                    : "Verified from committed history"
                   : "No public market directory connected"}
               </span>
               {m && (
@@ -558,13 +600,24 @@ export default function Experience(p: ExperienceProps) {
                   className="position-book"
                   aria-label="Market positions"
                 >
-                  <div className="book-toolbar">
-                    <span>
-                      {p.address
-                        ? `${eligible.length} owned by you`
-                        : "All positions"}
-                    </span>
-                    <span className="subtle">Backing in CKB</span>
+                  <div className="inventory-strip">
+                    <div>
+                      <span className="micro-label">OWNED POSITIONS</span>
+                      <strong>
+                        {p.address
+                          ? String(eligible.length).padStart(2, "0")
+                          : "—"}
+                      </strong>
+                    </div>
+                    <div className="inventory-value">
+                      <span className="micro-label">
+                        YOUR BACKING · THIS MARKET
+                      </span>
+                      <strong>
+                        {p.address ? totalBacking(eligible) : "—"}{" "}
+                        <small>CKB</small>
+                      </strong>
+                    </div>
                   </div>
                   <div className="table-wrap">
                     <table className="position-table">
@@ -588,7 +641,12 @@ export default function Experience(p: ExperienceProps) {
                             }
                           >
                             <td>
-                              <b>#{r.index}</b>
+                              <span className="claim-identity">
+                                <span className="claim-glyph">
+                                  <CellMark seed={r.index} />
+                                </span>
+                                <b>#{r.index}</b>
+                              </span>
                               <small>
                                 {r.empty
                                   ? "Open"
@@ -659,9 +717,17 @@ export default function Experience(p: ExperienceProps) {
                     </details>
                   )}
                 </section>
-                <section className="action-panel" aria-label="Position actions">
+                <section
+                  id="position-actions"
+                  tabIndex={-1}
+                  className="action-panel"
+                  aria-label="Position actions"
+                >
                   <div className="ticket-heading">
-                    <span>Claim #{f.index}</span>
+                    <span className="ticket-identity">
+                      <CellMark seed={Number(f.index)} />
+                      <span>Claim #{f.index}</span>
+                    </span>
                     <span className="phase">
                       {selected?.mine
                         ? "You own this"
@@ -968,6 +1034,14 @@ export default function Experience(p: ExperienceProps) {
                     spellCheck={false}
                   />
                 </label>
+                <div
+                  className="allocation-bar"
+                  role="img"
+                  aria-label="80% reserved backing, 20% gross creator proceeds"
+                >
+                  <span />
+                  <span />
+                </div>
                 <div className="fixed-policy">
                   <div>
                     <span>Initial backing</span>

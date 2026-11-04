@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-04",
+  "branch": "wo13-trade-experience",
+  "baseline": "7ff6c030602268fca922c6369c59870c3c3172d5",
+  "browser": "browser-1793776280331",
+  "checks": 42,
+  "axe_scans": 16,
+  "automated_violations": 0,
+  "incomplete_checks": 3,
+  "native": {
+    "directory": "browser-native-1793776166472",
+    "transactions": 10,
+    "cases": 5,
+    "offline_replay": "native-offline-replay.log"
+  },
+  "unchanged": [
+    "transaction controller",
+    "lib/market.ts",
+    "lib/approval.ts",
+    "configured covenant",
+    "public manifests"
+  ],
+  "public_broadcasts": 0,
+  "signing_enabled": false,
+  "qualification": "Presentation fixtures are not external-wallet/Pudge execution; automated accessibility smoke checks are not full WCAG conformance."
+}
