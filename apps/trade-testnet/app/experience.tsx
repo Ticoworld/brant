@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-export type Tab = "Markets" | "My Positions" | "Create Market" | "Activity";
+export type Tab =
+  | "Trade"
+  | "Markets"
+  | "My Positions"
+  | "Create Market"
+  | "Activity";
 export type Fields = {
   id: string;
   creator: string;
@@ -249,6 +254,7 @@ function Amount({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           inputMode="decimal"
+          placeholder="0"
           disabled={disabled}
           autoComplete="off"
         />
@@ -274,7 +280,7 @@ function net(value: string) {
   ).replace(/\.?0+$/, "");
 }
 export default function Experience(p: ExperienceProps) {
-  const [tab, setTab] = useState<Tab>("Markets"),
+  const [tab, setTab] = useState<Tab>("Trade"),
     [action, setAction] = useState<"redeem" | "sell" | "import">("redeem"),
     [shareError, setShareError] = useState("");
   const f = p.fields,
@@ -297,6 +303,7 @@ export default function Experience(p: ExperienceProps) {
       (r) => r.mine && !r.empty && (m.phase === "Funding" || r.remaining),
     ) ?? [];
   function select(r: Position) {
+    setTab("Trade");
     p.update("index", String(r.index));
     if (window.matchMedia("(max-width:720px)").matches)
       requestAnimationFrame(() => {
@@ -380,7 +387,13 @@ export default function Experience(p: ExperienceProps) {
         </a>
         <nav className="navigation" aria-label="Main navigation">
           {(
-            ["Markets", "My Positions", "Activity", "Create Market"] as Tab[]
+            [
+              "Trade",
+              "My Positions",
+              "Markets",
+              "Activity",
+              "Create Market",
+            ] as Tab[]
           ).map((t) => (
             <button
               key={t}
@@ -410,7 +423,18 @@ export default function Experience(p: ExperienceProps) {
           </button>
         </div>
       </header>
-      <main id="workspace" tabIndex={-1} aria-busy={p.busy}>
+      <main
+        id="workspace"
+        className={
+          tab === "Trade"
+            ? "trade-mode"
+            : tab === "My Positions"
+              ? "positions-mode"
+              : ""
+        }
+        tabIndex={-1}
+        aria-busy={p.busy}
+      >
         {p.fixture && (
           <div className="fixture-banner">
             CONTROLLED LOCAL UI FIXTURE · no wallet, liquidity or Pudge
@@ -565,11 +589,13 @@ export default function Experience(p: ExperienceProps) {
             </div>
           </>
         )}
-        {tab === "My Positions" && (
+        {(tab === "My Positions" || tab === "Trade") && (
           <>
-            <div className="page-heading">
+            <div
+              className={"page-heading " + (tab === "Trade" ? "sr-only" : "")}
+            >
               <div>
-                <h1>Positions</h1>
+                <h1>{tab === "Trade" ? "Trade" : "Positions"}</h1>
                 {m && (
                   <span className="subtle">
                     {short(m.id)} <span className="separator">/</span> {m.phase}
@@ -588,37 +614,103 @@ export default function Experience(p: ExperienceProps) {
               )}
             </div>
             {!m ? (
-              <div className="standalone-empty">
-                <Icon name="wallet" />
-                <h2>No market selected</h2>
-                <p>Open a market to view your positions.</p>
-                <button onClick={() => setTab("Markets")}>Open market</button>
-              </div>
+              tab === "Trade" ? (
+                <section
+                  className="trade-empty action-panel"
+                  aria-label="Open a market"
+                >
+                  <div className="action-tabs">
+                    <span className="selected-tab">Redeem</span>
+                    <span>Sell</span>
+                    <span>Import offer</span>
+                  </div>
+                  <form
+                    className="market-search"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      p.onRecover();
+                    }}
+                  >
+                    <Icon name="search" />
+                    <label className="sr-only" htmlFor="market-id">
+                      Market link or identity
+                    </label>
+                    <input
+                      id="market-id"
+                      value={f.id}
+                      onChange={change("id")}
+                      placeholder="Open market by link or ID"
+                      disabled={p.busy}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    <button
+                      className="search-submit"
+                      aria-label="Open market"
+                      disabled={p.busy || !f.id.trim()}
+                    >
+                      <Icon name="arrow" />
+                    </button>
+                  </form>
+                  <Amount
+                    id="empty-amount"
+                    label="Redeem amount"
+                    value=""
+                    onChange={() => {}}
+                    disabled
+                  />
+                  <span className="settlement-direction" aria-hidden="true">
+                    <Icon name="arrow" />
+                  </span>
+                  <div className="empty-receive">
+                    <span>You receive</span>
+                    <div>
+                      <strong>—</strong>
+                      <span className="asset">
+                        <span className="asset-mark" aria-hidden="true">
+                          <img
+                            src="/assets/ckb.svg"
+                            alt=""
+                            width="12"
+                            height="12"
+                          />
+                        </span>
+                        CKB
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    className="primary wide"
+                    disabled={p.busy}
+                    onClick={
+                      !p.connected
+                        ? p.onConnect
+                        : !p.address
+                          ? p.onCheck
+                          : p.onRecover
+                    }
+                  >
+                    {!p.connected
+                      ? "Connect wallet"
+                      : !p.address
+                        ? "Check wallet"
+                        : "Open market"}
+                  </button>
+                  <p className="card-footnote">Open a market to continue.</p>
+                </section>
+              ) : (
+                <div className="standalone-empty">
+                  <Icon name="wallet" />
+                  <h2>No market selected</h2>
+                  <button onClick={() => setTab("Markets")}>Open market</button>
+                </div>
+              )
             ) : (
               <div className="position-workspace">
                 <section
                   className="position-book"
                   aria-label="Market positions"
                 >
-                  <div className="inventory-strip">
-                    <div>
-                      <span className="micro-label">OWNED POSITIONS</span>
-                      <strong>
-                        {p.address
-                          ? String(eligible.length).padStart(2, "0")
-                          : "—"}
-                      </strong>
-                    </div>
-                    <div className="inventory-value">
-                      <span className="micro-label">
-                        YOUR BACKING · THIS MARKET
-                      </span>
-                      <strong>
-                        {p.address ? totalBacking(eligible) : "—"}{" "}
-                        <small>CKB</small>
-                      </strong>
-                    </div>
-                  </div>
                   <div className="table-wrap">
                     <table className="position-table">
                       <thead>
@@ -688,7 +780,11 @@ export default function Experience(p: ExperienceProps) {
                     </table>
                   </div>
                   <div className="book-foot">
-                    <span>{m.backing} CKB reserved</span>
+                    <span>
+                      {p.address
+                        ? totalBacking(eligible) + " CKB your backing"
+                        : m.backing + " CKB reserved"}
+                    </span>
                     <span>{m.positions.length} slots</span>
                   </div>
                   {terms}
@@ -724,17 +820,27 @@ export default function Experience(p: ExperienceProps) {
                   aria-label="Position actions"
                 >
                   <div className="ticket-heading">
-                    <span className="ticket-identity">
-                      <CellMark seed={Number(f.index)} />
-                      <span>Claim #{f.index}</span>
-                    </span>
-                    <span className="phase">
-                      {selected?.mine
-                        ? "You own this"
-                        : selected?.empty
-                          ? "Open slot"
-                          : "Other owner"}
-                    </span>
+                    <label className="sr-only" htmlFor="claim-selector">
+                      Claim
+                    </label>
+                    <select
+                      id="claim-selector"
+                      value={f.index}
+                      disabled={p.busy}
+                      onChange={(e) => {
+                        const r = m.positions.find(
+                          (x) => x.index === Number(e.target.value),
+                        );
+                        if (r) select(r);
+                      }}
+                    >
+                      {m.positions.map((r) => (
+                        <option key={r.index} value={r.index}>
+                          Claim #{r.index}
+                          {r.empty ? " · Open" : r.mine ? " · You" : ""}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   {m.phase === "Active" ? (
                     <div className="action-tabs">
@@ -773,6 +879,14 @@ export default function Experience(p: ExperienceProps) {
                         onChange={(v) => p.update("amount", v)}
                         disabled={p.busy}
                       />
+                      {m.phase === "Active" && (
+                        <span
+                          className="settlement-direction"
+                          aria-hidden="true"
+                        >
+                          <Icon name="arrow" />
+                        </span>
+                      )}
                       <dl className="ticket-summary">
                         <div>
                           <dt>Available backing</dt>

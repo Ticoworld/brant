@@ -8,7 +8,7 @@ import crypto from "node:crypto";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.resolve(
     root,
-    "../../labs/wo13-trade-experience/revision-03/browser-" + Date.now(),
+    "../../labs/wo13-trade-experience/revision-04/browser-" + Date.now(),
   );
 fs.mkdirSync(out, { recursive: true });
 const axeURL =
@@ -136,6 +136,14 @@ try {
   for (const width of [1440, 768, 375]) {
     await p.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
     await p.goto(base);
+    await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
+    await p.screenshot({ path: out + `/trade-${width}.png`, fullPage: true });
+    await reflow(p, "trade " + width);
+    await scan(p, "trade " + width);
+    await p
+      .getByRole("navigation")
+      .getByRole("button", { name: "Markets", exact: true })
+      .click();
     await p.getByRole("heading", { name: "Markets", exact: true }).waitFor();
     await p
       .locator("footer .advanced")
@@ -223,10 +231,7 @@ try {
         .getByRole("heading", { name: "Positions", exact: true })
         .waitFor();
       if (state === "active") {
-        assert.match(
-          await p.locator(".inventory-value strong").innerText(),
-          /0.1/,
-        );
+        assert.match(await p.locator(".book-foot").innerText(), /0.1/);
         await p
           .getByRole("button", { name: "Select claim 1", exact: true })
           .click();
@@ -238,9 +243,7 @@ try {
             .getByRole("button", { name: "Review redemption", exact: true })
             .isDisabled(),
         );
-        await p
-          .getByRole("button", { name: "Select claim 0", exact: true })
-          .click();
+        await p.getByLabel("Claim", { exact: true }).selectOption("0");
         await p.waitForFunction(
           () => document.activeElement?.id === "position-actions",
         );
@@ -253,6 +256,11 @@ try {
           "Mobile claim selection focuses controls without enabling another owner redemption",
         );
       }
+      if (state !== "active")
+        await p
+          .getByRole("navigation")
+          .getByRole("button", { name: "Trade", exact: true })
+          .click();
       await reflow(p, state);
       await scan(p, state);
       if (state === "maturity")
@@ -289,10 +297,7 @@ try {
     check(state + " labelled presentation state");
   }
   await p.goto(base + "/experience-fixture?state=active");
-  await p
-    .getByRole("navigation")
-    .getByRole("button", { name: "Positions", exact: true })
-    .click();
+  await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
   assert.equal(
     await p.locator(".ticket-summary .total dd").innerText(),
     "0.099 CKB",
@@ -345,7 +350,7 @@ try {
   await p.setViewportSize({ width: 1440, height: 1000 });
   await p.goto(base + "/experience-fixture?state=active");
   await p.getByText("CONTROLLED LOCAL UI FIXTURE", { exact: false }).waitFor();
-  await p.screenshot({ path: out + "/market-open-1440.png", fullPage: true });
+  await p.screenshot({ path: out + "/trade-open-1440.png", fullPage: true });
   // Fresh captures avoid leaving axe's temporary focus styling in presentation screenshots.
   await p.goto(base + "/experience-fixture?state=active");
   await p
@@ -354,6 +359,10 @@ try {
     .click();
   await p.setViewportSize({ width: 1440, height: 1000 });
   await p.screenshot({ path: out + "/positions-1440.png", fullPage: true });
+  await p
+    .getByRole("navigation")
+    .getByRole("button", { name: "Trade", exact: true })
+    .click();
   await p.getByRole("button", { name: "Sell", exact: true }).click();
   await p.screenshot({ path: out + "/sell-1440.png", fullPage: true });
   await p
@@ -370,6 +379,10 @@ try {
     fullPage: false,
   });
   await p.keyboard.press("Escape");
+  await p.setViewportSize({ width: 1920, height: 1080 });
+  await p.goto(base + "/experience-fixture?state=active");
+  await p.getByRole("heading", { name: "Trade", exact: true }).waitFor();
+  await p.screenshot({ path: out + "/trade-1920.png", fullPage: true });
   assert.equal(evidence.pageErrors.length, 0);
   assert(!evidence.rpcMethods.includes("send_transaction"));
   check("No page errors or public broadcast");

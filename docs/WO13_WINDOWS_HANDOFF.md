@@ -49,7 +49,7 @@ A mismatch stops deployment. Code capacity 17,889 CKB is distinct from the 322 C
 
 ## Once separately authorized: paid-assignment handoff
 
-Seller opens Positions in the verified market, selects their claim and the **Sell** tab, then enters the consenting buyer's public address and agreed CKB price, then prepares an offer. Save the offer file and send it privately to the buyer. The buyer opens the same market, chooses the same claim, enters the same buyer address and price, selects **Import offer**, and imports the file. Import does not accept its terms.
+Seller opens Positions in the verified market and selects their claim. This opens the **Trade** panel; choose **Sell**, then enter the consenting buyer's public address and agreed CKB price, then prepares an offer. Save the offer file and send it privately to the buyer. The buyer opens the same market and selects the same claim in **Trade**, enters the same buyer address and price, then selects **Import offer**, and imports the file. Import does not accept its terms.
 
 Each side uses **Review & add signature**, reviews the amounts/fee/identities and exact outputs in the dialog, and separately consents in their real wallet. Save and return the signed file; do not edit the JSON. The final consenting participant uses **Review & submit** on the same fully reviewed transaction. The buyer pays the 0.001 CKB fee in addition to the seller's consideration. A locally signed file is not settlement or guaranteed liquidity.
 
