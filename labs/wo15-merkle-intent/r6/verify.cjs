@@ -1,0 +1,2 @@
+const fs=require('fs'),cp=require('child_process'),path=require('path');
+for(const dir of fs.readdirSync(__dirname+'/evidence')) {const p=__dirname+'/evidence/'+dir;if(!fs.existsSync(p+'/complete.json'))continue;const r=JSON.parse(cp.execFileSync(process.execPath,[path.resolve(__dirname,'../src/verify.cjs'),p],{encoding:'utf8',maxBuffer:10000000}));fs.writeFileSync(p+'/independent-replay.json',JSON.stringify(r,null,2));console.log(dir,r.verifiedSales.length,'sales verified');}

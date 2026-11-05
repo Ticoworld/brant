@@ -1,0 +1,70 @@
+{
+  "status": "experimental",
+  "root": "0x03d67fcf1751ac922406e9c4d1b70f9d5bebc82c504fec47cfa1feedca401ea4",
+  "positions": [
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    }
+  ],
+  "genesis": "0x5cc9f6c4b26448ff8c6ddd67630a09f627040dc8c3cc98d81286113bb66af9a1",
+  "identity": {
+    "hash": "0xed3ee9872c17e80fecde802d77857725cc8e49de8bbeb8b4b120e8e788620de7",
+    "outPoint": {
+      "txHash": "0xa89b6f394bcfe8938e8ecb04ef2a544b4a0968216b034bbc38b400fc8de3db1a",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0xed3ee9872c17e80fecde802d77857725cc8e49de8bbeb8b4b120e8e788620de7",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 60336,
+    "occupied": "6037700000000"
+  },
+  "batch": 8
+}
