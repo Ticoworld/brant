@@ -1,0 +1,7 @@
+[
+  {
+    "label": "bad_seller_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 85 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/04a97d1560b2ad7704d456229cf3837383ac7eb65a9b94be5a500470770045e8.html#85 })"
+  }
+]

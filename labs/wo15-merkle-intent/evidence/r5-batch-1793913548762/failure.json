@@ -1,0 +1,3 @@
+{
+  "error": "Error: PoolRejectedTransactionByMinFeeRate: The min fee rate is 1000 shannons/KW, requiring a transaction fee of at least 27190 shannons, but the fee provided is only 10000\n    at Engine.rpc (/mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/wo09-e2-capacity/src/engine.cjs:5:351)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async Engine.send (/mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/wo09-e2-capacity/src/engine.cjs:16:87)\n    at async fill (/mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/wo15-merkle-intent/src/run-batch.cjs:12:36)\n    at async /mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/wo15-merkle-intent/src/run-batch.cjs:16:343"
+}
