@@ -1,0 +1,47 @@
+{
+  "hashes": [
+    "0x9d9284ebe8e7564617f323e1fff750a7a8a663f4f16f3482e8d63c686de3f848",
+    "0x814bdcca43200dba9f54c5a80b7dd7af40f24953c6738b230732a8ada9451955"
+  ],
+  "orderOutpoints": [
+    {
+      "txHash": "0x65f56f5b91462de78b2e4e7463c053997147d33264a3abcb06edc7a489d09e4a",
+      "index": "0x0"
+    },
+    {
+      "txHash": "0x45100579eef0cbfab6a51de8e930173a189cf90ea0e9d14f0fed02ae999c424e",
+      "index": "0x0"
+    }
+  ],
+  "settlementOutputs": [
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x0"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x1"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x2"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x3"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x4"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x5"
+    },
+    {
+      "txHash": "0x3744ebe3d0f66bf84b72f5ff144fbecb6bc93e98fd64ec751f24d17dedc25db6",
+      "index": "0x6"
+    }
+  ],
+  "fee": "1000000"
+}
