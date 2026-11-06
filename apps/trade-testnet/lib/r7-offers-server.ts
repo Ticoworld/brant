@@ -18,6 +18,21 @@ function db() {
   d.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS offers (id TEXT PRIMARY KEY, vault TEXT NOT NULL, terms TEXT NOT NULL, signature TEXT NOT NULL, created INTEGER NOT NULL)');
   return d;
 }
+export async function markets() {
+  const {rpc,genesis,code}=config();
+  const g=await rpc('get_block_by_number',['0x0']);if(g.header.hash!==genesis)throw Error('Wrong chain genesis');
+  const head=await rpc('get_tip_header',[]),height=BigInt(head.number),found=new Map<string,string>();
+  for(let h=height;h>=0n && height-h<10000n;h--){
+    const block=await rpc('get_block_by_number',[ccc.numToHex(h)]);
+    for(const tx of [...block.transactions].reverse()){
+      const o=tx.outputs[0],id=o?.type?.args;
+      if(o?.type?.code_hash!==code||o.type.hash_type!=='data1'||!/^0x[0-9a-f]{64}$/.test(id)||found.has(id))continue;
+      const live=await rpc('get_live_cell',[{tx_hash:tx.hash,index:'0x0'},true]);
+      if(live.status==='live'){await recoverR7(rpc,tx.hash,code,id,genesis);found.set(id,tx.hash);}
+    }
+  }
+  return {genesis,codeHash:code,markets:[...found].map(([id,tip])=>({id,tip})),complete:height<10000n};
+}
 async function state(vault:string) {
   if(!/^0x[0-9a-f]{64}$/.test(vault)) throw Error('Invalid vault');
   const {rpc,genesis,code}=config();
