@@ -12,8 +12,14 @@ export async function POST(req:Request) {
  busy=true;
  try{
   const script=path.resolve(process.cwd(),'../../labs/wo15-merkle-intent/r7-message-check/run.cjs');
+  const windows=process.platform==='win32';
+  const match=windows?script.match(/^([a-zA-Z]):\\(.*)$/):null;
+  if(windows&&!match)throw Error('Verifier requires a WSL-accessible drive path');
+  const linuxScript=match?`/mnt/${match[1].toLowerCase()}/${match[2].replaceAll('\\','/')}`:script;
+  const command=windows?'wsl.exe':process.execPath;
+  const args=windows?['-e','bash','-lc','exec node "$1"','r7-message-check',linuxScript]:[script];
   const result=await new Promise<string>((resolve,reject)=>{
-   const child=spawn(process.execPath,[script],{stdio:['pipe','pipe','pipe']});let out='',err='';
+   const child=spawn(command,args,{stdio:['pipe','pipe','pipe'],windowsHide:true});let out='',err='';
    const timer=setTimeout(()=>{child.kill('SIGTERM');reject(Error('Verifier timed out'));},90000);
    child.stdout.on('data',d=>{out+=d;if(out.length>100000)child.kill('SIGTERM')});
    child.stderr.on('data',d=>{err+=d;if(err.length>100000)child.kill('SIGTERM')});
