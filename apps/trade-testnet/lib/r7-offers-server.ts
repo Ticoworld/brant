@@ -64,5 +64,13 @@ export async function publish(terms:SaleTerms,signature:string) {
 export async function offers(vault:string) {
   const s=await state(vault),d=db();let rows:{id:string;terms:string;signature:string;created:number}[];
   try { rows=d.prepare('SELECT id,terms,signature,created FROM offers WHERE vault=? ORDER BY created DESC').all(vault) as typeof rows; } finally {d.close();}
-  return {tip:s.tip,offers:rows.map(row=>{const terms=JSON.parse(row.terms) as SaleTerms;try{check(terms,row.signature,s);return {...row,terms,status:'live'};}catch{return {...row,terms,status:'stale'};}})};
+  return {tip:s.tip,offers:rows.map(row=>{const terms=JSON.parse(row.terms) as SaleTerms;
+    try { verifyAuthorization(terms,row.signature); if(terms.vault!==vault || terms.genesis!==s.genesis || terms.covenant!==ccc.Script.from({codeHash:s.code,hashType:'data1',args:vault}).hash())throw Error('Wrong domain'); } catch { return {...row,terms,status:'invalid'}; }
+    const transition=s.changes.find(c=>String(c.index)===terms.position && c.old.owner===terms.seller && String(c.old.p)===terms.principal && String(c.old.b)===terms.backing && String(c.old.revision)===terms.revision);
+    if(transition){
+      const filled=transition.op===8 && transition.price===terms.price && transition.signature?.toLowerCase()===row.signature.toLowerCase();
+      return {...row,terms,status:filled?'filled':transition.op===9?'revoked':'stale',transition:transition.txHash};
+    }
+    try{check(terms,row.signature,s);return {...row,terms,status:'live'};}catch{return {...row,terms,status:'stale'};}
+  })};
 }

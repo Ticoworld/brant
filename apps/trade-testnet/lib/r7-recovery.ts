@@ -23,6 +23,7 @@ export async function recoverR7(rpc:Rpc,tip:ccc.Hex,codeHash:ccc.Hex,id:ccc.Hex,
   if(initial.length!==216||new TextDecoder().decode(initial.slice(0,8))!=='TCM0003\0'||ccc.hexFrom(initial.slice(184,216))!==genesis)throw Error('Wrong R7 state or genesis');
   const count=Number(read(initial,120));const tree=new PositionTree(count,id);
   const immutable=ccc.hexFrom(initial.slice(160,216));let previous='';
+  const changes:{op:number;index:number;old:ReturnType<typeof decodePosition>;signature?:string;price?:string;txHash:string}[]=[];
   for(const [step,{hash:txHash,tx,w}] of blocks.entries()){
     if(step&&tx.inputs[0].previous_output.tx_hash!==previous)throw Error('History discontinuity');
     const op=Number(read(w,0)),n=Number(read(w,8)),stride=120+32*tree.depth+(op===8?106:0);
@@ -41,6 +42,8 @@ export async function recoverR7(rpc:Rpc,tip:ccc.Hex,codeHash:ccc.Hex,id:ccc.Hex,
         const spent=previousBuyer.transaction.outputs[Number(BigInt(input.index))];
         if(!out||!buyer||!spent||out.type||BigInt(out.capacity)<price||ccc.Script.from(cccA.JsonRpcTransformers.scriptTo(out.lock)).hash()!==old.owner||ccc.Script.from(cccA.JsonRpcTransformers.scriptTo(buyer.lock)).hash()!==next.owner||ccc.Script.from(cccA.JsonRpcTransformers.scriptTo(spent.lock)).hash()!==next.owner||old.p!==next.p||old.b!==next.b)throw Error('Invalid sale payout or entitlement');
       }
+      const off=120+32*tree.depth;
+      changes.push({op,index:i,old,txHash,...(op===8?{price:String(read(p,off)),signature:ccc.hexFrom(p.slice(off+41,off+106))}:{})});
       tree.set(i,next);
     }
     const out=tx.outputs[0],data=ccc.bytesFrom(tx.outputs_data[0]);
@@ -51,5 +54,5 @@ export async function recoverR7(rpc:Rpc,tip:ccc.Hex,codeHash:ccc.Hex,id:ccc.Hex,
   }
   const live=await rpc('get_live_cell',[{tx_hash:tip,index:'0x0'},true]);
   if(live.status!=='live'||live.cell.data.content!==blocks.at(-1)!.tx.outputs_data[0])throw Error('Stale vault: rebuild from latest live state');
-  return {tree,tip,cell:live.cell,history:blocks.map(b=>b.hash)};
+  return {tree,tip,cell:live.cell,history:blocks.map(b=>b.hash),changes};
 }
