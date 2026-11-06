@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+import { PositionTree, encodePosition, decodePosition } from '../lib/r7-tree.ts';
+import { ZERO } from '../lib/market.ts';
+const require=createRequire(import.meta.url), old=require('../../../labs/wo15-merkle-intent/src/merkle-lib.cjs');
+const id=('0x'+'11'.repeat(32)) as `0x${string}`;
+const a=new PositionTree(3,id), b=new old.Tree(3,id);
+const position={owner:('0x'+'22'.repeat(32)) as `0x${string}`,p:125n,b:100n,revision:1n};
+assert.equal(a.root,b.root);
+a.set(1,position);b.set(1,position);
+assert.equal(a.root,b.root);assert.deepEqual(a.proof(1),b.proof(1));
+assert.deepEqual(decodePosition(encodePosition(position)),position);
+const tombstone={owner:ZERO,p:0n,b:0n,revision:2n};
+a.set(1,tombstone);b.set(1,tombstone);assert.equal(a.root,b.root);
+assert.throws(()=>a.set(1,{...tombstone,b:1n}));
+console.log('R7 tree matches independent R6 tree fixtures');
