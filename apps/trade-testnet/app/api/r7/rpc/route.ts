@@ -1,8 +1,8 @@
+import { localRequest } from '../../../../lib/r7-local-request';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 export async function POST(req:Request) {
-  const origin=new URL(req.url);
-  if(process.env.R7_LOCAL_ENABLED!=='1'||!['localhost','127.0.0.1','[::1]'].includes(origin.hostname)||req.headers.get('origin')&&req.headers.get('origin')!==origin.origin)return new Response('Disabled',{status:403});
+  if(process.env.R7_LOCAL_ENABLED!=='1'||!localRequest(req))return new Response('Disabled',{status:403});
   try {
     const url=new URL(process.env.R7_LOCAL_RPC||'http://127.0.0.1:19224');
     if(url.protocol!=='http:'||!['localhost','127.0.0.1','[::1]'].includes(url.hostname)||url.username||url.password)throw Error('Only loopback RPC permitted');
