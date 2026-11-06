@@ -21,17 +21,19 @@ function db() {
 export async function markets() {
   const {rpc,genesis,code}=config();
   const g=await rpc('get_block_by_number',['0x0']);if(g.header.hash!==genesis)throw Error('Wrong chain genesis');
-  const head=await rpc('get_tip_header',[]),height=BigInt(head.number),found=new Map<string,string>();
+  const head=await rpc('get_tip_header',[]),height=BigInt(head.number),found=new Map<string,string>();let codeDep:{txHash:string;index:string}|undefined;
   for(let h=height;h>=0n && height-h<10000n;h--){
     const block=await rpc('get_block_by_number',[ccc.numToHex(h)]);
     for(const tx of [...block.transactions].reverse()){
+      for(let i=0;i<tx.outputs_data.length;i++)if(!codeDep&&ccc.hashCkb(tx.outputs_data[i])===code)codeDep={txHash:tx.hash,index:ccc.numToHex(i)};
       const o=tx.outputs[0],id=o?.type?.args;
       if(o?.type?.code_hash!==code||o.type.hash_type!=='data1'||!/^0x[0-9a-f]{64}$/.test(id)||found.has(id))continue;
       const live=await rpc('get_live_cell',[{tx_hash:tx.hash,index:'0x0'},true]);
       if(live.status==='live'){await recoverR7(rpc,tx.hash,code,id,genesis);found.set(id,tx.hash);}
     }
   }
-  return {genesis,codeHash:code,markets:[...found].map(([id,tip])=>({id,tip})),complete:height<10000n};
+  if(!codeDep)throw Error('R7 code deployment not found within scan bound');
+  return {genesis,codeHash:code,codeDep:{outPoint:codeDep,depType:'code'},secpDep:{outPoint:{txHash:g.transactions[1].hash,index:'0x0'},depType:'depGroup'},markets:[...found].map(([id,tip])=>({id,tip})),complete:height<10000n};
 }
 async function state(vault:string) {
   if(!/^0x[0-9a-f]{64}$/.test(vault)) throw Error('Invalid vault');
