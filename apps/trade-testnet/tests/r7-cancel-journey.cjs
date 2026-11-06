@@ -1,0 +1,13 @@
+const {spawn}=require('child_process'),path=require('path'),fs=require('fs'),assert=require('assert/strict');
+const {chromium}=require('playwright-core');
+module.exports=async({e,m,C})=>{
+ const root=path.resolve(__dirname,'..');let browser,server;
+ try{
+  server=spawn(process.execPath,[root+'/node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','3102'],{cwd:root,env:{...process.env,NEXT_PUBLIC_LOCAL_FIXTURE:'1',R7_LOCAL_ENABLED:'1',R7_LOCAL_GENESIS:m.genesis,R7_LOCAL_CODE_HASH:e.codes.market.hash,R7_LOCAL_RPC:'http://127.0.0.1:19224',R7_LISTING_DB:e.out+'/offers.sqlite',NEXT_TELEMETRY_DISABLED:'1'},stdio:['ignore',fs.openSync(e.out+'/next.log','w'),fs.openSync(e.out+'/next.log','a')]});
+  for(let i=0;i<120;i++){try{if((await fetch('http://127.0.0.1:3102/r7')).ok)break}catch{}await new Promise(r=>setTimeout(r,500));}
+  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/home/timot/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome',headless:true,args:['--no-sandbox']});const page=await browser.newPage();page.on('dialog',d=>d.accept());
+  await page.goto('http://127.0.0.1:3102/r7');await page.getByRole('button',{name:'Connect disposable seller'}).click();await page.getByRole('button',{name:/Position 0: backing/}).click({timeout:60000});await page.getByLabel('Price CKB').fill('80');await page.getByRole('button',{name:'Review',exact:true}).click();await page.getByRole('button',{name:'Sign and publish'}).click();await page.getByText('Offer published').waitFor({timeout:60000});
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.getByText(/(?:Pending|Submitted) 0x/).waitFor({timeout:60000});const status=await page.getByRole('status').innerText(),hash=status.match(/0x[0-9a-f]{64}/)[0];let tx;for(let i=0;i<30;i++){await e.mine();tx=await e.rpc('get_transaction',[hash]);if(tx.tx_status.status==='committed')break}assert.equal(tx.tx_status.status,'committed');await page.getByText('Committed '+hash).waitFor({timeout:60000});await page.getByRole('button',{name:'Refresh'}).click();await page.waitForTimeout(3000);assert.equal(await page.getByRole('button',{name:'Cancel',exact:true}).count(),0);
+  const old=m.tree.records[0],raw=C.b(tx.transaction.witnesses.at(-1));assert.equal(raw.readBigUInt64LE(0),9n);assert.equal(raw.readBigUInt64LE(8),1n);assert.equal(raw.readBigUInt64LE(128),old.revision+1n);assert.equal(BigInt(tx.transaction.outputs[0].capacity),m.vault.capacity);C.write(e.out+'/cancel-result.json',{hash,committed:tx.tx_status.status,oldRevision:String(old.revision),newRevision:String(old.revision+1n)});console.log('BROWSER_REVOKE',hash);
+ }finally{if(browser)await browser.close();if(server)server.kill('SIGTERM')}
+};
