@@ -1,0 +1,17 @@
+'use client';
+import {useState} from 'react';
+import {ccc} from '@ckb-ccc/core';
+import {saleMessage,verifyAuthorization,type SaleTerms} from '../../lib/r7-authorization';
+
+const expected='ckt1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqfkauuw6p3sp7s0x4l37dst397ywmzuf7gzldwps';
+const vault='0xa1872dcc13c3dd19f9652fe5147ad902778e9ebcdd3931a966c88128a4c7230d';
+const terms:SaleTerms={genesis:'0x64f7b997b4b3e6067500a6052a688a3f3009d0d62401abc8fd41551a36770802',vault,covenant:ccc.Script.from({codeHash:'0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36',hashType:'data1',args:vault}).hash(),position:'0',seller:'0xc47b33f79bb3439876bf5be3af7d790eca8ae73779346297b5290ad73e4436ca',principal:'125000000',backing:'100000000',revision:'2',price:'8000000000'};
+type Provider={getNetwork:()=>Promise<string>;connect:()=>Promise<void>;getAccount:()=>Promise<string[]>;signMessage:(message:string,address:string)=>Promise<string>};
+export default function WalletCheck(){
+ const [account,setAccount]=useState(''),[network,setNetwork]=useState(''),[signature,setSignature]=useState(''),[status,setStatus]=useState('');
+ const provider=()=>{if(!['127.0.0.1','localhost','[::1]'].includes(window.location.hostname))throw Error('Local browser required');const p=(window as unknown as {utxoGlobal?:{ckbSigner?:Provider}}).utxoGlobal?.ckbSigner;if(!p)throw Error('UTXO Global CKB provider unavailable');return p};
+ async function connect(){const p=provider();const before=await p.getNetwork();setNetwork(before);if(before!=='nervos_testnet')throw Error('Select CKB testnet in the wallet before connecting; no network switch was requested');await p.connect();const after=await p.getNetwork();if(after!==before)throw Error('Wallet network changed; stop and review');const accounts=await p.getAccount();if(accounts[0]!==expected)throw Error('Connected account differs from the supplied test address');setAccount(accounts[0]);setStatus('Account connected');}
+ async function sign(){if(!account)throw Error('Connect the designated account first');const p=provider();if(await p.getNetwork()!==network||network!=='nervos_testnet')throw Error('Wallet network changed');setStatus('Awaiting wallet approval');const result=await p.signMessage(saleMessage(terms),account);setSignature(result);const checked=verifyAuthorization(terms,result);setStatus('CCC signature verified; recovered lock '+checked.lock.hash()+'. On-chain verification remains pending.');}
+ const action=(f:()=>Promise<void>)=>{f().catch(e=>setStatus(String(e)))};
+ return <main style={{maxWidth:900,margin:'auto',padding:24}}><h1>Private-chain signature check</h1><p>This is a test authorization for a stopped disposable chain. The position has not been assigned to this account. Do not sign if the wallet shows different terms or changes network.</p><p>Wallet network: {network||'not checked'}</p><p>Account: {account||'not connected'}</p><button onClick={()=>action(connect)}>Connect UTXO Global</button><h2>Authorization to review</h2><pre style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{saleMessage(terms)}</pre><button disabled={!account} onClick={()=>action(sign)}>Request message signature</button><p role="status">{status}</p>{signature&&<><h2>Returned signature</h2><code style={{overflowWrap:'anywhere'}}>{signature}</code></>}</main>
+}
