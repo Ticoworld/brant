@@ -16,5 +16,8 @@ const hash=tx.hash(),h=new ccc.HasherCkb();h.update(hash);ccc.Transaction.hashWi
 assert.equal(verifyPudgeWitness(tx,hash,owner),true);
 const edited=ccc.Transaction.from(JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v)));edited.outputs[1].capacity-=1n;assert.throws(()=>verifyPudgeWitness(edited,hash,owner));
 const altered=ccc.Transaction.from(JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v)));altered.outputsData[0]='0x00';assert.throws(()=>verifyPudgeWitness(altered,hash,owner));
+const differentInput=ccc.Transaction.from(JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v)));differentInput.inputs[0].previousOutput.index=1n;assert.throws(()=>verifyPudgeWitness(differentInput,hash,owner));
+const changedLock=ccc.Transaction.from(JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v)));changedLock.outputs[0].lock.args=ccc.hexFrom(new Uint8Array(20).fill(0x44));assert.throws(()=>verifyPudgeWitness(changedLock,hash,owner));
+const badSig=ccc.Transaction.from(JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v)));badSig.witnesses=[blank];assert.throws(()=>verifyPudgeWitness(badSig,hash,owner));
 assert.throws(()=>verifyPudgeWitness(tx,hash,'0x'+'33'.repeat(20)));
 console.log('R7 deployment signature and mutation cases passed');
