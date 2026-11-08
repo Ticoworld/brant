@@ -2,6 +2,9 @@ import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {ccc} from '@ckb-ccc/core';
 import {localRequest} from '../../../lib/r7-local-request';
+import {verifyPudgeWitness} from '../../../lib/pudge-wallet-verify';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {DatabaseSync} from 'node:sqlite';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 const expected='0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36';
@@ -19,4 +22,15 @@ export async function GET(req:Request){
  const size=BigInt(make(0n).toBytes().length),fee=(size*rate+999n)/1000n;if(9999986100000n-capacity-fee<6100000000n)throw Error('Insufficient change');const tx=make(fee);
  return Response.json({genesis:genesis.header.hash,codeHash:expected,codeBytes:code.length,feeRate:rate.toString(),fee:fee.toString(),size:size.toString(),input:'9999986100000',capacity:capacity.toString(),change:(9999986100000n-capacity-fee).toString(),hash:tx.hash(),transaction:JSON.parse(JSON.stringify(tx,(_,v)=>typeof v==='bigint'?v.toString():v))});
  }catch(e){return Response.json({error:e instanceof Error?e.message:'Review unavailable'},{status:503});}
+}
+export async function POST(req:Request){
+ if(process.env.PUDGE_R7_DEPLOY_REVIEW!=='1'||process.env.PUDGE_R7_BROADCAST_ENABLED!=='1'||!localRequest(req)||!req.headers.get('origin')||req.headers.get('content-type')!=='application/json')return new Response('Disabled',{status:403});
+ try{
+  const body=await req.text();if(body.length>250000)throw Error('Request too large');const tx=ccc.Transaction.from(JSON.parse(body));
+  const check=await GET(req);const fresh=await check.json();if(!check.ok||tx.hash()!==fresh.hash)throw Error('Input, fee or transaction changed; review again');verifyPudgeWitness(tx,fresh.hash);
+  const db=new DatabaseSync(path.resolve(process.cwd(),'pudge-deployment-attempts.sqlite'));try{db.exec('PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS attempts (hash TEXT PRIMARY KEY, attempted INTEGER NOT NULL); CREATE TABLE IF NOT EXISTS funding_guard (funding TEXT PRIMARY KEY, hash TEXT NOT NULL)');db.exec('BEGIN IMMEDIATE');try{const inserted=db.prepare('INSERT OR IGNORE INTO funding_guard VALUES (?,?)').run('0x3fa9dd0155936e0dacc9bf5e57a4785c3d6d66191a7560f1ff5ec6a6b04954f3:2',fresh.hash);if(!inserted.changes)throw Error('Funding input already attempted; reconcile before retry');db.prepare('INSERT INTO attempts VALUES (?,?)').run(fresh.hash,Date.now());db.exec('COMMIT')}catch(e){db.exec('ROLLBACK');throw e}}finally{db.close()}
+  const r=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'send_transaction',params:[cccA.JsonRpcTransformers.transactionFrom(tx),'passthrough']})});
+  const j=await r.json();if(!r.ok||j.error||j.result!==fresh.hash)throw Error('Submission outcome requires reconciliation for '+fresh.hash);
+  return Response.json({hash:fresh.hash,status:'submitted'});
+ }catch(e){return Response.json({error:e instanceof Error?e.message:'Submission outcome unknown'},{status:400});}
 }
