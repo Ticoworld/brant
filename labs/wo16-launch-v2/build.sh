@@ -2,7 +2,7 @@
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="${TRADE_MECHANISMS_ROOT:-$here/../rebuild/mechanisms}"
-zig="$root/tools/zig-x86_64-linux-0.14.1/zig"
+zig="${ZIG_BIN:-$root/tools/python/ziglang/zig}"
 std="$root/deps/ckb-c-stdlib"
 mkdir -p "$here/build"
 for name in one_shot_owner market marker_candidate market_lineage_candidate owner_lineage_candidate; do
