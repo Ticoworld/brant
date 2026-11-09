@@ -1,0 +1,11 @@
+{
+  "supply": "1000",
+  "inventory": "998",
+  "buyer": "2",
+  "price": "2100000000",
+  "reserveIncrease": "2100000000",
+  "fee": "1000000",
+  "marketHash": "0x16dd978535820e0249bc5e4c9ec89b4e62f9603b552fcc11050c73df90949bd3",
+  "tokenHash": "0x53d3524436f545a9e47361533de1ec1aca6d342d8655bd44a0b33cc52fe40005",
+  "purchase": "0xe807d1b7f8c77652a82be9689f534f8a6836e063d7b51055e159b924b618bfcb"
+}

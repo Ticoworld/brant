@@ -1,0 +1,13 @@
+{
+  "supply": "1000",
+  "inventory": "997",
+  "buyer": "3",
+  "firstPrice": "2100000000",
+  "secondPrice": "1200000000",
+  "reserveIncrease": "3300000000",
+  "fee": "1000000",
+  "marketHash": "0xbbc1304c804e58e1168fccf5d6fbc48e0c5a6f25057c08cb3f47e79573e26d04",
+  "tokenHash": "0x9218782c4607553afd3add5bc2479a0ddc887946756e26fb83ae0cab7c1cbd8e",
+  "firstPurchase": "0x2254a5252718dbc27e53944904d940ddb942423a788e83a324b66753f7a196d3",
+  "secondPurchase": "0x2c2559b36ce115f08c477c8ed12d586be3c5adb599bad9a64428518ca3e73f1a"
+}
