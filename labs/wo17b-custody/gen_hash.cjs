@@ -1,0 +1,1 @@
+const C=require(process.env.TRADE_NATIVE_ROOT+'/src/lib.cjs'),path=require('path'); const b=C.b(C.hash(C.fs.readFileSync(path.join(__dirname,'build/custody'))));console.log('static const uint8_t custody_code[32]={'+[...b].map(v=>'0x'+v.toString(16).padStart(2,'0')).join(',')+'};');
