@@ -10,4 +10,6 @@
 - [ ] Offline R7-style seller authorization: standard xUDT lock currently requires an online transaction signature; a separate covenant-controlled intent is needed.
 - [ ] Commit verified evidence and create and verify local recovery bundle.
 
+Cloud reproduction: on CKB 0.210.0 and Zig 0.14.1, `run-1794227269564` repeats issuance, purchases, sale and the committed counterfeit purchase; `verify.cjs` reconciles the recorded run. `lineage-1794227293131` repeats candidate issuance, one purchase and marker-substitution rejection only. The candidate has not passed the identity or accounting security gate.
+
 No public network, user wallet, or real assets used. CKB node commitment claims depend on the private node; replay is not an independent consensus verification.
