@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <string.h>
 int main(void) {
-  uint8_t script[169], self[32], input[44], typ[85], lock[32], data[16], market[141], identity[32];
+  uint8_t script[169], self[32], input[44], typ[85], lock[32], data[16], market[141], identity[32], marker[64], asset[32];
   uint64_t n=sizeof(script);
   if (ckb_load_script(script,&n,0)||n!=sizeof(script)||script[49]!=116||script[50]||script[51]||script[52]) return 1;
   n=32; if (ckb_load_script_hash(self,&n,0)||n!=32) return 2;
@@ -28,9 +28,14 @@ int main(void) {
     if(r==CKB_ITEM_MISSING) continue;
     if(r) return 5;
     if(n!=85||memcmp(typ+16,script+89,32)||typ[48]!=2||typ[49]!=32||typ[50]||typ[51]||typ[52]||memcmp(typ+53,self,32)) continue;
+    if(i!=0) return 13;
     n=32; if(ckb_load_cell_by_field(lock,&n,0,i,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK_HASH)||n!=32||memcmp(lock,script+121,32)) return 6;
     n=sizeof(market);if(ckb_load_cell_by_field(market,&n,0,i,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK)||n!=sizeof(market)||market[49]!=88||market[50]||market[51]||market[52]||memcmp(market+53,identity,32)||memcmp(market+101,script+153,8))return 12;
     n=16; if(ckb_load_cell_data(data,&n,0,i,CKB_SOURCE_OUTPUT)||n!=16||memcmp(data,script+153,16)) return 7;
+    n=32; if(ckb_load_cell_by_field(asset,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH)||n!=32) return 14;
+    n=32; if(ckb_load_cell_by_field(lock,&n,0,1,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH)||n!=32||memcmp(lock,market+109,32)) return 14;
+    n=32; if(ckb_load_cell_by_field(lock,&n,0,1,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK_HASH)||n!=32||memcmp(lock,script+121,32)) return 14;
+    n=64; if(ckb_load_cell_data(marker,&n,0,1,CKB_SOURCE_OUTPUT)||n!=64||memcmp(marker,script+121,32)||memcmp(marker+32,asset,32)) return 14;
     outputs++;
   }
   n=sizeof(typ); int end=ckb_load_cell_by_field(typ,&n,0,128,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK);
