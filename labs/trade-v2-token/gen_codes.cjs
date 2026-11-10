@@ -1,0 +1,1 @@
+const C=require(process.env.TRADE_NATIVE_ROOT+'/src/lib.cjs'),path=require('path');for(const [name,file] of [['custody_code','custody'],['marker_code','custody_marker']]){const b=C.b(C.hash(C.fs.readFileSync(path.join(__dirname,'build',file))));console.log('static const uint8_t '+name+'[32]={'+[...b].map(v=>'0x'+v.toString(16).padStart(2,'0')).join(',')+'};');}
