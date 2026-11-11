@@ -11,11 +11,21 @@ const ckbBin = process.env.CKB_BIN || path.join(C.ROOT, 'tools/ckb');
 const OWNER_TARGET = Number(process.env.TRADE_GATE2_OWNER_TARGET || 128);
 const SUPPLY = BigInt(process.env.TRADE_GATE2_SUPPLY || '2000');
 assert(OWNER_TARGET >= 3 && OWNER_TARGET <= 1024);
+const recoveryOwnerKey = process.env.TRADE_GATE2_RECOVERY_OWNER_PRIVATE_KEY;
+const recoveryOwnerRole = Number(process.env.TRADE_GATE2_RECOVERY_OWNER_ROLE || OWNER_TARGET + 1);
+if (recoveryOwnerKey) {
+  assert(/^0x[0-9a-f]{64}$/i.test(recoveryOwnerKey), 'recovery owner key must be a 32-byte hex value');
+  assert(Number.isInteger(recoveryOwnerRole) && recoveryOwnerRole >= 4 && recoveryOwnerRole <= OWNER_TARGET + 1, 'recovery owner role must identify a batched owner position');
+  U.privateKeyToPublicKey(recoveryOwnerKey);
+}
 for (let n = 4; n <= OWNER_TARGET + 2; n++) {
-  const key = '0x' + n.toString(16).padStart(64, '0');
+  const key = recoveryOwnerKey && n === recoveryOwnerRole + 1
+    ? recoveryOwnerKey
+    : '0x' + n.toString(16).padStart(64, '0');
   keys.push(key);
   locks.push({ codeHash: locks[0].codeHash, hashType: 'type', args: '0x' + U.blake160(U.privateKeyToPublicKey(key), 'hex') });
 }
+const recoveryOwnerLockHash = recoveryOwnerKey ? U.scriptToHash(locks[recoveryOwnerRole]) : null;
 
 const out = path.join(__dirname, 'evidence', 'native-' + Date.now());
 const build = process.env.TRADE_GATE2_BUILD_DIR || path.join(__dirname, 'build');
@@ -24,6 +34,7 @@ fs.mkdirSync(chainRoot, { recursive: true });
 const chain = fs.mkdtempSync(path.join(chainRoot, 'trade-gate2-')) + '/chain';
 fs.mkdirSync(out, { recursive: true });
 let child, secp, rpcSequence = 0;
+let initializationTransactionHash;
 const eventPath = path.join(out, 'events.jsonl');
 function record(file, v) { fs.appendFileSync(path.join(out, file), JSON.stringify(v, (_, x) => typeof x === 'bigint' ? x.toString() : x) + '\n'); }
 async function rpc(method, params = []) {
@@ -60,6 +71,7 @@ function sign(t, inputs, roles) {
 async function commit(label, signed) {
   const cycles = await rpc('estimate_cycles', [C.snake(signed)]);
   const hashValue = await rpc('send_transaction', [C.snake(signed), 'passthrough']);
+  if (label === 'initial_curve_purchase') initializationTransactionHash = hashValue;
   let result;
   for (let i = 0; i < 60; i++) {
     result = await rpc('get_transaction', [hashValue]);
@@ -469,7 +481,7 @@ async function main() {
   }
 
   const tip = await rpc('get_tip_header');
-  const result = { out, chain, genesis: genesis.header.hash, tip: tip.hash, hashes, scripts: { market, marker, owner, token, custody, custodyMarker }, roots: { initial: init.root, enrolled: step.root, final: custodyCell.data.slice(34) }, owners: positions.length, supply: SUPPLY.toString(), internalEntitlements: positions.reduce((sum, p) => sum + p.balance, 0n).toString(), marketInventory: inventoryAmount.toString(), withdrawnExternal: withdrawn[2].data, externalAfterRedemption: finalExternal.data, fullSellDown: runFullSellDown, finalCustody: custodyCell.outPoint, finalMarket: inventoryCell.outPoint, finalMarketCapacity: inventoryCell.capacity.toString() };
+  const result = { out, chain, genesis: genesis.header.hash, tip: tip.hash, initializationTransactionHash, hashes, scripts: { market, marker, owner, token, custody, custodyMarker }, roots: { initial: init.root, enrolled: step.root, final: custodyCell.data.slice(34) }, owners: positions.length, supply: SUPPLY.toString(), internalEntitlements: positions.reduce((sum, p) => sum + p.balance, 0n).toString(), marketInventory: inventoryAmount.toString(), withdrawnExternal: withdrawn[2].data, externalAfterRedemption: finalExternal.data, fullSellDown: runFullSellDown, finalCustody: custodyCell.outPoint, finalMarket: inventoryCell.outPoint, finalMarketCapacity: inventoryCell.capacity.toString(), ...(recoveryOwnerLockHash ? { recoveryOwnerLockHash } : {}) };
   fs.writeFileSync(path.join(out, 'summary.json'), JSON.stringify(result, null, 2));
   console.log('Evidence ' + out);
   if (process.env.TRADE_KEEP_NATIVE_NODE === '1') {

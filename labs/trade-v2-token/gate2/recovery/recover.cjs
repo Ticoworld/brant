@@ -8,6 +8,7 @@ const { spawnSync } = require('node:child_process');
 const FEE_LIMIT = 1000000n;
 const UNIT = 100000000n;
 const RECOVERY_KEY_ENV = 'TRADE_RECOVERY_PRIVATE_KEY';
+const RPC_LOG_ENV = 'TRADE_RECOVERY_RPC_LOG';
 const SECP_CODE_HASH = '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
 
 function fail(message) { throw new Error(message); }
@@ -50,12 +51,23 @@ function qhex(v, field) {
   return BigInt(v);
 }
 async function rpc(url, method, params = []) {
-  const response = await fetch(url, {
-    method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-  });
-  if (!response.ok) fail(`${method}: HTTP ${response.status}`);
+  let response;
+  try {
+    response = await fetch(url, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+    });
+  } catch (error) {
+    if (process.env[RPC_LOG_ENV]) fs.appendFileSync(path.resolve(process.env[RPC_LOG_ENV]), `${JSON.stringify({ method, params, transport_error: String(error) })}\n`);
+    throw error;
+  }
+  if (!response.ok) {
+    const text = await response.text();
+    if (process.env[RPC_LOG_ENV]) fs.appendFileSync(path.resolve(process.env[RPC_LOG_ENV]), `${JSON.stringify({ method, params, http_status: response.status, body: text })}\n`);
+    fail(`${method}: HTTP ${response.status}`);
+  }
   const body = await response.json();
+  if (process.env[RPC_LOG_ENV]) fs.appendFileSync(path.resolve(process.env[RPC_LOG_ENV]), `${JSON.stringify({ method, params, response: body })}\n`);
   if (body.error) fail(`${method}: ${JSON.stringify(body.error)}`);
   return body.result;
 }

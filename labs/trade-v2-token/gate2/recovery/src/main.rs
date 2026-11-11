@@ -593,7 +593,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
                 ),
                 2 => ensure!(
                     updates.len() >= 2
-                        && updates.len() <= 8
+                        && updates.len() <= 16
                         && increases == updates.len()
                         && delta > 0,
                     "batch buy transition must increase each participant"

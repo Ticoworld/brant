@@ -1,0 +1,69 @@
+{
+  "out": "/mnt/c/Users/timot/Desktop/2026/CKB/trade-wo18-v2-merkle/labs/trade-v2-token/gate2/evidence/native-1794410154147",
+  "chain": "/mnt/c/Users/timot/Desktop/2026/CKB/trade-gate2-scale-recovery-20261111/trade-gate2-tzWRRO/chain",
+  "genesis": "0x5c3c260b88ed55984d9337d7fe95b3dbef9529c27a0e17688f2bec56c253659f",
+  "tip": "0x24ae8cc0d9c6db7b4e92b46649ae18095f1900b040fe561e2581e669c7f24fa5",
+  "initializationTransactionHash": "0x2fee43db192ee7591d30630f4e07fa8883bd321e0411476a04201b3dd77ad9cd",
+  "hashes": {
+    "marker_candidate": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "market_smt": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+    "owner_lineage_candidate": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "custody_smt": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+    "custody_marker": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "scripts": {
+    "market": {
+      "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+      "hashType": "data1",
+      "args": "0x4bdb165d088849b1df82184197f8201caf3fb522f45efb941e93fc83d553f6aa00ca9a3b0000000000e1f50500000000d00700000000000070a4721f8b2c4d3c11ef1030f490536a392a9777c401259819f18f7e976f72e7"
+    },
+    "marker": {
+      "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+      "hashType": "data1",
+      "args": "0x8711b805aac812a9aac67ddf3d95b53b34258810afc8a40257cefb1137d1e993"
+    },
+    "owner": {
+      "codeHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+      "hashType": "data1",
+      "args": "0x4b11ee1fee2974198c50b4edb7b77267c700c082de2c0b52e17d5ebb6927d1750f00000050bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b959d2cd4a1296a18cd2a9ecd609c97f31d15f6e91cbbfc021c1a1e3283892871cdd0070000000000000000000000000000"
+    },
+    "token": {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "args": "0x6e9cda8d46b045041b4e0a559ed34fdd711956e48f46b4050d2a17e1c1230104"
+    },
+    "custody": {
+      "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+      "hashType": "data1",
+      "args": "0x9d2cd4a1296a18cd2a9ecd609c97f31d15f6e91cbbfc021c1a1e3283892871cdbcd0e5135ca8a0026b382556756bf7cf76ddac5c4291ff4ce359583a06a6371a5c3c260b88ed55984d9337d7fe95b3dbef9529c27a0e17688f2bec56c253659fee52d614eaaa9df27d86ac470181aa17fdcf6633b70539dcdfbfb8a735a0280d"
+    },
+    "custodyMarker": {
+      "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+      "hashType": "data1",
+      "args": "0x9d2cd4a1296a18cd2a9ecd609c97f31d15f6e91cbbfc021c1a1e3283892871cd"
+    }
+  },
+  "roots": {
+    "initial": "0x535a9987657a8ca9b8cf5f0a7cf6bd7e85ac89cec950fbcfd5198ab480c2a118",
+    "enrolled": "0xa0deded770c2aa9567b94f13a47d06e9e4a3e05ec3add2070c96517423791ebd",
+    "final": "6e3067fae47381798a36e2972b09e91eac34b4d02695055c229fa7c61f0b072a"
+  },
+  "owners": 1024,
+  "supply": "2000",
+  "internalEntitlements": "1031",
+  "marketInventory": "968",
+  "withdrawnExternal": "0x01000000000000000000000000000000",
+  "externalAfterRedemption": "0x01000000000000000000000000000000",
+  "fullSellDown": false,
+  "finalCustody": {
+    "txHash": "0x24f53f349078babf813bcd4d0eb5d161e846244057eff3507d6f5147ac911d43",
+    "index": "0x0"
+  },
+  "finalMarket": {
+    "txHash": "0x10be8e85b64dd2b4ef3048280ee763fc9fee10ba361062e8d1b1ad8536de62ed",
+    "index": "0x0"
+  },
+  "finalMarketCapacity": "54261600000000",
+  "recoveryOwnerLockHash": "0xb527b6202ca6259732363767777faa3b99315165369fe279db8e975e35b5319d"
+}

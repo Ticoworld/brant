@@ -1,0 +1,40 @@
+{
+  "format": "trade-v2-scale-recovery-acceptance-v1",
+  "private_chain": true,
+  "ckb_version": "0.210.0",
+  "owners": 1024,
+  "initialization_transaction": "0x2fee43db192ee7591d30630f4e07fa8883bd321e0411476a04201b3dd77ad9cd",
+  "recovery_owner_lock_hash": "0xb527b6202ca6259732363767777faa3b99315165369fe279db8e975e35b5319d",
+  "source": "canonical-full-block-scan",
+  "indexer_used": false,
+  "history_transactions_before": 70,
+  "owner_balance_before": "1",
+  "owner_revision_before": "1",
+  "membership_proof_bytes": 399,
+  "membership_root_verified": true,
+  "custody_before": "1031",
+  "entitlement_total_before": "1031",
+  "withdrawal_transaction": "0x161131587f2fcc84791e18d744e510f90b5d7276b31bdacb9a31bfd76d023da3",
+  "withdrawal_vm_cycles": "0x228b3a",
+  "withdrawal_block": "0x12f",
+  "owner_balance_after": "0",
+  "owner_revision_after": "2",
+  "custody_after": "1030",
+  "entitlement_total_after": "1030",
+  "history_transactions_after": 71,
+  "pre_withdrawal_tip": {
+    "number": "0x12b",
+    "hash": "0x24ae8cc0d9c6db7b4e92b46649ae18095f1900b040fe561e2581e669c7f24fa5"
+  },
+  "post_withdrawal_tip": {
+    "number": "0x12f",
+    "hash": "0xb141ef4da85af4186fa4e271fecc19afee59887d608371ee6b80f678e02d8572"
+  },
+  "sha256": {
+    "history": "86fb4ce378ccd3dc65a6f4c4c9075118402cacff335b49949b3d081b8c81abbb",
+    "replay": "4efb709684fbd25275a0b8d41e9add68c9c0465e4235da44873494887221d8ee",
+    "withdrawal": "130190d4e2e0023d79b4d849562da3747cefccc260297296ed76806cc847221e",
+    "post_withdrawal_history": "bd67e3dbed40a9802990e68e2cec17ed40f1cf68cb2aa9400281d3a0d1ed931a",
+    "post_withdrawal_replay": "a473ff5f570a2fea2fa9b3a3916e68c46aff3eddf31a3b54f62b9b6d5a6ad5bf"
+  }
+}
