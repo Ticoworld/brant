@@ -2,31 +2,54 @@
 #include "../wo09-open-markets/contracts/common.h"
 #include "codes.h"
 static int amt(int i,size_t s,uint64_t*v){uint8_t d[16];if(bytes(d,16,i,s))return 1;for(int j=8;j<16;j++)if(d[j])return 1;*v=rd(d);return 0;}
+static int inventory(int i,size_t src,uint64_t *v,uint8_t *id){uint8_t d[48];if(bytes(d,48,i,src))return 1;for(int j=8;j<16;j++)if(d[j])return 1;*v=rd(d);memcpy(id,d+16,32);return 0;}
 static int custody_amt(int i,size_t s,uint64_t*v){uint8_t d[48];if(bytes(d,48,i,s))return 1;for(int j=8;j<16;j++)if(d[j])return 1;*v=rd(d);return 0;}
 static int cp(int i,size_t s,uint64_t*v){return field(v,8,i,s,CKB_CELL_FIELD_CAPACITY);}
 static void digest(const uint8_t*p,size_t n,uint8_t*out){blake2b_state s;blake2b_init(&s,32);blake2b_update(&s,p,n);blake2b_final(&s,out,32);}
 static void root(const uint8_t *records,uint8_t*out){uint8_t h[8][32],buf[65];for(uint64_t i=0;i<8;i++){uint8_t p[57];p[0]=1;for(int j=0;j<8;j++)p[1+j]=(uint8_t)(i>>(8*j));memcpy(p+9,records+48*i,48);digest(p,57,h[i]);}for(int width=8;width>1;width/=2)for(int i=0;i<width/2;i++){buf[0]=2;memcpy(buf+1,h[2*i],32);memcpy(buf+33,h[2*i+1],32);digest(buf,65,h[i]);}memcpy(out,h[0],32);}
 int main(void){uint8_t script[141],self[32],asset[32],buyer[32],w[400],marker[64],cl[181],d[48],r[32],hdr[208],gh[32],id[32],in[44],msg[52],mt[85],mth[32],custody[32],cm[64];uint64_t n=141,before,after,ci,co;
 if(ckb_load_script(script,&n,0)||n!=141||script[49]!=88||script[50]||script[51]||script[52])return 1;uint64_t base=rd(script+85),step=rd(script+93),supply=rd(script+101);if(!base||!step||!supply||supply>0xffffffffULL)return 2;n=32;if(ckb_load_script_hash(self,&n,0)||n!=32)return 3;
-if(count_cells(CKB_SOURCE_INPUT)==5&&count_cells(CKB_SOURCE_OUTPUT)==5){
+/* External sell: input/output 0 inventory, 1 market marker, 2 holder xUDT, 3 holder plain CKB. Witness at index 4: q, minimum gross proceeds (LE64 each). Standard lock group signs both holder inputs and extra witness. */
+if(count_cells(CKB_SOURCE_INPUT)==4 && count_cells(CKB_SOURCE_OUTPUT)==4){
+ uint8_t seller[32], extin[16], extout[16], sw[16]; uint64_t ei,eo,wi,wo,mi,mo,marki,marko,extci,extco;
+ if(!lock_is(0,CKB_SOURCE_INPUT,self)||!lock_is(0,CKB_SOURCE_OUTPUT,self)||!lock_is(1,CKB_SOURCE_INPUT,self)||!lock_is(1,CKB_SOURCE_OUTPUT,self)||!type_is(1,CKB_SOURCE_INPUT,script+109)||!type_is(1,CKB_SOURCE_OUTPUT,script+109))return 40;
+ if(bytes(marker,64,1,CKB_SOURCE_INPUT)||bytes(cm,64,1,CKB_SOURCE_OUTPUT)||memcmp(marker,cm,64)||memcmp(marker,self,32)||field(asset,32,0,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(marker+32,asset,32)||!type_is(0,CKB_SOURCE_OUTPUT,asset)||!type_is(2,CKB_SOURCE_INPUT,asset)||!type_is(2,CKB_SOURCE_OUTPUT,asset))return 41;
+ if(!standard_owner(2,CKB_SOURCE_INPUT)||field(seller,32,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(2,CKB_SOURCE_OUTPUT,seller)||!standard_owner(3,CKB_SOURCE_INPUT)||!lock_is(3,CKB_SOURCE_INPUT,seller)||!plain(3,CKB_SOURCE_INPUT)||!lock_is(3,CKB_SOURCE_OUTPUT,seller)||!plain(3,CKB_SOURCE_OUTPUT))return 42;
+ uint8_t iid[32],oid[32];if(inventory(0,CKB_SOURCE_INPUT,&before,iid)||inventory(0,CKB_SOURCE_OUTPUT,&after,oid)||memcmp(iid,oid,32)||before>supply||after>supply||after<=before||bytes(extin,16,2,CKB_SOURCE_INPUT)||bytes(extout,16,2,CKB_SOURCE_OUTPUT))return 43;
+ for(int j=8;j<16;j++)if(extin[j]||extout[j])return 43;ei=rd(extin);eo=rd(extout);uint64_t q=after-before,outstanding=supply-before;if(q>outstanding||ei<q||ei-q!=eo)return 44;
+ n=16;if(ckb_load_witness(sw,&n,0,4,CKB_SOURCE_INPUT)||n!=16||rd(sw)!=q)return 45;
+ __uint128_t price=(__uint128_t)q*base+(__uint128_t)step*((__uint128_t)q*(outstanding-q)+(__uint128_t)q*(q-1)/2);if(price>UINT64_MAX||price<rd(sw+8))return 46;
+ if(cp(0,CKB_SOURCE_INPUT,&mi)||cp(0,CKB_SOURCE_OUTPUT,&mo)||(__uint128_t)mo+price!=mi||cp(1,CKB_SOURCE_INPUT,&marki)||cp(1,CKB_SOURCE_OUTPUT,&marko)||marki!=marko||cp(2,CKB_SOURCE_INPUT,&extci)||cp(2,CKB_SOURCE_OUTPUT,&extco)||extci!=extco||cp(3,CKB_SOURCE_INPUT,&wi)||cp(3,CKB_SOURCE_OUTPUT,&wo))return 47;
+ __uint128_t in_total=(__uint128_t)mi+marki+extci+wi,out_total=(__uint128_t)mo+marko+extco+wo;if(in_total<out_total||in_total-out_total>FEE_LIMIT||(__uint128_t)wo+(in_total-out_total)!=(__uint128_t)wi+price)return 48;
+ return 0;
+}
+
+int count=count_cells(CKB_SOURCE_INPUT);if((count==5||count==7)&&count_cells(CKB_SOURCE_OUTPUT)==count){
 /* Coupled continuation: market pair 0/1, custody pair 2/3, buyer 4. */
 if(!lock_is(0,CKB_SOURCE_INPUT,self)||!lock_is(0,CKB_SOURCE_OUTPUT,self)||!lock_is(1,CKB_SOURCE_INPUT,self)||!lock_is(1,CKB_SOURCE_OUTPUT,self)||!type_is(1,CKB_SOURCE_INPUT,script+109)||!type_is(1,CKB_SOURCE_OUTPUT,script+109))return 21;
 if(bytes(marker,64,1,CKB_SOURCE_INPUT)||bytes(cm,64,1,CKB_SOURCE_OUTPUT)||memcmp(marker,cm,64)||memcmp(marker,self,32)||field(asset,32,0,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(marker+32,asset,32)||!type_is(0,CKB_SOURCE_OUTPUT,asset)||!type_is(2,CKB_SOURCE_INPUT,asset)||!type_is(2,CKB_SOURCE_OUTPUT,asset))return 22;
 if(field(custody,32,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(2,CKB_SOURCE_OUTPUT,custody)||!lock_is(3,CKB_SOURCE_INPUT,custody)||!lock_is(3,CKB_SOURCE_OUTPUT,custody)||bytes(cm,64,3,CKB_SOURCE_INPUT)||memcmp(cm,custody,32)||memcmp(cm+32,asset,32)||bytes(marker,64,3,CKB_SOURCE_OUTPUT)||memcmp(cm,marker,64))return 23;
 n=181;if(ckb_load_cell_by_field(cl,&n,0,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK)||n!=181||memcmp(cl+16,custody_code,32)||cl[48]!=2||cl[49]!=128||cl[50]||cl[51]||cl[52]||memcmp(cl+53,self,32)||memcmp(cl+85,asset,32)||field(mth,32,3,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(cl+149,mth,32)||!type_is(3,CKB_SOURCE_OUTPUT,mth))return 24;
 n=85;if(ckb_load_cell_by_field(mt,&n,0,3,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE)||n!=85||memcmp(mt+16,marker_code,32)||mt[48]!=2||mt[49]!=32||mt[50]||mt[51]||mt[52]||memcmp(mt+53,self,32))return 24;
+if(count==7){
+uint8_t iw[32],ow[32],bw[96],wh[938];uint64_t inq,outq,bc,ac,fs=0; n=96;if(ckb_load_witness(bw,&n,0,8,CKB_SOURCE_INPUT)||n!=96)return 40;n=938;if(ckb_load_witness(wh,&n,0,7,CKB_SOURCE_INPUT)||n!=938||rd(wh)!=7)return 40;
+if(inventory(0,CKB_SOURCE_INPUT,&before,iw)||inventory(0,CKB_SOURCE_OUTPUT,&after,ow)||memcmp(iw,mth,32)||memcmp(ow,mth,32)||before>supply||after>=before||custody_amt(2,CKB_SOURCE_INPUT,&inq)||custody_amt(2,CKB_SOURCE_OUTPUT,&outq))return 41;
+uint64_t total=before-after,allocated=0;__uint128_t cost=0;uint8_t owners[3][32];for(int k=0;k<3;k++){uint64_t slot=rd(bw+32*k),q=rd(bw+32*k+8),max=rd(bw+32*k+16),share=rd(bw+32*k+24);if(slot>=8||!q||q>total-allocated||share>FEE_LIMIT||fs>FEE_LIMIT-share||!standard_owner(4+k,CKB_SOURCE_INPUT)||!plain(4+k,CKB_SOURCE_INPUT)||!plain(4+k,CKB_SOURCE_OUTPUT)||field(owners[k],32,4+k,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(4+k,CKB_SOURCE_OUTPUT,owners[k]))return 42;for(int j=0;j<k;j++)if(!memcmp(owners[j],owners[k],32)||slot==rd(bw+32*j))return 42;
+__uint128_t price=(__uint128_t)base*q+(__uint128_t)step*((__uint128_t)q*(supply-before+allocated)+(__uint128_t)q*(q-1)/2);if(price>max||price>UINT64_MAX||cp(4+k,CKB_SOURCE_INPUT,&bc)||cp(4+k,CKB_SOURCE_OUTPUT,&ac)||(__uint128_t)ac+price+share!=bc)return 43;allocated+=q;cost+=price;fs+=share;}
+if(allocated!=total||(__uint128_t)inq+total!=outq||cp(0,CKB_SOURCE_INPUT,&bc)||cp(0,CKB_SOURCE_OUTPUT,&ac)||(__uint128_t)bc+cost!=ac)return 44;for(int k=1;k<=3;k++)if(cp(k,CKB_SOURCE_INPUT,&bc)||cp(k,CKB_SOURCE_OUTPUT,&ac)||bc!=ac)return 45;__uint128_t it=0,ot=0;for(int k=0;k<7;k++){if(cp(k,CKB_SOURCE_INPUT,&bc)||cp(k,CKB_SOURCE_OUTPUT,&ac))return 45;it+=bc;ot+=ac;}if(it<ot||it-ot!=fs)return 45;return 0;}
 if(!plain(4,CKB_SOURCE_INPUT)||!standard_owner(4,CKB_SOURCE_INPUT)||field(buyer,32,4,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(4,CKB_SOURCE_OUTPUT,buyer)||!plain(4,CKB_SOURCE_OUTPUT))return 25;
-if(amt(0,CKB_SOURCE_INPUT,&before)||amt(0,CKB_SOURCE_OUTPUT,&after)||before>=supply||after>=before)return 26;uint64_t q=before-after,cb,ca;if(custody_amt(2,CKB_SOURCE_INPUT,&cb)||custody_amt(2,CKB_SOURCE_OUTPUT,&ca)||(__uint128_t)cb+q!=ca)return 27;
-__uint128_t price=((__uint128_t)base+(__uint128_t)step*(supply-before))*q+(__uint128_t)step*q*(q-1)/2;if(price>UINT64_MAX||cp(0,CKB_SOURCE_INPUT,&ci)||cp(0,CKB_SOURCE_OUTPUT,&co)||(__uint128_t)ci+price!=co)return 28;
+uint8_t iid[32],oid[32];if(inventory(0,CKB_SOURCE_INPUT,&before,iid)||inventory(0,CKB_SOURCE_OUTPUT,&after,oid)||memcmp(iid,mth,32)||memcmp(oid,mth,32)||before>supply||after>supply||before==after)return 26;uint64_t cb,ca;if(custody_amt(2,CKB_SOURCE_INPUT,&cb)||custody_amt(2,CKB_SOURCE_OUTPUT,&ca))return 27;
+int selling=after>before;uint64_t q=selling?after-before:before-after;if(selling){if(before==supply||q>supply-before||cb<q||ca!=cb-q)return 27;}else if((__uint128_t)cb+q!=ca)return 27;
+uint64_t sold=supply-before;__uint128_t price=(__uint128_t)base*q+(__uint128_t)step*((__uint128_t)q*(selling?sold-q:sold)+(__uint128_t)q*(q-1)/2);if(price>UINT64_MAX||cp(0,CKB_SOURCE_INPUT,&ci)||cp(0,CKB_SOURCE_OUTPUT,&co))return 28;if(selling){uint8_t sw[938];uint64_t sn=938;if(ckb_load_witness(sw,&sn,0,5,CKB_SOURCE_INPUT)||sn!=938||rd(sw)!=6||rd(sw+24)!=q||price<rd(sw+32))return 31;uint64_t wi,wo;if(ci<price||co!=ci-(uint64_t)price||cp(4,CKB_SOURCE_INPUT,&wi)||cp(4,CKB_SOURCE_OUTPUT,&wo)||(__uint128_t)wo+FEE_LIMIT<(__uint128_t)wi+price||(__uint128_t)wo>(__uint128_t)wi+price)return 28;}else if((__uint128_t)ci+price!=co)return 28;
 for(int j=1;j<=3;j++){if(cp(j,CKB_SOURCE_INPUT,&ci)||cp(j,CKB_SOURCE_OUTPUT,&co)||ci!=co)return 29;}__uint128_t it=0,ot=0;for(int j=0;j<5;j++){if(cp(j,CKB_SOURCE_INPUT,&ci)||cp(j,CKB_SOURCE_OUTPUT,&co))return 30;it+=ci;ot+=co;}if(it<ot||it-ot>FEE_LIMIT)return 30;return 0;
 }
 if(count_cells(CKB_SOURCE_INPUT)!=3||count_cells(CKB_SOURCE_OUTPUT)!=5)return 4;
 if(!type_is(1,CKB_SOURCE_INPUT,script+109)||!type_is(1,CKB_SOURCE_OUTPUT,script+109)||!lock_is(0,CKB_SOURCE_INPUT,self)||!lock_is(0,CKB_SOURCE_OUTPUT,self)||!lock_is(1,CKB_SOURCE_INPUT,self)||!lock_is(1,CKB_SOURCE_OUTPUT,self))return 5;
 if(bytes(marker,64,1,CKB_SOURCE_INPUT)||memcmp(marker,self,32)||field(asset,32,0,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(marker+32,asset,32)||!type_is(0,CKB_SOURCE_OUTPUT,asset)||!type_is(2,CKB_SOURCE_OUTPUT,asset))return 6;
 if(!plain(2,CKB_SOURCE_INPUT)||!standard_owner(2,CKB_SOURCE_INPUT)||field(buyer,32,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(4,CKB_SOURCE_OUTPUT,buyer)||!plain(4,CKB_SOURCE_OUTPUT))return 7;
-if(amt(0,CKB_SOURCE_INPUT,&before)||amt(0,CKB_SOURCE_OUTPUT,&after)||before!=supply||after>=before)return 8;uint64_t q=before-after;
+uint8_t initial_marker[32];if(amt(0,CKB_SOURCE_INPUT,&before)||inventory(0,CKB_SOURCE_OUTPUT,&after,initial_marker)||before!=supply||after>=before)return 8;uint64_t q=before-after;
 memcpy(id,self,32);
-n=85;if(ckb_load_cell_by_field(mt,&n,0,3,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE)||n!=85||memcmp(mt+16,marker_code,32)||mt[48]!=2||mt[49]!=32||mt[50]||mt[51]||mt[52]||memcmp(mt+53,id,32))return 9;if(field(mth,32,3,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH))return 9;
+n=85;if(ckb_load_cell_by_field(mt,&n,0,3,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE)||n!=85||memcmp(mt+16,marker_code,32)||mt[48]!=2||mt[49]!=32||mt[50]||mt[51]||mt[52]||memcmp(mt+53,id,32))return 9;if(field(mth,32,3,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH)||memcmp(initial_marker,mth,32))return 9;
 n=208;if(ckb_load_header(hdr,&n,0,0,CKB_SOURCE_HEADER_DEP)||n!=208||rd(hdr+16))return 10;digest(hdr,208,gh);
 n=181;if(ckb_load_cell_by_field(cl,&n,0,2,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK)||n!=181||memcmp(cl+16,custody_code,32)||cl[48]!=2||cl[49]!=128||cl[50]||cl[51]||cl[52]||memcmp(cl+53,self,32)||memcmp(cl+85,asset,32)||memcmp(cl+117,gh,32)||memcmp(cl+149,mth,32))return 11;
 if(field(custody,32,2,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(3,CKB_SOURCE_OUTPUT,custody)||bytes(cm,64,3,CKB_SOURCE_OUTPUT)||memcmp(cm,custody,32)||memcmp(cm+32,asset,32))return 11;
