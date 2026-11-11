@@ -1,0 +1,23 @@
+{
+  "marketA": {
+    "anchor": {
+      "txHash": "0xa70f1273a866885001262246ffb8181d79299d9735001a37135290f97321d5e1",
+      "index": "0xa"
+    },
+    "market": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4",
+    "token": "0xb238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b",
+    "custody": "0xd4b96261c56676c1c7b5fd151cf377bb15224a9bf86d28abd4e193e8d319768b",
+    "marker": "0x35212c7fef708b620eae7d9d9e9bac5632334c37e96d1022968bc3e9431d6ca5"
+  },
+  "marketB": {
+    "anchor": {
+      "txHash": "0xa70f1273a866885001262246ffb8181d79299d9735001a37135290f97321d5e1",
+      "index": "0xb"
+    },
+    "market": "0x3932b769ed99e3e4346c801a473178fa3935999ea437b8f7dcd3b854f26cade1",
+    "token": "0x1b2f14729b1a04cd876aecb0ffbfe2ee9859ff375021e0159063c72fb4d692f0",
+    "custody": "0x96564f6cc36a6ebb8f97d63092e29d6cd1e305b630b337a8afcdc064520cadfc",
+    "marker": "0x3f7b97b6d5d4d8c44f68d3cb97bdfe3c7ddbdfcc2f4574a33a72836f048e4c98"
+  },
+  "distinct_market_token_custody_and_marker_lineages": true
+}

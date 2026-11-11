@@ -1,0 +1,34 @@
+{
+  "sourceFixture": "labs/trade-v2-token/gate2/orders/fixture.cjs",
+  "sourceFixtureSha256": "13b65a2a1f2925bd493fd98bb26c311c0c350af9c6be29b6d77d2630512a333c",
+  "securityRunnerSha256": "dad9d6c6ab224617ab10c3d78a553e3e03f08bd08fbe81c9c33ce8cfddfab928",
+  "derivedFixtureSha256": "f018342727ff78b7293425f12f1289cb9ab27ef77343ec2ff6fd2700bef6c144",
+  "freshGate2ElfSha256": {
+    "marker_candidate": "5941ccbc5ebd47e59811c4c8d8c8ae8d8f19431770fe771cf12b0e88d7bb5f4f",
+    "market_smt": "b33d7396778340c3d6e66c62897a1dbd1561b32848715106a94d8a077bb7cd1f",
+    "custody_smt": "7db957901242d6c9243f585b393c55d42faad3c7ddd16f1672c1a19ad14d4601",
+    "custody_marker": "cca4552516f372d97377b4e27ebffe1655d4bdeea3535544f36da44ff15aba07"
+  },
+  "rpcPort": 19234,
+  "p2pPort": 19235,
+  "attacks": [
+    "tampered_compiled_multiproof",
+    "forged_membership_claim_for_absent_solver",
+    "forged_nonmembership_claim_for_enrolled_buyer",
+    "invalid_new_leaf_state_tag",
+    "skipped_owner_revision_with_valid_old_and_new_roots",
+    "unauthorized_owner_input_for_solver_allocation",
+    "duplicate_owner_identity_in_transition",
+    "valid_proof_inflated_unbacked_entitlement",
+    "gate2_custody_output_root_substitution",
+    "gate2_forged_market_singleton_successor",
+    "gate2_market_reserve_extraction_one_ckb",
+    "gate2_curve_seller_payout_redirect",
+    "gate2_curve_seller_underpayment_exceeds_fee_limit",
+    "gate2_curve_payout_inflation_from_reserve",
+    "cross_market_A_offline_order_replay_on_B",
+    "cross_market_A_xudt_substituted_for_B_external_sale",
+    "cross_market_A_custody_substituted_into_B_transition",
+    "cross_market_A_asset_used_as_B_inventory_singleton"
+  ]
+}

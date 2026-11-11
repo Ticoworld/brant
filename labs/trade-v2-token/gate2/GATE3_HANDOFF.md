@@ -26,6 +26,9 @@ Gate 3 should add a fast coordinator around the existing Gate 2 transaction form
 
 ## Starting Evidence
 
+- 1,024-owner sell-down and same-lineage rebuy: `evidence/native-replay-1024-selldown-20261111b/`; 1,100 committed transactions, 1,096 custody transitions, 11 CKB aggregate fees. The 1,024 owner sells are sequential spends of shared market/custody singleton outpoints and do not demonstrate contention-free throughput.
+- Combined canonical accounting replay and raw block RPC history: `recovery/evidence/scale-1024-selldown-20261111/`.
+- Gate 2 native two-market and proof attacks: `security/evidence/native-smt-1794427785208/`.
 - 1,024-owner native recovery: `evidence/native-1794410154147/recovery-acceptance.json`.
 - Native SMT attacks and positive control: `security/evidence/native-smt-1794411243401/`.
 - Offline order lifecycle: `orders/evidence/native-1794396855738/`.

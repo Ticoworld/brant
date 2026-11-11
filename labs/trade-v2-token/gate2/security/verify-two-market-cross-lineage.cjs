@@ -1,0 +1,120 @@
+// Independent replay of the targeted two-market native fixture.
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const nativeRoot = process.env.TRADE_NATIVE_ROOT || path.resolve(__dirname, '../../../rebuild/native');
+const C = require(nativeRoot + '/src/lib.cjs');
+const UNIT = C.UNIT;
+const evidence = process.argv[2];
+assert(evidence, 'usage: node verify-two-market-cross-lineage.cjs <evidence-dir>');
+const lines = fs.readFileSync(path.join(evidence, 'events.jsonl'), 'utf8').trim().split(/\r?\n/).map(JSON.parse);
+const summary = JSON.parse(fs.readFileSync(path.join(evidence, 'summary.json'), 'utf8'));
+const attack = JSON.parse(fs.readFileSync(path.join(evidence, 'cross-market-A-custody-credited-by-market-B.json'), 'utf8'));
+const reserve = JSON.parse(fs.readFileSync(path.join(evidence, 'market-reserve-one-ckb-extraction.json'), 'utf8'));
+const rpc = fs.readFileSync(path.join(evidence, 'rpc.jsonl'), 'utf8').trim().split(/\r?\n/).map(JSON.parse);
+const genesisRecord = rpc.find(x => x.method === 'get_block_by_number' && x.params[0] === '0x0');
+assert(genesisRecord?.response?.result, 'raw genesis block missing');
+assert.equal(summary.nativeVersion.version, '0.210.0 (2592ddf 2026-09-17)');
+assert.equal(lines.length, 6);
+const genesisBlock = genesisRecord.response.result;
+const cells = new Map();
+const measured = [];
+const outPointKey = (txHash, index) => `${txHash.toLowerCase()}:${BigInt(index).toString()}`;
+for (const t of genesisBlock.transactions) for (let i = 0; i < t.outputs.length; i++) {
+  cells.set(outPointKey(t.hash, i), { output: t.outputs[i], data: t.outputs_data[i] });
+}
+const minCapacity = (output, data) => BigInt(8 + 33 + C.b(output.lock.args).length + (output.type ? 33 + C.b(output.type.args).length : 0) + C.b(data).length) * UNIT;
+let replayed = 0;
+for (const item of lines) {
+  assert.equal(C.U.rawTransactionToHash(item.tx), item.hash, `${item.label} hash`);
+  assert.equal(item.receipt.tx_status.status, 'committed', `${item.label} status`);
+  let inputCapacity = 0n;
+  for (const input of item.tx.inputs) {
+    const key = outPointKey(input.previousOutput.txHash, input.previousOutput.index);
+    const cell = cells.get(key);
+    assert(cell, `${item.label} input missing from independent replay: ${key}`);
+    inputCapacity += BigInt(cell.output.capacity);
+    cells.delete(key);
+  }
+  let outputCapacity = 0n;
+  for (let i = 0; i < item.tx.outputs.length; i++) {
+    const output = item.tx.outputs[i], data = item.tx.outputsData[i];
+    const capacity = BigInt(output.capacity);
+    assert(capacity >= minCapacity(output, data), `${item.label} output ${i} below occupied capacity`);
+    outputCapacity += capacity;
+    cells.set(outPointKey(item.hash, i), { output, data });
+  }
+  assert(inputCapacity >= outputCapacity, `${item.label} capacity underflow`);
+  assert.equal(inputCapacity - outputCapacity, 1_000_000n, `${item.label} independently computed fee`);
+  assert.equal(BigInt(item.cycles.cycles) > 0n, true, `${item.label} estimated cycles`);
+  const serialized = C.U.serializeTransaction(item.tx);
+  measured.push({ label: item.label, hash: item.hash, cycles: BigInt(item.cycles.cycles).toString(), fee: (inputCapacity - outputCapacity).toString(), bytes: typeof serialized === 'string' ? Math.floor((serialized.length - (serialized.startsWith('0x') ? 2 : 0)) / 2) : serialized.length });
+  replayed++;
+}
+const byLabel = Object.fromEntries(lines.map(x => [x.label, x]));
+for (const label of ['issue-market-A-independent-anchor', 'issue-market-B-independent-anchor', 'initialize-market-A-custody', 'initialize-market-B-custody', 'positive-control-market-B-continuation']) assert(byLabel[label], `missing positive control ${label}`);
+assert.notEqual(summary.markets.A.marketHash, summary.markets.B.marketHash);
+assert.notEqual(summary.markets.A.tokenHash, summary.markets.B.tokenHash);
+assert.notEqual(summary.markets.A.markerHash, summary.markets.B.markerHash);
+const issueA = byLabel['issue-market-A-independent-anchor'].tx, issueB = byLabel['issue-market-B-independent-anchor'].tx;
+assert.notEqual(outPointKey(issueA.inputs[0].previousOutput.txHash, issueA.inputs[0].previousOutput.index), outPointKey(issueB.inputs[0].previousOutput.txHash, issueB.inputs[0].previousOutput.index), 'distinct issue anchors');
+const positiveB = byLabel['positive-control-market-B-continuation'];
+assert.equal(BigInt('0x' + Buffer.from(C.b(positiveB.tx.outputsData[0]).subarray(0, 16)).reverse().toString('hex')), 998n);
+assert.equal(BigInt('0x' + Buffer.from(C.b(positiveB.tx.outputsData[2]).subarray(0, 16)).reverse().toString('hex')), 2n);
+assert.equal(BigInt(positiveB.tx.inputs[0].previousOutput.index), 0n);
+assert.equal(BigInt(positiveB.tx.inputs[2].previousOutput.index), 2n);
+assert.equal(attack.label, 'cross-market-A-custody-credited-by-market-B');
+assert.equal(attack.tx.inputs.length, 5);
+assert.equal(attack.tx.outputs.length, 5);
+assert.equal(C.U.rawTransactionToHash(attack.tx), summary.attack.rawTransactionHash);
+assert.equal(attack.tx.inputs[0].previousOutput.txHash, positiveB.hash, 'attack spends current B inventory created by committed positive control');
+assert.equal(attack.tx.inputs[2].previousOutput.txHash, byLabel['initialize-market-A-custody'].hash, 'attack spends independently initialized A custody');
+assert.equal(attack.tx.outputs[0].type.args, positiveB.tx.outputs[0].type.args, 'B inventory asset identity retained');
+assert.equal(attack.tx.inputs[2].previousOutput.index, '0x2');
+assert.equal(attack.tx.outputs[2].type.args, byLabel['initialize-market-A-custody'].tx.outputs[2].type.args, 'A custody asset identity retained');
+assert.equal(BigInt('0x' + Buffer.from(C.b(attack.tx.outputsData[2]).subarray(0, 16)).reverse().toString('hex')), 2n);
+const error = JSON.parse(attack.error).message;
+const marketCodeHash = attack.tx.inputs[0].previousOutput.txHash === positiveB.hash ? positiveB.tx.outputs[0].lock.codeHash : '';
+assert(marketCodeHash);
+const custodyCodeHash = byLabel['initialize-market-A-custody'].tx.outputs[2].lock.codeHash;
+let crossAttribution;
+if (error.includes('source: Inputs[0].Lock') && error.includes('error code 22') && error.includes(`by-data-hash/${marketCodeHash.slice(2)}.html#22`)) crossAttribution = { source: 'Inputs[0].Lock', code: 22, codeHash: marketCodeHash };
+else if (error.includes('source: Inputs[2].Lock') && error.includes('error code 20') && error.includes(`by-data-hash/${custodyCodeHash.slice(2)}.html#20`)) crossAttribution = { source: 'Inputs[2].Lock', code: 20, codeHash: custodyCodeHash };
+assert(crossAttribution, 'cross-market attack must fail in one of the intended market/custody domain checks');
+assert.equal(summary.attack.rejectingSource, crossAttribution.source);
+assert.equal(summary.attack.rejectingCode, crossAttribution.code);
+assert.equal(summary.attack.rejectingScriptHash, crossAttribution.codeHash);
+const reserveError = JSON.parse(reserve.error).message;
+assert(reserveError.includes('source: Inputs[0].Lock') && reserveError.includes('error code 28'), 'reserve extraction rejected by market lock');
+assert(reserveError.includes(`by-data-hash/${marketCodeHash.slice(2)}.html#28`), 'reserve extraction Market code hash attribution');
+assert.equal(reserve.tx.inputs[0].previousOutput.txHash, positiveB.hash, 'reserve attack uses the current B market input from the positive control');
+assert.equal(reserve.tx.inputs[2].previousOutput.txHash, positiveB.hash, 'reserve attack uses current B custody from the positive control');
+assert.equal(BigInt('0x' + Buffer.from(C.b(reserve.tx.outputsData[0]).subarray(0, 16)).reverse().toString('hex')), 997n);
+assert.equal(BigInt('0x' + Buffer.from(C.b(reserve.tx.outputsData[2]).subarray(0, 16)).reverse().toString('hex')), 3n);
+const reserveInputCapacity = lines.flatMap(x => x.tx.outputs.map((o, i) => ({ txHash: x.hash, index: i, output: o }))).reduce((n, cell) => {
+  const input = reserve.tx.inputs.find(x => x.previousOutput.txHash === cell.txHash && BigInt(x.previousOutput.index) === BigInt(cell.index));
+  return input ? n + BigInt(cell.output.capacity) : n;
+}, 0n);
+assert.equal(reserve.tx.inputs.length, 5);
+const reserveOutputCapacity = reserve.tx.outputs.reduce((n, output) => n + BigInt(output.capacity), 0n);
+assert.equal(reserveInputCapacity - reserveOutputCapacity, 1_000_000n, 'reserve attack preserves exact fee');
+for (let i = 0; i < reserve.tx.outputs.length; i++) assert(BigInt(reserve.tx.outputs[i].capacity) >= minCapacity(reserve.tx.outputs[i], reserve.tx.outputsData[i]), `reserve attack output ${i} occupied capacity`);
+const reserveExtracted = BigInt(lines.find(x => x.label === 'positive-control-market-B-continuation').tx.outputs[0].capacity) + 12n * UNIT - BigInt(reserve.tx.outputs[0].capacity);
+assert.equal(reserveExtracted, UNIT, 'exactly one CKB diverted from market reserve');
+const reserveSerialized = C.U.serializeTransaction(reserve.tx);
+const reserveBytes = typeof reserveSerialized === 'string' ? Math.floor((reserveSerialized.length - (reserveSerialized.startsWith('0x') ? 2 : 0)) / 2) : reserveSerialized.length;
+measured.push({ label: reserve.label, hash: C.U.rawTransactionToHash(reserve.tx), cycles: 'rejected-before-estimate-result', fee: (reserveInputCapacity - reserveOutputCapacity).toString(), bytes: reserveBytes });
+const attackInputCapacity = attack.tx.inputs.reduce((n, input) => {
+  const prior = lines.flatMap(x => x.tx.outputs.map((o, i) => ({ txHash: x.hash, index: i, output: o }))).find(o => o.txHash === input.previousOutput.txHash && BigInt(o.index) === BigInt(input.previousOutput.index));
+  assert(prior, 'attack input belongs to committed history');
+  return n + BigInt(prior.output.capacity);
+}, 0n);
+const attackOutputCapacity = attack.tx.outputs.reduce((n, output) => n + BigInt(output.capacity), 0n);
+assert.equal(attackInputCapacity - attackOutputCapacity, 1_000_000n, 'attack is fee-balanced');
+for (let i = 0; i < attack.tx.outputs.length; i++) assert(BigInt(attack.tx.outputs[i].capacity) >= minCapacity(attack.tx.outputs[i], attack.tx.outputsData[i]), `attack output ${i} occupied capacity`);
+const attackSerialized = C.U.serializeTransaction(attack.tx);
+const attackBytes = typeof attackSerialized === 'string' ? Math.floor((attackSerialized.length - (attackSerialized.startsWith('0x') ? 2 : 0)) / 2) : attackSerialized.length;
+measured.push({ label: attack.label, hash: summary.attack.rawTransactionHash, cycles: 'rejected-before-estimate-result', fee: (attackInputCapacity - attackOutputCapacity).toString(), bytes: attackBytes });
+fs.writeFileSync(path.join(evidence, 'independent-replay.json'), JSON.stringify({ nativeVersion: summary.nativeVersion.version, committedTransactions: replayed, lineages: summary.markets, transactions: measured, rejections: [ { label: reserve.label, source: 'Inputs[0].Lock', code: 28, codeHash: marketCodeHash, txHash: C.U.rawTransactionToHash(reserve.tx), fee: (reserveInputCapacity - reserveOutputCapacity).toString(), bytes: reserveBytes }, { label: attack.label, ...crossAttribution, txHash: summary.attack.rawTransactionHash, fee: (attackInputCapacity - attackOutputCapacity).toString(), bytes: attackBytes } ] }, null, 2));
+console.log(`PASS independent replay: ${replayed} committed native transactions; 2 distinct market/token/marker lineages; B continuation committed; reserve extraction rejected by Market error 28 and cross-market substitution by ${crossAttribution.source} error ${crossAttribution.code}.`);
+console.table(measured);

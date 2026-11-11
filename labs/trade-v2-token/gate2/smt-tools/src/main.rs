@@ -252,6 +252,14 @@ fn sorted_unique_positions(
 }
 
 fn build_proof(request: &Request) -> Result<JsonValue> {
+    build_proof_with_revision_check(request, true)
+}
+
+fn build_adversarial_proof(request: &Request) -> Result<JsonValue> {
+    build_proof_with_revision_check(request, false)
+}
+
+fn build_proof_with_revision_check(request: &Request, check_revisions: bool) -> Result<JsonValue> {
     let domain = domain_bytes(&request.domain)?;
     ensure!(
         request.op <= 8,
@@ -301,10 +309,12 @@ fn build_proof(request: &Request) -> Result<JsonValue> {
                 .revision
                 .checked_add(1)
                 .ok_or_else(|| anyhow!("owner revision overflow"))?;
-            ensure!(
-                update.position.revision == expected,
-                "existing owner update must advance revision exactly once"
-            );
+            if check_revisions {
+                ensure!(
+                    update.position.revision == expected,
+                    "existing owner update must advance revision exactly once"
+                );
+            }
         } else {
             let initial_revision = if request.op == 0 { 0 } else { 1 };
             ensure!(
@@ -595,12 +605,18 @@ fn run() -> Result<()> {
             let proof = build_proof(&request)?;
             emit(&proof, args.get(2).map(String::as_str))
         }
+        Some("proof-adversarial-revision") if args.len() == 2 || args.len() == 3 => {
+            let text = read_json(Some(&args[1]))?;
+            let request: Request = serde_json::from_str(&text).context("parse transition JSON")?;
+            let proof = build_adversarial_proof(&request)?;
+            emit(&proof, args.get(2).map(String::as_str))
+        }
         Some("bench") if args.len() <= 2 => emit(&benchmark()?, args.get(1).map(String::as_str)),
         Some("help") | Some("--help") | Some("-h") | None => {
-            println!("trade-v2-smt-tools\n  proof <input.json|-> [output.json|-]\n  bench [output.json|-]\n\nUse `cargo test --locked` for deterministic vectors. `bench` reports proof bytes, not CKB-VM cycles.");
+            println!("trade-v2-smt-tools\n  proof <input.json|-> [output.json|-]\n  proof-adversarial-revision <input.json|-> [output.json|-]\n  bench [output.json|-]\n\n`proof-adversarial-revision` is test-only and skips owner revision progression validation. Use `cargo test --locked` for deterministic vectors. `bench` reports proof bytes, not CKB-VM cycles.");
             Ok(())
         }
-        _ => bail!("usage: trade-v2-smt-tools proof <input.json|-> [output.json|-] | bench [output.json|-]"),
+        _ => bail!("usage: trade-v2-smt-tools proof <input.json|-> [output.json|-] | proof-adversarial-revision <input.json|-> [output.json|-] | bench [output.json|-]"),
     }
 }
 

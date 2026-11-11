@@ -1,0 +1,137 @@
+{
+  "label": "cross_market_A_xudt_substituted_for_B_external_sale",
+  "rawTransactionHash": "0x0de6d17039377ddf3b72522d2c11a016fcec86941c0981b9fcd943cdc8336476",
+  "fullSignedTransactionSha256": "89a1b0b2a988d7cd83d94426cbf57428d149fb8723f892d10aa63ff37bebb141",
+  "witnessesSha256": "0f5f7dbb56b803427650606230bdd02a11b352db74de1ab1cdefbfeef0fc6cc6",
+  "rejectingSource": "Inputs[0].Lock",
+  "rejectingCode": 41,
+  "rejectingCodeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+  "alteredCondition": "genuine Market A xUDT is supplied as the external sell asset to a valid Market B inventory and marker pair",
+  "estimateCyclesError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 41 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#41 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 41 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#41 } }\"}",
+  "sendTransactionError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 41 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#41 })\",\"data\":\"Verification(Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 41 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#41 } })\"}",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x32687cd0792930994a4268ed8a240ad74d8a74abb151d988766adc4334c9438e",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x1"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x0"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xa70f1273a866885001262246ffb8181d79299d9735001a37135290f97321d5e1",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x57df0bd35e9dc71bc4266a4f2428bf3c4aa8b3cc26ff91d7cda6d605ab67a40b",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x57df0bd35e9dc71bc4266a4f2428bf3c4aa8b3cc26ff91d7cda6d605ab67a40b",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0xcd6309c6995f39c4d4266f3859d5d2f1ec5bff7e83f9e2435f718b393e1cede9",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0xcd6309c6995f39c4d4266f3859d5d2f1ec5bff7e83f9e2435f718b393e1cede9",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x97fde9800",
+        "lock": {
+          "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+          "hashType": "data1",
+          "args": "0x8253a6aa288c2203109695558dc54e235f4e851f7253fee21966bdb28e8bc5d100ca9a3b0000000000e1f50500000000d0070000000000003f7b97b6d5d4d8c44f68d3cb97bdfe3c7ddbdfcc2f4574a33a72836f048e4c98"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x85e0b193c516f101ca4cbf5406ea860a44ed3616c55fbda56ec67a2cb2738db0"
+        }
+      },
+      {
+        "capacity": "0x6fc23ac00",
+        "lock": {
+          "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+          "hashType": "data1",
+          "args": "0x8253a6aa288c2203109695558dc54e235f4e851f7253fee21966bdb28e8bc5d100ca9a3b0000000000e1f50500000000d0070000000000003f7b97b6d5d4d8c44f68d3cb97bdfe3c7ddbdfcc2f4574a33a72836f048e4c98"
+        },
+        "type": {
+          "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+          "hashType": "data1",
+          "args": "0x2cf455a21a4c05120122ce6039f19a9d6b7524786e180113d55df6d18c01cfc0"
+        }
+      },
+      {
+        "capacity": "0x34e62ce00",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x9b39350af43bda8c8ce8a754dfefc7c77cbeb206"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x3883ddb9a89a9a25fc41576fe84a10fa6ffef9ccb82073d6f6743683d95acb02"
+        }
+      },
+      {
+        "capacity": "0x428ae36580",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x9b39350af43bda8c8ce8a754dfefc7c77cbeb206"
+        }
+      }
+    ],
+    "outputsData": [
+      "0xc80700000000000000000000000000000bfd43d25354d54f8fd96a4cab164d6959e53913eda89d43339869a6448463c5",
+      "0x3932b769ed99e3e4346c801a473178fa3935999ea437b8f7dcd3b854f26cade11b2f14729b1a04cd876aecb0ffbfe2ee9859ff375021e0159063c72fb4d692f0",
+      "0x01000000000000000000000000000000",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x5500000010000000550000005500000041000000c857fe674d4494f94231602026598c2678a9a0a9d0fefc5238763832e4a650aa3c18c90a8abf958d9d289e42f11327ccfae51218a92613b295e71f1d7576599b01",
+      "0x"
+    ]
+  }
+}

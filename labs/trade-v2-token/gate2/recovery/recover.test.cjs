@@ -63,7 +63,21 @@ function runCli(args, cwd, env = {}) {
   });
 }
 
-test('independent RPC collection rebuilds committed TMS1 history and fails closed on a history gap', async (t) => {
+function preserveFaultEvidence(cases) {
+  const parent = path.join(here, 'evidence');
+  fs.mkdirSync(parent, { recursive: true });
+  const directory = path.join(parent, `rpc-faults-${Date.now()}`);
+  fs.mkdirSync(directory);
+  const output = path.join(directory, 'fault-results.json');
+  fs.writeFileSync(output, `${JSON.stringify({
+    format: 'trade-v2-recovery-mocked-rpc-fault-evidence-v1',
+    execution_boundary: 'mocked JSON-RPC; no CKB-VM execution is claimed by this file',
+    cases,
+  }, null, 2)}\n`);
+  process.stdout.write(`Recovery RPC fault evidence: ${output}\n`);
+}
+
+test('independent RPC recovery reconstructs TMS1 history and fails closed under provider and state faults', async (t) => {
   execFileSync('cargo', ['build', '--release', '--locked', '--offline', '--manifest-path', recoveryManifest], { cwd: root, stdio: 'pipe' });
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'trade-v2-recovery-rpc-'));
   t.after(() => fs.rmSync(tmp, { recursive: true, force: true }));
@@ -104,6 +118,12 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
   const txBView = rpcTx(txB, [rawInput(txA, 0), rawInput(txA, 1)], [outB, markerB], [outBData, markerData], next.contract_witness.hex);
   const txMap = new Map([[txA, { transaction: txAView, block_number: '0x1', block_hash: blockA }], [txB, { transaction: txBView, block_number: '0x2', block_hash: blockB }]]);
   let omitSecond = false;
+  let conflictingProvider = false;
+  let missingTransactionBody = false;
+  let reorgDuringCollection = false;
+  let concurrentCustodyChange = false;
+  let tipReads = 0;
+  let broadcasts = 0;
   const fundingHash = h('f0');
   const fundingIndex = 3;
   const fundingOutput = { capacity: '0x10000000000', lock: C.snake(C.locks[1]) };
@@ -128,17 +148,22 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
 
   const node = await rpcServer(async (method, params) => {
     if (method === 'local_node_info') return { version: '0.210.0 (test)' };
-    if (method === 'get_tip_header') return { number: chainTipNumber, hash: chainTipHash };
+    if (method === 'get_tip_header') {
+      tipReads++;
+      return { number: chainTipNumber, hash: reorgDuringCollection && tipReads > 1 ? h('c8') : chainTipHash };
+    }
     if (method === 'get_block_by_number') {
       const n = params[0];
       if (n === '0x0') return { header: { number: n, hash: domain.genesis_hash }, transactions: genesisTxs };
       if (n === '0x4' && withdrawalRecord) return { header: { number: n, hash: withdrawalRecord.block_hash }, transactions: [withdrawalRecord.transaction] };
+      if (n === chainTipNumber && reorgDuringCollection) return { header: { number: n, hash: h('c8') }, transactions: [] };
       const hash = n === '0x1' ? blockA : n === '0x2' ? blockB : tipHash;
       const tx = n === '0x1' ? [txAView] : n === '0x2' ? [txBView] : [];
       return { header: { number: n, hash }, transactions: tx };
     }
     if (method === 'estimate_cycles') return { cycles: '0x1234' };
     if (method === 'send_transaction') {
+      broadcasts++;
       const transaction = params[0];
       const hash = C.U.rawTransactionToHash(canonicalCamel(transaction));
       const committedTx = { ...transaction, outputs: transaction.outputs.map((output) => output.type ? output : { ...output, type: null }), hash };
@@ -157,6 +182,7 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
         transaction: withdrawalRecord.transaction,
         tx_status: { status: 'committed', block_number: withdrawalRecord.block_number, block_hash: withdrawalRecord.block_hash },
       };
+      if (missingTransactionBody && params[0] === txB) return null;
       const row = txMap.get(params[0]);
       if (!row) return null;
       return { transaction: row.transaction, tx_status: { status: 'committed', block_number: row.block_number, block_hash: row.block_hash } };
@@ -165,6 +191,10 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
       const point = params[0];
       const key = `${point.tx_hash}:${Number(BigInt(point.index))}`;
       if (spentPoints.has(key)) return { status: 'unknown' };
+      if (concurrentCustodyChange && key === `${txB}:0`) {
+        const changedData = writeAmountRoot(7, h('c9'));
+        return { status: 'live', cell: { output: outB, data: { content: changedData } } };
+      }
       const created = createdCells.get(key);
       if (created) return { status: 'live', cell: { output: created.output, data: { content: created.data } } };
       if (key === `${txB}:0`) return { status: 'live', cell: { output: outB, data: { content: outBData } } };
@@ -182,7 +212,7 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
       const objects = [
         { tx_hash: txA, block_number: '0x1', tx_index: '0x0', io_type: 'output', io_index: '0x0' },
         { tx_hash: txA, block_number: '0x1', tx_index: '0x0', io_type: 'output', io_index: '0x1' },
-        { tx_hash: txB, block_number: '0x2', tx_index: '0x0', io_type: 'input', io_index: '0x0' },
+        { tx_hash: txB, block_number: conflictingProvider ? '0x3' : '0x2', tx_index: '0x0', io_type: 'input', io_index: '0x0' },
         { tx_hash: txB, block_number: '0x2', tx_index: '0x0', io_type: 'output', io_index: '0x0' },
       ].filter((x) => !omitSecond || x.tx_hash !== txB);
       return { objects, last_cursor: '0x' };
@@ -230,6 +260,38 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
   assert.match(gap.stderr, /initialization transaction|live canonical custody output|previous custody/i);
 
   omitSecond = false;
+  conflictingProvider = true;
+  const conflictPath = path.join(tmp, 'conflicting-provider.json');
+  const conflict = await runCli(argsFor(conflictPath), root);
+  assert.notEqual(conflict.status, 0, 'conflicting indexer and full-node positions must fail closed');
+  assert.match(conflict.stderr, /conflicting position/);
+  conflictingProvider = false;
+
+  missingTransactionBody = true;
+  const missingPath = path.join(tmp, 'missing-transaction-body.json');
+  const missing = await runCli(argsFor(missingPath), root);
+  assert.notEqual(missing.status, 0, 'missing full-node transaction bodies must fail closed');
+  assert.match(missing.stderr, /full node cannot retrieve committed transaction/);
+  missingTransactionBody = false;
+
+  tipReads = 0;
+  reorgDuringCollection = true;
+  const reorgPath = path.join(tmp, 'reorganized-history.json');
+  const reorganized = await runCli(argsFor(reorgPath), root);
+  assert.notEqual(reorganized.status, 0, 'a tip change during collection must fail closed');
+  assert.match(reorganized.stderr, /canonical chain changed during collection/);
+  reorgDuringCollection = false;
+  tipReads = 0;
+
+  concurrentCustodyChange = true;
+  const concurrentPath = path.join(tmp, 'concurrent-state-change.json');
+  const concurrent = await runCli([cli, 'withdraw', '--node', node.url, '--bundle', bundlePath, '--out', concurrentPath], root,
+    { TRADE_RECOVERY_PRIVATE_KEY: recoveryKey });
+  assert.notEqual(concurrent.status, 0, 'a concurrent custody successor must invalidate a stale recovery snapshot');
+  assert.match(concurrent.stderr, /not the current canonical live cell/);
+  assert.equal(broadcasts, 0, 'stale recovery snapshot must not broadcast');
+  concurrentCustodyChange = false;
+
   const withdrawalPath = path.join(tmp, 'withdrawal.json');
   const withdrawn = await runCli([
     cli, 'withdraw', '--node', node.url, '--bundle', bundlePath,
@@ -258,4 +320,23 @@ test('independent RPC collection rebuilds committed TMS1 history and fails close
   const verifiedReport = JSON.parse(fs.readFileSync(withdrawalPath, 'utf8'));
   assert.equal(verifiedReport.status, 'committed');
   assert.equal(verifiedReport.block_hash, h('c2'));
+
+  const priorBroadcasts = broadcasts;
+  const retryPath = path.join(tmp, 'already-withdrawn-retry.json');
+  const retry = await runCli([cli, 'withdraw', '--node', node.url, '--bundle', bundlePath, '--out', retryPath], root,
+    { TRADE_RECOVERY_PRIVATE_KEY: recoveryKey });
+  assert.notEqual(retry.status, 0, 'recovery must not withdraw twice from the already spent custody singleton');
+  assert.match(retry.stderr, /not live|not the current canonical live cell/i);
+  assert.equal(broadcasts, priorBroadcasts, 'already-withdrawn retry must not broadcast a second transaction');
+
+  preserveFaultEvidence([
+    { case: 'full-block recovery without local proof cache or indexer', outcome: 'reconstructed', transitions: blockResult.transitions.length, indexer_used: false },
+    { case: 'incomplete indexer history', outcome: 'failed closed', detail: 'missing custody successor was not treated as current state' },
+    { case: 'conflicting indexer and full-node positions', outcome: 'failed closed', detail: 'block-position mismatch' },
+    { case: 'missing committed transaction body', outcome: 'failed closed', detail: 'full node returned no transaction body' },
+    { case: 'chain reorganization during history collection', outcome: 'failed closed', detail: 'tip changed during collection' },
+    { case: 'concurrent custody successor after proof collection', outcome: 'failed closed', broadcasts: 0 },
+    { case: 'already-withdrawn retry', outcome: 'failed closed', broadcasts_after_retry: broadcasts - priorBroadcasts },
+    { case: 'mocked RPC withdrawal control', outcome: 'reported committed by mock only', native_vm_execution: false },
+  ]);
 });
