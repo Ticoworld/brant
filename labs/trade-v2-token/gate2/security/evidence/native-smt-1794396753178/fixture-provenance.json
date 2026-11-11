@@ -1,0 +1,11 @@
+{
+  "sourceFixture": "labs/trade-v2-token/gate2/orders/fixture.cjs",
+  "sourceFixtureSha256": "d8ffbaea3a9b258e2eb4d973b80573b7f017edf9fa6a343c57364a8f9d46917b",
+  "derivedFixtureSha256": "13602c977a8db45d69af9d212380c102b2b45c741476ad2424d5d9400ac556dd",
+  "rpcPort": 19234,
+  "p2pPort": 19235,
+  "attacks": [
+    "tampered_compiled_multiproof",
+    "valid_proof_inflated_unbacked_entitlement"
+  ]
+}

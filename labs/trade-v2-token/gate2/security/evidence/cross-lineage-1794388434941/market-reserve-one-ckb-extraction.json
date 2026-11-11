@@ -1,0 +1,168 @@
+{
+  "label": "market-reserve-one-ckb-extraction",
+  "error": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 28 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1.html#28 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 28 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1.html#28 } }\"}",
+  "tx": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x3d826adee78853a43e259ca97efdacd46ee85a1967adca7c6863c3f684c43b45",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xff55ff4a8cf298a6e93d56ac32d850dc1fc10fbfd105a08ab20cab5e6405745a",
+          "index": "0xa"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xff55ff4a8cf298a6e93d56ac32d850dc1fc10fbfd105a08ab20cab5e6405745a",
+          "index": "0x9"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xff55ff4a8cf298a6e93d56ac32d850dc1fc10fbfd105a08ab20cab5e6405745a",
+          "index": "0xc"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xff55ff4a8cf298a6e93d56ac32d850dc1fc10fbfd105a08ab20cab5e6405745a",
+          "index": "0xd"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xff55ff4a8cf298a6e93d56ac32d850dc1fc10fbfd105a08ab20cab5e6405745a",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [
+      "0xc4a102f0f225ec6c63b95819e1c9b01f97cd18bfab1da9003c41d7bf391185b6"
+    ],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x92ee748980c8b3f36ac101d466076f100c9916e965f041d380ddee1409e36a27",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x92ee748980c8b3f36ac101d466076f100c9916e965f041d380ddee1409e36a27",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x92ee748980c8b3f36ac101d466076f100c9916e965f041d380ddee1409e36a27",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x92ee748980c8b3f36ac101d466076f100c9916e965f041d380ddee1409e36a27",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0xc53e12fd5ffea842fe727d3419fec7f0f8a7d160ee0f902088efc14078710cc7",
+          "index": "0x5"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x7badfcc00",
+        "lock": {
+          "codeHash": "0xd797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1",
+          "hashType": "data1",
+          "args": "0xa0a21917eada65c68d1cb69834bb603772bfc4e3b09c0bb8b7cac244c89baece00ca9a3b0000000000e1f50500000000e80300000000000014920ee3ab0ceb30c0a1baf0a13cf5c8a2667c9e1841b6a74794f7915b05936b"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x54d2f5a125192c77bf08bbec19d15face858021001c47163ae89cb0569df9360"
+        }
+      },
+      {
+        "capacity": "0x6fc23ac00",
+        "lock": {
+          "codeHash": "0xd797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1",
+          "hashType": "data1",
+          "args": "0xa0a21917eada65c68d1cb69834bb603772bfc4e3b09c0bb8b7cac244c89baece00ca9a3b0000000000e1f50500000000e80300000000000014920ee3ab0ceb30c0a1baf0a13cf5c8a2667c9e1841b6a74794f7915b05936b"
+        },
+        "type": {
+          "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+          "hashType": "data1",
+          "args": "0xd18e14900fae7e3e93b5e9f74b5fd78efb6e1afab0a4a1122b89bea0dfecd897"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0x2dbf13680775cfa18b70017a2cc32f54fb55e0622cf9add46f33f56a7937b80e",
+          "hashType": "data1",
+          "args": "0xef6113179bae812e54602cddbad8658db580d9b8c2ebaf0fffbedb30bf00dff0109563f7adfcffd2a63005d3825281161d5d93f050448b7b3d65f356c980a520c4a102f0f225ec6c63b95819e1c9b01f97cd18bfab1da9003c41d7bf391185b66f6a38efe2b39cd9850e568f44aadc1d563e01a82dd42e5460a7dddc211f27e1"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x54d2f5a125192c77bf08bbec19d15face858021001c47163ae89cb0569df9360"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0x2dbf13680775cfa18b70017a2cc32f54fb55e0622cf9add46f33f56a7937b80e",
+          "hashType": "data1",
+          "args": "0xef6113179bae812e54602cddbad8658db580d9b8c2ebaf0fffbedb30bf00dff0109563f7adfcffd2a63005d3825281161d5d93f050448b7b3d65f356c980a520c4a102f0f225ec6c63b95819e1c9b01f97cd18bfab1da9003c41d7bf391185b66f6a38efe2b39cd9850e568f44aadc1d563e01a82dd42e5460a7dddc211f27e1"
+        },
+        "type": {
+          "codeHash": "0xf457da3128db0267f68908eec41751297e72594525ad6f11cb82d9900657dd2c",
+          "hashType": "data1",
+          "args": "0xef6113179bae812e54602cddbad8658db580d9b8c2ebaf0fffbedb30bf00dff0"
+        }
+      },
+      {
+        "capacity": "0x1706d6fac0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0xb459c2747561fbe31638d2dfd465d730bd3a20a6"
+        }
+      }
+    ],
+    "outputsData": [
+      "0xe50300000000000000000000000000006f6a38efe2b39cd9850e568f44aadc1d563e01a82dd42e5460a7dddc211f27e1",
+      "0xef6113179bae812e54602cddbad8658db580d9b8c2ebaf0fffbedb30bf00dff0109563f7adfcffd2a63005d3825281161d5d93f050448b7b3d65f356c980a520",
+      "0x03000000000000000000000000000000165f9ff32b2c67af6c5f4304ed5546273014fb910764199ac98587021694defa",
+      "0x587ee739c5fff18dd371a2810a7784680bc8082a6ed9fa8df24ad75aa841f9b1109563f7adfcffd2a63005d3825281161d5d93f050448b7b3d65f356c980a520",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x",
+      "0x",
+      "0x550000001000000055000000550000004100000038e2a015a4452010cef4e4c1c087a4ba69778a66437d6219b49551f09d725afb0954417f51cdc9cc28c8a9c270bf63de0c7696003399c33dc06e87df7e3656c800",
+      "0x050000000000000000000000000000000200000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d0100000000000000000000000000000097743fa0df293fb01498944b2b05d7afebaf3d4fa5544d00e6abceafcac1e12d01000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d0100000000000000000000000000000097743fa0df293fb01498944b2b05d7afebaf3d4fa5544d00e6abceafcac1e12d01000000000000000100000000000000ad2d1be48bb618fc8ed9438a416d7033ccda3952b79410f1a668fb9d66544515010000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    ]
+  }
+}

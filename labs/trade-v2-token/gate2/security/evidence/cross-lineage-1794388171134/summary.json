@@ -1,0 +1,127 @@
+{
+  "nativeVersion": {
+    "active": true,
+    "addresses": [
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225",
+        "score": "0x1"
+      },
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225/ws",
+        "score": "0x1"
+      }
+    ],
+    "connections": "0x0",
+    "node_id": "QmPevxYFypx7gZrHoGE4GB83occS3AvrdHBHb97n5iujhH",
+    "protocols": [
+      {
+        "id": "0x64",
+        "name": "/ckb/syn",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x65",
+        "name": "/ckb/relay3",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x79",
+        "name": "/ckb/filter",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x66",
+        "name": "/ckb/tim",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x78",
+        "name": "/ckb/lightclient",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x2",
+        "name": "/ckb/identify",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x0",
+        "name": "/ckb/ping",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x1",
+        "name": "/ckb/discovery",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x3",
+        "name": "/ckb/flr",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x4",
+        "name": "/ckb/disconnectmsg",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x82",
+        "name": "/ckb/holepunching",
+        "support_versions": [
+          "3"
+        ]
+      }
+    ],
+    "version": "0.210.0 (2592ddf 2026-09-17)"
+  },
+  "markets": {
+    "A": {
+      "marketHash": "0x75fac7e3eb03ed0ec306287689617f373bb05f10fbdd09bc7a59a6772b279ef5",
+      "tokenHash": "0x8dae641a9909678a836b4bee87f46a69f8830508399487324cf8948a462d304f",
+      "markerHash": "0x1f20b6384b6eafe99bb9f72a404b683f3bd28d09e2ade748437a0df90a95f015",
+      "issueHash": "0x8561e6733c0bf60b43ca034403140b2ee9f1d8ebca0e2bf7241c7a499c10211d"
+    },
+    "B": {
+      "marketHash": "0x19edb6419e755db8da9f7cacb2e77ed721ea78795f227345ca2579796aeeeaab",
+      "tokenHash": "0x9e6f68912b0c7038a520765e24995520582d6db037735f12fe5c01e02b9c6bea",
+      "markerHash": "0x3ea1b5e57400448533d73f147bf3bcc59c826e37da20d918f5f0870db7a3e6c1",
+      "issueHash": "0xa6b6fc266915b9c5eb2370417aad9798bd8bac745481a5e260ea38edd00d3dfd"
+    }
+  },
+  "positiveControl": "market B initialization and continuation committed; hashes in events.jsonl",
+  "attack": {
+    "rawTransactionHash": "0x560e4384941ad13615b8ea08d821ad1c1b57e621027ce44e95d798c97973c422",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 22 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1.html#22 })",
+    "marketBInput": {
+      "txHash": "0x93e422592e620b957d872064d6dc062b517e93e1c2f93b5085d9d77c68d77f17",
+      "index": "0x0"
+    },
+    "custodyAInput": {
+      "txHash": "0x496d428b8d6c9796bfba7e0834df879221e4ee65c9a8e398c4f846e956574b81",
+      "index": "0x2"
+    },
+    "outputCustodyAAmount": "2",
+    "inputCustodyAAmount": "1"
+  },
+  "interpretation": "Market B rejects at its own lock before the A custody lock or B/A xUDT type scripts; the attacker attempted to use B reserve for an A entitlement. This verifies the marker and genuine A/B script identities are distinct and the cross-asset substitution boundary executes."
+}

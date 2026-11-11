@@ -1,0 +1,138 @@
+{
+  "nativeVersion": {
+    "active": true,
+    "addresses": [
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225",
+        "score": "0x1"
+      },
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225/ws",
+        "score": "0x1"
+      }
+    ],
+    "connections": "0x0",
+    "node_id": "QmaJi2vUeLLXQzg5asfPTwjbrRjh543DbQzVjCSa3KGZLs",
+    "protocols": [
+      {
+        "id": "0x64",
+        "name": "/ckb/syn",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x65",
+        "name": "/ckb/relay3",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x79",
+        "name": "/ckb/filter",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x66",
+        "name": "/ckb/tim",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x78",
+        "name": "/ckb/lightclient",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x2",
+        "name": "/ckb/identify",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x0",
+        "name": "/ckb/ping",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x1",
+        "name": "/ckb/discovery",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x3",
+        "name": "/ckb/flr",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x4",
+        "name": "/ckb/disconnectmsg",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x82",
+        "name": "/ckb/holepunching",
+        "support_versions": [
+          "3"
+        ]
+      }
+    ],
+    "version": "0.210.0 (2592ddf 2026-09-17)"
+  },
+  "markets": {
+    "A": {
+      "marketHash": "0x53c47f62ab89eb2dee67e746432711db133bbd49a6975fed2fc78378309fd6d7",
+      "tokenHash": "0x2366b53102fe19ac65a8dbb6dbf695244ad6b3b6214a69c0cdbb982036fd7bb3",
+      "markerHash": "0xd0e8716a0c9654358584e86870963291253b2e4a54993fed68ede5cee2aeb441",
+      "issueHash": "0x74edf1bbdfa22c56419a2ffeadc70f8ffcc1f7e9f6e7b85059053006dc22ea63"
+    },
+    "B": {
+      "marketHash": "0x2bcae254f0abf5cb140557f43b09aba860a317837e919aaac767baabcbfa0f2b",
+      "tokenHash": "0xaf412a2539e891902bc5d898cd90d516cf3a373a8c9c89cc3bc9b72339e48d61",
+      "markerHash": "0x27ace2a2562f7ae9c83305830cf4f153aed788f1a6392d93af011cdce0aedc1a",
+      "issueHash": "0x9a3f81bafc865642d5194cd67f6189ace6d03d13decf562fb3dc5698b836b940"
+    }
+  },
+  "positiveControl": "market B initialization and continuation committed; hashes in events.jsonl",
+  "reserveExtraction": {
+    "rawTransactionHash": "0xc1073c492a8a4480f73aa1f2856b46a0a1bbf630f5a0764b23dba7e57bcc9a7c",
+    "description": "diverts 1 CKB from the curve market output to the authorized buyer while preserving fee and occupied capacity",
+    "committedPositiveInput": {
+      "txHash": "0xee6d0dbd9498c59d6c720724951236d0052abce1310bb384d7e51081ef524887",
+      "index": "0x0"
+    }
+  },
+  "attack": {
+    "rawTransactionHash": "0xa71ea9b236de8f56c55f19bcf0bbc0c767b58819be2ee8b8764322f8dfe991f0",
+    "error": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 22 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1.html#22 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 22 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/d797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1.html#22 } }\"}",
+    "rejectingSource": "Inputs[0].Lock",
+    "rejectingCode": 22,
+    "rejectingScriptHash": "0xd797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1",
+    "marketBInput": {
+      "txHash": "0xee6d0dbd9498c59d6c720724951236d0052abce1310bb384d7e51081ef524887",
+      "index": "0x0"
+    },
+    "custodyAInput": {
+      "txHash": "0x728f246caacc9f20a0fdac165230475cf97ed7bcb5252cadcf45d2b2453aec89",
+      "index": "0x2"
+    },
+    "outputCustodyAAmount": "2",
+    "inputCustodyAAmount": "1"
+  },
+  "interpretation": "The independently initialized A and B lineages are crossed: the transaction spends B inventory/marker while attempting to credit A custody. The native VM rejects it in either the B Market asset/domain check or A Custody market-domain check, depending on script execution order; both are intended script checks. A and B issue/init controls and a valid B continuation committed."
+}

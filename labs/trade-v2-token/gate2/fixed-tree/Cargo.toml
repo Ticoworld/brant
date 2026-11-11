@@ -1,0 +1,12 @@
+[package]
+name = "trade-v2-fixed-tree-bench"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+anyhow = "=1.0.104"
+blake2b-rs = "=0.2.0"
+hex = "=0.4.3"
+sparse-merkle-tree = { version = "=0.6.1", path = "../vendor/sparse-merkle-tree-pinned", features = ["smtc"] }
+serde_json = "=1.0.154"

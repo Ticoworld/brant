@@ -1,0 +1,3 @@
+{
+  "message": "TypeError: Do not know how to serialize a BigInt\n    at JSON.stringify (<anonymous>)\n    at sign (/mnt/c/Users/timot/Desktop/2026/CKB/trade-wo18-v2-merkle/labs/trade-v2-token/gate2/security/two-market-cross-lineage.cjs:43:92)\n    at continueBuy (/mnt/c/Users/timot/Desktop/2026/CKB/trade-wo18-v2-merkle/labs/trade-v2-token/gate2/security/two-market-cross-lineage.cjs:177:38)\n    at main (/mnt/c/Users/timot/Desktop/2026/CKB/trade-wo18-v2-merkle/labs/trade-v2-token/gate2/security/two-market-cross-lineage.cjs:183:9)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}
