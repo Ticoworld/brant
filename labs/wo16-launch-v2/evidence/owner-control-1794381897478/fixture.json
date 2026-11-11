@@ -1,0 +1,17 @@
+{
+  "owner": {
+    "codeHash": "0xae19c1e5d373c57f53229a38f36ae59bd1ca3c685fed95fc52bdefc3eb532a1d",
+    "hashType": "data1",
+    "args": "0x42"
+  },
+  "token": {
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "args": "0x873a4dfe8225c8933e522d02919d13a88a4b853151d79ac6e74303ec2850cd21"
+  },
+  "hashes": {
+    "owner": "0xae19c1e5d373c57f53229a38f36ae59bd1ca3c685fed95fc52bdefc3eb532a1d",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "libraryBytes": 9248
+}
