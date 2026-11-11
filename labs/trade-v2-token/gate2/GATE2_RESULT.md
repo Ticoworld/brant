@@ -2,7 +2,7 @@
 
 **Classification: GATE 2 PARTIAL, EXACT BLOCKERS**
 
-This continuation starts at local and remote checkpoint `3af1f1cd29135d45532e79c9021596cdbb14df6a` on `wo18-v2-merkle-custody`. All new native runs used private disposable CKB 0.210.0 chains and test credentials. No mainnet, public testnet, real assets, or deployment was used. The final implementation/evidence commit is recorded in the publication metadata update following this report's validation commit.
+This continuation starts at local and remote checkpoint `3af1f1cd29135d45532e79c9021596cdbb14df6a` on `wo18-v2-merkle-custody`. The validated implementation and evidence commit is `f95d7361942aac30505be496443ba020e87d5564`. All new native runs used private disposable CKB 0.210.0 chains and test credentials. No mainnet, public testnet, real assets, or deployment was used.
 
 ## Verified Results
 
