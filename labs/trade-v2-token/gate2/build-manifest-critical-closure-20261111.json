@@ -4,6 +4,7 @@
   "branch": "wo18-v2-merkle-custody",
   "starting_commit": "ab9d46588359e76e7f1754cfbc2d363dfae30618",
   "implementation_commit": "f95d7363632c9e557443adb39860640d3596d6a5",
+  "validated_closure_commit": "cd12260cc831ed2cf02633f72f490a887d3a39ab",
   "previous_gate2_checkpoint": "3af1f1cd29135d45532e79c9021596cdbb14df6a",
   "environment": {
     "ckb_node": "0.210.0 (2592ddf 2026-09-17)",
