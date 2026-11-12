@@ -1,0 +1,178 @@
+{
+  "label": "alternate-xudt-type-substituted-for-market-inventory",
+  "classification": "VERIFIED_NATIVE_REJECTION",
+  "exploitHypothesis": "alternate-xudt-type-substituted-for-market-inventory",
+  "positiveControl": {
+    "label": "offline_seller_initial_purchase",
+    "transactionHash": "0x734b911ecb7ebf9cbdda6721a948085350d18ab571e0fa639aec4093fc509f33",
+    "committedAfterRejection": true
+  },
+  "rawTransactionHash": "0x99cc871d8622254006f4368a8801392759853d938a2244072bb3847fb9c48d43",
+  "fullSignedTransactionSha256": "fdd03664c5542368955d0802ae5fac53571d210cfc80183d4cc3e39f2518e266",
+  "witnessesSha256": "e9dea76a0289bd539545f318cb043e3694118352567a908e659ab6533820bfa8",
+  "alteredCondition": "replaced the market inventory successor type with a syntactically valid xUDT Type Script sharing the pinned code but carrying a different owner-script hash",
+  "rejectingSource": "Inputs[0].Lock",
+  "rejectingScript": "market_smt",
+  "rejectingCodeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+  "rejectingCode": 6,
+  "estimateCyclesError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 } }\"}",
+  "sendTransactionError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 })\",\"data\":\"Verification(Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 } })\"}",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x61554eb4108c97fe19a13ea75be0febd582079be29d2e2a12f60a76f023a491c",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xfd289222fec7236b4b723aa098dc8007394b2f233d801ff6673c9dc0fef7586f",
+          "index": "0x1"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xfd289222fec7236b4b723aa098dc8007394b2f233d801ff6673c9dc0fef7586f",
+          "index": "0x0"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xfd289222fec7236b4b723aa098dc8007394b2f233d801ff6673c9dc0fef7586f",
+          "index": "0x3"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xfd289222fec7236b4b723aa098dc8007394b2f233d801ff6673c9dc0fef7586f",
+          "index": "0x4"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xdbfa357582fc42edca29035d581ab739867d9401e5437da7639e5e552197466a",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [
+      "0x745ac87d99ecd0bec569eef46f0d25bec52e209433dc038fb7333aabf29cce04"
+    ],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x8ade039b9a31f76a432f4f662a6cbebb580391b0a9b069aa78080ae905c42ffb",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x8ade039b9a31f76a432f4f662a6cbebb580391b0a9b069aa78080ae905c42ffb",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x1459cb2d087a0cef6af14af9c30cc758265150dfb34bd48c38163a34cb429f0e",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x91a8aa700",
+        "lock": {
+          "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+          "hashType": "data1",
+          "args": "0x83f2d65d7e82ec171bb28f982d46894d508c4b34cd2e8d6926a471102b8f881800ca9a3b0000000000e1f50500000000ffffffff0000000074716bcca05340297d7e5aff0b4d6c7f7f941eb9b131af9c83cb912068c304c4"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x43b15df8c4e13c86ad761dea6fdc0b17c11e342678093e7379e93b3bdd6b229b"
+        }
+      },
+      {
+        "capacity": "0x6fc23ac00",
+        "lock": {
+          "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+          "hashType": "data1",
+          "args": "0x83f2d65d7e82ec171bb28f982d46894d508c4b34cd2e8d6926a471102b8f881800ca9a3b0000000000e1f50500000000ffffffff0000000074716bcca05340297d7e5aff0b4d6c7f7f941eb9b131af9c83cb912068c304c4"
+        },
+        "type": {
+          "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+          "hashType": "data1",
+          "args": "0xe5008a50f3a1f9ca1107fb3961891801042b2891089aec4b166d3a6141e93deb"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0x3bdf54134df75e8c0aaff4010e197a4d24315ad09d0f32ebdfc097750619b19ca22315760987012f6a0cd3c0f40d31e3c953f08a68a1d4238091b8c7e829b489745ac87d99ecd0bec569eef46f0d25bec52e209433dc038fb7333aabf29cce046c083b6c1ee73e122e14e3b7975aef86f846a33ca39ae7e59d0f00fe1c8375bc"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x034aee83be4611d50e596bddae0bc1e32e50496fa85f177c54a2e6688bcc5b83"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0x3bdf54134df75e8c0aaff4010e197a4d24315ad09d0f32ebdfc097750619b19ca22315760987012f6a0cd3c0f40d31e3c953f08a68a1d4238091b8c7e829b489745ac87d99ecd0bec569eef46f0d25bec52e209433dc038fb7333aabf29cce046c083b6c1ee73e122e14e3b7975aef86f846a33ca39ae7e59d0f00fe1c8375bc"
+        },
+        "type": {
+          "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+          "hashType": "data1",
+          "args": "0x3bdf54134df75e8c0aaff4010e197a4d24315ad09d0f32ebdfc097750619b19c"
+        }
+      },
+      {
+        "capacity": "0x1c262456c0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x6666db3b6b4cc50bed85316bb91f04513f1258c2"
+        }
+      }
+    ],
+    "outputsData": [
+      "0xf8ffffff0000000000000000000000006c083b6c1ee73e122e14e3b7975aef86f846a33ca39ae7e59d0f00fe1c8375bc",
+      "0x3bdf54134df75e8c0aaff4010e197a4d24315ad09d0f32ebdfc097750619b19ca22315760987012f6a0cd3c0f40d31e3c953f08a68a1d4238091b8c7e829b489",
+      "0x070000000000000000000000000000006905790e685e6331c0aa6a328289b47fd3710f49a131d236dac1f8eaa152c97c",
+      "0x2b3b70807e3c7d9e90bf74d5e9a02f0dc8cb12f1385a718432e3f1ba90ade6fea22315760987012f6a0cd3c0f40d31e3c953f08a68a1d4238091b8c7e829b489",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x55000000100000005500000055000000410000007d1b2fa1e60a790a7e4a1f806bd7814ed16b2808dfdb1d255d52acc0d7c5e3c504f005729b184d8629da394b165a4c6d6f061a5ff51d86cef3d51cca78871d2301",
+      "0x544d533101000100030000004a2daa6c8b6d170cd2630a48837cb4cdca51fea62bc42324e20136b25bae5138000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000010000000000000000000000000000004c4f0000fb661e02000000"
+    ]
+  },
+  "sourceHashes": {
+    "market_smt_c": "fa0f0db4f1eb545468deacc2d81e0ebc9a56983e616e3e0727ba6591700b4cfa",
+    "custody_smt_c": "cac3356341e5197809a03909a7684e9971796fe1e7305c51572cfe5e07734eea",
+    "owner_lineage_candidate_c": "a10fb1968054c3ad96b5ed4475fb008b27b51a60547394e1f980585c4891cb3e"
+  },
+  "binarySha256": {
+    "market_smt": "b33d7396778340c3d6e66c62897a1dbd1561b32848715106a94d8a077bb7cd1f",
+    "owner_lineage_candidate": "661820b1d9ce5b384762e5e67389335c04bb2c34aac7bbcb7cb684e9ea13671b",
+    "xudt": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "classification": "VERIFIED_EVIDENCE_MANIFEST",
+  "sourceDirectory": "native-token-boundaries-1794450855229",
+  "trackedFiles": [
+    {
+      "path": "alternate-xudt-type-substituted-for-market-inventory.json",
+      "sha256": "188551d702b6f98f0b74dfcfedd35d9f96895e60503ad9ad389f1fdaa1c5f7fa",
+      "bytes": 8882
+    },
+    {
+      "path": "genuine-xudt-quantity-inflation-on-external-transfer.json",
+      "sha256": "b3d247f940cb20f0c2c361784247604ee43437730f77534a825e1fca5bc4159b",
+      "bytes": 4711
+    },
+    {
+      "path": "owner-mode-reissue-with-consumed-anchor.json",
+      "sha256": "fb2d36625c7048524220ddc9258a9605038328d4f508122d6e865b007272d0a9",
+      "bytes": 5065
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "c003d1fa283bbc5a7949f06f832b4efbe6dc5f88a8818e579ff85fdec1d62aba",
+      "bytes": 896
+    },
+    {
+      "path": "target-completion.json",
+      "sha256": "0e5ac17b88e33d71a188293dd1d982b8553d2695b1fbddce08658bc1f35026ed",
+      "bytes": 15468
+    },
+    {
+      "path": "unexpected-additional-xudt-input-to-external-sale.json",
+      "sha256": "a062398db609aeab9258479c0a9b2f395509b75f656c67c896f526bedf170fce",
+      "bytes": 8092
+    },
+    {
+      "path": "unexpected-additional-xudt-output.json",
+      "sha256": "8b911a56444106da961991da2194c143f2575fc854d8132b580f3795a8b27933",
+      "bytes": 9422
+    }
+  ],
+  "localOnlyFiles": [
+    {
+      "path": "rpc.jsonl",
+      "sha256": "b407c30792c716a40785dfc2f03e14b741256898cbb684d4f36d6234883a6717",
+      "bytes": 4463570,
+      "storage": "local-only"
+    },
+    {
+      "path": "events.jsonl",
+      "sha256": "cc0e18bce4666b439e172df3264e6f10fbcb7be9c95f20ab21de4265104fc249",
+      "bytes": 508550,
+      "storage": "local-only"
+    },
+    {
+      "path": "node.log",
+      "sha256": "024c8bb7ddaaff2e068afd7dd4b22f30bd363d0381391b056521a9d6231feea8",
+      "bytes": 36601,
+      "storage": "local-only"
+    },
+    {
+      "path": "dev.toml",
+      "sha256": "5df14a502dc509da88ad5fe1787212f213fce1df0d7b19865a76c2fca683c9c0",
+      "bytes": 4320,
+      "storage": "local-only"
+    }
+  ]
+}

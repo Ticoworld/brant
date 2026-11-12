@@ -2,6 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -72,6 +73,13 @@ function preserveFaultEvidence(cases) {
   fs.writeFileSync(output, `${JSON.stringify({
     format: 'trade-v2-recovery-mocked-rpc-fault-evidence-v1',
     execution_boundary: 'mocked JSON-RPC; no CKB-VM execution is claimed by this file',
+    created_at_utc: new Date().toISOString(),
+    source_commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+    reproduction_command: 'node --test labs/trade-v2-token/gate2/recovery/recover.test.cjs',
+    source_sha256: Object.fromEntries(['recover.test.cjs', 'recover.cjs', 'src/main.rs'].map((relative) => {
+      const sourcePath = path.join(here, relative);
+      return [relative, crypto.createHash('sha256').update(fs.readFileSync(sourcePath)).digest('hex')];
+    })),
     cases,
   }, null, 2)}\n`);
   process.stdout.write(`Recovery RPC fault evidence: ${output}\n`);
@@ -120,8 +128,10 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
   let omitSecond = false;
   let conflictingProvider = false;
   let missingTransactionBody = false;
+  let omitCanonicalTransition = false;
   let reorgDuringCollection = false;
   let concurrentCustodyChange = false;
+  let loseBroadcastResponseOnce = false;
   let tipReads = 0;
   let broadcasts = 0;
   const fundingHash = h('f0');
@@ -159,6 +169,7 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
       if (n === chainTipNumber && reorgDuringCollection) return { header: { number: n, hash: h('c8') }, transactions: [] };
       const hash = n === '0x1' ? blockA : n === '0x2' ? blockB : tipHash;
       const tx = n === '0x1' ? [txAView] : n === '0x2' ? [txBView] : [];
+      if (n === '0x2' && omitCanonicalTransition) return { header: { number: n, hash }, transactions: [] };
       return { header: { number: n, hash }, transactions: tx };
     }
     if (method === 'estimate_cycles') return { cycles: '0x1234' };
@@ -174,6 +185,10 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
         createdCells.set(`${hash}:${i}`, { output: transaction.outputs[i], data: transaction.outputs_data[i] });
       }
       chainTipNumber = '0x4'; chainTipHash = blockHash;
+      if (loseBroadcastResponseOnce) {
+        loseBroadcastResponseOnce = false;
+        throw new Error('simulated transport loss after node accepted withdrawal');
+      }
       return hash;
     }
     if (method === 'generate_block') return chainTipHash;
@@ -191,6 +206,7 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
       const point = params[0];
       const key = `${point.tx_hash}:${Number(BigInt(point.index))}`;
       if (spentPoints.has(key)) return { status: 'unknown' };
+      if (key.startsWith(`${txA}:`)) return { status: 'unknown' };
       if (concurrentCustodyChange && key === `${txB}:0`) {
         const changedData = writeAmountRoot(7, h('c9'));
         return { status: 'live', cell: { output: outB, data: { content: changedData } } };
@@ -253,6 +269,17 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
   assert.equal(blockResult.entitlement_total, '7');
   assert.equal(blockResult.owner.balance, '2');
 
+  omitCanonicalTransition = true;
+  const incompleteFullHistoryPath = path.join(tmp, 'incomplete-full-block-history.json');
+  const incompleteFullHistory = await runCli([
+    cli, 'collect-blocks', '--node', node.url, '--init', txA, '--owner', ownerB,
+    '--custody-lock', custodyPath, '--xudt-type', assetPath, '--max-blocks', '10',
+    '--out', incompleteFullHistoryPath,
+  ], root);
+  assert.notEqual(incompleteFullHistory.status, 0, 'full-block recovery must reject a missing committed transition');
+  assert.match(incompleteFullHistory.stderr, /initialization-first custody history|last reconstructed custody xUDT output is not live/i);
+  omitCanonicalTransition = false;
+
   omitSecond = true;
   const gapPath = path.join(tmp, 'gap.json');
   const gap = await runCli(argsFor(gapPath), root);
@@ -293,12 +320,16 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
   concurrentCustodyChange = false;
 
   const withdrawalPath = path.join(tmp, 'withdrawal.json');
+  loseBroadcastResponseOnce = true;
   const withdrawn = await runCli([
     cli, 'withdraw', '--node', node.url, '--bundle', bundlePath,
     '--out', withdrawalPath,
   ], root, { TRADE_RECOVERY_PRIVATE_KEY: recoveryKey });
-  assert.equal(withdrawn.status, 0, `${withdrawn.stderr}\n${withdrawn.stdout}`);
+  assert.notEqual(withdrawn.status, 0, 'a lost response after node acceptance must surface as an uncertain submission');
+  assert.match(withdrawn.stderr, /simulated transport loss after node accepted withdrawal/);
+  assert.equal(fs.existsSync(withdrawalPath), true, 'signed transaction report must be durable before send_transaction');
   const withdrawal = JSON.parse(fs.readFileSync(withdrawalPath, 'utf8'));
+  assert.equal(withdrawal.status, 'estimated', 'pre-broadcast report must remain available after the response loss');
   assert.equal(withdrawal.format, 'trade-v2-independent-withdrawal-v1');
   assert.equal(withdrawal.owner_lock_hash, ownerB);
   assert.equal(withdrawal.quantity, '2');
@@ -313,8 +344,6 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
   assert.equal(Buffer.from(withdrawal.external_xudt_data.slice(2), 'hex').readBigUInt64LE(0), 2n);
   assert.match(withdrawal.transaction.witnesses[3], /^0x544d5331/);
   assert.notEqual(withdrawal.transaction.witnesses[2], '0x');
-  withdrawal.status = 'broadcast';
-  fs.writeFileSync(withdrawalPath, JSON.stringify(withdrawal, null, 2));
   const verified = await runCli([cli, 'verify-withdrawal', '--node', node.url, '--report', withdrawalPath], root);
   assert.equal(verified.status, 0, `${verified.stderr}\n${verified.stdout}`);
   const verifiedReport = JSON.parse(fs.readFileSync(withdrawalPath, 'utf8'));
@@ -334,9 +363,10 @@ test('independent RPC recovery reconstructs TMS1 history and fails closed under 
     { case: 'incomplete indexer history', outcome: 'failed closed', detail: 'missing custody successor was not treated as current state' },
     { case: 'conflicting indexer and full-node positions', outcome: 'failed closed', detail: 'block-position mismatch' },
     { case: 'missing committed transaction body', outcome: 'failed closed', detail: 'full node returned no transaction body' },
+    { case: 'incomplete full-block history', outcome: 'failed closed', detail: 'terminal live custody output did not match reconstructed history' },
     { case: 'chain reorganization during history collection', outcome: 'failed closed', detail: 'tip changed during collection' },
     { case: 'concurrent custody successor after proof collection', outcome: 'failed closed', broadcasts: 0 },
     { case: 'already-withdrawn retry', outcome: 'failed closed', broadcasts_after_retry: broadcasts - priorBroadcasts },
-    { case: 'mocked RPC withdrawal control', outcome: 'reported committed by mock only', native_vm_execution: false },
+    { case: 'withdrawal accepted but send response lost', outcome: 'recovered by verifying pre-broadcast report against mock canonical history', transaction_hash: withdrawal.transaction_hash, broadcasts: 1, native_vm_execution: false },
   ]);
 });

@@ -1,0 +1,62 @@
+{
+  "format": "trade-v2-recovery-mocked-rpc-fault-evidence-v1",
+  "execution_boundary": "mocked JSON-RPC; no CKB-VM execution is claimed by this file",
+  "created_at_utc": "2026-11-12T02:36:51.452Z",
+  "source_commit": "00e36a318a23014b5fdf2fb9f4f01608ecee3917",
+  "reproduction_command": "node --test labs/trade-v2-token/gate2/recovery/recover.test.cjs",
+  "source_sha256": {
+    "recover.test.cjs": "f24ec24423fa69652116e357f4d7669a83feeb254967e471d4bfe47ec72e98bc",
+    "recover.cjs": "d42e5e384d8ad37e9db6a625fd06600704b82e37770f73200c9a37a916d32679",
+    "src/main.rs": "1bea017290a5d99dffd7548e85a31e2ae9d3ce42d294b07ede61100a2738bfbd"
+  },
+  "cases": [
+    {
+      "case": "full-block recovery without local proof cache or indexer",
+      "outcome": "reconstructed",
+      "transitions": 2,
+      "indexer_used": false
+    },
+    {
+      "case": "incomplete indexer history",
+      "outcome": "failed closed",
+      "detail": "missing custody successor was not treated as current state"
+    },
+    {
+      "case": "conflicting indexer and full-node positions",
+      "outcome": "failed closed",
+      "detail": "block-position mismatch"
+    },
+    {
+      "case": "missing committed transaction body",
+      "outcome": "failed closed",
+      "detail": "full node returned no transaction body"
+    },
+    {
+      "case": "incomplete full-block history",
+      "outcome": "failed closed",
+      "detail": "terminal live custody output did not match reconstructed history"
+    },
+    {
+      "case": "chain reorganization during history collection",
+      "outcome": "failed closed",
+      "detail": "tip changed during collection"
+    },
+    {
+      "case": "concurrent custody successor after proof collection",
+      "outcome": "failed closed",
+      "broadcasts": 0
+    },
+    {
+      "case": "already-withdrawn retry",
+      "outcome": "failed closed",
+      "broadcasts_after_retry": 0
+    },
+    {
+      "case": "withdrawal accepted but send response lost",
+      "outcome": "recovered by verifying pre-broadcast report against mock canonical history",
+      "transaction_hash": "0x18d47fd0c5674a39ad8a8a5f7801f39f84f8818a6fab4d4048ffdcc2b2ca9e0f",
+      "broadcasts": 1,
+      "native_vm_execution": false
+    }
+  ]
+}
