@@ -8,7 +8,7 @@
 
 This is an experimental engineering assessment, not an audit or deployment approval. It records two isolated branches built from the verified Gate 2 baseline `00e36a318a23014b5fdf2fb9f4f01608ecee3917`:
 
-- Gate 2 security branch `codex/gate2-critical-security-final`, starting at `00e36a318a23014b5fdf2fb9f4f01608ecee3917`; this report is prepared for commit on that branch.
+- Gate 2 security branch `codex/gate2-critical-security-final`, starting at `00e36a318a23014b5fdf2fb9f4f01608ecee3917`; the initial security/evidence publication is commit `42fbb8a`, with this provenance correction committed separately.
 - Gate 3 execution branch `codex/gate3-high-performance-settlement`, validated commit `615bde2` (`Add Gate 3 native contention measurements`), pushed to `origin/codex/gate3-high-performance-settlement`.
 - Preserved verified Gate 2 implementation `cd12260cc831ed2cf02633f72f490a887d3a39ab`, which is an ancestor of the baseline.
 
