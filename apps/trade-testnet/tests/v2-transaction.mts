@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { buildTransition } from '../lib/v2-engine/transaction.ts';
+const cell = (i: number, capacity: bigint, data = '0x') => ({ outPoint: {txHash: '0x' + i.toString(16).padStart(64, '0'), index: '0x0'}, capacity, lock: {}, data });
+const data = '0x' + '00'.repeat(48);
+const cells = [cell(1, 1000n, data), cell(2, 200n), cell(3, 300n, data), cell(4, 400n), cell(5, 1000n)] as Parameters<typeof buildTransition>[0]['cells'];
+const base = { curve: {base: 10n, step: 1n, supply: 100n, inventory: 90n}, cells, custodyAmount: 10n, newRoot: '0x' + 'ab'.repeat(32), witness: '0x1234', fee: 2n, quantity: 3n };
+const buy = buildTransition({...base, side: 'buy'});
+assert.equal(buy.amount, 63n);
+assert.equal(buy.outputs[0].capacity, '0x427');
+assert.equal(buy.outputs[4].capacity, '0x3a7');
+assert.equal(buy.witnesses[5], '0x1234');
+const sell = buildTransition({...base, side: 'sell'});
+assert.equal(sell.amount, 54n);
+assert.equal(sell.outputs[4].capacity, '0x41c');
+assert.throws(() => buildTransition({...base, side: 'sell', custodyAmount: 2n}));
+assert.throws(() => buildTransition({...base, side: 'buy', fee: 1000001n}));
+console.log('Gate 2 unsigned transition layout checks passed');
