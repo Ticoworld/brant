@@ -4,6 +4,7 @@ import { readFundingCell } from './funding.ts';
 import { buildReviewedTransaction } from './review.ts';
 import { quote } from './curve.ts';
 import type { Cell } from './transaction.ts';
+import { discoverMarketPair, discoverCustodyPair } from './lineage.ts';
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
@@ -21,8 +22,9 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const body = await response.json();
   if (!response.ok) throw Error(body.error || 'Proof unavailable');
   const p = body.proof;
-  if (body.genesis !== config.genesis || p.side !== side || p.quantity !== quantity.toString() || p.tip_outpoint.index !== '0x2') throw Error('Proof identity mismatch');
-  const points = [0,1,2,3].map(i=>({tx_hash:p.tip_outpoint.tx_hash,index:'0x'+i.toString(16)})) as [Point,Point,Point,Point];
+  if (body.genesis !== config.genesis || p.side !== side || p.quantity !== quantity.toString() || !p.tip_outpoint) throw Error('Proof identity mismatch');
+  const [market, custody] = await Promise.all([discoverMarketPair(rpc,[config.initial[0],config.initial[1]]),discoverCustodyPair(rpc,p.tip_outpoint)]);
+  const points:[Point,Point,Point,Point] = [...market,...custody];
   const live = await readLiveSingletons(rpc,points,config.genesis);
   if (live.cells[0].output.lock.code_hash.toLowerCase() !== pinned.market_smt || live.cells[0].output.lock.hash_type !== 'data1' || live.cells[2].output.lock.code_hash.toLowerCase() !== pinned.custody_smt || live.cells[2].output.lock.hash_type !== 'data1') throw Error('Market or custody script is not the pinned Gate 2 binary');
   if (live.custodyRoot.toLowerCase() !== p.old_root.toLowerCase()) throw Error('Stale custody proof');

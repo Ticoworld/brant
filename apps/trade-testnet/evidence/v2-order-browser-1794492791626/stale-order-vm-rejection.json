@@ -1,0 +1,126 @@
+{
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0xa9aa1aa6bf9016366e54c4c26e3d882d3c92fe8fc1785d424c546a7bc700a0ad",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x26e466cd19db8c54d1ae29fa5effea5d2ac7840a6624437f4e2230289cccdabb",
+          "index": "0xc"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x26e466cd19db8c54d1ae29fa5effea5d2ac7840a6624437f4e2230289cccdabb",
+          "index": "0xd"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x26e466cd19db8c54d1ae29fa5effea5d2ac7840a6624437f4e2230289cccdabb",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [
+      "0x4a237af232ce41c891f7f84a4d6797914689c1f766f38611ff00c562e01dd5f2"
+    ],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x22c5ba50b29e6cae4dc2f48ec653bf8c2b937edcd524e726e8119d4c8dd8b2cc",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x22c5ba50b29e6cae4dc2f48ec653bf8c2b937edcd524e726e8119d4c8dd8b2cc",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x0c5ac62e97e0fde1c550fe61560087c99082a8970736af056336751ae893b28b",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "args": "0x012eb3f77fe15020efcc5660adc5246d14d29b47300eaa862fd5fec3908594dc853b3e2efe341d3abecffbda8ba88a44b2f97ad02643446f8216b0a6067640bf4a237af232ce41c891f7f84a4d6797914689c1f766f38611ff00c562e01dd5f24d0eb7a327bd0139519f243be70d7d2dd2634bae6699f08fe9b2935a48d7fa0c",
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1"
+        },
+        "type": {
+          "args": "0x517fcd068fe468ecb79ca9ae3d0d3aec5d2c89de262b29cac34954da02371c0a",
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "args": "0x012eb3f77fe15020efcc5660adc5246d14d29b47300eaa862fd5fec3908594dc853b3e2efe341d3abecffbda8ba88a44b2f97ad02643446f8216b0a6067640bf4a237af232ce41c891f7f84a4d6797914689c1f766f38611ff00c562e01dd5f24d0eb7a327bd0139519f243be70d7d2dd2634bae6699f08fe9b2935a48d7fa0c",
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1"
+        },
+        "type": {
+          "args": "0x012eb3f77fe15020efcc5660adc5246d14d29b47300eaa862fd5fec3908594dc",
+          "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+          "hashType": "data1"
+        }
+      },
+      {
+        "capacity": "0x29e8d2fac0",
+        "lock": {
+          "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d",
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type"
+        }
+      },
+      {
+        "capacity": "0x2540be400",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0xa3c778981c19e1dcc611fb2132dcdaac075a5064"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x0700000000000000000000000000000035e709cff129104c7ae0100598d4d78d1cda8cb273d2a0c842d0c04c57aa17a7",
+      "0x537855dd9a9d081a387e9c694ba56eef7143015d2e967475861aa5e41122a518853b3e2efe341d3abecffbda8ba88a44b2f97ad02643446f8216b0a6067640bf",
+      "0x",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x55000000100000005500000055000000410000009dc7630ee6b57cdc83231bdcfe483b6636a78f2f40a833a71c32581ab3c6aa0261f597d6f390cfe52f627fadf43c7e10a9154c8fbdd3dbda5fa09b6ca6f89d7a00",
+      "0x544d5331010802000900000059297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b01000000000000000100000000000000010000000000000000000000000000000200000000000000020000000000000001000000000000000000000000000000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38060000000000000002000000000000000100000000000000000000000000000005000000000000000300000000000000010000000000000000000000000000004c4ffe4c4ffe484f01010000000000000000e40b540200000085a20d59df9e021eb0eb2c7c73065ba8b06ce25cd8804905888ca45ff5439e1fe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e3802c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee586438cffeab7001bcf0f71a472d039be9039ed8ffd693c895dfcdf9c7b9028d21a437104a9fb1618274d9c685856086603102d99f358688a79a5dfbb72d194de01"
+    ]
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "error": {
+      "code": -302,
+      "message": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 38 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#38 })",
+      "data": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 38 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#38 } }"
+    },
+    "id": 1
+  }
+}

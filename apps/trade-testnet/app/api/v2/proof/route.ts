@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   if (url.protocol !== 'http:' || !['127.0.0.1','localhost','[::1]'].includes(url.hostname) || url.username || url.password) return NextResponse.json({error:'Local RPC required'}, {status:503});
   let body: {owner?: string; side?: string; quantity?: string};
   try { body = await request.json(); } catch { return NextResponse.json({error:'Invalid JSON'}, {status:400}); }
-  if (!body || typeof body !== 'object' || !hash.test(body.owner || '') || !['buy','sell'].includes(body.side || '') || !/^[1-9][0-9]{0,19}$/.test(body.quantity || '') || BigInt(body.quantity!) > (1n << 64n) - 1n) return NextResponse.json({error:'Invalid owner, side, or quantity'}, {status:400});
+  if (!body || typeof body !== 'object' || !hash.test(body.owner || '') || !['buy','sell','withdraw'].includes(body.side || '') || !/^[1-9][0-9]{0,19}$/.test(body.quantity || '') || BigInt(body.quantity!) > (1n << 64n) - 1n) return NextResponse.json({error:'Invalid owner, side, or quantity'}, {status:400});
   const deploymentPath = process.env.ROVEKO_LOCAL_DEPLOYMENT;
   const proofBinary = process.env.ROVEKO_PROOF_BINARY;
   if (!deploymentPath || !proofBinary) return NextResponse.json({error:'Local deployment and proof binary are not configured'}, {status:503});

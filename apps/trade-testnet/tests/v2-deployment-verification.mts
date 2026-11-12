@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {verifyCodeDeployment} from '../lib/v2-engine/deployment-verification.ts';
+const lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'11'.repeat(20)};
+const code='0x1234',hash=ccc.hashCkb(code),genesis='0x'+'11'.repeat(32),block='0x'+'22'.repeat(32);
+const tx=ccc.Transaction.from({inputs:[{previousOutput:{txHash:'0x'+'33'.repeat(32),index:0}}],outputs:[{capacity:10000000000n,lock},{capacity:10000000000n,lock}],outputsData:[code,'0x']});
+const rpc=async(method:string)=>method==='get_block_hash'?genesis:method==='get_transaction'?{tx_status:{status:'committed',block_hash:block},transaction:cccA.JsonRpcTransformers.transactionFrom(tx)}:method==='get_header'?{number:'0x1',hash:block}:{status:'live',cell:{data:{hash,content:code}}};
+const canonical=async(method:string,params:unknown[])=>method==='get_block_hash'&&params[0]==='0x1'?block:rpc(method);
+assert.equal((await verifyCodeDeployment(canonical,tx,genesis,[hash])).hash,tx.hash());
+await assert.rejects(()=>verifyCodeDeployment(async(m,p)=>m==='get_transaction'?{tx_status:{status:'pending'}}:canonical(m,p),tx,genesis,[hash]),/not committed/);
+await assert.rejects(()=>verifyCodeDeployment(async(m,p)=>m==='get_block_hash'&&p[0]==='0x1'?genesis:canonical(m,p),tx,genesis,[hash]),/canonical/);
+await assert.rejects(()=>verifyCodeDeployment(async(m,p)=>m==='get_live_cell'?{status:'dead'}:canonical(m,p),tx,genesis,[hash]),/unavailable/);
+console.log('deployment confirmation checks passed');

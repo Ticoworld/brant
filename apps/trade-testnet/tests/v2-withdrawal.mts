@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { ccc } from '@ckb-ccc/core';
+import { buildWithdrawal } from '../lib/v2-engine/withdrawal.ts';
+const le=(n:bigint,len:number)=>Array.from({length:len},(_,i)=>Number((n>>BigInt(8*i))&255n).toString(16).padStart(2,'0')).join('');
+const lock={codeHash:'0x'+'11'.repeat(32),hashType:'type' as const,args:'0x'+'22'.repeat(20)};
+const owner=ccc.Script.from(lock).hash();
+const type={codeHash:'0x'+'33'.repeat(32),hashType:'data1' as const,args:'0x'+'44'.repeat(32)};
+const point=(i:number)=>({txHash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'});
+const cells=[{outPoint:point(1),capacity:30000000000n,lock,type,data:'0x'+le(4n,16)+'aa'.repeat(32)},{outPoint:point(2),capacity:30000000000n,lock,type,data:'0x'},{outPoint:point(3),capacity:100000000000n,lock,data:'0x'}] as Parameters<typeof buildWithdrawal>[0];
+const witness='0x544d533101050100'+le(1n,4)+owner.slice(2)+le(4n,8)+le(1n,8)+'01'+'00'.repeat(15)+le(3n,8)+le(2n,8)+'01'+'00'.repeat(15)+'00';
+const args=[cells,1n,'0x'+'bb'.repeat(32),witness,100000n,[],'0x'+'cc'.repeat(32),owner] as const;
+const tx=buildWithdrawal(cells,args[1],args[2],witness,args[4],[],args[6],owner).transaction;
+assert.equal(tx.inputs.length,3); assert.equal(tx.outputs.length,4); assert.equal(tx.outputsData[2],'0x'+le(1n,16));
+assert.throws(()=>buildWithdrawal(cells,2n,args[2],witness,args[4],[],args[6],owner),/quantity/);
+assert.throws(()=>buildWithdrawal(cells,1n,args[2],witness,1000001n,[],args[6],owner),/parameters/);
+assert.throws(()=>buildWithdrawal(cells,1n,args[2],witness,args[4],[],args[6],'0x'+'ff'.repeat(32)),/owner/);
+console.log('Withdrawal layout checks passed');

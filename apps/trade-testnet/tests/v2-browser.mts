@@ -43,7 +43,7 @@ try {
   await page.waitForFunction(() => typeof (window as any).rovTestConnect === 'function');
   const genesis=await rpc('get_block_by_number',['0x0']);
   await page.evaluate(({key,secp}:any) => {const w=window as any; w.rovTestConnect(w.createDisposableTestSigner(key,secp));},{key:native.keys[2],secp:{outPoint:{txHash:genesis.transactions[1].hash,index:'0x0'},depType:'depGroup'}});
-  await page.getByLabel('Token quantity').fill('1');
+  await page.locator('#rv-quantity').fill('1');
   const transactions: Record<string, any> = {};
   for(const side of ['buy','sell']){
     if(side==='sell') await page.getByRole('button',{name:'Sell back'}).click();
@@ -51,7 +51,7 @@ try {
     await page.getByRole('button',{name:'Sign and submit reviewed transaction'}).waitFor({timeout:180000});
     await page.getByRole('button',{name:'Sign and submit reviewed transaction'}).click();
     await page.getByRole('status').filter({hasText:/Submitted 0x/}).waitFor({timeout:180000});
-    const status=await page.getByRole('status').innerText();
+    const status=await page.getByRole('status').filter({hasText:/Submitted 0x/}).innerText();
     const hash=status.match(/0x[0-9a-f]{64}/i)?.[0]; assert(hash,status);
     let committed;
     for (let i=0;i<12;i++) { await rpc('generate_block'); committed=await rpc('get_transaction',[hash]); if(committed?.tx_status?.status==='committed') break; }

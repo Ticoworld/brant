@@ -758,6 +758,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
         "owner_membership_proof":{"key":fmt(owner_key.as_slice()),"leaf_value":old_hex,"compiled_proof":fmt(&proof),"proof_bytes":proof.len(),"root_verified":valid},
         "withdrawal_template":withdrawal_template,
         "domain":{"market_script_hash":fmt(market_hash),"xudt_type_script_hash":fmt(asset_hash),"genesis_hash":fmt(genesis_hash),"custody_marker_type_hash":fmt(marker_hash),"args_len":script_args.len()},
+        "owners":owner_keys.iter().map(|(owner,key)| { let p = &map[key]; json!({"owner_lock_hash":fmt(owner),"balance":p.balance.to_string(),"revision":p.revision.to_string(),"active":p.active}) }).collect::<Vec<_>>(),
         "transitions":transitions
     }))
 }
@@ -787,7 +788,7 @@ fn run() -> Result<()> {
             let b: Bundle = serde_json::from_str(&read_json(Some(&a[1]))?)?;
             let result = replay(&b)?;
             let side = &a[2];
-            ensure!(side == "buy" || side == "sell", "invalid side");
+            ensure!(side == "buy" || side == "sell" || side == "withdraw", "invalid side");
             let quantity: u64 = a[3].parse()?;
             ensure!(quantity > 0, "quantity must be positive");
             let balance: u64 = result["owner"]["balance"].as_str().unwrap().parse()?;
@@ -805,7 +806,7 @@ fn run() -> Result<()> {
             let key = H256::from(<[u8; 32]>::try_from(key).map_err(|_| anyhow!("key length"))?);
             let root = CompiledMerkleProof(proof.clone()).compute_root::<CkbHasher>(vec![(key, H256::from(leaf))])?;
             let mut witness = b"TMS1".to_vec();
-            witness.extend_from_slice(&[1, if side == "buy" { 1 } else { 4 }, 1, 0]);
+            witness.extend_from_slice(&[1, if side == "buy" { 1 } else if side == "sell" { 4 } else { 5 }, 1, 0]);
             witness.extend_from_slice(&(proof.len() as u32).to_le_bytes());
             witness.extend_from_slice(&owner); witness.extend_from_slice(&old); witness.extend_from_slice(&leaf); witness.extend_from_slice(&proof);
             write_json(&json!({"old_root":result["ownership_root"],"new_root":fmt(root.as_slice()),"witness":fmt(&witness),"quantity":quantity.to_string(),"side":side,"owner":result["owner"],"tip_outpoint":result["tip_outpoint"]}), None)
