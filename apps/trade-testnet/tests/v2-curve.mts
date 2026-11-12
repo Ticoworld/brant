@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { quote, decodeCurve } from '../lib/v2-engine/curve.ts';
+const c = { base: 10n, step: 1n, supply: 100n, inventory: 90n };
+assert.equal(quote(c, 'buy', 3n), 63n);
+assert.equal(quote({ ...c, inventory: 87n }, 'sell', 3n), 63n);
+assert.throws(() => quote(c, 'sell', 11n));
+assert.throws(() => quote(c, 'buy', 0n));
+assert.throws(() => quote({ ...c, base: (1n << 64n) - 1n }, 'buy', 2n));
+const le = (n: bigint, size: number) => Array.from({ length: size }, (_, i) => Number((n >> BigInt(i * 8)) & 255n).toString(16).padStart(2, '0')).join('');
+assert.deepEqual(decodeCurve('0x' + '00'.repeat(32) + le(10n, 8) + le(1n, 8) + le(100n, 8) + '00'.repeat(32), '0x' + le(90n, 16) + '00'.repeat(32)), c);
+assert.throws(() => decodeCurve('0x', '0x'));
+console.log('Gate 2 curve arithmetic checks passed');
