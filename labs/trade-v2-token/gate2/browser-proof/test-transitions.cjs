@@ -1,0 +1,19 @@
+'use strict';
+const assert = require('node:assert/strict');
+const {spawnSync} = require('node:child_process');
+const path = require('node:path');
+const bin = path.join(__dirname, 'target/release', process.platform === 'win32' ? 'trade-v2-recovery.exe' : 'trade-v2-recovery');
+const bundle = path.join(__dirname, '../evidence/native-1794410154147/recovery-history.json');
+function run(side, qty) { return spawnSync(bin, ['transition', bundle, side, qty], {encoding:'utf8'}); }
+const buy = run('buy','1'); assert.equal(buy.status,0,buy.stderr);
+const b = JSON.parse(buy.stdout);
+assert.equal(b.old_root,'0x6e3067fae47381798a36e2972b09e91eac34b4d02695055c229fa7c61f0b072a');
+assert.match(b.witness,/^0x544d533101010100/);
+assert.notEqual(b.old_root,b.new_root);
+const sell = run('sell','1'); assert.equal(sell.status,0,sell.stderr);
+const s = JSON.parse(sell.stdout); assert.match(s.witness,/^0x544d533101040100/);
+assert.notEqual(s.new_root,b.new_root);
+assert.notEqual(run('sell','2').status,0);
+assert.notEqual(run('buy','0').status,0);
+assert.notEqual(run('transfer','1').status,0);
+console.log('replayed buy/sell proof transitions and rejected invalid quantities');
