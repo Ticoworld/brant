@@ -6,6 +6,7 @@ import os from 'node:os';
 import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {chromium} from 'playwright-core';
+import {ccc} from '@ckb-ccc/core';
 const root=path.resolve(import.meta.dirname,'..'), require=createRequire(import.meta.url), webpack=require('next/dist/compiled/webpack/webpack').webpack;
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rov-deploy-test-'));
 await new Promise<void>((resolve,reject)=>webpack({mode:'development',target:'web',entry:path.join(root,'tests/v2-deploy-wallet-entry.cjs'),output:{path:dir,filename:'wallet.js'}},(e:Error,s:any)=>e||s.hasErrors()?reject(e||Error(s.toString({all:false,errors:true}))):resolve()));
@@ -54,5 +55,13 @@ try{
  await p.getByRole('button',{name:'Reconcile saved attempt'}).click();
  await p.getByText(/retain the journal and do not retry/).waitFor();
  assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('roveko-v2-code-deployment-v1')!).state),'submitted');
+ await p.evaluate(()=>localStorage.removeItem('roveko-v2-code-deployment-v1')); await p.reload();
+ const backup={...attempt,codeHashes:codes.map(c=>ccc.hashCkb(c.data)),extra:'not persisted'};
+ await p.getByLabel('Restore public backup JSON').fill(JSON.stringify(backup));
+ await p.getByRole('button',{name:'Restore attempt'}).click();
+ await p.getByText(/Backup restored/).waitFor();
+ const saved=await p.evaluate(()=>localStorage.getItem('roveko-v2-code-deployment-v1'));
+ assert(saved && !saved.includes('not persisted'));
+ assert(await p.getByRole('button',{name:'Prepare unsigned review'}).isDisabled());
  console.log('V2 deployment browser review checks passed (mock RPC; no signing)');
 }finally{await browser?.close();next.kill();}

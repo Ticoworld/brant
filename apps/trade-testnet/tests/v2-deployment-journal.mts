@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {advanceDeploymentAttempt,parseDeploymentAttempt,saveDeploymentAttempt,reserveDeploymentAttempt} from '../lib/v2-engine/deployment-journal.ts';
+import {advanceDeploymentAttempt,parseDeploymentAttempt,saveDeploymentAttempt,reserveDeploymentAttempt,importDeploymentAttempt} from '../lib/v2-engine/deployment-journal.ts';
 const hash = (v:string) => '0x'+v.repeat(64);
 const prepared = parseDeploymentAttempt(JSON.stringify({version:1,genesis:hash('1'),owner:hash('2'),txHash:hash('3'),codeHashes:[hash('4')],state:'prepared'}));
 const submitted = advanceDeploymentAttempt(prepared,'submitted');
@@ -16,4 +16,12 @@ assert.throws(()=>saveDeploymentAttempt(storage,{...submitted,txHash:hash('6')})
 assert.throws(()=>reserveDeploymentAttempt(storage,submitted),/reconciliation/);
 saved=null; reserveDeploymentAttempt(storage,submitted);
 assert.throws(()=>reserveDeploymentAttempt(storage,{...submitted,txHash:hash('6')}),/reconciliation/);
+saved=null;
+assert.throws(()=>importDeploymentAttempt(storage,JSON.stringify(submitted),hash('9'),[hash('4')]),/network/);
+const restored=importDeploymentAttempt(storage,JSON.stringify({...submitted,secret:'discard me'}),hash('1'),[hash('4')]);
+assert.equal(restored.state,'submitted'); assert(!saved!.includes('discard me'));
+assert.throws(()=>importDeploymentAttempt(storage,JSON.stringify(submitted),hash('1'),[hash('4')]),/reconciliation/);
+saved=null;
+const confirmed=advanceDeploymentAttempt(submitted,'confirmed',hash('5'));
+assert.deepEqual(importDeploymentAttempt(storage,JSON.stringify(confirmed),hash('1'),[hash('4')]),{...submitted,blockHash:hash('5')});
 console.log('Deployment journal checks passed');

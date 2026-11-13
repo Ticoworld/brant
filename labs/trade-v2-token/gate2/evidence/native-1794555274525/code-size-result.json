@@ -1,0 +1,26 @@
+{
+  "scope": "disposable localhost only",
+  "genesis": "0x2a5300d44d285dbfed6918008d9747ca1524273815d06e2c9d62c017c008a514",
+  "hash": "0x20be0e7466260ee3da6c81ea2f980e3db4867455fb9a0c3830670857ca072676",
+  "sizeBytes": 115824,
+  "feeShannons": "1000000",
+  "outputCapacityShannons": "11523300000000",
+  "dataBytes": [
+    53632,
+    30704,
+    4184,
+    13096,
+    13312
+  ],
+  "estimate": {
+    "cycles": "0x18ef06"
+  },
+  "submitted": "0x20be0e7466260ee3da6c81ea2f980e3db4867455fb9a0c3830670857ca072676",
+  "committed": {
+    "block_hash": "0xc62a0163ed84c16bd38361da20810d6949e0ffa382108b49476d86f831bb2a64",
+    "block_number": "0x1c",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  }
+}

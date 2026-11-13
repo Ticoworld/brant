@@ -4,8 +4,9 @@ export type DeploymentAttempt = { version: 1; genesis: string; owner: string; tx
 const h = /^0x[0-9a-f]{64}$/i;
 export function parseDeploymentAttempt(raw: string): DeploymentAttempt {
   const v = JSON.parse(raw) as DeploymentAttempt;
-  if (!v || v.version !== 1 || !h.test(v.genesis) || !h.test(v.owner) || !h.test(v.txHash) || !Array.isArray(v.codeHashes) || !v.codeHashes.length || v.codeHashes.some(x => !h.test(x)) || new Set(v.codeHashes.map(x => x.toLowerCase())).size !== v.codeHashes.length || !['prepared','submitted','confirmed'].includes(v.state) || (v.state === 'confirmed' && (!v.blockHash || !h.test(v.blockHash)))) throw Error('Invalid deployment journal');
-  return v;
+  if (!v || v.version !== 1 || !h.test(v.genesis) || !h.test(v.owner) || !h.test(v.txHash) || !Array.isArray(v.codeHashes) || !v.codeHashes.length || v.codeHashes.some(x => !h.test(x)) || new Set(v.codeHashes.map(x => x.toLowerCase())).size !== v.codeHashes.length || !['prepared','submitted','confirmed'].includes(v.state) || (v.blockHash !== undefined && !h.test(v.blockHash)) || (v.state === 'confirmed' && !v.blockHash)) throw Error('Invalid deployment journal');
+  // Construct a public-only record even if imported JSON contains extra fields.
+  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:[...v.codeHashes],state:v.state,...(v.blockHash ? {blockHash:v.blockHash} : {})};
 }
 export function advanceDeploymentAttempt(attempt: DeploymentAttempt, state: DeploymentAttempt['state'], blockHash?: string): DeploymentAttempt {
   const current = parseDeploymentAttempt(JSON.stringify(attempt));
@@ -14,6 +15,19 @@ export function advanceDeploymentAttempt(attempt: DeploymentAttempt, state: Depl
 }
 
 export const JOURNAL_KEY = 'roveko-v2-code-deployment-v1';
+/** Import is a claim, not chain evidence; confirmation always needs rechecking. */
+export function importDeploymentAttempt(storage: Pick<Storage,'getItem'|'setItem'>, raw: string, genesis: string, expectedCodeHashes: string[]) {
+  if (raw.length > 8192) throw Error('Deployment backup is too large');
+  if (storage.getItem(JOURNAL_KEY) !== null) throw Error('Existing deployment attempt requires reconciliation');
+  const v = parseDeploymentAttempt(raw);
+  const expected = new Set(expectedCodeHashes.map(hash=>hash.toLowerCase()));
+  if (v.genesis.toLowerCase() !== genesis.toLowerCase() || expected.size!==expectedCodeHashes.length || v.codeHashes.length !== expected.size || v.codeHashes.some(hash=>!expected.has(hash.toLowerCase()))) throw Error('Backup does not match this network and deployment');
+  if(v.state==='prepared') throw Error('Prepared transaction has no submission to recover');
+  // An imported record can never by itself establish current canonical status.
+  const pending:DeploymentAttempt={version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:v.codeHashes,state:'submitted',...(v.blockHash?{blockHash:v.blockHash}:{})};
+  reserveDeploymentAttempt(storage,pending);
+  return pending;
+}
 /** Call only while holding the origin-wide exclusive deployment lock. */
 export function reserveDeploymentAttempt(storage: Pick<Storage,'getItem'|'setItem'>, attempt: DeploymentAttempt) {
   if (storage.getItem(JOURNAL_KEY) !== null) throw Error('Existing deployment attempt requires reconciliation');

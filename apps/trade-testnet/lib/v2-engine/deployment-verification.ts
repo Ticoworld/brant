@@ -29,6 +29,6 @@ export async function reconcileCodeAttempt(rpc:Rpc, attempt:import('./deployment
   if(tx.hash().toLowerCase()!==attempt.txHash.toLowerCase() || tx.outputs.length!==attempt.codeHashes.length+1) throw Error('Attempt transaction does not match journal');
   if(tx.outputs.slice(0,attempt.codeHashes.length).some(o=>o.lock.hash().toLowerCase()!==attempt.owner.toLowerCase())) throw Error('Code cell owner differs from journal');
   const verified = await verifyCodeDeployment(rpc,tx,attempt.genesis,attempt.codeHashes);
-  if(attempt.state==='confirmed' && attempt.blockHash?.toLowerCase()!==verified.blockHash.toLowerCase()) throw Error('Previously recorded confirmation changed; manual reconciliation required');
+  if(attempt.blockHash && attempt.blockHash.toLowerCase()!==verified.blockHash.toLowerCase()) throw Error('Previously recorded confirmation changed; manual reconciliation required');
   return verified;
 }
