@@ -8,7 +8,7 @@ import { discoverMarketPair, discoverCustodyPair } from './lineage.ts';
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
-type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>};
+type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;initializationTransactionHash?:string};
 const le64 = (n:bigint) => Array.from({length:8},(_,i)=>Number((n >> BigInt(i*8)) & 255n).toString(16).padStart(2,'0')).join('');
 const pinned:Record<string,string> = {
   market_smt:'0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770',
@@ -18,7 +18,7 @@ const pinned:Record<string,string> = {
   xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95',
 };
 export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint) {
-  const response = await fetch('/api/v2/proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString()})});
+  const response = await fetch('/api/v2/proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
   const body = await response.json();
   if (!response.ok) throw Error(body.error || 'Proof unavailable');
   const p = body.proof;

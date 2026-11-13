@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {appendWizardSubmission,confirmWizardSubmission,parseWizard} from '../lib/v2-engine/wizard-journal.ts';
+const h=(s:string)=>'0x'+s.repeat(64);
+const empty=parseWizard(JSON.stringify({version:1,genesis:h('1'),owner:h('2'),entries:[],privateKey:'discard'}));
+assert(!JSON.stringify(empty).includes('privateKey'));
+const code=appendWizardSubmission(empty,'code',h('3'));
+assert.throws(()=>appendWizardSubmission(code,'setup',h('4')),/reconciliation/);
+assert.throws(()=>appendWizardSubmission(code,'code',h('5')),/reconciliation/);
+assert.throws(()=>confirmWizardSubmission(code,'code',h('5'),h('6')),/match/);
+const confirmed=confirmWizardSubmission(code,'code',h('3'),h('6'));
+const setup=appendWizardSubmission(confirmed,'setup',h('4'));
+assert.equal(setup.entries.length,2);
+assert.throws(()=>parseWizard(JSON.stringify({...setup,entries:[setup.entries[1]]})),/stage/);
+assert.throws(()=>appendWizardSubmission(confirmed,'setup',h('3')),/stage/);
+console.log('Deployment wizard journal checks passed');

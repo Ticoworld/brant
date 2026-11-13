@@ -42,7 +42,7 @@ try{
  await p.getByText(/Unsigned code-cell transaction prepared/).waitFor({timeout:30000});
  assert(await p.getByRole('button',{name:'Request wallet signature'}).isDisabled());
  assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
- assert.equal(await p.locator('li').count(),5);
+ assert.equal(await p.getByRole('list',{name:'Code outputs'}).locator('li').count(),5);
  await p.getByLabel(/Protected outpoints/).fill(`${points[0].tx_hash}:0x00`);
  await p.getByRole('button',{name:'Prepare unsigned review'}).click();
  await p.getByText(/Insufficient eligible funds/).waitFor({timeout:30000});

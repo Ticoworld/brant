@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {verifyInitializationSignature} from '../lib/v2-engine/initialization-signature.ts';
+const dir=process.env.ROVEKO_INIT_EVIDENCE;if(!dir)throw Error('Set ROVEKO_INIT_EVIDENCE to the private-node evidence directory');
+const fixture=JSON.parse(fs.readFileSync(path.join(dir,'initialization-bootstrap.json'),'utf8')),setup=JSON.parse(fs.readFileSync(path.join(dir,'initialization-setup-test.json'),'utf8')),next=JSON.parse(fs.readFileSync(path.join(dir,'initialization-continuation-test.json'),'utf8'));
+const tx=(r:any)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(r.transaction));
+const clone=(t:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(t)));
+const check=(signed:ccc.Transaction,index:number,locks:any[])=>{const reviewed=clone(signed);reviewed.witnesses[index]='0x';const owner=ccc.Script.from(locks[index]).hash();assert.equal(verifyInitializationSignature(reviewed,signed,locks.map(lock=>({lock})),index,owner),true);const changed=clone(signed);changed.outputs[0].capacity+=1n;assert.throws(()=>verifyInitializationSignature(reviewed,changed,locks.map(lock=>({lock})),index,owner),/changed/);};
+const setupTx=tx(setup.transaction),issueTx=tx(next.issuance.transaction),purchaseTx=tx(next.purchase.transaction);
+check(setupTx,0,[fixture.wallets[2].lock]);check(issueTx,0,[fixture.wallets[0].lock,setupTx.outputs[0].lock]);check(purchaseTx,2,[issueTx.outputs[0].lock,issueTx.outputs[1].lock,setupTx.outputs[1].lock]);
+const altered=clone(purchaseTx), reviewed=clone(purchaseTx);reviewed.witnesses[2]='0x';altered.witnesses[3]='0x1234';assert.throws(()=>verifyInitializationSignature(reviewed,altered,[{lock:issueTx.outputs[0].lock},{lock:issueTx.outputs[1].lock},{lock:setupTx.outputs[1].lock}],2,setupTx.outputs[1].lock.hash()),/witness/);
+console.log('Initialization wallet signature checks passed');

@@ -1,0 +1,44 @@
+[
+  {
+    "stage": "code",
+    "hash": "0xeaecb533bc5c5610db1140a97c9c1e514c866a0066e6550d1a4f25055e0d255d",
+    "feeShannons": "115828",
+    "cycles": "0x18f780",
+    "block": "0x10"
+  },
+  {
+    "stage": "setup",
+    "hash": "0x4da75426be37f672bbdefa0932e2530b04dfa1ef04fd53e0a7b6c3c4f57a7d4a",
+    "feeShannons": "1000000",
+    "cycles": "0x18e50c",
+    "block": "0x13"
+  },
+  {
+    "stage": "issuance",
+    "hash": "0x844c7521099e006e77ee92453f01a1da8241c39d94a2f83ad2a22fcf53e4f0c8",
+    "feeShannons": "1000000",
+    "cycles": "0x19d953",
+    "block": "0x17"
+  },
+  {
+    "stage": "purchase",
+    "hash": "0x7a835cc5a33e18d3a6f9b22521e14ff96f32e020ee78dc56ed1200aed6a7b6f1",
+    "feeShannons": "1000000",
+    "cycles": "0x1e017f",
+    "block": "0x1b"
+  },
+  {
+    "stage": "buy",
+    "hash": "0xa003b8e6904150a56e3ee95844d73299504df9436a6c65492c6b8d10e3f424d0",
+    "feeShannons": "100000",
+    "cycles": "0x219540",
+    "block": "0x1f"
+  },
+  {
+    "stage": "sell",
+    "hash": "0xd3d6390de7d28f8981b7b07bb81aa008d2ec832b09c92db2ad7760e7eb39959f",
+    "feeShannons": "100000",
+    "cycles": "0x215723",
+    "block": "0x22"
+  }
+]
