@@ -20,3 +20,15 @@ export async function verifyCodeDeployment(rpc:Rpc, reviewed:ccc.Transaction, ex
   }
   return {hash,blockHash:header.hash,outpoints:expectedHashes.map((_,i)=>({tx_hash:hash,index:'0x'+i.toString(16)}))};
 }
+
+/** Reconcile an uncertain attempt using the persisted public identity. */
+export async function reconcileCodeAttempt(rpc:Rpc, attempt:import('./deployment-journal.ts').DeploymentAttempt) {
+  const result=await rpc('get_transaction',[attempt.txHash]) as {transaction?:unknown;tx_status?:{status?:string}};
+  if(result?.tx_status?.status!=='committed'||!result.transaction) throw Error('Attempt is not confirmed; retain the journal and do not retry');
+  const tx=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(result.transaction as never));
+  if(tx.hash().toLowerCase()!==attempt.txHash.toLowerCase() || tx.outputs.length!==attempt.codeHashes.length+1) throw Error('Attempt transaction does not match journal');
+  if(tx.outputs.slice(0,attempt.codeHashes.length).some(o=>o.lock.hash().toLowerCase()!==attempt.owner.toLowerCase())) throw Error('Code cell owner differs from journal');
+  const verified = await verifyCodeDeployment(rpc,tx,attempt.genesis,attempt.codeHashes);
+  if(attempt.state==='confirmed' && attempt.blockHash?.toLowerCase()!==verified.blockHash.toLowerCase()) throw Error('Previously recorded confirmation changed; manual reconciliation required');
+  return verified;
+}

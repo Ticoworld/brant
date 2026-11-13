@@ -27,6 +27,7 @@ try{
    if(method==='get_block_hash')result=params[0]==='0x0'?network:tip;
    else if(method==='get_tip_header')result={hash:tip,number:'0x1'};
    else if(method==='get_indexer_tip')result={block_hash:tip,block_number:'0x1'};
+   else if(method==='get_transaction')result={tx_status:{status:'pending'}};
    else if(method==='get_cells')result={objects:points.map(out_point=>({out_point}))};
    else if(method==='tx_pool_info')result={min_fee_rate:'0x3e8'};
    else if(method==='get_live_cell')result=params[0].tx_hash===codeDep?{status:'live',cell:{data:{hash:'0xf66ca3517241864672b7f47d093aec4d6d4d07824068993eacd728eb9078e236'}}}:{status:'live',cell:{output:{capacity:'0x'+(50000n*100000000n).toString(16),lock,type:null},data:{content:'0x'}}};
@@ -45,5 +46,13 @@ try{
  await p.getByRole('button',{name:'Prepare unsigned review'}).click();
  await p.getByText(/Insufficient eligible funds/).waitFor({timeout:30000});
  network='0x'+'99'.repeat(32);await p.getByRole('button',{name:'Prepare unsigned review'}).click();await p.getByText(/Wrong wallet or RPC genesis/).waitFor();
+ const attempt={version:1,genesis,owner:'0x'+'44'.repeat(32),txHash:'0x'+'55'.repeat(32),codeHashes:['0x'+'66'.repeat(32)],state:'submitted'};
+ await p.evaluate(a=>localStorage.setItem('roveko-v2-code-deployment-v1',JSON.stringify(a)),attempt);
+ await p.reload();
+ await p.getByText(/Saved deployment attempt/).waitFor();
+ assert(await p.getByRole('button',{name:'Prepare unsigned review'}).isDisabled());
+ await p.getByRole('button',{name:'Reconcile saved attempt'}).click();
+ await p.getByText(/retain the journal and do not retry/).waitFor();
+ assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('roveko-v2-code-deployment-v1')!).state),'submitted');
  console.log('V2 deployment browser review checks passed (mock RPC; no signing)');
 }finally{await browser?.close();next.kill();}

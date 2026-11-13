@@ -784,6 +784,26 @@ fn write_json(v: &Value, path: Option<&str>) -> Result<()> {
 fn run() -> Result<()> {
     let a = std::env::args().skip(1).collect::<Vec<_>>();
     match a.first().map(String::as_str) {
+        Some("verify-init") if a.len() == 2 => {
+            let request: Value = serde_json::from_str(&read_json(Some(&a[1]))?)?;
+            let read = |name: &str| -> Result<Vec<u8>> { hex_bytes(request[name].as_str().ok_or_else(|| anyhow!("missing {name}"))?, name) };
+            let domain: [u8;128] = read("domain")?.try_into().map_err(|_| anyhow!("domain length"))?;
+            let owner: [u8;32] = read("owner")?.try_into().map_err(|_| anyhow!("owner length"))?;
+            let root = h256_slice(&read("new_root")?)?;
+            let witness = read("witness")?;
+            let quantity: u64 = request["quantity"].as_str().ok_or_else(|| anyhow!("missing quantity"))?.parse()?;
+            let price: u64 = request["price"].as_str().ok_or_else(|| anyhow!("missing price"))?.parse()?;
+            ensure!(quantity > 0 && witness.len() >= 116 && &witness[..8] == b"TMS1\x01\x00\x01\x00", "invalid initial witness");
+            let len = u32::from_le_bytes(witness[8..12].try_into()?) as usize;
+            ensure!(len > 0 && 108usize.checked_add(len).and_then(|n| n.checked_add(8)) == Some(witness.len()), "invalid proof length");
+            ensure!(witness[12..44] == owner && witness[44..76] == [0u8;32], "initial owner or old leaf mismatch");
+            let mut leaf=[0u8;32]; leaf[..8].copy_from_slice(&quantity.to_le_bytes()); leaf[16]=1;
+            ensure!(witness[76..108] == leaf && witness[108+len..] == price.to_le_bytes(), "initial leaf or price mismatch");
+            let key=derive_key(&domain,&owner); let proof=&witness[108..108+len];
+            csmt_verify(H256::zero(), &[(key,H256::zero())], proof)?;
+            csmt_verify(root, &[(key,H256::from(leaf))], proof)?;
+            write_json(&json!({"verified":true,"new_root":fmt(root.as_slice())}),None)
+        }
         Some("transition") if a.len() == 4 => {
             let b: Bundle = serde_json::from_str(&read_json(Some(&a[1]))?)?;
             let result = replay(&b)?;

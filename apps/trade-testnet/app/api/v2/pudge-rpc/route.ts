@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 export const runtime='nodejs';
-const allowed=new Set(['get_block_hash','get_tip_header','get_live_cell','get_cells','get_indexer_tip','tx_pool_info']);
+const allowed=new Set(['get_block_hash','get_tip_header','get_header','get_transaction','get_live_cell','get_cells','get_indexer_tip','tx_pool_info']);
 export async function POST(request:Request){
   let input:{method?:string;params?:unknown[]};
   try {input=await request.json();} catch {return NextResponse.json({error:'Invalid JSON'}, {status:400});}
