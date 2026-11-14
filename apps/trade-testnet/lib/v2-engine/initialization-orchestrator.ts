@@ -3,6 +3,7 @@ import {buildInitializationSetup,buildIssuance,buildFirstPurchase,deriveMarketId
 import {verifyInitializationLive} from './initialization-live.ts';
 import {nextInitializationStage,verifyInitializationStage} from './initialization-lifecycle.ts';
 import {readFundingCell} from './funding.ts';
+import {verifyPudgeInitialProof} from './pudge-proof-client.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 type Cell=Parameters<typeof verifyInitializationLive>[2][number];
@@ -89,10 +90,6 @@ export async function preparePudgeInitializationStage(rpc:Rpc,request:Request,in
   if(request.params.supply!==2000n||request.params.quantity!==7n||request.params.price!==9100000000n||!prior||prior.transaction.inputs.length!==2||key(request.params.buyer.outPoint)!==key({txHash:prior.transaction.inputs[1].previousOutput.txHash,index:'0x1'}))throw Error('Purchase lineage or terms mismatch');
  }
  return prepareInitializationStage(rpc,PUDGE,request,inputs,deps,prior,async()=>{
-  const owner=ccc.Script.from(inputs[2].lock).hash(),response=await fetch('/api/v2/pudge-init-proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({anchor,owner})});
-  if(!response.ok)throw Error('Pudge initial proof verification unavailable');
-  const proof=await response.json();
-  if(proof.genesis!==PUDGE||proof.market!==id.market.hash()||proof.custody!==id.custody.hash())throw Error('Pudge proof domain mismatch');
-  return proof;
+  return verifyPudgeInitialProof(anchor,ccc.Script.from(inputs[2].lock).hash());
  });
 }

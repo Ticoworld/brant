@@ -1,0 +1,23 @@
+// Exercise CCC's real UTXO Global signer with a disposable in-memory provider.
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {UtxoGlobal} from '@ckb-ccc/utxo-global';
+import {prepareCodeDeployment} from '../lib/v2-engine/deployment.ts';
+import {verifyInitializationSignature} from '../lib/v2-engine/initialization-signature.ts';
+const key='0x'+'00'.repeat(31)+'01',pub='0x0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798';
+const owner=ccc.Script.from({codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:ccc.hashCkbShort(pub)}),contract=ccc.Script.from({codeHash:'0x'+'ab'.repeat(32),hashType:'data1',args:'0x'});
+const secp={outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup' as const},client=ccc.ClientPublicTestnet.open({urls:['http://127.0.0.1:1']}).value;
+const cells=new Map<string,ccc.Cell>();const cell=(i:number,lock:ccc.Script)=>{const point={txHash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'},c=ccc.Cell.from({outPoint:point,cellOutput:{capacity:10000000000n,lock},outputData:'0x'});cells.set(point.txHash,c);return {outPoint:point,capacity:10000000000n,lock,data:'0x'};};
+const a=cell(1,owner),b=cell(2,owner),c=cell(3,contract),d=cell(4,contract);
+(client as any).getCell=async(p:{txHash:string})=>cells.get(p.txHash);(client as any).getKnownScript=async()=>({cellDeps:[]});(client as any).getCellDeps=async()=>[ccc.CellDep.from(secp)];
+let walletNetwork='nervos_testnet',mode='valid';const address=ccc.Address.fromScript(owner,client).toString();
+const provider={getAccount:async()=>[address],getNetwork:async()=>walletNetwork,isConnected:async()=>true,signTransaction:async(value:ccc.Transaction)=>{if(mode==='refuse')throw Error('Wallet declined');const tx=ccc.Transaction.from(value);if(mode==='modified'){tx.outputs[0].capacity+=1n;return tx;}const indices=[];for(let i=0;i<tx.inputs.length;i++)if(cells.get(tx.inputs[i].previousOutput.txHash)?.cellOutput.lock.hash()===owner.hash())indices.push(i);assert(indices.length);const hasher=new ccc.HasherCkb();hasher.update(tx.hash());ccc.Transaction.hashWitnessToHasher(ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex(),hasher);for(const i of indices.slice(1))ccc.Transaction.hashWitnessToHasher(tx.witnesses[i]||'0x',hasher);for(const w of tx.witnesses.slice(tx.inputs.length))ccc.Transaction.hashWitnessToHasher(w,hasher);tx.witnesses[indices[0]]=ccc.WitnessArgs.from({lock:ccc.signMessageSecp256k1(hasher.digest(),key)}).toHex();return tx;}};
+const signer=new UtxoGlobal.SignerCkb(client,provider as never),clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(tx)));
+const data='0x'+'12'.repeat(60),code=prepareCodeDeployment([{name:'code',data,expectedDataHash:ccc.hashCkb(data)}],[a,b],{codeHash:owner.codeHash,hashType:owner.hashType,args:owner.args},secp,1000n);assert.equal(code.status,'review');if(code.status!=='review')throw Error('Missing code review');
+assert(await signer.isConnected());const codeSigned=await signer.signTransaction(clone(code.transaction));assert(verifyInitializationSignature(code.transaction,codeSigned,code.selected,0,owner.hash()));
+const mixed=ccc.Transaction.from({inputs:[{previousOutput:c.outPoint},{previousOutput:d.outPoint},{previousOutput:a.outPoint}],outputs:[{capacity:10000000000n,lock:owner}],outputsData:['0x'],cellDeps:[secp],witnesses:['0x','0x','0x','0x1234']});
+const mixedSigned=await signer.signTransaction(clone(mixed));assert(verifyInitializationSignature(mixed,mixedSigned,[c,d,a],2,owner.hash()));
+mode='modified';const changed=await signer.signTransaction(clone(mixed));assert.throws(()=>verifyInitializationSignature(mixed,changed,[c,d,a],2,owner.hash()),/changed/);
+mode='refuse';await assert.rejects(()=>signer.signTransaction(clone(mixed)),/declined/);walletNetwork='nervos';assert.equal(await signer.isConnected(),false);
+console.log('CCC UTXO Global adapter checks passed with disposable provider');

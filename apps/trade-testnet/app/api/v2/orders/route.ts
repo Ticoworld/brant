@@ -8,7 +8,7 @@ import { orderMessage } from '../../../../lib/v2-engine/order.ts';
 import { parseOrder, type StoredOrder } from '../../../../lib/v2-engine/local-order.ts';
 export const runtime='nodejs';export const dynamic='force-dynamic';
 function db(){const d=new DatabaseSync(process.env.ROVEKO_ORDER_DB||path.join(tmpdir(),'roveko-local-orders.sqlite'));d.exec('PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS orders (genesis TEXT NOT NULL, id TEXT NOT NULL, payload TEXT NOT NULL, created INTEGER NOT NULL, PRIMARY KEY(genesis,id))');return d;}
-function enabled(req:Request){return process.env.NEXT_PUBLIC_LOCAL_FIXTURE==='1'&&localRequest(req);}
+function enabled(req:Request){return process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_LOCAL_FIXTURE==='1'&&localRequest(req);}
 async function deployment(){const p=process.env.V2_LOCAL_BOOTSTRAP;if(!p) throw Error('Local deployment unavailable');return JSON.parse(await readFile(p,'utf8'));}
 function verify(value:StoredOrder,d:any){
  const t=parseOrder(value),message=orderMessage(t);

@@ -12,10 +12,11 @@ import { signAndSubmitReviewed } from '../../lib/v2-engine/wallet.ts';
 import { cccA } from '@ckb-ccc/core/advanced';
 import WithdrawalPanel from './withdrawal-panel';
 import OrderPanel from './order-panel';
+import PudgeMarket from './pudge-market';
 
-const localMode = process.env.NEXT_PUBLIC_LOCAL_FIXTURE === '1';
+const localMode = process.env.NODE_ENV!=='production' && process.env.NEXT_PUBLIC_LOCAL_FIXTURE === '1' && process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK!=='1';
 const client = ccc.ClientPublicTestnet.open({urls:localMode && typeof window !== 'undefined' ? [`${window.location.origin}/api/local-rpc`] : ['https://testnet.ckb.dev/', 'https://testnet.ckbapp.dev/']}).value;
-export default function Screen() { return <Provider name="ROVEKO" defaultClient={client} clientOptions={[{name:localMode ? 'Disposable local CKB' : 'CKB Pudge',client}]}><Market /></Provider>; }
+export default function Screen() { return <Provider name="ROVEKO" defaultClient={client} clientOptions={[{name:localMode ? 'Disposable local CKB' : 'CKB Pudge',client}]}>{localMode?<Market />:<PudgeMarket/>}</Provider>; }
 function Market() {
   const connector = useCcc(), connectedSigner = useSigner();
   const [testSigner, setTestSigner] = useState<typeof connectedSigner>(undefined);

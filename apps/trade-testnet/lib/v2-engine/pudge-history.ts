@@ -16,7 +16,7 @@ const sum=(a:bigint[])=>a.reduce((x,y)=>x+y,0n);
 
 /** Rebuild each claimed stage from canonical transaction history. This is a
  * read-only recovery check; no saved browser receipt is accepted as proof. */
-export async function recoverPudgeHistory(rpc:Rpc,attempt:DeploymentAttempt,rawWizard:WizardJournal,proof: (anchor:{txHash:string;index:string},owner:string)=>Promise<{owner:string;newRoot:string;witness:string}>) {
+export async function recoverPudgeHistory(rpc:Rpc,attempt:DeploymentAttempt,rawWizard:WizardJournal,proof: (anchor:{txHash:string;index:string},owner:string)=>Promise<{owner:string;newRoot:string;witness:string}>,options:{requireSuccessors?:boolean}={}) {
  const journal=parseWizard(JSON.stringify(rawWizard));
  if(!attempt.anchor||attempt.genesis.toLowerCase()!==genesis||journal.genesis.toLowerCase()!==genesis||journal.owner.toLowerCase()!==attempt.owner.toLowerCase()||journal.entries[0]?.txHash.toLowerCase()!==attempt.txHash.toLowerCase())throw Error('Deployment recovery identity mismatch');
  const expected=[hashes.custody,hashes.market,hashes.custodyMarker,hashes.marker,hashes.owner];
@@ -72,9 +72,12 @@ export async function recoverPudgeHistory(rpc:Rpc,attempt:DeploymentAttempt,rawW
   stages[entry.stage]=value;
  }
  const last=journal.entries.at(-1)?.stage;
- if(last==='code')await live(anchor);
- if(last==='setup'){await live({txHash:stages.setup.tx.hash(),index:'0x0'});await live({txHash:stages.setup.tx.hash(),index:'0x1'});await live(anchor);}
- if(last==='issuance'){await live({txHash:stages.issuance.tx.hash(),index:'0x0'});await live({txHash:stages.issuance.tx.hash(),index:'0x1'});await live({txHash:stages.setup.tx.hash(),index:'0x1'});}
- if(last==='purchase')for(let i=0;i<4;i++)await live({txHash:stages.purchase.tx.hash(),index:'0x'+i.toString(16)});
+ if(options.requireSuccessors===false&&last!=='purchase')throw Error('Historical recovery requires completed initialization');
+ if(options.requireSuccessors!==false){
+  if(last==='code')await live(anchor);
+  if(last==='setup'){await live({txHash:stages.setup.tx.hash(),index:'0x0'});await live({txHash:stages.setup.tx.hash(),index:'0x1'});await live(anchor);}
+  if(last==='issuance'){await live({txHash:stages.issuance.tx.hash(),index:'0x0'});await live({txHash:stages.issuance.tx.hash(),index:'0x1'});await live({txHash:stages.setup.tx.hash(),index:'0x1'});}
+  if(last==='purchase')for(let i=0;i<4;i++)await live({txHash:stages.purchase.tx.hash(),index:'0x'+i.toString(16)});
+ }
  return {code,identity:id,stages};
 }

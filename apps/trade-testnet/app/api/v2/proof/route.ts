@@ -16,7 +16,7 @@ const hash = /^0x[0-9a-f]{64}$/i;
 // This experimental local-only endpoint accepts public identities, never keys.
 // Configuration is server-owned: clients cannot choose RPC URLs or paths.
 export async function POST(request: Request) {
-  if (process.env.ROVEKO_LOCAL_PROOFS !== '1') return NextResponse.json({error:'Local proof service is disabled'}, {status:503});
+  if (process.env.NODE_ENV === 'production' || process.env.ROVEKO_LOCAL_PROOFS !== '1') return NextResponse.json({error:'Local proof service is disabled'}, {status:503});
   const rpc = process.env.ROVEKO_LOCAL_RPC || 'http://127.0.0.1:19224';
   let url: URL;
   try { url = new URL(rpc); } catch { return NextResponse.json({error:'Invalid RPC configuration'}, {status:503}); }
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   try {
     let deployment;
     if(body.initTxHash){
-      if(process.env.NODE_ENV==='production'||process.env.NEXT_PUBLIC_LOCAL_FIXTURE!=='1'||!process.env.ROVEKO_INIT_BOOTSTRAP||!hash.test(body.initTxHash))throw Error('Fixture handoff unavailable');
+      if(process.env.NEXT_PUBLIC_LOCAL_FIXTURE!=='1'||!process.env.ROVEKO_INIT_BOOTSTRAP||!hash.test(body.initTxHash))throw Error('Fixture handoff unavailable');
       const f=JSON.parse(await readFile(process.env.ROVEKO_INIT_BOOTSTRAP,'utf8'));
       const id=deriveMarketIdentity({anchor:f.wallets[0].outPoint,genesis:f.genesis,base:1000000000n,step:100000000n,supply:2000n,codes:{market:f.hashes.market_smt,marker:f.hashes.marker_candidate,owner:f.hashes.owner_lineage_candidate,custody:f.hashes.custody_smt,custodyMarker:f.hashes.custody_marker,xudt:f.hashes.xudt}});
       const call=async(method:string,params:unknown[])=>{const r=await fetch(rpc,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(5000)});const j=await r.json();if(!r.ok||j.error)throw Error('Fixture RPC failed');return j.result;};

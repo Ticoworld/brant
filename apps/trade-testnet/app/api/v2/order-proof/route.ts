@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 const run = promisify(execFile), hash = /^0x[0-9a-f]{64}$/;
 type Owner = {owner_lock_hash:string;balance:string;revision:string;active:boolean};
 export async function POST(request:Request) {
-  if (process.env.ROVEKO_LOCAL_PROOFS !== '1') return NextResponse.json({error:'Local proof service disabled'}, {status:503});
+  if (process.env.NODE_ENV === 'production' || process.env.ROVEKO_LOCAL_PROOFS !== '1') return NextResponse.json({error:'Local proof service disabled'}, {status:503});
   const rpc=process.env.ROVEKO_LOCAL_RPC || 'http://127.0.0.1:19224';
   let url:URL; try {url=new URL(rpc);} catch {return NextResponse.json({error:'Invalid local node'}, {status:503});}
   if (url.protocol!=='http:' || !['localhost','127.0.0.1','[::1]'].includes(url.hostname) || url.username || url.password) return NextResponse.json({error:'Local node required'}, {status:503});

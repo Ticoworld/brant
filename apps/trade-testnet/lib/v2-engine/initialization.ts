@@ -34,7 +34,7 @@ export function buildInitializationSetup(p:{identity:Identity;anchor:{txHash:str
   for(const c of p.inputs){const key=`${c.outPoint.txHash.toLowerCase()}:${BigInt(c.outPoint.index)}`;if(seen.has(key)||key===`${p.anchor.txHash.toLowerCase()}:${BigInt(p.anchor.index)}`||c.type||c.data!=='0x'||!equalScript(c.lock,wallet))throw Error('Invalid or reserved setup input');seen.add(key);total+=c.capacity;}
   const change=total-p.ownerCapacity-p.buyerCapacity-p.fee;if(change<0n)throw Error('Insufficient setup funding');
   const capacities=[p.ownerCapacity,p.buyerCapacity,change];
-  return checked(ccc.Transaction.from({inputs:p.inputs.map(point),outputs:[{capacity:p.ownerCapacity,lock:p.identity.owner},{capacity:p.buyerCapacity,lock:wallet},{capacity:change,lock:wallet}],outputsData:['0x','0x','0x'],cellDeps:[p.secpDep],witnesses:['0x']}),capacities);
+  return checked(ccc.Transaction.from({inputs:p.inputs.map(point),outputs:[{capacity:p.ownerCapacity,lock:p.identity.owner},{capacity:p.buyerCapacity,lock:wallet},{capacity:change,lock:wallet}],outputsData:['0x','0x','0x'],cellDeps:[p.secpDep],witnesses:p.inputs.map(()=>'0x')}),capacities);
 }
 /** One-shot issuance consumes the wallet-owned anchor at input 0 and an
  * already-created owner-lineage cell at input 1. All values require fresh

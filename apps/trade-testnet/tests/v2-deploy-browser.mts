@@ -7,6 +7,7 @@ import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {chromium} from 'playwright-core';
 import {ccc} from '@ckb-ccc/core';
+import {POST as initialProof} from '../app/api/v2/pudge-init-proof/route.ts';
 const root=path.resolve(import.meta.dirname,'..'), require=createRequire(import.meta.url), webpack=require('next/dist/compiled/webpack/webpack').webpack;
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rov-deploy-test-'));
 await new Promise<void>((resolve,reject)=>webpack({mode:'development',target:'web',entry:path.join(root,'tests/v2-deploy-wallet-entry.cjs'),output:{path:dir,filename:'wallet.js'}},(e:Error,s:any)=>e||s.hasErrors()?reject(e||Error(s.toString({all:false,errors:true}))):resolve()));
@@ -27,6 +28,7 @@ try{
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
  const p=await browser.newPage();let network=genesis,stale=false;
  await p.route('**/api/v2/code',route=>route.fulfill({json:{codes}}));
+ await p.route('**/api/v2/pudge-init-proof',async route=>{const response=await initialProof(new Request('http://127.0.0.1:3107/api/v2/pudge-init-proof',{method:'POST',headers:{host:'127.0.0.1:3107',origin:'http://127.0.0.1:3107','content-type':'application/json'},body:route.request().postData()||''}));await route.fulfill({status:response.status,body:await response.text(),contentType:'application/json'});});
  await p.route('**/api/v2/pudge-rpc',route=>{const {method,params}=route.request().postDataJSON();let result:unknown;
    if(method==='get_block_hash')result=params[0]==='0x0'?network:tip;
    else if(method==='get_tip_header')result={hash:tip,number:'0x1'};
@@ -49,7 +51,8 @@ try{
  await p.getByLabel(/I reviewed the owner/).check();assert(await p.getByRole('button',{name:'Request wallet signature'}).isEnabled());
  await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet declined').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
  await p.evaluate(()=>{(window as any).rovTestWalletMode='modified';});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText(/Wallet changed reviewed transaction/).waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
- await p.evaluate(()=>{(window as any).rovTestWalletMode='valid';});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Signature verified. Transaction has not been broadcast.').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
+ await p.evaluate(()=>{(window as any).rovTestWalletMode='valid';});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Signature verified. Transaction has not been broadcast.').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isEnabled());
+ await p.evaluate(()=>{(window as any).rovTestWalletNetworkWrong=true;});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet changed or an attempt requires reconciliation').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());await p.evaluate(()=>{(window as any).rovTestWalletNetworkWrong=false;});
  network='0x'+'99'.repeat(32);await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet account or network changed').waitFor();network=genesis;
  stale=true;await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText(/Reserved anchor|Funding cell|unavailable/).first().waitFor();stale=false;
  await p.evaluate(g=>(window as any).rovDeployTestConnect((window as any).createDeployReviewTestWallet(g,'0x'+'33'.repeat(20))),genesis);await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet account or network changed').waitFor();
