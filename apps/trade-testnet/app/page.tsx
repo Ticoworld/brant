@@ -1,4 +1,5 @@
-import WalletEntry from "./wallet-entry";
+import { redirect } from "next/navigation";
+
 export default function Page() {
-  return <WalletEntry />;
+  redirect("/v2");
 }
