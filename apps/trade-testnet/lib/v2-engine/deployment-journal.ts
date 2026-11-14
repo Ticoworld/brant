@@ -1,12 +1,12 @@
 // Store only public transaction identities. An ambiguous submission must be
 // reconciled against the canonical chain before a replacement is considered.
-export type DeploymentAttempt = { version: 1; genesis: string; owner: string; txHash: string; codeHashes: string[]; state: 'prepared' | 'submitted' | 'confirmed'; blockHash?: string };
+export type DeploymentAttempt = { version: 1; genesis: string; owner: string; txHash: string; codeHashes: string[]; state: 'prepared' | 'submitted' | 'confirmed'; blockHash?: string; anchor?: {txHash:string;index:string} };
 const h = /^0x[0-9a-f]{64}$/i;
 export function parseDeploymentAttempt(raw: string): DeploymentAttempt {
   const v = JSON.parse(raw) as DeploymentAttempt;
-  if (!v || v.version !== 1 || !h.test(v.genesis) || !h.test(v.owner) || !h.test(v.txHash) || !Array.isArray(v.codeHashes) || !v.codeHashes.length || v.codeHashes.some(x => !h.test(x)) || new Set(v.codeHashes.map(x => x.toLowerCase())).size !== v.codeHashes.length || !['prepared','submitted','confirmed'].includes(v.state) || (v.blockHash !== undefined && !h.test(v.blockHash)) || (v.state === 'confirmed' && !v.blockHash)) throw Error('Invalid deployment journal');
+  if (!v || v.version !== 1 || !h.test(v.genesis) || !h.test(v.owner) || !h.test(v.txHash) || !Array.isArray(v.codeHashes) || !v.codeHashes.length || v.codeHashes.some(x => !h.test(x)) || new Set(v.codeHashes.map(x => x.toLowerCase())).size !== v.codeHashes.length || !['prepared','submitted','confirmed'].includes(v.state) || (v.blockHash !== undefined && !h.test(v.blockHash)) || (v.state === 'confirmed' && !v.blockHash) || (v.anchor !== undefined && (!v.anchor || !h.test(v.anchor.txHash) || !/^0x[0-9a-f]{1,8}$/i.test(v.anchor.index)))) throw Error('Invalid deployment journal');
   // Construct a public-only record even if imported JSON contains extra fields.
-  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:[...v.codeHashes],state:v.state,...(v.blockHash ? {blockHash:v.blockHash} : {})};
+  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:[...v.codeHashes],state:v.state,...(v.blockHash ? {blockHash:v.blockHash} : {}),...(v.anchor?{anchor:{txHash:v.anchor.txHash,index:v.anchor.index}}:{})};
 }
 export function advanceDeploymentAttempt(attempt: DeploymentAttempt, state: DeploymentAttempt['state'], blockHash?: string): DeploymentAttempt {
   const current = parseDeploymentAttempt(JSON.stringify(attempt));
@@ -24,7 +24,7 @@ export function importDeploymentAttempt(storage: Pick<Storage,'getItem'|'setItem
   if (v.genesis.toLowerCase() !== genesis.toLowerCase() || expected.size!==expectedCodeHashes.length || v.codeHashes.length !== expected.size || v.codeHashes.some(hash=>!expected.has(hash.toLowerCase()))) throw Error('Backup does not match this network and deployment');
   if(v.state==='prepared') throw Error('Prepared transaction has no submission to recover');
   // An imported record can never by itself establish current canonical status.
-  const pending:DeploymentAttempt={version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:v.codeHashes,state:'submitted',...(v.blockHash?{blockHash:v.blockHash}:{})};
+  const pending:DeploymentAttempt={version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,codeHashes:v.codeHashes,state:'submitted',...(v.blockHash?{blockHash:v.blockHash}:{}),...(v.anchor?{anchor:v.anchor}:{})};
   reserveDeploymentAttempt(storage,pending);
   return pending;
 }
@@ -41,7 +41,7 @@ export function saveDeploymentAttempt(storage: Pick<Storage,'getItem'|'setItem'>
   const next = parseDeploymentAttempt(JSON.stringify(attempt));
   if (previous) {
     const old = parseDeploymentAttempt(previous);
-    if (old.txHash.toLowerCase() !== next.txHash.toLowerCase() || old.genesis.toLowerCase() !== next.genesis.toLowerCase() || old.owner.toLowerCase() !== next.owner.toLowerCase() || old.codeHashes.join(',').toLowerCase() !== next.codeHashes.join(',').toLowerCase()) throw Error('Existing deployment attempt requires reconciliation');
+    if (old.txHash.toLowerCase() !== next.txHash.toLowerCase() || old.genesis.toLowerCase() !== next.genesis.toLowerCase() || old.owner.toLowerCase() !== next.owner.toLowerCase() || old.codeHashes.join(',').toLowerCase() !== next.codeHashes.join(',').toLowerCase() || JSON.stringify(old.anchor??null).toLowerCase()!==JSON.stringify(next.anchor??null).toLowerCase()) throw Error('Existing deployment attempt requires reconciliation');
     const order = {prepared:0,submitted:1,confirmed:2};
     if (order[next.state] < order[old.state]) throw Error('Cannot roll back deployment journal');
   }

@@ -24,4 +24,9 @@ assert.throws(()=>importDeploymentAttempt(storage,JSON.stringify(submitted),hash
 saved=null;
 const confirmed=advanceDeploymentAttempt(submitted,'confirmed',hash('5'));
 assert.deepEqual(importDeploymentAttempt(storage,JSON.stringify(confirmed),hash('1'),[hash('4')]),{...submitted,blockHash:hash('5')});
+saved=null;
+const anchored={...submitted,anchor:{txHash:hash('7'),index:'0x1'}};
+assert.deepEqual(importDeploymentAttempt(storage,JSON.stringify(anchored),hash('1'),[hash('4')]).anchor,anchored.anchor);
+assert.throws(()=>saveDeploymentAttempt(storage,{...anchored,anchor:{...anchored.anchor,index:'0x2'}}),/reconciliation/);
+assert.throws(()=>parseDeploymentAttempt(JSON.stringify({...anchored,anchor:{txHash:hash('7'),index:'-1'}})),/Invalid/);
 console.log('Deployment journal checks passed');
