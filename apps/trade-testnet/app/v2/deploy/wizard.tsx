@@ -3,11 +3,12 @@ import {useEffect,useState} from 'react';
 import {JOURNAL_KEY,parseDeploymentAttempt} from '../../../lib/v2-engine/deployment-journal.ts';
 import {reconcileCodeAttempt} from '../../../lib/v2-engine/deployment-verification.ts';
 import {WIZARD_KEY,WIZARD_STAGES,appendWizardSubmission,confirmWizardSubmission,parseWizard,type WizardJournal} from '../../../lib/v2-engine/wizard-journal.ts';
+import {recoverPudgeHistory} from '../../../lib/v2-engine/pudge-history.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 /** Owner-facing recovery record. Stored entries are hints, not authorization. */
 export default function DeploymentWizard({rpc,genesis,codeHashes}:{rpc:Rpc;genesis:string;codeHashes:string[]}){
- const [journal,setJournal]=useState<WizardJournal|null>(null),[message,setMessage]=useState('No verified deployment recorded.');
+ const [journal,setJournal]=useState<WizardJournal|null>(null),[message,setMessage]=useState('No verified deployment recorded.'),[backup,setBackup]=useState('');
  useEffect(()=>{try{const raw=localStorage.getItem(WIZARD_KEY);if(raw){const j=parseWizard(raw);setJournal(j);setMessage('Saved progress loaded. Reconcile with the chain before relying on it.');}}catch{setMessage('Saved progress is invalid; manual reconciliation is required.');}},[]);
  async function reconcileCode(){try{
    if(!navigator.locks)throw Error('Exclusive deployment lock unavailable');
@@ -27,5 +28,21 @@ export default function DeploymentWizard({rpc,genesis,codeHashes}:{rpc:Rpc;genes
      localStorage.setItem(WIZARD_KEY,JSON.stringify(current));setJournal(current);setMessage('Code cells verified live in a canonical block. Initialization stages require separate review.');
    });
  }catch(e){setMessage(e instanceof Error?e.message:'Unable to reconcile code stage');}}
- return <section><h2>Deployment stages</h2><p>Saved progress is a public recovery record. Every stage requires fresh chain and transaction checks; a saved status alone never enables signing.</p><ol>{WIZARD_STAGES.map((stage,i)=><li key={stage}>{['Code cells','Initialization setup','Fixed-supply issuance','First purchase and custody'][i]}: {journal?.entries[i]?`recorded ${journal.entries[i].state} · ${journal.entries[i].txHash}`:'not recorded'}</li>)}</ol><button onClick={reconcileCode}>Reconcile code stage</button><p role="status">{message}</p>{journal&&<label>Public wizard backup JSON<br/><textarea readOnly rows={5} value={JSON.stringify(journal)}/></label>}<p>Setup, issuance and first purchase are unavailable until the reviewed transaction builders and owner-wallet flow are validated.</p></section>;
+ async function reconcileAll(imported?:string){try{
+  if(!navigator.locks)throw Error('Exclusive deployment lock unavailable');
+  await navigator.locks.request('roveko-v2-code-deployment',{mode:'exclusive',ifAvailable:true},async lock=>{
+   if(!lock)throw Error('Another deployment operation is in progress');
+   const code=localStorage.getItem(JOURNAL_KEY),existing=localStorage.getItem(WIZARD_KEY);if(!code)throw Error('Restore the code deployment backup first');
+   if(imported&&existing)throw Error('Existing wizard requires reconciliation');
+   const current=parseWizard(imported||existing||'');
+   const proof=async(anchor:{txHash:string;index:string},owner:string)=>{const response=await fetch('/api/v2/pudge-init-proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({anchor,owner})});if(!response.ok)throw Error('Initial proof verification unavailable');return response.json();};
+   const verified=await recoverPudgeHistory(rpc,parseDeploymentAttempt(code),current,proof);
+   const last=current.entries.at(-1);if(!last)throw Error('No stage to reconcile');
+   const block=last.stage==='code'?verified.code.blockHash:verified.stages[last.stage]?.blockHash;
+   if(!block)throw Error('Stage confirmation unavailable');
+   const next=last.state==='submitted'?confirmWizardSubmission(current,last.stage,last.txHash,block):current;
+   localStorage.setItem(WIZARD_KEY,JSON.stringify(next));setJournal(next);setBackup('');setMessage('Recorded stages reconstructed and verified against canonical history.');
+  });
+ }catch(e){setMessage(e instanceof Error?e.message:'Unable to reconcile stages');}}
+ return <section><h2>Deployment stages</h2><p>Saved progress is a public recovery record. Every stage requires fresh chain and transaction checks; a saved status alone never enables signing.</p><ol>{WIZARD_STAGES.map((stage,i)=><li key={stage}>{['Code cells','Initialization setup','Fixed-supply issuance','First purchase and custody'][i]}: {journal?.entries[i]?`recorded ${journal.entries[i].state} · ${journal.entries[i].txHash}`:'not recorded'}</li>)}</ol><button onClick={reconcileCode}>Reconcile code stage</button>{journal&&<> <button onClick={()=>reconcileAll()}>Reconcile recorded stages</button></>}<p role="status">{message}</p>{journal?<label>Public wizard backup JSON<br/><textarea readOnly rows={5} value={JSON.stringify(journal)}/></label>:<><label>Restore wizard backup JSON<br/><textarea rows={5} value={backup} onChange={e=>setBackup(e.target.value)}/></label><br/><button disabled={!backup} onClick={()=>reconcileAll(backup)}>Verify and restore stages</button></>}<p>Setup, issuance and first purchase are unavailable until the reviewed transaction builders and owner-wallet flow are validated.</p></section>;
 }
