@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {prepareOwnerSplit} from '../lib/v2-engine/owner-split.ts';
+const unit=100_000_000n;
+const lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'11'.repeat(20)};
+const point={txHash:'0x'+'01'.repeat(32),index:'0x0'},cells=[{outPoint:point,capacity:5000n*unit,lock,data:'0x'}];
+const dep={outPoint:{txHash:'0x'+'aa'.repeat(32),index:'0x0'},depType:'depGroup'};
+const split=prepareOwnerSplit(cells,lock,dep,500n*unit,4000n*unit,1000n);
+assert.equal(split.transaction.outputs[0].capacity,500n*unit);
+assert.equal(split.transaction.outputs[1].capacity,split.change);
+assert.equal(split.total,split.transaction.outputs.reduce((n,o)=>n+o.capacity,0n)+split.fee);
+assert.equal(split.transaction.estimateFee(1000n),split.fee);
+assert.throws(()=>prepareOwnerSplit(cells,lock,dep,500n*unit,4000n*unit,1000n,[`${point.txHash}:0`]),/Insufficient/);
+assert.throws(()=>prepareOwnerSplit([{...cells[0],data:'0x01'}],lock,dep,500n*unit,4000n*unit,1000n),/Insufficient/);
+console.log('owner split preparation checks passed');
