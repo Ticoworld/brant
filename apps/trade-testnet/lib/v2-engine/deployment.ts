@@ -19,7 +19,7 @@ export function prepareCodeDeployment(codes:DeploymentCode[], candidates:Funding
   });
   const outputCapacity=outputs.reduce((sum,o)=>sum+o.capacity,0n);
   const placeholder=ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex();
-  const make=(inputs:FundingCandidate[], change:bigint)=>ccc.Transaction.from({inputs:inputs.map(c=>({previousOutput:c.outPoint})),outputs:[...outputs,{capacity:change,lock:script}],outputsData:[...codes.map(c=>c.data),'0x'],cellDeps:[secpDep],witnesses:[placeholder]});
+  const make=(inputs:FundingCandidate[], change:bigint)=>ccc.Transaction.from({inputs:inputs.map(c=>({previousOutput:c.outPoint})),outputs:[...outputs,{capacity:change,lock:script}],outputsData:[...codes.map(c=>c.data),'0x'],cellDeps:[secpDep],witnesses:inputs.map((_,i)=>i===0?placeholder:'0x')});
   // Size depends only on input count because all selected inputs share one
   // standard lock group; the first witness contains a 65-byte placeholder.
   const fake=(n:number)=>Array.from({length:n},(_,i)=>({outPoint:{txHash:'0x'+(i+1).toString(16).padStart(64,'0'),index:'0x0'},capacity:0n,lock:owner,data:'0x'}));
