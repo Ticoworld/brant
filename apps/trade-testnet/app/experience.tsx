@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import type { PageRoute } from "../lib/market-reader";
+import { LanguageSwitcher, useLocale } from "./i18n-provider";
 export type Tab = PageRoute["view"];
 export type Fields = {
   id: string;
@@ -178,6 +179,7 @@ function ReviewDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  const { t: text } = useLocale();
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const d = ref.current,
@@ -201,7 +203,7 @@ function ReviewDialog({
         <h2 id="review-title">{review.title}</h2>
         <button
           className="icon-button"
-          aria-label="Close transaction review"
+          aria-label={`${text("close")} ${text("reviewTransaction")}`}
           onClick={onCancel}
           disabled={busy}
         >
@@ -218,12 +220,12 @@ function ReviewDialog({
             </div>
           ))}
         <div>
-          <dt>Network fee</dt>
+          <dt>{text("networkFee")}</dt>
           <dd>{review.fee} CKB</dd>
         </div>
       </dl>
       <details>
-        <summary>Transaction details & identities</summary>
+        <summary>{text("advancedDetails")}</summary>
         {review.lines
           .filter((x) => /^0x[0-9a-fA-F]{64}$/.test(x.value))
           .map((x) => (
@@ -243,15 +245,14 @@ function ReviewDialog({
         ))}
       </details>
       <p className="hint">
-        Approve only these terms. Changed inputs require a new review and fresh
-        signatures.
+        {text("transactionNeedsReview")}
       </p>
       <div className="dialog-actions">
         <button onClick={onCancel} disabled={busy}>
-          Cancel
+          {text("cancel")}
         </button>
         <button className="primary" disabled={busy} onClick={onConfirm}>
-          {busy ? "Checking…" : review.button}
+          {busy ? text("checkingConfiguration") : review.button}
         </button>
       </div>
     </dialog>
@@ -324,9 +325,10 @@ function ratio(value: string, total: string) {
     : 0;
 }
 function MarketSearch({ p }: { p: ExperienceProps }) {
+  const { t: text } = useLocale();
   return (
     <form
-      className="market-search"
+      className="flex w-full items-center gap-2.5 rounded-lg border border-[#526075] bg-[#151c27] px-3 text-[#9daabd] sm:w-[330px]"
       onSubmit={(e) => {
         e.preventDefault();
         p.onOpenMarket(p.fields.id);
@@ -334,18 +336,19 @@ function MarketSearch({ p }: { p: ExperienceProps }) {
     >
       <Icon name="search" />
       <label className="sr-only" htmlFor="market-id">
-        Market link or identity
+        {text("marketLinkOrIdentity")}
       </label>
       <input
+        className="!min-w-0 !w-auto !flex-1 !border-0 !bg-transparent !px-0 !py-[11px] text-xs focus-visible:outline-offset-0"
         id="market-id"
         value={p.fields.id}
         onChange={(e) => p.update("id", e.target.value)}
-        placeholder="Open market by link or ID"
+        placeholder={text("marketLinkOrIdentity")}
         disabled={p.busy}
         autoComplete="off"
         spellCheck={false}
       />
-      <button aria-label="Open market" disabled={p.busy || !p.fields.id.trim()}>
+      <button className="min-h-[30px] min-w-[30px] border-0 bg-transparent p-[5px]" aria-label={text("openMarket")} disabled={p.busy || !p.fields.id.trim()}>
         <Icon name="arrow" />
       </button>
     </form>
@@ -360,6 +363,7 @@ function PositionTable({
   m: MarketView;
   onlyMine?: boolean;
 }) {
+  const { t: text, locale } = useLocale();
   const rows = onlyMine
     ? m.positions.filter((r) => r.mine && !r.empty)
     : m.positions;
@@ -368,10 +372,10 @@ function PositionTable({
       <table className="position-table">
         <thead>
           <tr>
-            <th>Position</th>
-            <th>Owner</th>
-            <th className="number optional-col">Contributed · CKB</th>
-            <th className="number">Backing · CKB</th>
+            <th>{text("positions")}</th>
+            <th>{text("connectedWallet")}</th>
+            <th className="number optional-col">{text("contributed")} · CKB</th>
+            <th className="number">{text("backing")} · CKB</th>
             <th>
               <span className="sr-only">Action</span>
             </th>
@@ -388,19 +392,19 @@ function PositionTable({
                   <b>#{r.index + 1}</b>
                   <small>
                     {r.empty
-                      ? "Available"
+                      ? text("available")
                       : m.phase === "Funding"
-                        ? "Funding"
+                        ? text("pending")
                         : !r.remaining
-                          ? "Settled"
+                          ? text("confirmed")
                           : m.maturity === "0" ||
                               (m.tip !== null &&
                                 BigInt(m.tip) >= BigInt(m.maturity))
-                            ? "Redeemable"
-                            : "Before maturity"}
+                            ? locale === "zh-CN" ? "可赎回" : "Redeemable"
+                            : locale === "zh-CN" ? "未到期" : "Before maturity"}
                   </small>
                 </td>
-                <td>{r.empty ? "—" : r.mine ? "You" : "Another wallet"}</td>
+                <td>{r.empty ? "—" : r.mine ? (locale === "zh-CN" ? "我的钱包" : "You") : (locale === "zh-CN" ? "其他钱包" : "Another wallet")}</td>
                 <td className="number optional-col">
                   {r.empty ? "—" : r.contribution}
                 </td>
@@ -413,10 +417,10 @@ function PositionTable({
                     onClick={() => p.onSelectPosition(r.index)}
                   >
                     {r.empty && m.phase === "Funding"
-                      ? "Contribute"
+                      ? locale === "zh-CN" ? "注资" : "Contribute"
                       : r.mine && r.remaining
-                        ? "Manage"
-                        : "View"}
+                        ? text("trade")
+                        : text("openMarketAction")}
                     <Icon name="arrow" />
                   </button>
                 </td>
@@ -425,7 +429,7 @@ function PositionTable({
           ) : (
             <tr>
               <td colSpan={5}>
-                <p>No positions belonging to this checked wallet.</p>
+                <p>{text("noPositions")}</p>
               </td>
             </tr>
           )}
@@ -848,6 +852,7 @@ function PositionAction({
   );
 }
 export default function Experience(p: ExperienceProps) {
+  const { t: text, locale } = useLocale();
   const f = p.fields,
     m = p.market;
   const selected =
@@ -859,13 +864,14 @@ export default function Experience(p: ExperienceProps) {
     (key: keyof Fields) => (e: React.ChangeEvent<HTMLInputElement>) =>
       p.update(key, e.target.value);
   return (
-    <div className="app-shell">
+    <div className="flex min-h-dvh flex-col">
       <a className="skip" href="#workspace">
         Skip to workspace
       </a>
-      <header className="topbar">
+      <header className="flex min-h-[70px] flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-[#212833] bg-[#0e1218] px-3 py-2 sm:flex-nowrap sm:justify-start sm:gap-[45px] sm:px-[30px] sm:py-0">
         <a
-          className="brand"
+          className="flex items-center gap-2 no-underline text-[#f1f2f4] sm:gap-[9px]"
+          style={{ fontFamily: '"Trade Wordmark", sans-serif', fontSize: 27, fontWeight: 600, letterSpacing: "-1.5px" }}
           href="/"
           aria-label="Trade home"
           onClick={(e) => {
@@ -874,14 +880,15 @@ export default function Experience(p: ExperienceProps) {
           }}
         >
           <CellMark />
-          trade<span className="network">CKB TESTNET</span>
+          trade<span className="ml-1 border-l border-[#4b5666] px-1.5 py-1 font-sans text-[7px] font-normal tracking-[0.04em] text-[#a6b1c1] sm:text-[8px]">CKB TESTNET</span>
         </a>
-        <nav className="navigation" aria-label="Main navigation">
+        <nav className="order-3 flex h-11 w-full flex-1 items-stretch gap-3 overflow-x-auto sm:order-none sm:h-[70px] sm:w-auto sm:gap-[27px]" aria-label={text("discover")}>
           {(
             ["Markets", "My Positions", "Activity", "Create Market"] as const
           ).map((v) => (
             <button
               key={v}
+              className={`!min-h-11 !whitespace-nowrap !rounded-none !border-0 !border-b-2 !bg-transparent !px-px !py-0 text-[11px] sm:text-[13px] ${v === "Create Market" ? "ml-auto !border-b-0 text-xs" : ""} ${p.route.view === v || (v === "Markets" && p.route.view === "Market") ? "!border-b-[#a3ddd6] !text-[#eef1f4]" : "!border-b-transparent !text-[#a6afbd]"}`}
               disabled={p.busy}
               aria-current={
                 p.route.view === v ||
@@ -892,40 +899,40 @@ export default function Experience(p: ExperienceProps) {
               onClick={() => p.onNavigate(v)}
             >
               {v === "My Positions" ? (
-                "Positions"
+                text("positions")
               ) : v === "Create Market" ? (
                 <>
                   <Icon name="plus" />
-                  Create market
+                  {text("createMarket")}
                 </>
               ) : (
-                v
+                v === "Markets" ? text("markets") : text("activity")
               )}
             </button>
           ))}
         </nav>
-        <div className="wallet-area">
+        <div className="order-2 flex items-center gap-2 sm:order-none">
+          <LanguageSwitcher />
           <button
-            className={p.address ? "wallet-connected" : "primary"}
+            className={`min-h-[34px] min-w-[100px] text-[11px] sm:min-h-9 sm:min-w-28 sm:text-xs ${p.address ? "wallet-connected" : "primary"}`}
             disabled={p.busy}
             onClick={p.onConnect}
           >
-            {p.address ? short(p.address) : "Connect wallet"}
+            {p.address ? short(p.address) : text("connectWallet")}
           </button>
         </div>
       </header>
       <main id="workspace" tabIndex={-1} aria-busy={p.busy}>
         {p.fixture && (
           <div className="fixture-banner">
-            CONTROLLED LOCAL UI FIXTURE · no wallet, liquidity or Pudge
-            execution
+            {text("localFixtureWarning")}
           </div>
         )}
         {p.connected && !p.address && (
           <div className="wallet-check">
-            <span>Wallet verification required</span>
+            <span>{text("checkWalletCompatibility")}</span>
             <button disabled={p.busy} onClick={p.onCheck}>
-              Check wallet compatibility
+              {text("checkWalletCompatibility")}
             </button>
           </div>
         )}
@@ -938,44 +945,44 @@ export default function Experience(p: ExperienceProps) {
           }
         >
           {p.busy && <span className="spinner" aria-hidden="true" />}
-          <p>{p.status}</p>
+          <p>{initial ? text("connectVerifyWallet") : p.status}</p>
         </div>
         {p.route.view === "Markets" && (
           <>
-            <div className="page-heading">
+            <div className="mb-6 flex flex-col items-stretch justify-between gap-5 sm:mb-7 sm:flex-row sm:items-center sm:gap-[22px]">
               <div>
-                <h1>Markets</h1>
-                <span className="subtle">Verified CKB-backed claims</span>
+                <h1 className="text-[23px] sm:text-[25px]">{text("markets")}</h1>
+                <span className="subtle">{text("verifiedCkbClaims")}</span>
               </div>
               <MarketSearch p={p} />
             </div>
-            <div className="directory-tools">
-              <span>{p.markets.length} verified in this session</span>
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-[15px] text-[10px] text-[#9fb0c5] sm:text-[11px]">
+              <span>{p.markets.length} {text("verifiedMarkets")}</span>
               <button
+                className="min-h-8 text-[10px] sm:text-[11px]"
                 disabled={p.busy || !p.readAvailable}
                 onClick={() => p.onDiscover(false)}
               >
                 <Icon name="refresh" />
-                Find markets
+                {text("findMarkets")}
               </button>
             </div>
             {!p.readAvailable && (
-              <p className="material-note">
-                The public contract is not configured. Discovery and signing
-                remain unavailable until deployment is verified.
+              <p className="my-3 rounded border border-[#66583a] bg-[#282316] px-3 py-2 text-[11px] text-[#e4d4a5]">
+                {text("contractNotConfigured")}
               </p>
             )}
-            <div className="table-wrap">
-              <table className="market-table">
+            <div className="w-full overflow-x-auto">
+              <table className="market-table w-full border-collapse text-left [font-variant-numeric:tabular-nums]">
                 <thead>
                   <tr>
-                    <th>Market</th>
-                    <th>Phase</th>
-                    <th className="number">Backing · CKB</th>
-                    <th className="number optional-col">Funded slots</th>
-                    <th className="optional-col">Maturity</th>
+                    <th>{text("markets")}</th>
+                    <th>{text("marketPhase")}</th>
+                    <th className="number">{text("backing")} · CKB</th>
+                    <th className="number optional-col">{text("fundedSlots")}</th>
+                    <th className="optional-col">{text("maturity")}</th>
                     <th>
-                      <span className="sr-only">Open</span>
+                      <span className="sr-only">{text("open")}</span>
                     </th>
                   </tr>
                 </thead>
@@ -985,7 +992,7 @@ export default function Experience(p: ExperienceProps) {
                       <tr key={x.id}>
                         <td>
                           <a
-                            className="market-name"
+                            className="flex items-center gap-2 text-inherit no-underline hover:underline sm:gap-[11px]"
                             href={"/market/" + x.id}
                             onClick={(e) => {
                               e.preventDefault();
@@ -1001,8 +1008,8 @@ export default function Experience(p: ExperienceProps) {
                               />
                             </span>
                             <span>
-                              <b>CKB-backed claims</b>
-                              <small>{x.positions.length} positions</small>
+                              <b>{text("ckbBackedClaims")}</b>
+                              <small>{x.positions.length} {text("positions")}</small>
                             </span>
                           </a>
                         </td>
@@ -1016,7 +1023,7 @@ export default function Experience(p: ExperienceProps) {
                         </td>
                         <td className="optional-col">
                           {x.maturity === "0"
-                            ? "No added delay"
+                            ? text("noAddedDelay")
                             : "Block " + x.maturity}
                         </td>
                         <td>
@@ -1034,20 +1041,37 @@ export default function Experience(p: ExperienceProps) {
                   ) : (
                     <tr>
                       <td colSpan={6}>
-                        <div className="empty">
+                        <div className="flex h-[290px] flex-col items-center justify-center gap-[15px] text-center text-[#8796a9]">
                           <Icon name="search" />
-                          <h2>No verified markets yet</h2>
-                          <p>
-                            Open a market link, or search the configured
-                            deployment.
+                          <h2 className="text-[13px] font-normal text-[#c1cad5]">
+                            {p.readAvailable
+                              ? text("noVerifiedMarkets")
+                              : text("discoveryUnavailable")}
+                          </h2>
+                          <p className="m-0 max-w-[36rem] text-[11px]">
+                            {p.readAvailable
+                              ? text("searchMarkets")
+                              : text("deploymentRequired")}
                           </p>
-                          <button
-                            onClick={() =>
-                              document.getElementById("market-id")?.focus()
-                            }
-                          >
-                            Open a market link
-                          </button>
+                          <div className="flex flex-wrap justify-center gap-[9px] py-2">
+                            <button
+                              className="text-[11px]"
+                              onClick={() =>
+                                document.getElementById("market-id")?.focus()
+                              }
+                            >
+                              {text("enterMarketLink")}
+                            </button>
+                            {p.readAvailable && (
+                              <button
+                                className="primary text-[11px]"
+                                onClick={() => p.onNavigate("Create Market")}
+                              >
+                                <Icon name="plus" />
+                                {text("createMarket")}
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -1055,19 +1079,17 @@ export default function Experience(p: ExperienceProps) {
                 </tbody>
               </table>
             </div>
-            <div className="discovery-result" role="status">
-              {p.discovery.message}
+            <div className="flex min-h-[43px] flex-col items-start justify-between gap-3 pt-3 text-[10px] leading-relaxed text-[#a3b6cc] sm:flex-row sm:items-center sm:gap-5 sm:text-[11px] sm:pt-0" role="status">
+              {p.discovery.state === "idle"
+                ? text("marketSearchScope")
+                : p.discovery.message}
               {p.discovery.next && (
                 <button disabled={p.busy} onClick={() => p.onDiscover(true)}>
-                  Load next page
+                  {text("loadNextPage")}
                 </button>
               )}
             </div>
-            <p className="directory-scope">
-              Discovery checks 20 live Cells per page from this contract. Every
-              listed market is independently reconstructed; an indexer result
-              alone is not accepted.
-            </p>
+            <p className="my-[18px] mb-6 max-w-[800px] text-[10px] text-[#9aaec5] sm:text-[11px]">{text("discoveryScope")}</p>
           </>
         )}
         {p.route.view === "Market" && (
@@ -1075,25 +1097,25 @@ export default function Experience(p: ExperienceProps) {
             {p.loadingMarket ? (
               <section className="workspace-loading" role="status">
                 <span className="spinner" />
-                <h1>Opening market</h1>
-                <p>Checking its live state and committed history.</p>
+                <h1>{text("openingMarket")}</h1>
+                <p>{text("checkingLiveHistory")}</p>
               </section>
             ) : !m ? (
               <section className="workspace-error">
-                <h1>Market unavailable</h1>
+                <h1>{text("marketUnavailable")}</h1>
                 <p>
                   No verified state is loaded. No position actions are enabled.
                 </p>
                 <div className="actions">
                   <button onClick={() => p.onNavigate("Markets")}>
-                    Back to Markets
+                    {text("backToMarkets")}
                   </button>
                   <button
                     className="primary"
                     disabled={p.busy}
                     onClick={p.onRecover}
                   >
-                    Retry recovery
+                    {text("retryRecovery")}
                   </button>
                 </div>
               </section>
@@ -1108,10 +1130,9 @@ export default function Experience(p: ExperienceProps) {
                     >
                       Markets /
                     </button>
-                    <h1>CKB-backed claims</h1>
+                    <h1>{text("ckbBackedClaims")}</h1>
                     <p>
-                      Transferable CKB claims, not launched tokens. Resale
-                      requires a buyer.
+                      {text("transferableClaimsSubtitle")}
                     </p>
                   </div>
                   <div className="market-heading-actions">
@@ -1122,7 +1143,7 @@ export default function Experience(p: ExperienceProps) {
                       onClick={p.onRecover}
                     >
                       <Icon name="refresh" />
-                      Refresh
+                      {text("refresh")}
                     </button>
                   </div>
                 </div>
@@ -1132,31 +1153,31 @@ export default function Experience(p: ExperienceProps) {
                 >
                   <dl>
                     <div>
-                      <dt>Contributed</dt>
+                      <dt>{text("contributed")}</dt>
                       <dd>
                         {m.contributed}
                         <small>CKB</small>
                       </dd>
                     </div>
                     <div>
-                      <dt>Backing remaining</dt>
+                      <dt>{text("backingRemaining")}</dt>
                       <dd>
                         {m.backing}
                         <small>CKB</small>
                       </dd>
                     </div>
                     <div>
-                      <dt>Creator gross allocation</dt>
+                      <dt>{text("creatorGrossAllocation")}</dt>
                       <dd>
                         {m.creatorAllocation}
                         <small>CKB</small>
                       </dd>
                     </div>
                     <div>
-                      <dt>Redemption maturity</dt>
+                      <dt>{text("redemptionMaturity")}</dt>
                       <dd>
                         {m.maturity === "0"
-                          ? "No added delay"
+                          ? text("noAddedDelay")
                           : "Block " + m.maturity}
                       </dd>
                     </div>
@@ -1217,7 +1238,7 @@ export default function Experience(p: ExperienceProps) {
                     aria-label="Authenticated market positions"
                   >
                     <div className="section-line">
-                      <h2>Positions</h2>
+                      <h2>{text("positions")}</h2>
                       <span>
                         {m.positions.filter((r) => !r.empty).length} /{" "}
                         {m.positions.length} funded
@@ -1242,7 +1263,7 @@ export default function Experience(p: ExperienceProps) {
                             disabled={p.busy || p.deployment !== "Configured"}
                             onClick={() => p.onAction("activate")}
                           >
-                            Review activation
+                          {text("reviewActivation")}
                           </button>
                         ) : (
                           <p>
@@ -1255,29 +1276,29 @@ export default function Experience(p: ExperienceProps) {
                           disabled={p.busy || p.deployment !== "Configured"}
                           onClick={() => p.onAction("close")}
                         >
-                          Review closure
+                        {text("reviewClosure")}
                         </button>
                       )}
                     </div>
                     <details className="market-terms">
-                      <summary>Terms & receiving requirements</summary>
+                      <summary>{text("termsReceivingRequirements")}</summary>
                       <dl>
                         <div>
-                          <dt>Fixed initial backing</dt>
+                          <dt>{text("fixedInitialBacking")}</dt>
                           <dd>80% of contributions</dd>
                         </div>
                         <div>
-                          <dt>Creator proceeds</dt>
+                          <dt>{text("creatorGrossProceeds")}</dt>
                           <dd>20% gross at activation</dd>
                         </div>
                         <div>
-                          <dt>Shared capacity</dt>
+                          <dt>{text("sharedCapacity")}</dt>
                           <dd>
                             {m.capacity} CKB, returned only at lawful closure
                           </dd>
                         </div>
                         <div>
-                          <dt>Wallet receiving capacity</dt>
+                          <dt>{text("walletCapacityRetained")}</dt>
                           <dd>A plain secp Cell must retain 61 CKB</dd>
                         </div>
                         <div>
@@ -1292,12 +1313,12 @@ export default function Experience(p: ExperienceProps) {
                       </p>
                     </details>
                     <details>
-                      <summary>Advanced market identity</summary>
-                      <p>Market identifier</p>
+                      <summary>{text("advancedMarketIdentity")}</summary>
+                      <p>{text("marketIdentifier")}</p>
                       <code>{m.id}</code>
                       <p>Current root</p>
                       <code>{m.root}</code>
-                      <a href={"/market/" + m.id}>Market permalink</a>
+                      <a href={"/market/" + m.id}>{text("marketPermalink")}</a>
                       <p>
                         {p.fixture
                           ? "Controlled presentation state."
@@ -1322,32 +1343,30 @@ export default function Experience(p: ExperienceProps) {
           <>
             <div className="page-heading">
               <div>
-                <h1>Positions</h1>
-                <span className="subtle">
-                  In markets verified during this session
-                </span>
+                <h1>{text("positions")}</h1>
+                <span className="subtle">{text("positionsInVerifiedMarkets")}</span>
               </div>
             </div>
             {!p.address ? (
               <div className="empty">
                 <Icon name="wallet" />
-                <h2>Connect and check your wallet</h2>
+                <h2>{text("connectAndCheckWallet")}</h2>
                 <p>
                   Ownership is matched against the authenticated owner lock.
                 </p>
                 <button onClick={p.connected ? p.onCheck : p.onConnect}>
                   {p.connected
-                    ? "Check wallet compatibility"
-                    : "Connect wallet"}
+                    ? text("checkWalletCompatibility")
+                    : text("connectWallet")}
                 </button>
               </div>
             ) : !p.markets.some((x) =>
                 x.positions.some((r) => r.mine && !r.empty),
               ) ? (
               <div className="empty">
-                <h2>No positions in opened markets</h2>
+                <h2>{text("noPositions")}</h2>
                 <button onClick={() => p.onNavigate("Markets")}>
-                  Open a market
+                  {text("openMarket")}
                 </button>
               </div>
             ) : (
@@ -1356,9 +1375,9 @@ export default function Experience(p: ExperienceProps) {
                 .map((x) => (
                   <section className="owned-market" key={x.id}>
                     <div className="section-line">
-                      <h2>CKB-backed claims</h2>
+                      <h2>{text("ckbBackedClaims")}</h2>
                       <button onClick={() => p.onOpenMarket(x.id)}>
-                        Open market
+                        {text("openMarket")}
                       </button>
                     </div>
                     <div className="owned-positions">
@@ -1374,7 +1393,7 @@ export default function Experience(p: ExperienceProps) {
                             }
                           >
                             Position #{r.index + 1}
-                            <span>{r.backing} CKB backing</span>
+                            <span>{r.backing} CKB {text("backing")}</span>
                             <Icon name="arrow" />
                           </button>
                         ))}
@@ -1387,12 +1406,12 @@ export default function Experience(p: ExperienceProps) {
         {p.route.view === "Create Market" && (
           <div className="creation">
             <div className="creation-heading">
-              <h1>Create Market</h1>
+              <h1>{text("createMarketHeading")}</h1>
             </div>
             <div className="creation-grid">
               <section className="creation-form">
                 <label htmlFor="slots">
-                  Participant slots
+                  {text("participantSlots")}
                   <input
                     id="slots"
                     type="number"
@@ -1408,7 +1427,7 @@ export default function Experience(p: ExperienceProps) {
                   activation.
                 </p>
                 <label htmlFor="maturity">
-                  Maturity block
+                  {text("maturityBlock")}
                   <input
                     id="maturity"
                     type="number"
@@ -1422,22 +1441,22 @@ export default function Experience(p: ExperienceProps) {
                   0 adds no block delay. The condition is fixed at creation.
                 </p>
                 <label htmlFor="creator">
-                  Creator address <span className="subtle">Optional</span>
+                  {text("creatorAddress")} <span className="subtle">{text("optional")}</span>
                   <input
                     id="creator"
                     value={f.creator}
                     onChange={update("creator")}
-                    placeholder="Use my checked wallet"
+                    placeholder={text("useMyCheckedWallet")}
                     disabled={p.busy}
                   />
                 </label>
                 <div className="fixed-policy">
                   <div>
-                    <span>Initial backing</span>
+                    <span>{text("initialBacking")}</span>
                     <b>80%</b>
                   </div>
                   <div>
-                    <span>Creator gross proceeds</span>
+                    <span>{text("creatorGrossProceeds")}</span>
                     <b>20%</b>
                   </div>
                 </div>
@@ -1448,7 +1467,7 @@ export default function Experience(p: ExperienceProps) {
                   }
                   onClick={p.onCreate}
                 >
-                  Review market creation
+                  {text("reviewMarketCreation")}
                 </button>
                 <p className="blocker">
                   {!p.address
@@ -1494,13 +1513,13 @@ export default function Experience(p: ExperienceProps) {
         {p.route.view === "Activity" && (
           <>
             <div className="page-heading">
-              <h1>Activity</h1>
-              <span className="subtle">This session · clears on refresh</span>
+              <h1>{text("activity")}</h1>
+              <span className="subtle">{text("sessionActivity")}</span>
             </div>
             <div className="activity-table">
               <div className="activity-table-head">
-                <span>Transaction</span>
-                <span>Status</span>
+                <span>{text("transaction")}</span>
+                <span>{text("status")}</span>
               </div>
               {p.activity.length ? (
                 p.activity.map((a, i) => (
@@ -1517,7 +1536,7 @@ export default function Experience(p: ExperienceProps) {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          View transaction on explorer <Icon name="arrow" />
+                          {text("viewExplorer")} <Icon name="arrow" />
                           <span className="sr-only">{a.hash}</span>
                         </a>
                       )}
@@ -1528,7 +1547,7 @@ export default function Experience(p: ExperienceProps) {
               ) : (
                 <div className="empty">
                   <Icon name="refresh" />
-                  <h2>No activity yet</h2>
+                  <h2>{text("noActivity")}</h2>
                 </div>
               )}
             </div>
@@ -1537,10 +1556,10 @@ export default function Experience(p: ExperienceProps) {
         <footer>
           <div>
             <span className="connection-dot" />
-            Pudge testnet<span className="footer-divider">·</span>Test CKB only
+            {text("pudgeTestnet")}<span className="footer-divider">·</span>{text("testCkbOnly")}
           </div>
           <details className="advanced">
-            <summary>Details & diagnostics</summary>
+            <summary>{text("detailsDiagnostics")}</summary>
             <p>
               Contract:{" "}
               {p.deployment === "Not deployed"

@@ -10,6 +10,7 @@ import {discoverCustodyPair,discoverMarketPair} from '../../lib/v2-engine/lineag
 import {readLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
 import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey} from '../../lib/v2-engine/pudge-trade-journal.ts';
+import {LanguageSwitcher,useLocale} from '../i18n-provider';
 
 const genesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
 type Side='buy'|'sell';
@@ -17,6 +18,7 @@ const clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.
 const ckb=(n:bigint)=>`${n/100_000_000n}.${(n%100_000_000n).toString().padStart(8,'0')} CKB`;
 
 export default function PudgeMarket(){
+ const {t}=useLocale();
  const connector=useCcc(),connectedSigner=useSigner(),[testSigner,setTestSigner]=useState<typeof connectedSigner>(undefined);
  const signer=process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK==='1'?testSigner||connectedSigner:connectedSigner,active=useRef(signer);active.current=signer;
  useEffect(()=>{if(process.env.NODE_ENV==='production'||process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK!=='1'||!['127.0.0.1','localhost','[::1]'].includes(window.location.hostname))return;const w=window as unknown as {rovPudgeTestConnect?:(s:typeof connectedSigner)=>void};w.rovPudgeTestConnect=setTestSigner;return()=>{delete w.rovPudgeTestConnect;};},[]);
@@ -44,5 +46,48 @@ export default function PudgeMarket(){
  async function reconcile(){try{const w=await wallet();if(!navigator.locks)throw Error('Exclusive trade lock unavailable');await navigator.locks.request(`roveko-pudge-trade-${w.owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{if(!lock)throw Error('Another trade action is in progress');const key=tradeKey(genesis,w.owner),raw=localStorage.getItem(key);if(!raw)throw Error('No saved trade attempt');const attempt=parseTradeAttempt(raw),manifest=await config();if(attempt.owner.toLowerCase()!==w.owner.toLowerCase())throw Error('Trade belongs to another wallet');const checked=await reconcilePudgeTrade(rpc,attempt,manifest);if(active.current!==w.current||localStorage.getItem(key)!==raw)throw Error('Wallet or trade record changed');localStorage.removeItem(key);setPending(false);setSavedAttempt('');setReview(null);setMessage(`Confirmed ${checked.hash}; refreshing market state.`);});await refresh();}catch(e){setMessage(e instanceof Error?e.message:'Trade reconciliation failed');}}
  async function restore(){try{const w=await wallet(),attempt=parseTradeAttempt(backup);if(attempt.genesis!==genesis||attempt.owner.toLowerCase()!==w.owner.toLowerCase())throw Error('Backup belongs to another wallet or network');if(!navigator.locks)throw Error('Exclusive trade lock unavailable');await navigator.locks.request(`roveko-pudge-trade-${w.owner.toLowerCase()}`,{ifAvailable:true},lock=>{if(!lock||active.current!==w.current)throw Error('Wallet changed or another trade action is in progress');const key=tradeKey(genesis,w.owner);if(localStorage.getItem(key)!==null)throw Error('Existing trade requires reconciliation');const raw=JSON.stringify(attempt);localStorage.setItem(key,raw);setSavedAttempt(raw);setPending(true);setBackup('');setMessage('Trade backup restored. Reconcile against Pudge before continuing.');});}catch(e){setMessage(e instanceof Error?e.message:'Backup restore failed');}}
  function resetReview(){revision.current++;setReview(null);setApproved(false);signed.current=null;setSignedReady(false);}
- return <main className="rv"><header className="rv-head"><a href="/v2" className="rv-logo">ROVEKO<span> / CKB</span></a><span className="rv-network"><i/> Pudge testnet</span><button onClick={()=>connector.open()}>{address?`${address.slice(0,12)}…${address.slice(-6)}`:'Connect wallet'}</button></header><div className="rv-body"><section><p className="rv-kicker">NATIVE CKB MARKETS / V2</p><h1>Trade on the curve<span>.</span></h1><p className="rv-lead">Verify the market and review each transaction before using your wallet.</p><button onClick={refresh} disabled={!signer}>Verify and refresh market</button><div className="rv-stats">{[['Market capacity',market?ckb(BigInt(market.cells[0].output.capacity)):'—'],['Curve inventory',market?.curve.inventory.toString()||'—'],['Internal circulation',market?.custodyAmount.toString()||'—']].map(([label,value])=><div key={label}><small>{label}</small><strong>{value}</strong></div>)}</div><p role="status">{message}</p><a href="/v2/deploy">Deployment and recovery</a></section><aside className="rv-panel"><div className="rv-tabs"><button className={side==='buy'?'active':''} onClick={()=>{resetReview();setSide('buy');}}>Buy on curve</button><button className={side==='sell'?'active':''} onClick={()=>{resetReview();setSide('sell');}}>Sell back</button></div><label htmlFor="pudge-quantity">Token quantity</label><div className="rv-input"><input id="pudge-quantity" inputMode="numeric" value={quantity} onChange={e=>{resetReview();setQuantity(e.target.value.replace(/[^0-9]/g,''));}}/><span>TOKEN</span></div><button className="rv-action" onClick={prepare} disabled={!signer||pending}>Prepare trade review</button>{review&&<><p>Wallet {address} · Owner entitlement: {review.ownerBalance.toString()} · {review.side==='buy'?'Cost':'Payout'}: {ckb(review.amount)} · Fee: {ckb(review.fee)}</p><p>Transaction {review.transaction.hash()}</p><ul aria-label="Trade outputs">{review.transaction.outputs.map((o,i)=><li key={i}>Output {i} · {o.capacity.toString()} shannons · lock {o.lock.hash()} · type {o.type?.hash()||'none'} · data {review.transaction.outputsData[i]}</li>)}</ul><details><summary>Review complete transaction and proof</summary><pre>{JSON.stringify(review.transaction,(_,v)=>typeof v==='bigint'?v.toString():v,2)}</pre></details><label><input type="checkbox" checked={approved} onChange={e=>{setApproved(e.target.checked);signed.current=null;setSignedReady(false);}}/> I reviewed the transaction, proof, amount and fee.</label><br/><button onClick={sign} disabled={!approved||pending}>Request trade signature</button> <button onClick={broadcast} disabled={!signedReady||!approved||pending}>Broadcast trade to Pudge</button></>}{pending&&<><p>A submission requires canonical reconciliation before another trade.</p><button onClick={reconcile}>Reconcile submitted trade</button><label>Public trade backup JSON<br/><textarea readOnly rows={4} value={savedAttempt}/></label></>}{!pending&&<details><summary>Restore a trade attempt</summary><textarea aria-label="Trade backup JSON" value={backup} onChange={e=>setBackup(e.target.value)}/><button onClick={restore} disabled={!backup||!signer}>Restore trade backup</button></details>}</aside></div></main>;
+ return (
+  <main className="min-h-screen bg-[#0c1210] text-[#eef2ec] [font-family:'Segoe_UI',Arial,sans-serif]">
+   <header className="flex min-h-16 items-center gap-3 border-b border-[#2d3a35] bg-[#0e1512] px-5 md:px-8">
+    <a href="/v2" className="mr-auto font-bold tracking-wide text-[#eef2ec] no-underline">ROVEKO <span className="text-xs text-[#9ebbad]">/ CKB</span></a>
+    <span className="hidden items-center gap-2 text-xs text-[#a5b1a8] sm:inline-flex"><i className="size-2 rounded-full bg-[#72dfb0]"/> {t('pudgeTestnet')}</span>
+    <LanguageSwitcher/>
+    <button onClick={()=>connector.open()}>{address?`${address.slice(0,12)}…${address.slice(-6)}`:t('connectWallet')}</button>
+   </header>
+   <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-6 px-5 py-8 md:grid-cols-[minmax(0,1fr)_minmax(340px,400px)] md:gap-12 md:px-8 md:py-12">
+    <section className="min-w-0">
+     <p className="text-[11px] font-semibold tracking-widest text-[#9ebbad]">NATIVE CKB MARKETS / V2</p>
+     <h1 className="mt-3 text-4xl font-semibold leading-tight md:text-5xl">ROVEKO {t('curveMarket')}<span className="text-[#72dfb0]">.</span></h1>
+     <p className="mt-3 max-w-xl text-sm leading-6 text-[#b5c1b9]">Verify the market and review each transaction before using your wallet.</p>
+     <button className="mt-5" onClick={refresh} disabled={!signer}>{t('verifyRefreshMarket')}</button>
+     <dl className="mt-5 grid grid-cols-3 border-y border-[#2d3a35]">
+      {[[t('marketCapacity'),market?ckb(BigInt(market.cells[0].output.capacity)):'—'],[t('curveInventory'),market?.curve.inventory.toString()||'—'],[t('internalCirculation'),market?.custodyAmount.toString()||'—']].map(([label,value])=><div className="min-w-0 border-r border-[#2d3a35] py-4 pr-2 last:border-r-0 sm:px-4" key={label}><dt className="text-[10px] uppercase tracking-wider text-[#9ebbad] sm:text-xs">{label}</dt><dd className="mt-2 break-words text-lg font-semibold tabular-nums">{value}</dd></div>)}
+     </dl>
+     <p className="mt-4 text-sm text-[#a5b1a8]" role="status">{message==='Connect a wallet and verify the market.'?t('connectVerifyMarket'):message}</p>
+     <a className="mt-2 inline-block text-sm text-[#72dfb0] underline underline-offset-4" href="/v2/deploy">{t('deployment')} / {t('independentRecovery')}</a>
+    </section>
+    <aside className="min-w-0 rounded-lg border border-[#34443c] bg-[#151e1a] p-4 shadow-xl md:p-5">
+     <div className="mb-5 grid grid-cols-2 gap-1 rounded-md bg-[#0e1512] p-1">
+      <button className={side==='buy'?'!border-[#72dfb0] !bg-[#72dfb0] !text-[#10231a]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('buy');}}>{t('buyOnCurve')}</button>
+      <button className={side==='sell'?'!border-[#f08e89] !bg-[#f08e89] !text-[#301615]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('sell');}}>{t('sellBack')}</button>
+     </div>
+     <label className="mb-2 block text-sm text-[#cbd5ce]" htmlFor="pudge-quantity">{t('tokenQuantity')}</label>
+     <div className="flex min-h-16 items-center gap-3 rounded-md border border-[#3b4b43] bg-[#0e1512] px-3 focus-within:border-[#72dfb0]">
+      <input className="min-w-0 flex-1 border-0 bg-transparent text-2xl tabular-nums outline-none" id="pudge-quantity" inputMode="numeric" value={quantity} onChange={e=>{resetReview();setQuantity(e.target.value.replace(/[^0-9]/g,''));}}/>
+      <span className="text-xs text-[#a5b1a8]">TOKEN</span>
+     </div>
+     <button className="mt-3 w-full" onClick={prepare} disabled={!signer||pending}>{t('prepareTradeReview')}</button>
+     {review&&<div className="mt-4 space-y-3 border-t border-[#2d3a35] pt-4">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm"><dt className="text-[#a5b1a8]">{t('available')}</dt><dd className="text-right tabular-nums">{review.ownerBalance.toString()}</dd><dt className="text-[#a5b1a8]">{review.side==='buy'?t('totalCost'):t('grossPayout')}</dt><dd className="text-right tabular-nums">{ckb(review.amount)}</dd><dt className="text-[#a5b1a8]">{t('exactFee')}</dt><dd className="text-right tabular-nums">{ckb(review.fee)}</dd></dl>
+      <p className="break-all text-xs text-[#a5b1a8]">{t('transaction')}: {review.transaction.hash()}</p>
+      <details className="text-sm text-[#a5b1a8]"><summary className="cursor-pointer">{t('advancedDetails')}</summary><ul aria-label={t('reviewTransaction')} className="mt-2 space-y-1 break-all text-xs">{review.transaction.outputs.map((o,i)=><li key={i}>Output {i} · {o.capacity.toString()} shannons · lock {o.lock.hash()} · type {o.type?.hash()||'none'} · data {review.transaction.outputsData[i]}</li>)}</ul><pre className="mt-2 max-h-72 overflow-auto rounded border border-[#34443c] bg-[#0c1210] p-3 text-xs">{JSON.stringify(review.transaction,(_,v)=>typeof v==='bigint'?v.toString():v,2)}</pre></details>
+      <label className="flex items-start gap-2 text-sm text-[#cbd5ce]"><input type="checkbox" checked={approved} onChange={e=>{setApproved(e.target.checked);signed.current=null;setSignedReady(false);}}/> {t('transactionNeedsReview')}</label>
+      <div className="flex flex-wrap gap-2"><button onClick={sign} disabled={!approved||pending}>{t('requestTradeSignature')}</button><button onClick={broadcast} disabled={!signedReady||!approved||pending}>{t('broadcastTrade')}</button></div>
+     </div>}
+     {pending&&<div className="mt-4 space-y-3 border-t border-[#2d3a35] pt-4"><p className="text-sm text-[#a5b1a8]">{t('reconcileBeforeRetry')}</p><button onClick={reconcile}>{t('reconcileTrade')}</button><label className="block text-sm">{t('exportRecoveryRecord')}<textarea className="mt-2 block w-full" readOnly rows={4} value={savedAttempt}/></label></div>}
+     {!pending&&!review&&<details className="mt-4 border-t border-[#2d3a35] pt-4 text-sm text-[#a5b1a8]"><summary className="cursor-pointer">{t('restoreBackup')}</summary><textarea className="mt-3 block w-full" aria-label={t('exportRecoveryRecord')} value={backup} onChange={e=>setBackup(e.target.value)}/><button className="mt-2" onClick={restore} disabled={!backup||!signer}>{t('restoreBackup')}</button></details>}
+    </aside>
+   </div>
+  </main>
+ );
 }

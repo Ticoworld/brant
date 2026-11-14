@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @font-face {
   font-family: "Trade Wordmark";
   src: url("/fonts/space-grotesk-variable.ttf") format("truetype");
@@ -130,80 +132,8 @@ small {
   font-size: 12px;
   color: var(--muted);
 }
-.topbar {
-  height: 70px;
-  display: flex;
-  align-items: center;
-  gap: 45px;
-  padding: 0 30px;
-  border-bottom: 1px solid #212833;
-  background: #0e1218;
-}
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-family: "Trade Wordmark", sans-serif;
-  font-size: 27px;
-  font-weight: 600;
-  letter-spacing: -1.5px;
-  text-decoration: none;
-  color: #f1f2f4;
-}
-.brand > .cell-mark {
-  width: 23px;
-  height: 26px;
-  color: #dbe5e6;
-}
-.network {
-  font-family: inherit;
-  color: #a6b1c1;
-  font-size: 8px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  margin-left: 4px;
-  padding: 4px 6px;
-  border-left: 1px solid #4b5666;
-}
-.navigation {
-  height: 100%;
-  display: flex;
-  align-items: stretch;
-  gap: 27px;
-  flex: 1;
-}
-.navigation button {
-  border: 0;
-  border-radius: 0;
-  border-bottom: 2px solid transparent;
-  padding: 0 1px;
-  background: transparent;
-  font-size: 13px;
-  color: #a6afbd;
-}
-.navigation button[aria-current] {
-  color: #eef1f4;
-  border-bottom-color: #a3ddd6;
-}
-.navigation button:last-child {
-  margin-left: auto;
-  border-bottom: 0;
-  font-size: 12px;
-}
-.navigation button:last-child svg {
-  width: 15px;
-}
-.wallet-area button {
-  min-width: 112px;
-  font-size: 12px;
-}
 .wallet-connected {
   font-variant-numeric: tabular-nums;
-}
-.app-shell {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
 }
 main {
   width: 100%;
@@ -226,28 +156,6 @@ main {
   display: flex;
   align-items: baseline;
   gap: 18px;
-}
-.market-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 9px 0 12px;
-  border: 1px solid #526075;
-  border-radius: 8px;
-  background: #151c27;
-  color: #9daabd;
-  width: 330px;
-}
-.market-search input {
-  padding: 11px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  min-width: 0;
-  font-size: 12px;
-}
-.market-search input:focus-visible {
-  outline-offset: 0;
 }
 .search-submit {
   min-width: 30px;
@@ -316,14 +224,6 @@ td small {
   display: block;
   margin-top: 5px;
   color: var(--muted);
-}
-.market-name {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
-.market-name b {
-  font-size: 13px;
 }
 .market-token {
   display: grid;
@@ -701,12 +601,6 @@ td small {
 }
 .action-panel .ticket-summary:not(:has(.total)) {
   margin-top: 18px;
-}
-.trade-empty .market-search {
-  width: 100%;
-  margin-bottom: 16px;
-  background: #141e2b;
-  border-color: #4e617c;
 }
 .trade-empty .amount-field {
   margin-top: 0;
@@ -1185,13 +1079,6 @@ dialog::backdrop {
   font-weight: 500;
 }
 @media (max-width: 1050px) {
-  .topbar {
-    gap: 25px;
-    padding: 0 22px;
-  }
-  .navigation {
-    gap: 20px;
-  }
   main {
     padding: 30px 24px 0;
   }
@@ -1208,55 +1095,6 @@ dialog::backdrop {
   }
 }
 @media (max-width: 720px) {
-  .topbar {
-    height: auto;
-    min-height: 60px;
-    flex-wrap: wrap;
-    gap: 0;
-    justify-content: space-between;
-    padding: 12px 16px 0;
-  }
-  .brand {
-    font-size: 25px;
-    gap: 8px;
-  }
-  .brand > .cell-mark {
-    width: 20px;
-    height: 23px;
-  }
-  .network {
-    font-size: 7px;
-  }
-  .wallet-area {
-    order: 2;
-  }
-  .wallet-area button {
-    font-size: 11px;
-    min-width: 100px;
-    min-height: 34px;
-  }
-  .navigation {
-    order: 3;
-    flex-basis: 100%;
-    height: 48px;
-    gap: 21px;
-    margin-top: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .navigation button {
-    font-size: 11px;
-    min-height: 44px;
-    white-space: nowrap;
-  }
-  .navigation button:last-child {
-    font-size: 10px;
-    gap: 3px;
-    margin-left: auto;
-  }
-  .navigation button:last-child svg {
-    width: 12px;
-  }
   main {
     padding: 24px 16px 0;
   }
@@ -1282,12 +1120,6 @@ dialog::backdrop {
   h1 {
     font-size: 23px;
   }
-  .market-search {
-    width: 100%;
-  }
-  .market-search input {
-    font-size: 11px;
-  }
   .optional-col {
     display: none;
   }
@@ -1298,15 +1130,6 @@ dialog::backdrop {
   td {
     font-size: 11px;
     padding: 15px 8px;
-  }
-  .market-name {
-    gap: 8px;
-  }
-  .market-name b {
-    font-size: 11px;
-  }
-  .market-name small {
-    font-size: 10px;
   }
   .market-token {
     width: 25px;
@@ -1398,9 +1221,6 @@ dialog::backdrop {
   }
   .action-panel details {
     margin-top: 12px;
-  }
-  .trade-empty .market-search {
-    margin-bottom: 15px;
   }
   .creation {
     margin: 0;
@@ -1617,42 +1437,7 @@ dialog::backdrop {
     padding-right: 115px;
   }
 }
-/* Market-centred journey: one ledger, authenticated positions, contextual actions. */
-.directory-tools {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--line);
-  padding: 0 0 15px;
-  color: #9fb0c5;
-  font-size: 11px;
-}
-.directory-tools button {
-  font-size: 11px;
-  min-height: 32px;
-}
-.directory-scope {
-  font-size: 11px;
-  max-width: 800px;
-  color: #9aaec5;
-  margin: 18px 0 24px;
-}
-.discovery-result {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  min-height: 43px;
-  font-size: 11px;
-  color: #a3b6cc;
-}
-.market-name {
-  text-decoration: none;
-}
-.market-name:hover b {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
+/* The discovery screen uses Tailwind utilities; its table-specific rules remain here. */
 .market-table th {
   height: 45px;
 }
@@ -2035,9 +1820,6 @@ dialog::backdrop {
 .empty button {
   font-size: 11px;
 }
-.directory-tools + .material-note {
-  font-size: 11px;
-}
 .position-action .connect-position p {
   font-size: 12px;
 }
@@ -2139,23 +1921,6 @@ dialog::backdrop {
   .position-table td:nth-child(2) {
     font-size: 10px;
   }
-  .directory-tools {
-    font-size: 10px;
-    gap: 12px;
-  }
-  .directory-tools button {
-    font-size: 10px;
-    gap: 5px;
-  }
-  .discovery-result {
-    font-size: 10px;
-    line-height: 1.65;
-    padding-top: 12px;
-    align-items: flex-start;
-  }
-  .directory-scope {
-    font-size: 10px;
-  }
   .owned-positions > button {
     gap: 8px;
     font-size: 11px;
@@ -2183,12 +1948,6 @@ dialog::backdrop {
     font-size: 11px;
   }
   .position-action .offer-mode button {
-    font-size: 10px;
-  }
-  .market-name b {
-    font-size: 11px;
-  }
-  .market-name small {
     font-size: 10px;
   }
   .market-table .number {
