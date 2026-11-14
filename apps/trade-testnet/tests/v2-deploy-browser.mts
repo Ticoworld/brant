@@ -1,4 +1,4 @@
-// Controlled browser review test; no wallet signature or network submission.
+// Controlled browser review and disposable signing test; no network submission.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,15 +14,18 @@ const binaryDir=process.env.ROVEKO_GATE2_BINARIES;
 assert(binaryDir,'Set ROVEKO_GATE2_BINARIES to verified binaries');
 const names=['custody_smt','market_smt','custody_marker','marker_candidate','owner_lineage_candidate'];
 const codes=names.map(name=>({name,data:'0x'+fs.readFileSync(path.join(binaryDir,name)).toString('hex')}));
+assert(process.env.TRADE_NATIVE_ROOT,'Set TRADE_NATIVE_ROOT to private test dependencies');
+const xudt='0x'+fs.readFileSync(path.join(process.env.TRADE_NATIVE_ROOT,'vendor/ickb/build/release/xudt')).toString('hex');
+const xudtHash='0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95';assert.equal(ccc.hashCkb(xudt),xudtHash);
 const genesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606', tip='0x'+'22'.repeat(32), codeDep='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
-const lock={code_hash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hash_type:'type',args:'0x'+'11'.repeat(20)};
-const points=[1,2,3].map(i=>({tx_hash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'}));
-const next=spawn(process.execPath,[path.join(root,'node_modules/next/dist/bin/next'),'dev','--webpack','--port','3107'],{cwd:root,env:{...process.env,NEXT_PUBLIC_LOCAL_FIXTURE:'1',R7_NEXT_DIST_DIR:'.next-v2-deploy-test',NEXT_TELEMETRY_DISABLED:'1'},stdio:'ignore'});
+const lock={code_hash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hash_type:'type',args:ccc.hashCkbShort('0x0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798')};
+const points=[1,2,3,4].map(i=>({tx_hash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'}));
+const next=spawn(process.execPath,[path.join(root,'node_modules/next/dist/bin/next'),'dev','--webpack','--hostname','127.0.0.1','--port','3107'],{cwd:root,env:{...process.env,NEXT_PUBLIC_LOCAL_FIXTURE:'1',R7_NEXT_DIST_DIR:'.next-v2-deploy-test',NEXT_TELEMETRY_DISABLED:'1'},stdio:'ignore'});
 let browser:Awaited<ReturnType<typeof chromium.launch>>|undefined;
 try{
  for(let i=0;i<100;i++){try{if((await fetch('http://127.0.0.1:3107/v2/deploy')).ok)break;}catch{}await new Promise(r=>setTimeout(r,500));}
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
- const p=await browser.newPage();let network=genesis;
+ const p=await browser.newPage();let network=genesis,stale=false;
  await p.route('**/api/v2/code',route=>route.fulfill({json:{codes}}));
  await p.route('**/api/v2/pudge-rpc',route=>{const {method,params}=route.request().postDataJSON();let result:unknown;
    if(method==='get_block_hash')result=params[0]==='0x0'?network:tip;
@@ -31,7 +34,7 @@ try{
    else if(method==='get_transaction')result={tx_status:{status:'pending'}};
    else if(method==='get_cells')result={objects:points.map(out_point=>({out_point}))};
    else if(method==='tx_pool_info')result={min_fee_rate:'0x3e8'};
-   else if(method==='get_live_cell')result=params[0].tx_hash===codeDep?{status:'live',cell:{data:{hash:'0xf66ca3517241864672b7f47d093aec4d6d4d07824068993eacd728eb9078e236'}}}:{status:'live',cell:{output:{capacity:'0x'+(50000n*100000000n).toString(16),lock,type:null},data:{content:'0x'}}};
+   else if(method==='get_live_cell')result=params[0].tx_hash===codeDep?{status:'live',cell:{data:{hash:'0xf66ca3517241864672b7f47d093aec4d6d4d07824068993eacd728eb9078e236'}}}:params[0].tx_hash==='0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f'?{status:'live',cell:{data:{hash:xudtHash,content:xudt}}}:stale?{status:'dead'}:{status:'live',cell:{output:{capacity:'0x'+(50000n*100000000n).toString(16),lock,type:null},data:{content:'0x'}}};
    else throw Error('Unexpected RPC '+method);
    return route.fulfill({json:{result}});
  });
@@ -43,9 +46,17 @@ try{
  assert(await p.getByRole('button',{name:'Request wallet signature'}).isDisabled());
  assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
  assert.equal(await p.getByRole('list',{name:'Code outputs'}).locator('li').count(),5);
+ await p.getByLabel(/I reviewed the owner/).check();assert(await p.getByRole('button',{name:'Request wallet signature'}).isEnabled());
+ await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet declined').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
+ await p.evaluate(()=>{(window as any).rovTestWalletMode='modified';});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText(/Wallet changed reviewed transaction/).waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
+ await p.evaluate(()=>{(window as any).rovTestWalletMode='valid';});await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Signature verified. Transaction has not been broadcast.').waitFor();assert(await p.getByRole('button',{name:'Broadcast signed transaction'}).isDisabled());
+ network='0x'+'99'.repeat(32);await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet account or network changed').waitFor();network=genesis;
+ stale=true;await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText(/Reserved anchor|Funding cell|unavailable/).first().waitFor();stale=false;
+ await p.evaluate(g=>(window as any).rovDeployTestConnect((window as any).createDeployReviewTestWallet(g,'0x'+'33'.repeat(20))),genesis);await p.getByRole('button',{name:'Request wallet signature'}).click();await p.getByText('Wallet account or network changed').waitFor();
+ await p.evaluate(g=>(window as any).rovDeployTestConnect((window as any).createDeployReviewTestWallet(g)),genesis);
  await p.getByLabel(/Protected outpoints/).fill(`${points[0].tx_hash}:0x00`);
  await p.getByRole('button',{name:'Prepare unsigned review'}).click();
- await p.getByText(/Insufficient eligible funds/).waitFor({timeout:30000});
+ await p.getByText(/distinct owner anchor and deployment funding/).waitFor({timeout:30000});
  network='0x'+'99'.repeat(32);await p.getByRole('button',{name:'Prepare unsigned review'}).click();await p.getByText(/Wrong wallet or RPC genesis/).waitFor();
  const attempt={version:1,genesis,owner:'0x'+'44'.repeat(32),txHash:'0x'+'55'.repeat(32),codeHashes:['0x'+'66'.repeat(32)],state:'submitted'};
  await p.evaluate(a=>localStorage.setItem('roveko-v2-code-deployment-v1',JSON.stringify(a)),attempt);
@@ -63,5 +74,5 @@ try{
  const saved=await p.evaluate(()=>localStorage.getItem('roveko-v2-code-deployment-v1'));
  assert(saved && !saved.includes('not persisted'));
  assert(await p.getByRole('button',{name:'Prepare unsigned review'}).isDisabled());
- console.log('V2 deployment browser review checks passed (mock RPC; no signing)');
+ console.log('V2 deployment browser review and disposable signing checks passed (mock RPC; no submission)');
 }finally{await browser?.close();next.kill();}
