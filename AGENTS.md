@@ -24,3 +24,8 @@ Build and experimentally validate protocol mechanisms for native CKB trading wit
 - Preserve security of the original participants and the project: never output or commit secrets; public fixture keys MUST stay limited to isolated testing.
 - Do not equate a working proof component with a profitable exchange business.
 - When blocked by cloud setup/network policy, produce a reproducible environment report and bounded next step rather than making unsupported claims.
+
+## Scoped Pudge exception — WO-V2-01F
+- On branch `v2/pudge-trading-app`, the project owner authorizes development, testing and preparation of owner-controlled transactions on public CKB Pudge Testnet for the Roveko deployment and trading workflow. The isolated-devnet restriction above remains in force for unrelated work.
+- The owner must personally review and approve Pudge transactions in their wallet; never sign or broadcast unattended. Do not bypass wallet confirmation, browser access controls, transaction validation or contract authorization.
+- No mainnet, real assets, primary-wallet private keys or recovery phrases. Never expose fixture keys or fixture endpoints on Pudge. Preserve historical evidence and use disposable keys for isolated tests.
