@@ -1,0 +1,6 @@
+{
+  "format": "trade-v2-public-recovery-identity-v1",
+  "initialization_transaction": "0x693cfac1ec415d227f679291ab7fa2ca302f6d98bede93c1feae742d46a41c3e",
+  "source_evidence": "../../evidence/native-1794396785318/summary.json",
+  "scope": "private CKB 0.210.0 test chain; public scripts and transaction identity only"
+}

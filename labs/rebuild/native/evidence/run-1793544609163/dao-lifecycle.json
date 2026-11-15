@@ -1,0 +1,59 @@
+{
+  "depositHeader": {
+    "compact_target": "0x20010000",
+    "dao": "0x31992415cea1272fb3fbf27f038c2300564d765f58bd050000a335acb40bff06",
+    "epoch": "0xa000800001e",
+    "extra_hash": "0xfd727e3b3e1b942d8f381470de6da87f26a3a2064eff7a64e40821989cc96cde",
+    "hash": "0xbbba5d4cc6476c509b39ee3e32725ecaed69694c18ca1a4b415988e79dba7670",
+    "nonce": "0x0",
+    "number": "0x134",
+    "parent_hash": "0x63b9c9bd669408e2938f565da734c5bc0a13075c73d77dcba49ca711444318e6",
+    "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": "0x1a19796ed2f",
+    "transactions_root": "0xaa452403d2ce6d5e31fc203a904b79c2a6302baa14c082702ad050be2c398f2c",
+    "version": "0x0"
+  },
+  "requestHeader": {
+    "compact_target": "0x20010000",
+    "dao": "0x03456c0a92822a2f9aa359218a8c2300d34895437555060000d8f05ae30bff06",
+    "epoch": "0xa0000000022",
+    "extra_hash": "0x7aa8315faaca589a97c85e520776c613c7f599da16ce9fb37f3463fcc134d401",
+    "hash": "0xe82f5ace13840f43433b4677de7a4602bb6f504048025add5e86b529c1955613",
+    "nonce": "0x0",
+    "number": "0x154",
+    "parent_hash": "0x8dc872cbf892f3890e60383088c6283d7dce357da75f61df004b3b9260fbd477",
+    "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": "0x1a19796eeab",
+    "transactions_root": "0xb036b828e6347522dc68019af4de2e2a12e288881b6ba31e363922b7954d97de",
+    "version": "0x0"
+  },
+  "matureSince": "0x20000a00080000d2",
+  "minimumEpoch": {
+    "number": "210",
+    "index": "8",
+    "length": "10"
+  },
+  "completionHeader": {
+    "compact_target": "0x20010000",
+    "dao": "0xd30fcd38f5e0c92f9b32d6a283a923004d41e3aa7646270000fd2b4cb515ff06",
+    "epoch": "0xa00020000d3",
+    "extra_hash": "0xddb81e767563288ec092ee55b2719ca64972ca98706c72afa06c5e5831a752c2",
+    "hash": "0x9a0c9b1bdc24b145e19ba4da7daf5b8f743feabf3fdb27b0f761c2e2ca8b0fa8",
+    "nonce": "0x0",
+    "number": "0x840",
+    "parent_hash": "0x27eef1fc484a35ae3d31abdc01a3374373e5e6f7153cb068222eca343abe7602",
+    "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": "0x1a197970081",
+    "transactions_root": "0xcd10f776788697030db68c15a88d6f0dd8f91c4c920fdc9579addb668755682a",
+    "version": "0x0"
+  },
+  "minedBlocks": 1770,
+  "depositCapacity": "10008200000000",
+  "issued": "9994432257408",
+  "payout": "9900000000000",
+  "maximum": "10008777911531",
+  "independentlyComputed": "10008777911531",
+  "finalSpendable": "10018776911531",
+  "interest": "577911531",
+  "note": "Interest freezes at request header; short integration epochs are not public-network elapsed time. Maker token and underlying DAO collateral must not be added as independent assets."
+}

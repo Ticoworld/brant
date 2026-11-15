@@ -1,0 +1,26 @@
+{
+  "bytes": 15424,
+  "sha256": "3a9f1d5c8cdb4796bd0f18a9a88361fb6317d21e24d1bab1201b9e411d4963ba",
+  "command": [
+    "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+    "cc",
+    "-target",
+    "riscv64-freestanding",
+    "-mcpu=generic_rv64+m+c",
+    "-Oz",
+    "-DSNAPSHOT",
+    "-nostdlib",
+    "-fno-builtin",
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+    "-Wl,--gc-sections",
+    "-Wl,-e,_start",
+    "-Wl,--strip-all",
+    "-Wl,--image-base=0x10000",
+    "-o",
+    "/workspace/trade/labs/wo09-unified/build/snapshot",
+    "/workspace/trade/labs/wo09-unified/contracts/cohort.c"
+  ]
+}

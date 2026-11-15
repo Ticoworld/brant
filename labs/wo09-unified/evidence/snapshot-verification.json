@@ -1,0 +1,8 @@
+{
+  "classification": "RECORDED_NATIVE_EVIDENCE_VERIFIED",
+  "transactions": 12,
+  "rejections": 15,
+  "creator_gross_ckb": 25.275,
+  "protected_ckb": 101.1,
+  "cushion_ckb": 170
+}

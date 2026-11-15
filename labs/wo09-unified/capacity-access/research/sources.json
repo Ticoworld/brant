@@ -1,0 +1,86 @@
+[
+  {
+    "title": "CKB occupied capacity source",
+    "url": "https://github.com/nervosnetwork/ckb/blob/2592ddf0502cd4adfe886db893cccc866db3c60f/util/gen-types/src/extension/capacity.rs",
+    "version_qualification": "CKB0.210.0 tag2592ddf; source saved withMITnotice",
+    "finding": "Script occupied bytes33+args; output8+lock+optionaltype+data.41CKBabsolute empty-lock structural lower bound;61forstandard20arg.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "CKB consensus capacity validation",
+    "url": "https://github.com/nervosnetwork/ckb/blob/2592ddf0502cd4adfe886db893cccc866db3c60f/verification/src/transaction_verifier.rs",
+    "version_qualification": "Pinned0.210.0source inspected; native failures preserved",
+    "finding": "Native admission rejects insufficient output capacity even when script-only estimation succeeds.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "RFC0002",
+    "url": "https://github.com/nervosnetwork/rfcs/blob/0c945451c24194f4d34d81195c0159df0a67581a/rfcs/0002-ckb/0002-ckb.md",
+    "version_qualification": "CurrentRFCsource hash pinned; book rendering can lag",
+    "finding": "Capacity and fee funding can belong to application/cell owners, not every end user. This economic possibility is prior art.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "RFC0022",
+    "url": "https://github.com/nervosnetwork/rfcs/blob/0c945451c24194f4d34d81195c0159df0a67581a/rfcs/0022-transaction-structure/0022-transaction-structure.md",
+    "version_qualification": "CurrentRFCsource; primary source via live search",
+    "finding": "Witnesses and script grouping are programmable; ordinary signature placement is a convention.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "RFC0026ACP",
+    "url": "https://github.com/nervosnetwork/rfcs/blob/0c945451c24194f4d34d81195c0159df0a67581a/rfcs/0026-anyone-can-pay/0026-anyone-can-pay.md",
+    "version_qualification": "CurrentRFCsource read; Proposal status",
+    "finding": "Can credit existing suitable funded recipients without their ordinary payment authorization undermonotonic conditions; no free new capacity.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "Official transaction signing",
+    "url": "https://docs.nervos.org/docs/how-tos/how-to-sign-a-tx",
+    "version_qualification": "Live primary documentation",
+    "finding": "Explains default secp witness scheme; this experiment uses a different directly verified user witness signature.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "CoBuild reference",
+    "url": "https://github.com/xcshuan/cobuild-otx-contracts/tree/f18eeaf22f29820ecd9a089481ab45b78b2b7454",
+    "version_qualification": "Previously read source and pinnedpublicproductresearch; notrerun",
+    "finding": "Flexible intended transaction composition is an alternative; current prototype binds the full transaction, not reusable range intents.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "Fiber channel lifecycle",
+    "url": "https://www.fiber.world/docs/concept/channels/channel-lifecycle",
+    "version_qualification": "Live primary documentation",
+    "finding": "Channels require real funding, commitment/closing rules and availability; different performance/control tradeoff.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "Fiber one-way funding",
+    "url": "https://www.fiber.world/docs/concept/channels/unidirectional-channel",
+    "version_qualification": "Live primary documentation read",
+    "finding": "Initiator may fund without acceptor contribution; documenteddefault99CKBreserve. It is a version/config cost, not a consensus global minimum.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "Historical sponsorship/cheque",
+    "url": "https://github.com/nervosnetwork/ckb-cheque-script",
+    "version_qualification": "Official historical repository; no new cheque execution",
+    "finding": "Sender-funded acceptance patterns are prior art, not proof of reusable capacity or safe arbitrary lease confiscation.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "Historical OTX scenario analysis",
+    "url": "https://github.com/nervosnetwork/ckb/discussions/3670",
+    "version_qualification": "Public historical discussion located; guessedforumURLnotaccessible",
+    "finding": "Capacity-funding and input aggregation are recognized application jobs; no novelconsensusexception claimed.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  },
+  {
+    "title": "ZigEd25519",
+    "url": "https://github.com/ziglang/zig/blob/0.14.1/lib/std/crypto/25519/ed25519.zig",
+    "version_qualification": "Zig0.14.1 source andMITlicense preserved; actual native tested",
+    "finding": "Canonical Ed25519 verification in isolated adapter; not a production-qualified CKBlock or securityaudit.",
+    "retrieved": "2026-11-03 Africa/Lagos"
+  }
+]

@@ -1,0 +1,106 @@
+{
+  "format": "trade-v2-gate2-critical-closure-manifest-v1",
+  "verdict": "GATE 2 PARTIAL, EXACT BLOCKERS",
+  "branch": "wo18-v2-merkle-custody",
+  "starting_commit": "ab9d46588359e76e7f1754cfbc2d363dfae30618",
+  "implementation_commit": "f95d7363632c9e557443adb39860640d3596d6a5",
+  "validated_closure_commit": "cd12260cc831ed2cf02633f72f490a887d3a39ab",
+  "previous_gate2_checkpoint": "3af1f1cd29135d45532e79c9021596cdbb14df6a",
+  "environment": {
+    "ckb_node": "0.210.0 (2592ddf 2026-09-17)",
+    "zig": "0.14.1",
+    "ckb_system_scripts_commit": "72eb92fca090700dcb398cd8cad8fbd8bad40355",
+    "secp256k1_submodule_commit": "3ffde18a060aaf4df5b81e7d88355f1e99874650",
+    "fresh_build_directory": "C:\\Users\\timot\\Desktop\\2026\\CKB\\trade-gate2-rebuild-closure-20261111",
+    "chain_scope": "private disposable nodes and test credentials only"
+  },
+  "contract_sources_sha256": {
+    "custody_smt.c": "cac3356341e5197809a03909a7684e9971796fe1e7305c51572cfe5e07734eea",
+    "market_smt.c": "fa0f0db4f1eb545468deacc2d81e0ebc9a56983e616e3e0727ba6591700b4cfa",
+    "custody_marker.c": "307204c02868d9544c7bbddf4aeb2b27764d9444b840f711d7e24db9cd83e086",
+    "marker_candidate.c": "a227f104d3bbbf396e52652033e6e27d718210f13088847260a10afc8997985d",
+    "owner_lineage_candidate.c": "a10fb1968054c3ad96b5ed4475fb008b27b51a60547394e1f980585c4891cb3e"
+  },
+  "fresh_elf_sha256": {
+    "custody_smt": "7db957901242d6c9243f585b393c55d42faad3c7ddd16f1672c1a19ad14d4601",
+    "market_smt": "b33d7396778340c3d6e66c62897a1dbd1561b32848715106a94d8a077bb7cd1f",
+    "custody_marker": "cca4552516f372d97377b4e27ebffe1655d4bdeea3535544f36da44ff15aba07",
+    "marker_candidate": "5941ccbc5ebd47e59811c4c8d8c8ae8d8f19431770fe771cf12b0e88d7bb5f4f",
+    "owner_lineage_candidate": "661820b1d9ce5b384762e5e67389335c04bb2c34aac7bbcb7cb684e9ea13671b"
+  },
+  "closure_tool_sha256": {
+    "smt-witness-attacks.cjs": "dad9d6c6ab224617ab10c3d78a553e3e03f08bd08fbe81c9c33ce8cfddfab928",
+    "replay-native-events.cjs": "24324a16507813b3d5d30ee9f0aea051ad5a48b065cbf3bbb2b0cae85b14571c",
+    "collect-run-history.cjs": "83089e3f7e2e86aacc28d2719a13bec44e96dc144a138e89a6df3035f045f178",
+    "verify-combined-1024-accounting.cjs": "730849a4b0d07f71bafb58b1f7143b092b5beb8914d1397b334b17848b7d7f56",
+    "verify-final-live-singletons.cjs": "ac6f19c13176c9c690582415ea2c28c20cdf41c86a8b773957d589364070375e",
+    "verify-two-market-cross-lineage.cjs": "00de7288b8cc35d615b6b6d524493dcfb6477df326859cb96f27de17eb0180bb",
+    "recovery-recover.cjs": "9ff96ea12d193b1b8887aa197728f2b8e5aec7ed18a4882fc9c446e8ce904891",
+    "recovery-main.rs": "3fd8ac3a1f352f45bafae0a380b8ccb6a0718f70e204609c9d78dbef13dc8972",
+    "smt-tools-main.rs": "9316b6648a4d317406da16b5f7e2ad78c0cd13b8cdf5f25bab45d7a4f8932745",
+    "recovery-recover.test.cjs": "4141194863000e0bccd005f81d5ca2ec0593b2383c3f3b875db297a1237556f5"
+  },
+  "native_attack_evidence": {
+    "directory": "security/evidence/native-smt-1794427785208",
+    "fixture_provenance_sha256": "a84814252f22ac7b49fdb35c16105b5006d90fa6321aa0b999fa82cae9fb5d19",
+    "smt_attacks_sha256": "6e3de7c84ba0c110344fb3ea85c8a3b71db2e9a0877555709e9e28df28dc084f",
+    "market_attacks_sha256": "e820c4eb5b721daeb29573d472d0250fb516c43c5d4543603ea472fd3c59c41c",
+    "attack_count": 18,
+    "record_format": "each attack JSON contains the complete signed transaction, raw transaction hash, signed transaction and witness hashes, altered condition, rejecting script-group source, script hash, and VM error",
+    "positive_controls": "positive-controls.jsonl"
+  },
+  "scale_replay": {
+    "source_native_run": "evidence/native-1794418766907",
+    "fresh_chain_replay": "evidence/native-replay-1024-selldown-20261111b",
+    "canonical_rpc_bundle": "recovery/evidence/scale-1024-selldown-20261111/history.json",
+    "canonical_rpc_log": "recovery/evidence/scale-1024-selldown-20261111/recovery-rpc.jsonl",
+    "accounting_result": "recovery/evidence/scale-1024-selldown-20261111/combined-accounting-replay.json",
+    "canonical_tip": "0xd49b1a3d6d534eb40320c94ca8ac89a98528e5ed9e66c15f713b9e59175a8621",
+    "native_transactions": 1100,
+    "custody_transitions": 1096,
+    "owners": 1024,
+    "owner_batch_transactions": 64,
+    "owner_batch_updates": 1022,
+    "fixed_supply": "2000",
+    "final_market_inventory": "2000",
+    "final_custody_entitlements": "0",
+    "final_external_xudt": "0",
+    "initial_and_final_spendable_reserve_shannons": "29999998064",
+    "peak_market_capacity_shannons": "54261600000000",
+    "total_fees_shannons": "1100000000",
+    "estimated_vm_cycles": "4837501910",
+    "maximum_transaction_estimated_cycles": "38098443",
+    "serialized_transaction_bytes": 3539687,
+    "occupied_output_checks": 7470,
+    "transition_conservation": true
+  },
+  "scale_replay_evidence_sha256": {
+    "history.json": "9428641dc46d4b061c0b8f856fec26fb3a162d196e75b7d95ffde9f141c5e79e",
+    "recovery-rpc.jsonl": "1162f3a43e811c55f1b50ba2a0321b45100d0d501a72963d610e2a3d177ae6a0",
+    "combined-accounting-replay.json": "4fee96f473c7bacfaf98b6c86d841e069e8167bb730e780e725efc4b6aa38c20",
+    "native-replay-summary.json": "5a3b16eb55419440e24e5d8ea3c1ea5422aa57201bbce8727f5bdb41b7ea60d3"
+  },
+  "independent_recovery": {
+    "evidence_directory": "evidence/native-1794410154147",
+    "initialization_transaction": "0x2fee43db192ee7591d30630f4e07fa8883bd321e0411476a04201b3dd77ad9cd",
+    "withdrawal_transaction": "0x161131587f2fcc84791e18d744e510f90b5d7276b31bdacb9a31bfd76d023da3",
+    "withdrawal_block": "0x12f",
+    "withdrawal_vm_cycles": 2263866,
+    "credential_scope": "disposable key generated in process; no private key saved",
+    "environment_boundary": "fresh private chain and recovery CLI on the same host, not a separately provisioned machine",
+    "fault_test_boundary": "mocked JSON-RPC only; no real reorganization induced"
+  },
+  "recovery_fault_evidence_sha256": {
+    "directory": "recovery/evidence/rpc-faults-1794429476044",
+    "fault-results.json": "d5334070a026560c49918ec51d6091228544b7e7e69760e03f8c885f14ecb002"
+  },
+  "remaining_unverified": [
+    "maximum curve quantities and arithmetic overflow/truncation boundaries in current Gate 2 VM scripts",
+    "exact occupied-capacity boundary and capacity-underflow attacks",
+    "unauthorized xUDT owner-mode issuance, counterfeit xUDT and unexpected additional token inputs/outputs",
+    "revision overflow, tombstone re-enrollment old-order revival, and unrelated-owner mutation",
+    "alternate valid duplicate redemption and competing singleton spend race",
+    "separately provisioned recovery client and actual node reorganization recovery",
+    "absolute covenant-enforced order expiry and individual 80-percent purchase-price protection"
+  ]
+}

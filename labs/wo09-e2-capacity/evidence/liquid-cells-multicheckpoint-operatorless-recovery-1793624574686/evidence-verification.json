@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "committed_transactions": 8,
+  "sequential_checkpoints": 4,
+  "latest_sequence": "4",
+  "state_total_matches_anchor": true,
+  "native_rejections": {
+    "stale_proof": "type-script error 62",
+    "1000_shannon_output": "CKB node InsufficientCellCapacity on send_transaction",
+    "sponsored_standard_output": "type-script error 67 (exact-balance payout)",
+    "spent_anchor_reuse": "Unknown OutPoint after prior exit committed"
+  },
+  "operatorless_user_exit_committed": "0x078d01ff55372355e9c59f893614065e1a26edeb5b88107b8af7c8cc81a22329",
+  "caveat": "The permissionless anchor lock is an always-success test lock; the anchor type script constrains the tested transition. This is a research fixture, not a deployable security design."
+}

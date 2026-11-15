@@ -1,0 +1,7 @@
+[
+  {
+    "label": "tampered_published_da_rejected_by_real_anchor_script",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 39 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5be963a27de2c18a47a7a2c0d4f0c33a850f1fdd1ae63c75335c17d33ddb384e.html#39 })"
+  }
+]

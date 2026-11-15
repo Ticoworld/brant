@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {deriveMarketIdentity} from '../lib/v2-engine/initialization.ts';
+import {assertLocalMarketScripts} from '../lib/v2-engine/local-manifest.ts';
+const h=(n:string)=>'0x'+n.repeat(64);
+const id=deriveMarketIdentity({anchor:{txHash:h('1'),index:'0x0'},genesis:h('2'),base:10n,step:1n,supply:100n,codes:{market:h('3'),marker:h('4'),owner:h('5'),custody:h('6'),custodyMarker:h('7'),xudt:h('8')}});
+const other=ccc.Script.from({codeHash:h('9'),hashType:'data1',args:'0x'});
+const outputs=[{lock:id.market,type:id.token},{lock:id.market,type:id.marker},{lock:id.custody,type:id.token},{lock:id.custody,type:id.custodyMarker},{lock:other}].map(x=>({...x,capacity:100000000000n}));
+const tx=()=>ccc.Transaction.from({outputs,outputsData:['0x','0x','0x','0x','0x']});
+assert.doesNotThrow(()=>assertLocalMarketScripts(tx(),id));
+const wrongMarketMarker=tx();wrongMarketMarker.outputs[1].lock=other;
+assert.throws(()=>assertLocalMarketScripts(wrongMarketMarker,id),/identities differ/);
+const wrongCustodyMarker=tx();wrongCustodyMarker.outputs[3].lock=other;
+assert.throws(()=>assertLocalMarketScripts(wrongCustodyMarker,id),/identities differ/);
+console.log('Local market marker lock checks passed');

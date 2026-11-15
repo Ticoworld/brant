@@ -1,0 +1,25 @@
+deploy_anchor 0x3e890e27e24c66ca5007f27d90c8894d759ce9501b45d9271ac90627ff5b65fb
+deploy_as 0x5a8a5c9a392f1c18d6f88e5392433c53f48c1446379e96a23897de23de9b6025
+claim_0_full_signed_merge true 11695095
+claim_0_missing_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }
+claim_0_invalid_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+claim_1_full_signed_merge true 11681091
+claim_1_missing_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }
+claim_1_invalid_signature false Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }
+wrong_amount false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+excess_amount false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+wrong_identity false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+changed_data false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+changed_type false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+wrong_root false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#63 } }
+other_liability false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#63 } }
+ambiguous_outputs false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+self_paid_fee_original_derivative false Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }
+order_012_owner_0 true 11695095
+order_012_owner_1 true 11654435
+order_012_owner_2 true 11695080
+order_210_owner_2 true 11697815
+order_210_owner_1 true 11699354
+order_210_owner_0 true 11687577
+EVIDENCE /workspace/trade/labs/wo09-e3/evidence/merge-vm-1793632167062
+COMPLETE /workspace/trade/labs/wo09-e2-capacity/evidence/e3-merge-vm-1793632165569

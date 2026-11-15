@@ -1,0 +1,8 @@
+{
+  "classification": "OFFLINE_NATIVE_MERKLE_EVIDENCE_VERIFICATION",
+  "committed_transactions": 12,
+  "leaf_updates": 8,
+  "target": 3,
+  "final_backing": "0",
+  "rejections": 7
+}

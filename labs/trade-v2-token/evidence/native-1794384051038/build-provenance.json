@@ -1,0 +1,60 @@
+{
+  "repository": "Ticoworld/trade",
+  "commit": "d7ed83325cbeec06641f192fb40a3ee5dcde96e7",
+  "remoteBranch": "origin/wo16-launch-v2-wip",
+  "ckbVersion": "0.210.0 (2592ddf 2026-09-17)",
+  "ckbBinarySha256": "d687e478aa4a395ba9ce839473fe43684cacd4ad7a38096af1e331b8a1ddd178",
+  "zigVersion": "0.14.1",
+  "zigBinarySha256": "9df4f1d2eaa7c6ee7649d0e13853ad40deed5d94e643e9ff2a2bab52ffd9feee",
+  "zigReleaseArchiveSha256": "24aeeec8af16c381934a6cd7d95c807a8cb2cf7df9fa40d359aa884195c4716c",
+  "buildCommand": "TRADE_BUILD_DIR=$PWD/labs/trade-v2-token/build-gate1-closed TRADE_NATIVE_ROOT=$PWD/labs/rebuild/native bash labs/trade-v2-token/build.sh",
+  "runCommand": "TRADE_BUILD_DIR=$PWD/labs/trade-v2-token/build-gate1-closed TRADE_NATIVE_ROOT=$PWD/labs/rebuild/native node labs/trade-v2-token/run.cjs",
+  "dependencies": {
+    "ckbSystemScripts": "72eb92fca090700dcb398cd8cad8fbd8bad40355",
+    "secp256k1": "3ffde18a060aaf4df5b81e7d88355f1e99874650",
+    "xudtElfSha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349"
+  },
+  "sourceSha256": {
+    "custody": "a01e11468fb31759a1c65ee7a75958c53ffd1c4b8b8d04cd631c686c9ef8f838",
+    "custody_marker": "f8a56fe1b5308e57efe4bcda22b5b5060b76da64d35d0ef4230a6c37da8f104f",
+    "market": "1d12c7b3cc9744d214644ed08eee308e862bc9fe8fed0b0b4cc46e9ed730c142",
+    "owner_lineage_candidate": "a10fb1968054c3ad96b5ed4475fb008b27b51a60547394e1f980585c4891cb3e"
+  },
+  "elfSha256": {
+    "custody": "65c26c5a33e9675b725e072e4bcfa83f3dd613ae14981d65f61769ba6d16c251",
+    "custody_marker": "c60b7202e46fedd2741952a399d16da761517908dbde0dd9d8f4a96e2cc3fe3b",
+    "market": "84a08aea1ed5d614895711fa3359edd9669f4af67def9ef70916c02f3d076b66",
+    "marker_candidate": "5941ccbc5ebd47e59811c4c8d8c8ae8d8f19431770fe771cf12b0e88d7bb5f4f",
+    "owner_lineage_candidate": "661820b1d9ce5b384762e5e67389335c04bb2c34aac7bbcb7cb684e9ea13671b",
+    "codes_h": "82e6af0e1fa76dd93da7ef4633988a1eb6cdab268702feba095dabfddfdd1e6e"
+  },
+  "nativeEvidence": "native-1794384051038",
+  "nativeCommittedTransactions": 27,
+  "attributedScriptRejections": 51,
+  "independentVerifier": "PASS; includes spent-input external replay resolution check",
+  "ownerControl": {
+    "sourceSha256": "217c05bcc282855222e1c5288c356c0de3140fd0e6fa044f1633c757049db1d4",
+    "elfSha256": "da8321097f522b9f7f241f5b10aaf723f5e403875a7ebb637205924acfce1ed2",
+    "evidence": "labs/wo16-launch-v2/evidence/owner-control-1794381897478",
+    "authorizedOutputMint": "0x89bab6ae7b88a1fa64dca98e27cf413ae68e248b132e262ba639ebf542f25e37",
+    "authorizedInputMint": "0x29911bfd50825d92d867ef6a4a458006caaf79800a43301563872d3b406ba4ea"
+  },
+  "closure": {
+    "runSourceSha256": "4adbdff5175f6c16246ab3c6396171aa56bbecf094c629a8529fabee5cedca9a",
+    "verifierSourceSha256": "88410b0f926f5d4ee31c79d1e247341d998638f72b023f65ec90348d896925aa",
+    "finalRebuildDirectory": "evidence/native-1794384051038/artifacts",
+    "finalRebuildSha256MatchesRecordedElfs": true,
+    "attackLabels": [
+      "duplicate_market_singleton",
+      "cross_market_inventory_substitution",
+      "owner_mode_forged_matching_lock_mint",
+      "external_extra_xudt_output",
+      "external_extra_xudt_input",
+      "external_incorrect_token_return",
+      "external_inventory_above_supply",
+      "external_quantity_exceeds_holder",
+      "second_initialization_after_full_sell_down"
+    ],
+    "externalReplay": "same committed transaction rejected by node resolution as Unknown(OutPoint); not a script-level rejection"
+  }
+}

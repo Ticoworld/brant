@@ -1,0 +1,23 @@
+# WO09-E1 candidate adjudication
+
+> **Restriction/status update:** Beneficiary-address settlement liveness remains **UNRESOLVED**. Original consumable-right happy paths and pre-warning observations are preserved, but the proposed correction has no native validation: its replay stopped at a JavaScript syntax error. Compiled/source-only changes are quarantined in `labs/wo09-open-markets/research/blocked-beneficiary-correction`. No security PASS or production readiness is asserted. Further restricted-case validation is paused; independent launch, fixed-risk, OTX and incentive research continues.
+
+
+Technical ADVANCE means a bounded result earns further research, not production approval. Commercial UNPROVED means no independently sourced customer premium, mandate or willingness to pay. Source/history, mathematical model, native execution and market observation remain distinct.
+
+| Candidate | Strongest rival | Technical | Commercial | Evidence / decision |
+|---|---|---|---|---|
+| Generic curve or ratcheting-floor launch | CCA/Launcher, Baseline, Nirvana/Samsara, retained cash | REVISE | UNPROVED | Reserve/financing/dilution models; rival mechanisms inspected. No new global curve is justified by a renamed floor. |
+| Individually funded fixed claim | Retained cash+at-risk contribution, CrowdCell/refund escrow | ADVANCE as frozen reusable baseline; REVISE standalone launch | UNPROVED; UNATTRACTIVE if only cash repackaging | Native independent purchases, transfer, partial/full four-note redemption.150 CKB reserve and reduced usable issuer finance matter. No failed-campaign implementation or global floor ratchet. |
+| Fixed-beneficiary complementary risk | Fully funded options/DLC/Gamma, selling to stable assets | ADVANCE research; freeze cheaper fallback | UNPROVED | Eight exact native outcomes, market-scale replication, two fallback ordering schedules. Trusted publisher, cap exhaustion and term capital remain. |
+| Band-limited protection | Funded put spread | REVISE | UNPROVED | Exact smaller-cap/reduced-coverage model only. Native standalone band not built; no premium counterparties. |
+| Generic new ring/DEX | Optimized A2/CoBuild/CKBSwap/RFQ | STOP SPECIFIC novelty/business mechanism | UNPROVED | New signed claim/xUDT/CKB exchange works but has no equivalent-workload measured advantage over strongest rails. Reuse the rails; don't invent an engine. |
+| Unlimited useful depth / automatic LP income | Paid professional MM/RFQ | STOP SPECIFIC MECHANISM | UNATTRACTIVE under unfunded terms | Finite inventory, self-consumption and adverse-selection counterexamples remain. |
+| Allocated finite execution quota | Firm RFQ, funded option, maker inventory auction | REVISE | UNPROVED | Truthful bounded service, synthetic economics; no new native SLA/third-party identity proof or issuer retainer quote. |
+| Permanent transferable risk records | Fixed-recipient pool, consumable variant | REVISE; terminal cleanup absent | UNPROVED; known permanent-capital disadvantage | Native bounded sale/settlement works;316 CKB records cannot burn. Consumable happy paths return capital but have unresolved liveness, so no secure superiority is established. |
+| Consumable transferable funded term rights | OTC/DLC transfer, option tokens, fixed-recipient pool | REVISE; beneficiary-address liveness unresolved | UNPROVED | Original happy-path sale/settlement traces exist; malformed-beneficiary liveness issue remains unresolved. Proposed correction not natively executed. No actual secondary market. |
+| Modular rights + shared event/discovery | Separate contracts on established rails | ADVANCE modular comparison | UNPROVED | A right sale gives a genuine new exit option compared with immutable recipients. Shared observation can amortize206 CKB/event; measured commercial synergy or native many-pool event benchmark not established. No principal is double pledged. |
+
+Open **research** candidates: fixed-term funded risk, issuer financing/distribution and finite paid inventory rights. Transferable term rights remain a conditional possibility, with beneficiary-address liveness unresolved. Strongest fallback: individually funded fixed native claims plus existing A2/compact settlement capabilities. No candidate earns PROMISING solely from this chain run. At least risk-rights research and issuer-financing/distribution research remain open; a generic token exchange has not earned product priority.
+
+The arbitrary-history recovery / A2 LO-01 boundary remains unresolved. The new anchored fixtures do not qualify that client or cure an upstream issue. Remit/Sluice identities remain unverified, so no relative novelty assertion is made.

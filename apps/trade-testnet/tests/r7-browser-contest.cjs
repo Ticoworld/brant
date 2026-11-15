@@ -1,0 +1,22 @@
+const fs=require('fs'),path=require('path'),Module=require('module');
+const source=path.resolve(__dirname,'r7-browser-journey.cjs');
+let text=fs.readFileSync(source,'utf8');
+const start=text.indexOf('  let submissions=0;');
+const end=text.indexOf('\n }finally',start);
+if(start<0||end<0)throw Error('Journey markers missing');
+text=text.slice(0,start)+`
+  const second=await browser.newPage();second.on('dialog',d=>d.accept());await second.goto('http://127.0.0.1:3102/r7');
+  await page.getByRole('button',{name:'Connect disposable buyer',exact:true}).click();
+  await second.getByRole('button',{name:'Connect second disposable buyer',exact:true}).click();
+  await Promise.all([page.getByRole('button',{name:'Refresh'}).click(),second.getByRole('button',{name:'Refresh'}).click()]);
+  await page.waitForTimeout(3000);
+  await Promise.all([page.getByRole('button',{name:'Buy',exact:true}).first().waitFor(),second.getByRole('button',{name:'Buy',exact:true}).first().waitFor()]);
+  const hashes=new Set();for(const p of [page,second])p.on('request',r=>{if(r.url().endsWith('/api/r7/rpc'))try{const x=r.postDataJSON();if(x.method==='send_transaction')hashes.add(x.params[0])}catch{}});
+  await Promise.all([page.getByRole('button',{name:'Buy',exact:true}).first().click(),second.getByRole('button',{name:'Buy',exact:true}).first().click()]);
+  await Promise.all([page.waitForTimeout(20000),second.waitForTimeout(20000)]);
+  const statuses=[await page.getByRole('status').innerText(),await second.getByRole('status').innerText()];console.log('BUYER_STATUSES',JSON.stringify(statuses));
+  const txHashes=statuses.flatMap(s=>s.match(/0x[0-9a-f]{64}/g)||[]);assert.equal(txHashes.length,2,'both buyer attempts must be reported');assert.notEqual(txHashes[0],txHashes[1]);
+  for(let i=0;i<20;i++)await e.mine();const outcomes=await Promise.all(txHashes.map(h=>e.rpc('get_transaction',[h])));assert.equal(outcomes.filter(x=>x?.tx_status?.status==='committed').length,1,'exactly one settlement must commit');
+  C.write(e.out+'/contest-result.json',{statuses,txHashes,outcomes});console.log('CONTEST',JSON.stringify({statuses,txHashes,outcomes:outcomes.map(x=>x?.tx_status)}));
+`+text.slice(end);
+const mod=new Module(source,module);mod.filename=source;mod.paths=Module._nodeModulePaths(path.dirname(source));mod._compile(text,source);module.exports=mod.exports;

@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/cryptape/omnilock",
+  "commit": "280dd97ac0930ea1ed766a18d49478229347c832",
+  "qualification": "Source inspection only. No rebuilt-source equivalence proof against current Pudge bytes; no OmniLock native signature PASS.",
+  "source_sha256": {
+    "README.md": "c25a4074b403ec4850c47fb6126118f4d7d918cba427cbeb5978f5945f8f0787",
+    "c/omni_lock_acp.h": "08aaddcabaec1036af0bd10e69c5db9f8b7cdb179aeb318c0b135960bbe31769",
+    "c/omni_lock.c": "e07009467789bd0c0d8895dd5b484e6326d39cfcac2aa516e06d5e816032989f",
+    "c/ckb_identity.h": "4f23998690c212d3e78bb7134b7d5d88ab04a97d7cd6d0999e650f6509e20d25"
+  },
+  "license_note": "No top-level LICENSE/COPYING file observed in inspected checkout; no new license or redistribution qualification asserted. Reviewed source is not built into the market or app."
+}

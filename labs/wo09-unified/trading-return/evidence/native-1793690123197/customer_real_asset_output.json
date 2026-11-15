@@ -1,0 +1,18 @@
+{
+  "capacity": "14289940000",
+  "lock": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0x2d8267a3f5563dd0594331d526d73b714514213f"
+  },
+  "type": {
+    "args": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1"
+  },
+  "data": "0x400d0300000000000000000000000000",
+  "outPoint": {
+    "txHash": "0xf1a30edd9331bd1dd908b4110c2962d3dfc52566116c14dbc65f8c2d2425472a",
+    "index": "0x2"
+  }
+}

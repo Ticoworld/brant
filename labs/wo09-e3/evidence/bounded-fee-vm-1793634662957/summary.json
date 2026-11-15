@@ -1,0 +1,149 @@
+{
+  "classification": "CONSTRUCTED_STATE_CKB_TESTTOOL",
+  "binary_sha256": "b7e32a8b4e93994771dcc8da268f8bc8059eadb69d8329d633d8b26cf5f9687f",
+  "binary_bytes": 118184,
+  "results": [
+    {
+      "label": "claim_0_fee_0",
+      "accepted": true,
+      "cycles": 10024540,
+      "fee_shannons": "0"
+    },
+    {
+      "label": "claim_0_fee_1",
+      "accepted": true,
+      "cycles": 10041726,
+      "fee_shannons": "1"
+    },
+    {
+      "label": "claim_0_fee_1000",
+      "accepted": true,
+      "cycles": 10060001,
+      "fee_shannons": "1000"
+    },
+    {
+      "label": "claim_0_fee_1000000",
+      "accepted": true,
+      "cycles": 10010769,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "claim_0_fee_over_cap",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "claim_0_missing_authorization",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }"
+    },
+    {
+      "label": "claim_0_invalid_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "claim_0_fee_changed_after_signing",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "claim_1_fee_0",
+      "accepted": true,
+      "cycles": 10018799,
+      "fee_shannons": "0"
+    },
+    {
+      "label": "claim_1_fee_1",
+      "accepted": true,
+      "cycles": 10038201,
+      "fee_shannons": "1"
+    },
+    {
+      "label": "claim_1_fee_1000",
+      "accepted": true,
+      "cycles": 10020035,
+      "fee_shannons": "1000"
+    },
+    {
+      "label": "claim_1_fee_1000000",
+      "accepted": true,
+      "cycles": 10023368,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "claim_1_fee_over_cap",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "claim_1_missing_authorization",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }"
+    },
+    {
+      "label": "claim_1_invalid_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "claim_1_fee_changed_after_signing",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "tiny_claim_fee_equals_claim",
+      "accepted": true,
+      "cycles": 10042112,
+      "fee_shannons": "1000"
+    },
+    {
+      "label": "tiny_claim_fee_exceeds_claim_below_cap",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "deducted_merge_with_additional_input_and_output",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "fee_mode_with_extra_destination",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "fee_mode_altered_other_liability",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#63 } }"
+    },
+    {
+      "label": "fee_mode_duplicate_old_claim_proof",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 62 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#62 } }"
+    },
+    {
+      "label": "fee_mode_wrong_recipient",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "fee_mode_ambiguous_owner_inputs",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/16fcff74e35910e6779b21710e89746b3456e56475ab9b37a53c216ef53292ad.html#67 } }"
+    },
+    {
+      "label": "sponsor_fallback_with_fee_extension",
+      "accepted": true,
+      "cycles": 11680176,
+      "fee_shannons": "1000000"
+    }
+  ],
+  "cap_shannons": "1000000",
+  "notes": [
+    "No native-chain execution in this fee experiment",
+    "Zero-fee acceptance is VM-only, not mempool relay assurance",
+    "Exact-claim sponsored fallback remains; uniqueness unchanged",
+    "100 percent claim fee allowed only within cap; may be uneconomic"
+  ]
+}

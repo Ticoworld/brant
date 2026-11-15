@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {verifyInitializationLive} from '../lib/v2-engine/initialization-live.ts';
+const hash='0x'+'11'.repeat(32), other='0x'+'22'.repeat(32), data='0x1234';
+const lock={codeHash:hash,hashType:'data1' as const,args:'0x'};
+const input={outPoint:{txHash:hash,index:'0x0'},capacity:100n,lock,data:'0x'};
+const dep={outPoint:{txHash:other,index:'0x0'},dataHash:ccc.hashCkb(data)};
+const rpc=async(method:string,params:unknown[])=>method==='get_block_hash'?hash:(params[0] as {tx_hash:string}).tx_hash===hash?{status:'live',cell:{output:{capacity:'0x64',lock:{code_hash:hash,hash_type:'data1',args:'0x'},type:null},data:{content:'0x'}}}:{status:'live',cell:{data:{content:data}}};
+await verifyInitializationLive(rpc,hash,[input],[dep]);
+await assert.rejects(()=>verifyInitializationLive(rpc,other,[input],[dep]),/genesis/);
+await assert.rejects(()=>verifyInitializationLive(rpc,hash,[input,input],[dep]),/Duplicate/);
+await assert.rejects(()=>verifyInitializationLive(rpc,hash,[{...input,capacity:101n}],[dep]),/differs/);
+await assert.rejects(()=>verifyInitializationLive(rpc,hash,[input],[{...dep,dataHash:hash}]),/dependency/);
+console.log('Initialization live identity checks passed');

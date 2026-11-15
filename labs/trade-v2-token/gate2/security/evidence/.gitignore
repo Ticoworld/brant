@@ -1,0 +1,5 @@
+# Keep newly generated native run transcripts local; retain compact attack JSON and manifests.
+native-token-boundaries-*/rpc.jsonl
+native-token-boundaries-*/events.jsonl
+native-token-boundaries-*/node.log
+native-token-boundaries-*/dev.toml

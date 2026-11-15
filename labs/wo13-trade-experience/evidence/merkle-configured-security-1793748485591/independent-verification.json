@@ -1,0 +1,362 @@
+{
+  "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+  "committed_transactions": 22,
+  "leaf_updates": 15,
+  "total_paid_fees_shannons": "1210000",
+  "markets": [
+    {
+      "id": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "closed": true,
+      "transactions": 12,
+      "market_fees_shannons": "120000",
+      "remaining_backing": "0"
+    },
+    {
+      "id": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "closed": true,
+      "transactions": 9,
+      "market_fees_shannons": "90000",
+      "remaining_backing": "0"
+    }
+  ],
+  "rows": [
+    {
+      "label": "create_empty_financial_merkle_market",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 0,
+      "updates": 0,
+      "bytes": 911,
+      "cycles": 1694467,
+      "fee_shannons": "10000",
+      "inputs": 1,
+      "outputs": 3,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "enroll_owner_0",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1809600,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "enroll_owner_1",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1805076,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "enroll_owner_2",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1796316,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "release_exact_creator_financing",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 2,
+      "updates": 0,
+      "bytes": 854,
+      "cycles": 1710998,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "partial_tiny_claim_self_paid_exit",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1808814,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "explicit_creator_funded_entitlement_increase",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 5,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1834822,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "atomic_paid_assignment",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 4,
+      "updates": 1,
+      "bytes": 1268,
+      "cycles": 3479550,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "redeem_current_owner_right_1",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1813828,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "redeem_current_owner_right_0",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1807443,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "redeem_current_owner_right_2",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1818815,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "close_and_return_designated_cushion",
+      "market": "0x6cc1a952e07512a1764e895307caa2df612526744868289c20e6bc95a3f915b6",
+      "n": 3,
+      "op": 7,
+      "updates": 0,
+      "bytes": 464,
+      "cycles": 1706828,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 1,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "create_second_market_for_domain_isolation",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 0,
+      "updates": 0,
+      "bytes": 802,
+      "cycles": 1701810,
+      "fee_shannons": "10000",
+      "inputs": 1,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "fund_second_market_right_0",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1797003,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "fund_second_market_right_1",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1816778,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "fund_second_market_right_2",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 1,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1802694,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "activate_second_market",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 2,
+      "updates": 0,
+      "bytes": 854,
+      "cycles": 1681363,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "second_market_redemption_0",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1824970,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "second_market_redemption_1",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1808708,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "second_market_redemption_2",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 3,
+      "updates": 1,
+      "bytes": 1022,
+      "cycles": 1821143,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 184,
+      "witness_chunks": [
+        184
+      ]
+    },
+    {
+      "label": "second_market_closure",
+      "market": "0x46f7ca5e9d38b9be41cc0e71ceca0dad653d6bc7069719d8db6c942751caadcc",
+      "n": 3,
+      "op": 7,
+      "updates": 0,
+      "bytes": 464,
+      "cycles": 1702247,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 1,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    }
+  ]
+}

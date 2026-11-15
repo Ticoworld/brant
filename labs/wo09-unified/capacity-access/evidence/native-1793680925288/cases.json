@@ -1,0 +1,7 @@
+[
+  {
+    "label": "signature_cannot_authorize_different_financial_change",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#82 })"
+  }
+]

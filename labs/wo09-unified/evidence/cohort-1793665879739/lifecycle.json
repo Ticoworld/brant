@@ -1,0 +1,28 @@
+{
+  "classification": "ACTUAL_CKB_0210_PRIVATE_CHAIN",
+  "creator_gross_shannons": "2527500000",
+  "protected_initial_shannons": "10110000000",
+  "cushion_shannons": "37800000000",
+  "wallet_fee_each_shannons": "10000",
+  "remaining_liability": "0",
+  "binary": {
+    "hash": "0x0b4fd2f2307f86f4ca2ba8854f785b856eb361c2b652378907f690c21336331f",
+    "outPoint": {
+      "txHash": "0x5e8f83967a6581b1eb5fc54f11b13ffac8470d2d4fca960890150fc6ad08171d",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x0b4fd2f2307f86f4ca2ba8854f785b856eb361c2b652378907f690c21336331f",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 15176,
+    "occupied": "1521700000000"
+  },
+  "notes": [
+    "Fixed three-record directly validated cohort; no Merkle tree or SP1",
+    "All financial transitions committed; all code roles use covenant identity",
+    "Record owners and transfers authenticated by actual secp input scripts",
+    "No claim of production security, competing native market throughput or commercial demand"
+  ]
+}

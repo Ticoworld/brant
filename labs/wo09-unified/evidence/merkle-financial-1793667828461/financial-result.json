@@ -1,0 +1,29 @@
+{
+  "classification": "ACTUAL_NATIVE_FINANCIAL_MERKLE_MARKET",
+  "market": "0xe91134c3027eadd77fa228f749a5d9de9c1d97f7430cd727940ba73ae20fb035",
+  "target": 3,
+  "creator_gross_shannons": "2527500000",
+  "initial_backing_shannons": "10110000000",
+  "funded_addition_shannons": "0",
+  "cushion_shannons": "29800000000",
+  "remaining_backing": "0",
+  "binary": {
+    "hash": "0x2833da493d334c39bd5c26761046bef2b77b855e85cb07f844921fa13f82e3dc",
+    "outPoint": {
+      "txHash": "0x050be0bb3e626f64257d1362e2bf0256965562177a4f91b6862b2cd7cd10be42",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x2833da493d334c39bd5c26761046bef2b77b855e85cb07f844921fa13f82e3dc",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 17408,
+    "occupied": "1744900000000"
+  },
+  "limitations": [
+    "Three-owner native lifecycle only in this run",
+    "No claim of commercial secondary liquidity",
+    "Optional funded increase is assigned explicitly, not a global pro-rata ratchet"
+  ]
+}

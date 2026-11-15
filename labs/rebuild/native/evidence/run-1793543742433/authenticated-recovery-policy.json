@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "domain": "trade-disposable-private-devnet",
+  "genesis": "0x162cd50c6793652939d3e06b7c0348fd2ae9b568f7109d2404ced9e18195c0d7",
+  "a2": {
+    "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "owner": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+  },
+  "recipient": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+  },
+  "fixtureRole": 0,
+  "master": {
+    "txHash": "0xd0711be5486b17fab8c52d6d76391b9870cbcc1d8bd6f8589f28f3cb4927dc8f",
+    "index": "0x1"
+  },
+  "mintTxHash": "0xd0711be5486b17fab8c52d6d76391b9870cbcc1d8bd6f8589f28f3cb4927dc8f",
+  "retainedMint": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x9e2d9b30f519d3a6a36a413bd9f68927809169c3cd13f2eb485c167c0bb4613e",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x381680994fe8e6a6b9626e6a45d983f26a509f89ac5e353bdcf6a7b58e4bf8ce",
+          "index": "0x5"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x381680994fe8e6a6b9626e6a45d983f26a509f89ac5e353bdcf6a7b58e4bf8ce",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x381680994fe8e6a6b9626e6a45d983f26a509f89ac5e353bdcf6a7b58e4bf8ce",
+          "index": "0xa"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x1bf08eb000",
+        "lock": {
+          "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+          "hashType": "data1",
+          "args": "0x"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b"
+        }
+      },
+      {
+        "capacity": "0x2540be400",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+        },
+        "type": {
+          "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+          "hashType": "data1",
+          "args": "0x"
+        }
+      },
+      {
+        "capacity": "0x2386d42b1729c0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000010000000000000000e1f505000000000000000000000000000000000000000000",
+      "0x",
+      "0x"
+    ],
+    "witnesses": [
+      "0x5500000010000000550000005500000041000000e5867da7fac75db812caca17ba03a78654e5f788b5d38460e43337055d64627e790027d555f471b2138c1d79bee477911416675cd9d90b70cff97afe3b8cbac201"
+    ]
+  },
+  "mintOrderIndex": 0,
+  "currentOrder": {
+    "txHash": "0x0314c0079158424343ec29e026fda79d95b7bdadde1fa99a7afef1bf576d80a7",
+    "index": "0x0"
+  },
+  "assetTypeHash": "0xac7f2eb7819aa6efbd6256c2e46e98fb65d05f1aed88d35e8bf6265fb9dccaf4",
+  "fee": "1000000",
+  "expectedCKB": "38899000000",
+  "expectedTokens": "911",
+  "cellDeps": [
+    {
+      "outPoint": {
+        "txHash": "0x9e2d9b30f519d3a6a36a413bd9f68927809169c3cd13f2eb485c167c0bb4613e",
+        "index": "0x0"
+      },
+      "depType": "depGroup"
+    },
+    {
+      "outPoint": {
+        "txHash": "0x381680994fe8e6a6b9626e6a45d983f26a509f89ac5e353bdcf6a7b58e4bf8ce",
+        "index": "0x5"
+      },
+      "depType": "code"
+    },
+    {
+      "outPoint": {
+        "txHash": "0x381680994fe8e6a6b9626e6a45d983f26a509f89ac5e353bdcf6a7b58e4bf8ce",
+        "index": "0x6"
+      },
+      "depType": "code"
+    }
+  ]
+}

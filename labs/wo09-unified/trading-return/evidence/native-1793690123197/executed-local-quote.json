@@ -1,0 +1,10 @@
+{
+  "classification": "DISPOSABLE_CONTROLLED_MAKER_SIGNED_QUOTE_NOT_PUBLIC_LIQUIDITY",
+  "paid_ckb_shannons": "10030000",
+  "received_test_xudt_units": "200000",
+  "test_token_decimals": 6,
+  "reference_rate": "2 TEST per CKB, hypothetical",
+  "maker_gross_spread_ckb_shannons": "30000",
+  "miner_fee_ckb_shannons": "10000",
+  "quote_expiry": "Spent-outpoint revocation; no passive upper-time expiry demonstrated"
+}

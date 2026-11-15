@@ -1,0 +1,4 @@
+{
+  "accepted": false,
+  "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#63 } }"
+}

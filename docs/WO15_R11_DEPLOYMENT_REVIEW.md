@@ -1,0 +1,9 @@
+# R7 Pudge deployment review
+
+2026-11-07: The local review endpoint checked the Pudge genesis, live standard-lock funding cell, live secp dep group, exact committed 51,072-byte R7 ELF and CKB data hash. The funding input was 99,999.861 CKB. The node reported minimum relay rate 1,000 shannons/KB; the candidate uses 2,000, producing 103,064 shannons for 51,532 bytes with a 65-byte placeholder witness. Code cell capacity is 51,133 CKB and change 48,866.85996936 CKB, both locked by the supplied standard wallet. Candidate raw hash at this observation: `0xed7014db04abc0e712c4c03817841006e18e14dcb2331b5947ee6ce58c74cf7f`. Live state and fee rate are rechecked before signing; a changed candidate requires review again.
+
+The wallet standard lock makes capacity recoverable if its owner signs a later spend, but accidental consumption can break any vaults referring to that code outpoint. It is not a protected long-lived deployment. A dedicated controlled lock or governance policy should be considered before any public deployment. No code lock or binary was silently changed.
+
+The read-only `dry_run_transaction` returned standard secp input-lock error -11 with the zero placeholder witness. This is expected for an unsigned candidate and is not execution validation. The gated local page never broadcasts and does not persist the signed transaction. Its signing button invokes the real wallet only when clicked; no real deployment signature was requested or observed. Signed validation and actual public deployment are not established.
+
+Run locally with `PUDGE_R7_DEPLOY_REVIEW=1` and a local Next server. The API refuses non-loopback requests and is disabled by default. The endpoint trusts the configured public RPC response, not independent consensus. Production build, TypeScript and headless Chromium review rendering passed. Chromium used no wallet and did not sign.

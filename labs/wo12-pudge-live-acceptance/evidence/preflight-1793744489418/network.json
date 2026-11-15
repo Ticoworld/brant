@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-11-03T22:21:30.203Z",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "tip": {
+    "compact_target": "0x1d087632",
+    "dao": "0x8cf49403b1ea1d5929a60a513f712a002549a05ca464900a008eb11f030e8609",
+    "epoch": "0x70803ef00372e",
+    "extra_hash": "0xedc215445449f07ee027cae1705d4ab13942a8da0405da0e062735aaba32c3e2",
+    "hash": "0xc1c2a1eec47bc87105a0174040200e4688bc2c44d3f31ef4667182b82fdb3f10",
+    "nonce": "0x4f8cbd49d6c2132d72e136700df378c9",
+    "number": "0x15e55b8",
+    "parent_hash": "0xe79d3236d4145bdb385ec2dc6a6ecb532967a00c66ba8fdb153aae0acaf4ef45",
+    "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": "0x1a1a380b12c",
+    "transactions_root": "0xd3dde329faed23210b1b47a7c3ad3fdafadd7f646f3e891328501ded7564b69d",
+    "version": "0x0"
+  },
+  "fee_statistics": {
+    "mean": "0x17545",
+    "median": "0x17545"
+  },
+  "qualification": "READ_ONLY_NO_FUNDING_SIGNING_OR_BROADCAST"
+}

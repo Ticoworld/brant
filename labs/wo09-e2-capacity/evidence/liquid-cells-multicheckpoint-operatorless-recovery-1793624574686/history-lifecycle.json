@@ -1,0 +1,41 @@
+{
+  "classification": "ACTUAL_PRIVATE_DEVNET_MULTI_CHECKPOINT_AND_EXIT",
+  "upstream_repository": "LusoCryptoLabs/Liquid-Cells",
+  "upstream_commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "anchor_binary_sha256": "f45f99ec74d7f3d511ce93f512465a6b0ae4036477e3405d8f643b552086cf35",
+  "genesis_transaction": "0x9ea0a13bd103b71f3192efd46db43f78aff8014c5cabb91a44ef3a049c92e3a3",
+  "checkpoints": [
+    "0xa0e3f79c615f501096f35fd25e2c3d05a97759869bff95d79bc04cf4989a8274",
+    "0xb14a6600902b1522281de85ce37e1a9e0bd11c80b38dde12392bfdc33797ca33",
+    "0x2de03d5bd47bca90e1fa79838aed1eedaccb667f327f2b8e7fb90ca28b5830f8",
+    "0x94df52d3ac2867078f7577ffd7f5ae8e974729d7824211dec288b678367f045b"
+  ],
+  "latest_anchor": {
+    "transaction": "0x94df52d3ac2867078f7577ffd7f5ae8e974729d7824211dec288b678367f045b",
+    "root": "0x769bbee31b3ae9abf6c05ba921e088e12a99b024d9c4beeaa6af8dd6c36ed1fc",
+    "sequence": "4",
+    "total_shannons": "9999600000",
+    "last_epoch": "3"
+  },
+  "claimant_balances_shannons": [
+    "9999596000",
+    "1000"
+  ],
+  "owner_exit": {
+    "hash": "0x078d01ff55372355e9c59f893614065e1a26edeb5b88107b8af7c8cc81a22329",
+    "payout_shannons": "9999596000",
+    "maturity_epoch": "183",
+    "mined_blocks_after_latest_checkpoint": 1800
+  },
+  "non_operator_authorization": "permissionless anchor lock; user role 1 signed only its fee input; account proof fixes payout to the owner key",
+  "successor_anchor_capacity_shannons": "50000004000",
+  "residual_accounted_total_shannons": "4000",
+  "notes": [
+    "Four sequential published Groth16 checkpoints (genesis, cp2, cp3, cp4) committed on CKB 0.210.0 with contiguous anchor outpoints.",
+    "A fresh child replayed each committed checkpoint DA from live RPC and rebuilt both owner proofs against the latest anchor root without fixtures, indexer, or sequencer state.",
+    "The cp1 owner proof was rejected against cp4 state; the replayed cp4 proof committed after the last_epoch timeout.",
+    "The fixture contains a 1,000-shannon claimant. Direct and sponsored payout trials were rejected; the exit design remains above the standalone cell floor for small claims.",
+    "A second proof-based transaction against the spent cp4 anchor was rejected as a shared-outpoint conflict.",
+    "The key preimage for the 1,000-shannon fixture record is derived from the published sequence fixture owner `key_for(2)`; no claim is made for arbitrary unknown owners."
+  ]
+}

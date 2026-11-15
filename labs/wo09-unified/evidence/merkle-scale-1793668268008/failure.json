@@ -1,0 +1,3 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Duplicate|duplicate|Duplicated|duplicated/. Input:\n\n'TransactionFailedToResolve: Resolve failed Dead(OutPoint(0xd2795ba4abb6a28b8ac2a56b532d954bc7edeb552886fcbd8ce98af7f14d827200000000))'\n\n    at Engine.reject (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:17:249)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async /workspace/trade/labs/wo09-unified/src/run-merkle-scale.cjs:21:230"
+}

@@ -1,0 +1,60 @@
+[
+  {
+    "variant": "compact",
+    "n": 1536,
+    "stagedFunding": false,
+    "fundingBytes": 382815,
+    "fundingTransactions": 1,
+    "settlementBytes": 264827,
+    "codeBytes": 15184,
+    "fundingCapacity": "154368000000000",
+    "filledCKB": "154368000000000",
+    "cycles": {
+      "cycles": "0x47981b4e"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xaa131dc95d57583f3ee7c2f366141c311351dc50dd9827f9908096b9ed9e0ec9"
+  },
+  {
+    "variant": "a2",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "fundingTransactions": 12,
+    "settlementBytes": 484366,
+    "codeBytes": 34200,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles"
+  },
+  {
+    "variant": "a2-source",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "fundingTransactions": 12,
+    "settlementBytes": 484366,
+    "codeBytes": 34304,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/551cca7623cdc3b157dc1f3bd9e7d2ef76eb2073152e81c15e1cda947dd4c17c.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles"
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "fundingTransactions": 12,
+    "settlementBytes": 484366,
+    "codeBytes": 34304,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "cycles": {
+      "cycles": "0x4c8900f"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xf01c996273a075bfc1890ff91848eeefbc6e1050b3481b2b437a610200bef5b3"
+  }
+]

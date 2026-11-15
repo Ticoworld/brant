@@ -1,0 +1,11 @@
+▲ Next.js 16.4.5 (webpack)
+- Local:         http://127.0.0.1:3100
+- Network:       http://127.0.0.1:3100
+✓ Ready in 345ms
+✓ Running next.config.mjs took 19ms
+
+○ Compiling /page ...
+ GET / 200 in 656ms (next.js: 380ms, application-code: 277ms)
+ GET / 200 in 176ms (next.js: 6ms, application-code: 170ms)
+[browser] Lit is in dev mode. Not recommended for production! See https://lit.dev/msg/dev-mode for more information.
+[?25h

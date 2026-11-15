@@ -1,0 +1,20 @@
+[
+  {
+    "name": "a2-source",
+    "bytes": 34528,
+    "sha256": "28fd7efd760c182012aaa86aa44cb582a0c589418641837995935d2cd1d14747",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
+  },
+  {
+    "name": "a2-optimized",
+    "bytes": 34528,
+    "sha256": "3ed493c909d7e97a292733b2d703a3344f4feaf7fd600da2313ba98096026814",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
+  },
+  {
+    "name": "gated_order",
+    "bytes": 42072,
+    "sha256": "9788767febf9714b43da3fd8bbdb7a53514c8c1d60173985766a223936d205df",
+    "origin": "Initial source build in work/variants-build; tested native code deployments preserved in raw evidence; path-sensitive compiler strings differ from later builds."
+  }
+]

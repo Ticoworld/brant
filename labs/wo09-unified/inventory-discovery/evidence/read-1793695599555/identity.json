@@ -1,0 +1,33 @@
+{
+  "retrieved": "2026-11-03T08:46:39.558Z",
+  "upstream_commit": "c8edfa8276108472612e2f1965e18ff85b0da73f",
+  "host": "v24.19.0",
+  "sdk": "9002.0.0",
+  "ccc": "1.23.0",
+  "read_only": true,
+  "endpoint": "https://mainnet.ckbapp.dev/",
+  "ickb": {
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "args": "0xb73b6ab39d79390c6de90a09c96b290c331baf1798ed6f97aed02590929734e800000080"
+  },
+  "logic": {
+    "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "order": {
+    "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "hashType": "data1",
+    "args": "0x"
+  },
+  "dep": [
+    {
+      "outPoint": {
+        "txHash": "0x621a6f38de3b9f453016780edac3b26bfcbfa3e2ecb47c2da275471a5d3ed165",
+        "index": "0"
+      },
+      "depType": "depGroup"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "classification": "CONSTRUCTED_STATE_CKB_TESTTOOL",
+  "results": [
+    {
+      "role": 0,
+      "accepted": true,
+      "cycles": 10005020,
+      "fee_shannons": "10000",
+      "bytes": 8968
+    },
+    {
+      "role": 1,
+      "accepted": true,
+      "cycles": 10022050,
+      "fee_shannons": "10000",
+      "bytes": 8968
+    }
+  ],
+  "relay_status": "UNTESTED; 10000 shannons exceeds size-based fee at saved configuration 1000 shannons/KB"
+}

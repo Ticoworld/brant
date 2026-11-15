@@ -1,0 +1,83 @@
+{
+  "classification": "ACTUAL_PRIVATE_DEVNET_TRANSACTIONS",
+  "upstream_repository": "LusoCryptoLabs/Liquid-Cells",
+  "upstream_commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "fixture": "fixtures/genesis",
+  "anchor_binary_sha256": "04a31bf62a4aff38a2e51c0aace5f2b253828424127336f64e55d29c015ce817",
+  "transactions": [
+    {
+      "label": "deploy_pinned_upstream_anchor_binary",
+      "hash": "0x9c7103ca353addcb0093468c0ef9090a28d5006cad8133325afe59a441d96bf6",
+      "cycles": {
+        "cycles": "0x193d19"
+      },
+      "bytes": 117108
+    },
+    {
+      "label": "deploy_permissionless_anchor_lock",
+      "hash": "0x869b50cc760d702de7d32f3e998a488f05cd1d243c803e0f2afec07525e53a53",
+      "cycles": {
+        "cycles": "0x190035"
+      },
+      "bytes": 784
+    },
+    {
+      "label": "create_canonical_empty_anchor_and_pinned_genesis_deposit",
+      "hash": "0x0bae54e0eb19d15b675aac2dc4fbf91f53b4a4fb7660a4509d9fdb56378b8c7e",
+      "cycles": {
+        "cycles": "0x19ff94"
+      },
+      "bytes": 751
+    },
+    {
+      "label": "commit_pinned_sp1_genesis_checkpoint_with_published_da",
+      "hash": "0xca4040c64ec12b08afc29a046901e75a9fabf87346469572a33bafaadd0eb595",
+      "cycles": {
+        "cycles": "0x54292e0"
+      },
+      "bytes": 1370
+    },
+    {
+      "label": "mature_owner_force_exit_after_180_private_chain_epochs",
+      "hash": "0x42a0fc129e6abb73a6c12b70b4bff398c45fe63ebcfebdb42121e924cc85b287",
+      "cycles": {
+        "cycles": "0x9879cc"
+      },
+      "bytes": 9077
+    }
+  ],
+  "rejections": [
+    {
+      "label": "tampered_published_da_rejected_by_real_anchor_script",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 59 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6.html#59 })"
+    },
+    {
+      "label": "force_exit_before_operator_silence_epoch_rejected",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 66 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6.html#66 })"
+    },
+    {
+      "label": "force_exit_wrong_payout_amount_rejected_at_mature_epoch",
+      "method": "estimate_cycles",
+      "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/373490f2d5b7c9101864c75333f8b72966509d5e8a7dc2b31614c029deeef8d6.html#67 })"
+    }
+  ],
+  "force_exit": {
+    "owner_key": "0xaa61b794ba668ff67c7b8d037034adcca06964c0dffdb3eae70e8666faa5a63d",
+    "payout_shannons": "9999899000",
+    "maturity_epoch": "0xb6",
+    "blocks_mined_after_checkpoint": 1800
+  },
+  "resulting_owner_payout": {
+    "txHash": "0x42a0fc129e6abb73a6c12b70b4bff398c45fe63ebcfebdb42121e924cc85b287",
+    "index": "0x1"
+  },
+  "anchor_lock_design": "deployed CKB-VM always-success lock; user/operator signatures do not authorize anchor spends; the Liquid Cells type script validates state transitions and payout proofs",
+  "checkpoint_authorization": "user key role 0 authorizes the input deposit; no signature is required by the permissionless anchor lock; a valid committed Groth16 proof authorizes the state transition",
+  "force_exit_fee_signer": "independent user key role 1; operator key role 2 is not an input",
+  "notes": [
+    "The operator funds/signs the checkpoint fee, then the independent user funds/signs the mature force-exit fee. The exiter pubkey is authenticated by the committed account proof and determines the only accepted payout lock; the exiter does not sign the transaction.",
+    "A separate child process fetched the committed checkpoint transaction through CKB RPC and reconstructed the force-exit proof from its published DA; no fixture/sequencer files were input to that reconstruction."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "classification": "ACTUAL_NATIVE_ZERO_PERSONAL_CELL_FUNDED_RIGHTS",
+  "people": [
+    {
+      "name": "Alice",
+      "owner": "0x6ab18de55b3d8e879221b4eb9de586c449676685da3dfb238a3adec1bb9aa145",
+      "public_key": "0x0dda0ea3bdd984d403e45739996bdd45970bc7d84a04d79bdb2523f06206b5ef",
+      "future_L1_lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0x2d296c380d1c6e925f37cd79c59a87a1eee632e8"
+      }
+    },
+    {
+      "name": "Bob",
+      "owner": "0xa8c70c4603aa437ab3bdd7de400efa6e37debf86cf2d82c015f66c10d2a1924c",
+      "public_key": "0xc1a88c07c1120626ed0ed06313234cdad4ecdc2179280a9802364761ed8eef52",
+      "future_L1_lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0xf5714446a1c9a5bc31280ba3b326b52fbcb03e84"
+      }
+    },
+    {
+      "name": "Carol",
+      "owner": "0xc1817632fc6123e8426e2c8cbf960c5804fc54d7102125751fa27dde004148ca",
+      "public_key": "0xb07d0d6b5ba1a854203fb77b4952c38b6e4210c13555956f3ea129ae6a75e50d",
+      "future_L1_lock": {
+        "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hashType": "type",
+        "args": "0x4e427749e631cd1512013477546c4511733d73d2"
+      }
+    }
+  ],
+  "funder_signature_absent_during_owner_recovery": true,
+  "scope": "CKB-funded claim trading; not multi-asset DEX, unconditional tiny standalone exit or production security",
+  "binary": {
+    "hash": "0xa75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be",
+    "outPoint": {
+      "txHash": "0x2b881975ddcf274fef7364a8bf552d5310bc892d63b1a319618c40d848032235",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0xa75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 48752,
+    "occupied": "4879300000000"
+  }
+}

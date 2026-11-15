@@ -1,0 +1,159 @@
+{
+  "classification": "OFFLINE_NATIVE_CKB_UTXO_xUDT_MERKLE_AND_OPENSSL_AUTHORIZATION_REPLAY",
+  "committed_transactions": 13,
+  "verified_owner_signatures": 9,
+  "total_fee_shannons": "2110000",
+  "markets": [
+    {
+      "id": "0x46e84096d8b73abb333baf8a729c1b3eb1329489659e50650e60a846645b64f7",
+      "closed": true,
+      "remaining": {
+        "c": "0",
+        "u": "0",
+        "live": "0"
+      }
+    }
+  ],
+  "rows": [
+    {
+      "label": "create_paired_zero_inventory_market",
+      "hash": "0x7c8890a244ad767866a2da4b66e6f4c709eba1810d09ae0037ff5cd39a8b0bfe",
+      "op": 0,
+      "bytes": 1425,
+      "cycles": 3368256,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 4,
+      "witness_bytes": 24,
+      "owner_signatures": 0,
+      "CKB_liability": "0",
+      "xUDT_liability": "0"
+    },
+    {
+      "label": "fund_actual_CKB_claim_0",
+      "hash": "0xed2743796a28514727933ff3b4b2b9a5b6eea3052617d2215fa4d7f572cfad01",
+      "op": 1,
+      "bytes": 1430,
+      "cycles": 7510707,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "100000000",
+      "xUDT_liability": "0"
+    },
+    {
+      "label": "fund_actual_CKB_claim_1",
+      "hash": "0xb2fe01a39bb750a1402b097c5631194bef3e7726b02fd1f718d3eb7e202154ab",
+      "op": 1,
+      "bytes": 1430,
+      "cycles": 7483527,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "200000000",
+      "xUDT_liability": "0"
+    },
+    {
+      "label": "deposit_genuine_published_xUDT_inventory",
+      "hash": "0x121d4feff8c5327459c5882a816cda94e88ea4dd5a8b035885cb9d33150ca39b",
+      "op": 2,
+      "bytes": 1531,
+      "cycles": 7527615,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "200000000",
+      "xUDT_liability": "100000000"
+    },
+    {
+      "label": "atomic_two_asset_RFQ_CKB_for_xUDT_without_customer_cell",
+      "hash": "0x2bfa052ff50d7a43c77e14d2b996b73f8d4e7c4a0334e6e47875334897f9ffc3",
+      "op": 3,
+      "bytes": 1432,
+      "cycles": 11503957,
+      "fee_shannons": "10000",
+      "inputs": 2,
+      "outputs": 2,
+      "witness_bytes": 520,
+      "owner_signatures": 2,
+      "CKB_liability": "199990000",
+      "xUDT_liability": "100000000"
+    },
+    {
+      "label": "owner_withdraws_real_xUDT_without_maker_signature",
+      "hash": "0x525c5700d421b085af8a1da96ad0c24ad3af233362e04cb5a0f035c1af2ce578",
+      "op": 4,
+      "bytes": 1531,
+      "cycles": 7481287,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "199980000",
+      "xUDT_liability": "99800000"
+    },
+    {
+      "label": "owner_recovers_remaining_CKB_into_own_funded_asset_cell",
+      "hash": "0xf1a30edd9331bd1dd908b4110c2962d3dfc52566116c14dbc65f8c2d2425472a",
+      "op": 5,
+      "bytes": 1531,
+      "cycles": 7450454,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "110030000",
+      "xUDT_liability": "99800000"
+    },
+    {
+      "label": "maker_recovers_remaining_xUDT_inventory",
+      "hash": "0x6ce864f7a34452dfdde12f4942908eeef36efa3cfbcbb03392161b6e713eec28",
+      "op": 4,
+      "bytes": 1531,
+      "cycles": 7397886,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "110020000",
+      "xUDT_liability": "0"
+    },
+    {
+      "label": "maker_recovers_CKB_proceeds_and_capital",
+      "hash": "0x4253c8824607154e4de94be9dd84a4e76cfa011e6aa709f667eb772583730b60",
+      "op": 5,
+      "bytes": 1430,
+      "cycles": 7451110,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 3,
+      "witness_bytes": 272,
+      "owner_signatures": 1,
+      "CKB_liability": "0",
+      "xUDT_liability": "0"
+    },
+    {
+      "label": "empty_market_closure_returns_only_sponsor_capacity",
+      "hash": "0xb6f22b01fca22fde1550a6988a82b0f9b5e1b3c2cc781520f756d5aeda3946ea",
+      "op": 7,
+      "bytes": 561,
+      "cycles": 1777616,
+      "fee_shannons": "10000",
+      "inputs": 3,
+      "outputs": 1,
+      "witness_bytes": 24,
+      "owner_signatures": 0,
+      "CKB_liability": "0",
+      "xUDT_liability": "0"
+    }
+  ]
+}

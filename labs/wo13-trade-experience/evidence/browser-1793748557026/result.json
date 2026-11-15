@@ -1,0 +1,164 @@
+{
+  "at": "2026-11-03T23:29:17.032Z",
+  "qualification": "UI PRESENTATION FIXTURES ARE NOT WALLET OR CHAIN EXECUTION",
+  "axe": {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.3/axe.min.js",
+    "sha256": "880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb"
+  },
+  "checks": [
+    "markets 1440 reflow",
+    "My Positions 1440 reflow",
+    "Create Market 1440 reflow",
+    "Activity 1440 reflow",
+    "markets 768 reflow",
+    "My Positions 768 reflow",
+    "Create Market 768 reflow",
+    "Activity 768 reflow",
+    "markets 375 reflow",
+    "My Positions 375 reflow",
+    "Create Market 375 reflow",
+    "Activity 375 reflow",
+    "Unapproved manifest rejects recovery/signing before any wallet request",
+    "Production UI fixtures disabled",
+    "active reflow",
+    "active fixture reflow",
+    "active labelled presentation state",
+    "funding reflow",
+    "funding fixture reflow",
+    "funding labelled presentation state"
+  ],
+  "accessibility": [
+    {
+      "label": "markets 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "markets 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "markets 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "active",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "funding",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    }
+  ],
+  "pageErrors": [],
+  "rpcMethods": [],
+  "failure": "Error: locator.isVisible: Error: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"status-bar status-error\">…</div> aka getByText('!This connected lock is')\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n\u001b[2m    - checking visibility of getByRole('alert')\u001b[22m\n"
+}

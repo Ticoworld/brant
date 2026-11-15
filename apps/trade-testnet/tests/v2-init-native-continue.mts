@@ -1,0 +1,38 @@
+// Continuation of v2-init-native-setup.mts on the same disposable node only.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {createRequire} from 'node:module';
+import {execFileSync} from 'node:child_process';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {deriveMarketIdentity} from '../lib/v2-engine/initialization.ts';
+import {prepareLocalInitializationStage} from '../lib/v2-engine/initialization-orchestrator.ts';
+import {verifyInitializationStage} from '../lib/v2-engine/initialization-lifecycle.ts';
+const file=process.env.ROVEKO_INIT_BOOTSTRAP,nativeRoot=process.env.TRADE_NATIVE_ROOT,smt=process.env.ROVEKO_SMT_BINARY,verifier=process.env.ROVEKO_PROOF_BINARY;
+if(!file||!nativeRoot||!smt||!verifier)throw Error('Set disposable bootstrap, native, SMT and verifier paths');
+const f=JSON.parse(fs.readFileSync(file,'utf8')),setup=JSON.parse(fs.readFileSync(path.join(path.dirname(file),'initialization-setup-test.json'),'utf8')),require=createRequire(import.meta.url),native=require(path.join(nativeRoot,'src/lib.cjs')),signGroup=require(path.join(nativeRoot,'node_modules/@nervosnetwork/ckb-sdk-core/lib/signWitnessGroup.js')).default;
+const rpc=async(method:string,params:unknown[])=>{const r=await fetch('http://127.0.0.1:19224',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(j.error)throw Error(JSON.stringify(j.error));return j.result;};
+assert.equal((await rpc('get_blockchain_info',[])).chain,'ckb_dev');assert.equal(await rpc('get_block_hash',['0x0']),f.genesis);assert.notEqual(f.genesis,'0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606');
+const id=deriveMarketIdentity({anchor:f.wallets[0].outPoint,genesis:f.genesis,base:1000000000n,step:100000000n,supply:2000n,codes:{market:f.hashes.market_smt,marker:f.hashes.marker_candidate,owner:f.hashes.owner_lineage_candidate,custody:f.hashes.custody_smt,custodyMarker:f.hashes.custody_marker,xudt:f.hashes.xudt}});
+const txSetup=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(setup.transaction.transaction));
+const cell=(tx:ccc.Transaction,hash:string,index:number)=>({outPoint:{txHash:hash,index:'0x'+index.toString(16)},capacity:tx.outputs[index].capacity,lock:tx.outputs[index].lock,type:tx.outputs[index].type || undefined,data:tx.outputsData[index]});
+const genesis=await rpc('get_block_by_number',['0x0']),secp={outPoint:{txHash:genesis.transactions[1].hash,index:'0x0'},depType:'depGroup' as const};
+const depsFor=async(names:string[])=>{const ds=[secp,...names.map(n=>f.deps[n])];const checks=[];for(const d of ds){const row=await rpc('get_live_cell',[{tx_hash:d.outPoint.txHash,index:d.outPoint.index},true]);assert.equal(row.status,'live');checks.push({outPoint:d.outPoint,dataHash:ccc.hashCkb(row.cell.data.content)});}return {ds,checks};};
+process.env.NEXT_PUBLIC_LOCAL_FIXTURE='1';Object.defineProperty(globalThis,'window',{value:{location:{hostname:'localhost'}},configurable:true});
+async function commit(stage:'issuance'|'purchase',reviewed:any,key:number,live:number[]){const tx=reviewed.transaction;const blank={lock:'',inputType:'',outputType:''};const group=[blank,...tx.witnesses.slice(tx.inputs.length)];tx.witnesses[stage==='issuance'?0:2]=signGroup(native.keys[key],tx.hash(),group)[0];const wire=cccA.JsonRpcTransformers.transactionFrom(tx),cycles=await rpc('estimate_cycles',[wire]),hash=await rpc('send_transaction',[wire,'passthrough']);assert.equal(hash,reviewed.hash);for(let i=0;i<30;i++){if((await rpc('get_transaction',[hash]))?.tx_status?.status==='committed')break;await rpc('generate_block',[]);}const receipt=await verifyInitializationStage(rpc,f.genesis,stage,tx,tx.inputs.map((i:any)=>({txHash:i.previousOutput.txHash,index:ccc.numToHex(i.previousOutput.index)})),live);return {tx,hash,cycles,receipt,transaction:await rpc('get_transaction',[hash])};}
+const anchor={...f.wallets[0],capacity:BigInt(f.wallets[0].capacity)},owner=cell(txSetup,setup.hash,0),buyer=cell(txSetup,setup.hash,1),issuanceDeps=await depsFor(['owner_lineage_candidate','xudt','marker_candidate']);
+const issueParams={identity:id,anchor,ownerCell:owner,supply:2000n,inventoryCapacity:30000000000n,markerCapacity:30000000000n,fee:1000000n,deps:issuanceDeps.ds};
+const issueReview=await prepareLocalInitializationStage(rpc,f.genesis,{stage:'issuance',params:issueParams,previous:setup.receipt},[anchor,owner],issuanceDeps.checks,{transaction:txSetup,requiredInputs:[f.wallets[2].outPoint],liveIndices:[0,1]}),issue=await commit('issuance',issueReview,0,[0,1,2]);
+const domain={market_script_hash:id.market.hash(),xudt_type_script_hash:id.token.hash(),genesis_hash:f.genesis,custody_marker_type_hash:id.custodyMarker.hash()},ownerHash=ccc.Script.from(buyer.lock).hash();
+const proofInput={domain,op:0,owners:[],updates:[{owner_lock_hash:ownerHash,balance:'7',revision:'0',active:true}]};
+const proof=JSON.parse(execFileSync(smt,['proof','-','-'],{input:JSON.stringify(proofInput),encoding:'utf8'}));
+const le=(n:bigint)=>Array.from({length:8},(_,i)=>Number((n>>BigInt(i*8))&255n).toString(16).padStart(2,'0')).join('');
+const witness=proof.contract_witness.hex+le(9100000000n),verifyInput={domain:id.custody.args,owner:ownerHash,new_root:proof.new_root,witness,quantity:'7',price:'9100000000'};
+assert.equal(JSON.parse(execFileSync(verifier,['verify-init','-'],{input:JSON.stringify(verifyInput),encoding:'utf8'})).verified,true);
+const inventory=cell(issue.tx,issue.hash,0),marker=cell(issue.tx,issue.hash,1),purchaseDeps=await depsFor(['market_smt','marker_candidate','custody_smt','custody_marker','xudt']);
+const purchaseParams={identity:id,inventory,marker,buyer,supply:2000n,quantity:7n,price:9100000000n,custodyCapacity:35000000000n,custodyMarkerCapacity:35000000000n,fee:1000000n,newRoot:proof.new_root,witness,genesis:f.genesis,deps:purchaseDeps.ds};
+const originalFetch=globalThis.fetch;globalThis.fetch=async(input,init)=>input==='/api/v2-init-proof'?Response.json({owner:ownerHash,newRoot:proof.new_root,witness}):originalFetch(input,init);
+const purchaseReview=await prepareLocalInitializationStage(rpc,f.genesis,{stage:'purchase',params:purchaseParams,previous:issue.receipt},[inventory,marker,buyer],purchaseDeps.checks,{transaction:issue.tx,requiredInputs:[anchor.outPoint,owner.outPoint],liveIndices:[0,1]}),purchase=await commit('purchase',purchaseReview,2,[0,1,2,3,4]);
+const evidence={issuance:{hash:issue.hash,cycles:issue.cycles,receipt:issue.receipt,transaction:issue.transaction},purchase:{hash:purchase.hash,cycles:purchase.cycles,receipt:purchase.receipt,transaction:purchase.transaction},fee:'1000000'};
+const out=path.join(path.dirname(file),'initialization-continuation-test.json');fs.writeFileSync(out,JSON.stringify(evidence,null,2));console.log(JSON.stringify({issuance:issue.hash,purchase:purchase.hash,issuanceCycles:issue.cycles,purchaseCycles:purchase.cycles,evidence:out}));

@@ -1,0 +1,22 @@
+[
+  {
+    "label": "missing_contributor_signature_3",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 })"
+  },
+  {
+    "label": "duplicated_funding_input_3",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Dead(OutPoint(0xf07f1c452d8c7cda305042f21415034dd1836ba4a0ccb04522ea852dd86bbb7600000000))"
+  },
+  {
+    "label": "cannot_activate_before_all_claims_are_funded",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 40 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/6fa59308ec2dcb1addc52b3437e6a7793067f427b6d2afea189ffc87b6175e88.html#40 })"
+  },
+  {
+    "label": "closure_with_3_remaining_claims",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 32 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/6fa59308ec2dcb1addc52b3437e6a7793067f427b6d2afea189ffc87b6175e88.html#32 })"
+  }
+]

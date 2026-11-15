@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-04",
+  "baseline": "08f9849e463cf47bbc5740f8bd5953738155abab",
+  "branch": "wo13-trade-experience",
+  "direction": "Owner-provided screenshots; neutral surfaces, limited accent, focused action, compact ledger",
+  "browser": "browser-1793782696901",
+  "checks": 45,
+  "axe_scans": 19,
+  "automated_violations": 0,
+  "incomplete_checks": 1,
+  "native": {
+    "directory": "browser-native-1793782753319",
+    "transactions": 10,
+    "cases": 5,
+    "offline_replay": "native-offline-replay.log"
+  },
+  "unchanged": [
+    "transaction controller",
+    "builder",
+    "approval guards",
+    "configured covenant",
+    "public manifests"
+  ],
+  "public_transactions": 0,
+  "public_signing_enabled": false,
+  "evidence_boundary": "Controlled UI fixtures are not real external-wallet or Pudge execution; incomplete accessibility checks require manual review."
+}

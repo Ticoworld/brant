@@ -1,0 +1,7 @@
+# Pudge wallet signing test result
+
+2026-11-07: The user supplied a screenshot of the local wallet-test page displaying `Wallet signature verified against the reviewed transaction and connected lock. Nothing was broadcast.` The visible connected provider was UTXO Global on `nervos_testnet`, and the displayed account was the supplied testnet address. This is evidence of the browser's local verification result; the signed witness was intentionally not persisted, so this report cannot independently replay that particular signature.
+
+The reviewed raw transaction hash was `0x6c690f53577dc3eceae20fcfe7315bc00d8dcfb265444803a3277b6f3cccb32b`, spending the observed 10,000 CKB input and returning 61 CKB and 9,938.9999 CKB to the same lock, with 0.0001 CKB fee. The page checks that the returned raw hash is unchanged, reconstructs the standard sighash-all digest, recovers the public key from its 65-byte witness and checks its blake160 against the expected lock. It never calls broadcast. The user's screenshot did not show the extension approval dialog in this transaction-signing attempt; the user's approval interaction itself was not independently observed.
+
+A read-only Pudge RPC query immediately after the screenshot returned transaction status `unknown`. This is consistent with no broadcast, but is not proof that the transaction could never be broadcast elsewhere. This self-transfer test does not prove R7 deployment or contract execution on Pudge. No signed transaction or private credential is stored in this report.

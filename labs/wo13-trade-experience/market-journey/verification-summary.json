@@ -1,0 +1,21 @@
+{
+  "at_utc": "2026-11-04T10:59:49.328402+00:00",
+  "baseline": "58f80b7dd350712ec906b9c5841a3fc234e6a015",
+  "browser_evidence": "browser-1793789870889",
+  "browser_complete": true,
+  "checks": 54,
+  "axe_scans": 36,
+  "axe_reported_violations": 0,
+  "axe_incomplete_scans": 8,
+  "typecheck": "exit 0",
+  "production_build": "exit 0; static root and dynamic /market/[id]",
+  "parser": "MARKET_ROUTE_PARSER_PASS",
+  "native_browser": "10 committed, 5 rejected; offline replay passed",
+  "configured_security": "22 committed, 30 rejected; offline replay passed",
+  "maturity_refund": "27 committed; offline replay passed",
+  "covenant_sha256": "c569360ba498e715899635410dc0474003e8f61c6afc08a5c3f2a87527711c1f",
+  "covenant_data_hash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+  "immutable_engine_and_contract_diff": "git diff --exit-code 58f80b7: no differences for lib/market.ts, lib/approval.ts, configured contracts/build, public/pudge.json",
+  "public_broadcast": false,
+  "external_wallet_acceptance": false
+}

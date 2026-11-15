@@ -1,0 +1,41 @@
+{
+  "status": "experimental",
+  "root": "0x0a9d0f7d6aeeece7b25a6a88c2c45f599dd2a0ca6a573c2a29c2be793e4a428d",
+  "positions": [
+    {
+      "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "4"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "99000000",
+      "revision": "3"
+    }
+  ],
+  "genesis": "0x8255cb171c482aa63734099af78b029e067360e84d6edf469d6de64773570940",
+  "identity": {
+    "hash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+    "outPoint": {
+      "txHash": "0x44b31b58ccae8d3799e50f96ef75e94c77b6e7ef973c91d8ffa8155aae8903ae",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 51072,
+    "occupied": "5111300000000"
+  },
+  "firstIntentSurvivedRootChange": true,
+  "batch": 2
+}

@@ -1,0 +1,1001 @@
+{
+  "baseUrl": "http://127.0.0.1:3001",
+  "routes": [
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Market terminal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-home.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Market terminal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/discover",
+      "status": 200,
+      "resolvedPath": "/v2/discover",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Discover",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-discover.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/portfolio",
+      "status": 200,
+      "resolvedPath": "/v2/portfolio",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Portfolio",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-portfolio.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/orders",
+      "status": 200,
+      "resolvedPath": "/v2/orders",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Open Orders",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-orders.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/activity",
+      "status": 200,
+      "resolvedPath": "/v2/activity",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Activity",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-activity.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/withdraw",
+      "status": 200,
+      "resolvedPath": "/v2/withdraw",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "External xUDT withdrawal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-withdraw.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/deploy",
+      "status": 200,
+      "resolvedPath": "/v2/deploy",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Deploy Test Market",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-desktop-v2-deploy.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/claims",
+      "status": 200,
+      "resolvedPath": "/claims",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "en",
+      "heading": "Markets",
+      "links": [],
+      "screenshot": "after-en-desktop-claims.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Market terminal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-home.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Market terminal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/discover",
+      "status": 200,
+      "resolvedPath": "/v2/discover",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Discover",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-discover.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/portfolio",
+      "status": 200,
+      "resolvedPath": "/v2/portfolio",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Portfolio",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-portfolio.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/orders",
+      "status": 200,
+      "resolvedPath": "/v2/orders",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Open Orders",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-orders.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/activity",
+      "status": 200,
+      "resolvedPath": "/v2/activity",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Activity",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-activity.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/withdraw",
+      "status": 200,
+      "resolvedPath": "/v2/withdraw",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "External xUDT withdrawal",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-withdraw.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/deploy",
+      "status": 200,
+      "resolvedPath": "/v2/deploy",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Deploy Test Market",
+      "links": [
+        "Trade",
+        "Discover",
+        "Portfolio",
+        "Open Orders",
+        "Activity"
+      ],
+      "screenshot": "after-en-mobile-v2-deploy.png"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/claims",
+      "status": 200,
+      "resolvedPath": "/claims",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "en",
+      "heading": "Markets",
+      "links": [],
+      "screenshot": "after-en-mobile-claims.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "市场终端",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-home.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "市场终端",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/discover",
+      "status": 200,
+      "resolvedPath": "/v2/discover",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "发现市场",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-discover.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/portfolio",
+      "status": 200,
+      "resolvedPath": "/v2/portfolio",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "资产组合",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-portfolio.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/orders",
+      "status": 200,
+      "resolvedPath": "/v2/orders",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "当前委托",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-orders.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/activity",
+      "status": 200,
+      "resolvedPath": "/v2/activity",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "动态",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-activity.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/withdraw",
+      "status": 200,
+      "resolvedPath": "/v2/withdraw",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "提现外部 xUDT",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-withdraw.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/deploy",
+      "status": 200,
+      "resolvedPath": "/v2/deploy",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "部署测试市场",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-desktop-v2-deploy.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/claims",
+      "status": 200,
+      "resolvedPath": "/claims",
+      "width": 1440,
+      "documentWidth": 1440,
+      "bodyWidth": 1440,
+      "height": 900,
+      "language": "zh-CN",
+      "heading": "市场",
+      "links": [],
+      "screenshot": "after-zh-CN-desktop-claims.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "市场终端",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-home.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2",
+      "status": 200,
+      "resolvedPath": "/v2",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "市场终端",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/discover",
+      "status": 200,
+      "resolvedPath": "/v2/discover",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "发现市场",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-discover.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/portfolio",
+      "status": 200,
+      "resolvedPath": "/v2/portfolio",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "资产组合",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-portfolio.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/orders",
+      "status": 200,
+      "resolvedPath": "/v2/orders",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "当前委托",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-orders.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/activity",
+      "status": 200,
+      "resolvedPath": "/v2/activity",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "动态",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-activity.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/withdraw",
+      "status": 200,
+      "resolvedPath": "/v2/withdraw",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "提现外部 xUDT",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-withdraw.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/deploy",
+      "status": 200,
+      "resolvedPath": "/v2/deploy",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "部署测试市场",
+      "links": [
+        "交易",
+        "发现市场",
+        "资产组合",
+        "当前委托",
+        "动态"
+      ],
+      "screenshot": "after-zh-CN-mobile-v2-deploy.png"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/claims",
+      "status": 200,
+      "resolvedPath": "/claims",
+      "width": 390,
+      "documentWidth": 390,
+      "bodyWidth": 390,
+      "height": 844,
+      "language": "zh-CN",
+      "heading": "市场",
+      "links": [],
+      "screenshot": "after-zh-CN-mobile-claims.png"
+    }
+  ],
+  "pageErrors": [
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/discover",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/portfolio",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/orders",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/activity",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/withdraw",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/v2/deploy",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/discover",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/portfolio",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/orders",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/activity",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/withdraw",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/v2/deploy",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/discover",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/portfolio",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/orders",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/activity",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/withdraw",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "route": "/v2/deploy",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/discover",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/portfolio",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/orders",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/activity",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/withdraw",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "route": "/v2/deploy",
+      "message": "Cannot read properties of undefined (reading 'addressPrefix')"
+    }
+  ],
+  "walletChoices": [
+    "Khie",
+    "JoyID Passkey",
+    "MetaMask",
+    "OKX Wallet",
+    "UniSat",
+    "UTXO Global Wallet"
+  ],
+  "interactions": [
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "action": "select sell",
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "action": "open wallet chooser",
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "action": "select sell",
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "action": "open wallet chooser",
+      "passed": true
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "action": "open wallet chooser",
+      "passed": true
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "action": "open wallet chooser",
+      "passed": true
+    }
+  ],
+  "disabledTradeActions": [
+    {
+      "locale": "en",
+      "viewport": "desktop",
+      "disabled": true
+    },
+    {
+      "locale": "en",
+      "viewport": "mobile",
+      "disabled": true
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "desktop",
+      "disabled": true
+    },
+    {
+      "locale": "zh-CN",
+      "viewport": "mobile",
+      "disabled": true
+    }
+  ],
+  "fixtures": "public views only; no isolated RPC fixture configured",
+  "overflow": []
+}

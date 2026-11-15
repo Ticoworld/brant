@@ -1,0 +1,3 @@
+{
+  "error": "Error: TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code 8 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#8 })\n    at Engine.rpc (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:5:351)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Engine.send (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:16:35)\n    at async /workspace/trade/labs/wo09-unified/trading-return/src/run.cjs:16:501"
+}

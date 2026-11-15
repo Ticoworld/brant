@@ -1,0 +1,118 @@
+{
+  "label": "invalid_new_leaf_state_tag",
+  "rawTransactionHash": "0x5962452542846c74e808067caf51b743ee651e2482b8d559ee371183bbdd96c6",
+  "fullSignedTransactionSha256": "0247eb66bcf285185738d5a8df81b25caf20c469c83cf7e220e0c23b19790707",
+  "witnessesSha256": "0da0bc17d73a57c1216a808cbb9114405968818e4c9fd5bdf72c479ab766e695",
+  "rejectingSource": "Inputs[0].Lock",
+  "rejectingCode": 7,
+  "rejectingCodeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+  "alteredCondition": "new active entitlement leaf state tag changed from 1 to non-canonical value 3",
+  "estimateCyclesError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 } }\"}",
+  "sendTransactionError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 })\",\"data\":\"Verification(Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 } })\"}",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x32687cd0792930994a4268ed8a240ad74d8a74abb151d988766adc4334c9438e",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x3"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x4"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xa70f1273a866885001262246ffb8181d79299d9735001a37135290f97321d5e1",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [
+      "0x5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d6474"
+    ],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x4ed654fea479a681af27b3817f53612762cf4c76ebad155c577752d70407c4cb",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x4ed654fea479a681af27b3817f53612762cf4c76ebad155c577752d70407c4cb",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x64ef0b8262b55e71bf437f48b552adebfbe6df97e5c9d5ec5d8500c894d47bd9",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4b238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d647406ed5d7fc9f00389a7e027c8cf915543a35744c6b876ee0b88783e82d3391939"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x3883ddb9a89a9a25fc41576fe84a10fa6ffef9ccb82073d6f6743683d95acb02"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4b238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d647406ed5d7fc9f00389a7e027c8cf915543a35744c6b876ee0b88783e82d3391939"
+        },
+        "type": {
+          "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4"
+        }
+      },
+      {
+        "capacity": "0x174867a5c0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x2d777d0286ef1f893d297f1cf6db5d75c2048078"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x0b0000000000000000000000000000004caf469bfb642f866616e7bdc2635f025ff06d188f333dcf9ecf00b38ccc3287",
+      "0xd4b96261c56676c1c7b5fd151cf377bb15224a9bf86d28abd4e193e8d319768bb238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x550000001000000055000000550000004100000086877679ac01a79dedbca1fbf8701db13a7085ec53ffaeda79643faecdfd4abe4e54e145fd1157aa923fe8d3c4606eeb917704c13c09b604e16917a3badc6d7300",
+      "0x544d5331010101008900000072e06ff31cd638cd618e0e998a113a8bb39647db96a32a357cf074b62fef2ffe000000000000000000000000000000000000000000000000000000000000000001000000000000000100000000000000030000000000000000000000000000004c4ffd51fd11fb075d3242ee5ee0860b021929b5a3019b20f5af388f5bb16fe9616d1d8a5816944bcb634a927642a8894ef1ac9328755cf618def4a3d786b157338a238f024f0151ff5b3bcba5380b251719f0b99fab639d869fff169a1a5767c0a1ae80b21f1d0f21dfbce4d8ee8e466332fd67136b8e4b8d0a0881b17c46f5112ecdcae32703957e"
+    ]
+  }
+}

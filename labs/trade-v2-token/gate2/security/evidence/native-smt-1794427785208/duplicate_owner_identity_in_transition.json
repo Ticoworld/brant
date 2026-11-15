@@ -1,0 +1,127 @@
+{
+  "label": "duplicate_owner_identity_in_transition",
+  "rawTransactionHash": "0x1e3a7ce2ec29eb5b8aa1b99a8cd0c0ba62276e1d88386f32b96a62f706a2844c",
+  "fullSignedTransactionSha256": "c7043c6c7ad4894e6aefce1def9979363b3c7f0a805e702f100aa6339efb6a80",
+  "witnessesSha256": "ecae7464833e46cfddd65649a01dde9b322238f2fcc04cf13bc0fa1cda482027",
+  "rejectingSource": "Inputs[0].Lock",
+  "rejectingCode": 7,
+  "rejectingCodeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+  "alteredCondition": "second TMS1 owner identity replaced by the first owner identity in a otherwise balanced signed offline-fill transaction",
+  "estimateCyclesError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 } }\"}",
+  "sendTransactionError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 })\",\"data\":\"Verification(Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 7 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/eb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000.html#7 } })\"}",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x32687cd0792930994a4268ed8a240ad74d8a74abb151d988766adc4334c9438e",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x3"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x3ae258903384b24903099b1ec082d05ce1060d0cdb66d8ed6fa46dc1ece758c6",
+          "index": "0x4"
+        },
+        "depType": "code"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xa70f1273a866885001262246ffb8181d79299d9735001a37135290f97321d5e1",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [
+      "0x5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d6474"
+    ],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0x4ed654fea479a681af27b3817f53612762cf4c76ebad155c577752d70407c4cb",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x4ed654fea479a681af27b3817f53612762cf4c76ebad155c577752d70407c4cb",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x4ed654fea479a681af27b3817f53612762cf4c76ebad155c577752d70407c4cb",
+          "index": "0x4"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4b238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d647406ed5d7fc9f00389a7e027c8cf915543a35744c6b876ee0b88783e82d3391939"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x3883ddb9a89a9a25fc41576fe84a10fa6ffef9ccb82073d6f6743683d95acb02"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4b238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b5b3ee1280d7f3027f5d442e107767e6aa35d43be7a5bd9123fa56ae4b05d647406ed5d7fc9f00389a7e027c8cf915543a35744c6b876ee0b88783e82d3391939"
+        },
+        "type": {
+          "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+          "hashType": "data1",
+          "args": "0xc38616e3fa2ecd3543ce93b6aea1a32fcc570386b8b9d29b997d8dbf5e6062c4"
+        }
+      },
+      {
+        "capacity": "0x2a0c4d02c0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0xe8d3feb7177314bcbdb705be19dcb4b6f92240ad"
+        }
+      },
+      {
+        "capacity": "0x1a13b8600",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x9b39350af43bda8c8ce8a754dfefc7c77cbeb206"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x0a0000000000000000000000000000005b5c3a8a6e64f54515dc343b79a28ce65d5705bf42bec912a036a32189a6ea6a",
+      "0xd4b96261c56676c1c7b5fd151cf377bb15224a9bf86d28abd4e193e8d319768bb238067278930c5d91d2b74a1a774e54c58c3258db74ca6d11cdadf6a5b2314b",
+      "0x",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x",
+      "0x550000001000000055000000550000004100000078261ba0f14e05d89009d82ba50487ebcf433da11d4f6851f5257f6825d65b6770c8465bd5860c2cc0a86dcdf5e5ef7ddb0e94e6bf6116bed4ef21b9bbc50cc700",
+      "0x544d53310108020007000000f70ef2ae76cbc3686d3e8490a4533e9d67dc0a2308f3100c4b1892f56c85c27704000000000000000200000000000000010000000000000000000000000000000300000000000000030000000000000001000000000000000000000000000000f70ef2ae76cbc3686d3e8490a4533e9d67dc0a2308f3100c4b1892f56c85c277060000000000000004000000000000000100000000000000000000000000000007000000000000000500000000000000010000000000000000000000000000004c4fff4c4fff48010000000000000000863ba101000000c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3f70ef2ae76cbc3686d3e8490a4533e9d67dc0a2308f3100c4b1892f56c85c277f70ef2ae76cbc3686d3e8490a4533e9d67dc0a2308f3100c4b1892f56c85c27702bf17cc233000041fdc89a6f838f17549eca67b20fd921116ac4ff8af88821bf6173e3a7a0be399ca39c5abcf930562d603a7db8c6907bc242467f04f174567967a134f46ff7e675b1028cba0223a14d603e784a5df05761149c25a15cb39c69e00"
+    ]
+  }
+}

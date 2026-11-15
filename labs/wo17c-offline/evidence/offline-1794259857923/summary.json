@@ -1,0 +1,40 @@
+{
+  "hashes": {
+    "marker_candidate": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "market_shared": "0x6e187048242c36d036569eb11aa1ad524c333c9ddc64147a9deea850f790d297",
+    "owner_lineage_candidate": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "custody": "0xa0e288ada91cede824c648bc92ec8ef6f86bcce386f976c5b069b766f8930036",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "market": {
+    "codeHash": "0x6e187048242c36d036569eb11aa1ad524c333c9ddc64147a9deea850f790d297",
+    "hashType": "data1",
+    "args": "0x4c1e2ad77e29cf55556c13ce1181cfd52ba07da8dc74f426ca1c1809e4338ecc00ca9a3b0000000000e1f50500000000e80300000000000012c512477f4d9abceeea606d8e55d2e5fd4df69ab9b203c01d9e9074a0a8eae5"
+  },
+  "marker": {
+    "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "hashType": "data1",
+    "args": "0xd4777df8b16fc63564965438a240f4e9cc98a1a1fd0767ddfabbd03e1ea9908f"
+  },
+  "owner": {
+    "codeHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "hashType": "data1",
+    "args": "0xa05092ec7abe67065e66b226b285ebe208d7f0d299235412500d21542f03e7e90e00000050bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95d199f18672f2769d5bf2c07cdc633f2500cb786c4d8ff5a56db3162cff15007fe8030000000000000000000000000000"
+  },
+  "token": {
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "args": "0x52a7de03267771f328a3ec1caed4f825b2489123ac8744f26c122f4c1f31df65"
+  },
+  "custody": {
+    "codeHash": "0xa0e288ada91cede824c648bc92ec8ef6f86bcce386f976c5b069b766f8930036",
+    "hashType": "data1",
+    "args": "0xd199f18672f2769d5bf2c07cdc633f2500cb786c4d8ff5a56db3162cff15007fd8fa3be665ac6676ac5c4d4e2e18d753b2b411a4f14c96b9d2b4af44bf91c2bfe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e3859297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b"
+  },
+  "alice": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+  "ben": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+  "genesis": "0x296db4c4f1e563e80aa1a6748581c216a432fd75a1ae15823d00c4b7bc88916a",
+  "order": "0xabababababababababababababababababababababababababababababababab",
+  "message": "TRADE WO17C TOKEN SALE v1\nGenesis: 0x296db4c4f1e563e80aa1a6748581c216a432fd75a1ae15823d00c4b7bc88916a\nMarket: 0xd199f18672f2769d5bf2c07cdc633f2500cb786c4d8ff5a56db3162cff15007f\nAsset: 0xd8fa3be665ac6676ac5c4d4e2e18d753b2b411a4f14c96b9d2b4af44bf91c2bf\nCustody: 0x50c8b31e8a6114c485494c304bd80a5987814182b6ae86abcad598118cfa77af\nInput transaction: 0xff1229c9387b4c1c289344fb4a3c0e73e62f410a48d1ddad525b832a141ded0c\nInput index: 2\nSeller: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nBuyer: 0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b\nQuantity: 1\nMinimum shannons: 10000000000\nPayout: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nOrder id: 0xabababababababababababababababababababababababababababababababab\nExpiry: none; valid until input is spent",
+  "mode": "cancel"
+}

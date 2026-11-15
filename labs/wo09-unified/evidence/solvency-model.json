@@ -1,0 +1,56 @@
+{
+  "classification": "EXECUTABLE_INTEGER_MODEL_ONLY",
+  "orders": [
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      1,
+      0
+    ]
+  ],
+  "negative_model_cases": [
+    "unfunded_ratchet",
+    "early_closure",
+    "owner_missing",
+    "excess_redemption",
+    "unpaid_sale",
+    "unsigned_sale",
+    "resurrect_redeemed_claim",
+    "duplicate_redemption"
+  ],
+  "creator_gross_proceeds_shannons": 422000000,
+  "protected_total_shannons": 1688000000,
+  "rounding_counterexample": {
+    "sum_individual_floors": 0,
+    "floor_aggregate": 2
+  },
+  "limitations": [
+    "signatures are modeled membership, not cryptography",
+    "payments are model constraints, not real asset transfers",
+    "no on-chain covenant or public-history proof validated"
+  ]
+}

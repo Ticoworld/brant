@@ -1,0 +1,76 @@
+{
+  "out": "/mnt/c/Users/timot/Desktop/2026/CKB/trade-wo18-v2-merkle/labs/trade-v2-token/gate2/evidence/native-replay-1024-selldown-20261111b",
+  "chain": "/mnt/c/Users/timot/Desktop/2026/CKB/trade-gate2-chain-replay-20261111/trade-gate2-replay-jZgZyE/chain",
+  "genesis": "0xa05234b21039171c7ef1811a15eceb07e076bc96adf3656845416c918fe372f2",
+  "tip": "0xd49b1a3d6d534eb40320c94ca8ac89a98528e5ed9e66c15f713b9e59175a8621",
+  "initializationTransactionHash": "0x7bb2cb2251b2d6eb3096e52732db31b3d41cc45f96a0636d6b1df38131406393",
+  "hashes": {
+    "marker_candidate": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "market_smt": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+    "owner_lineage_candidate": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "custody_smt": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+    "custody_marker": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "scripts": {
+    "market": {
+      "codeHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+      "hashType": "data1",
+      "args": "0xa9f1d2cdcd2c11ade57ae09f18aceb1fd2648a5564d39b2c445923563d00646900ca9a3b0000000000e1f50500000000d0070000000000007189dbf2310a379d0ac69f8d0a21f9393dae6cdb76f256794be89f70ca7ad9f5"
+    },
+    "marker": {
+      "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+      "hashType": "data1",
+      "args": "0x14c6420f3d5b7c4eb92dd0bcd7053b41be9c5754663c596d5414c1691b3cf4a0"
+    },
+    "owner": {
+      "codeHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+      "hashType": "data1",
+      "args": "0x9327ac1216bdf3310dd27ddd0c06746cf542ee4f5699bc484ef4b68d8f8cfe030f00000050bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b953d933a35fa940cb01a827bb4e88e000cf1f427d08219d1cbdff79f0ad22aeb57d0070000000000000000000000000000"
+    },
+    "token": {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "args": "0x4f4def75b8263d0cbcf14e1f3ec169cd7d07fa6de3da4ef88bcaad1306ab9340"
+    },
+    "custody": {
+      "codeHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+      "hashType": "data1",
+      "args": "0x3d933a35fa940cb01a827bb4e88e000cf1f427d08219d1cbdff79f0ad22aeb57866556d01cf39c1c118e6fb046d69b20aa7d2dbf85e73b82f73f704fa101ab97a05234b21039171c7ef1811a15eceb07e076bc96adf3656845416c918fe372f2c2e4ad7357c937e8fbb7cb109c360164ea45d9d6d0b0a50266d6cb3132619bb6"
+    },
+    "custodyMarker": {
+      "codeHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc",
+      "hashType": "data1",
+      "args": "0x3d933a35fa940cb01a827bb4e88e000cf1f427d08219d1cbdff79f0ad22aeb57"
+    }
+  },
+  "roots": {
+    "initial": "0x24a650df8209a28fad7ec1ae7b7edbc72540258181955447778ca913e693c44f",
+    "enrolled": "0x4f33f26be84a1706e7100584d343c5564a614ff046e375632455fc1a6f42e3ce",
+    "final": "309d9708f7b353278478856f8df4ccc4c8314b3f869bc2fb0573687e2bae207e"
+  },
+  "owners": 1024,
+  "supply": "2000",
+  "internalEntitlements": "0",
+  "marketInventory": "2000",
+  "withdrawnExternal": "0x01000000000000000000000000000000",
+  "externalAfterRedemption": "0x00000000000000000000000000000000",
+  "fullSellDown": true,
+  "finalCustody": {
+    "txHash": "0x9ab4851b55130103015a47e43d3c5c5dc3c91922b12c11b6efe028548560b02c",
+    "index": "0x2"
+  },
+  "finalMarket": {
+    "txHash": "0x9ab4851b55130103015a47e43d3c5c5dc3c91922b12c11b6efe028548560b02c",
+    "index": "0x0"
+  },
+  "finalMarketCapacity": "30000000000",
+  "replay_of": {
+    "source_native_run": "native-1794418766907",
+    "source_event_count": 1100,
+    "source_events_sha256": "2b020a432387f770a9a2fc7485e9aaab3a669793038a670e6fa035b2b392e648",
+    "source_genesis_rpc_log_sha256": "0846b326a9fc5746b254281ec5952082dc8de7f2b177523a9e442d25f4f92a8f",
+    "committed_to_fresh_ckb_node": true,
+    "canonical_history_must_be_refetched_from_rpc": true
+  }
+}

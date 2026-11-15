@@ -1,0 +1,72 @@
+[
+  {
+    "label": "signature_cannot_authorize_different_financial_change",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#82 })"
+  },
+  {
+    "label": "capacity_funder_cannot_reduce_immutable_cushion",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 33 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#33 })"
+  },
+  {
+    "label": "invalid_user_signature",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#82 })"
+  },
+  {
+    "label": "operator_signature_substitution",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 80 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#80 })"
+  },
+  {
+    "label": "arbitrary_root_no_valid_transition",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 46 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#46 })"
+  },
+  {
+    "label": "capacity_drain_with_unchanged_liabilities",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 33 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#33 })"
+  },
+  {
+    "label": "replay_consumed_vault",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xea300d205a8bcee47c02ea9d8680f00fe58f40ed0310a4e49062471b9c3484a200000000))"
+  },
+  {
+    "label": "stale_intent_on_current_vault",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 45 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#45 })"
+  },
+  {
+    "label": "signature_replay_between_two_genuinely_funded_markets",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 82 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#82 })"
+  },
+  {
+    "label": "tiny_standalone_output_consensus_capacity",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[1]): expected occupied capacity (0x16b969d00) <= capacity (0x39338e0))"
+  },
+  {
+    "label": "duplicate_Carol_withdrawal_consumed_input",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xe5d7fe1dcc825c06c90e0c349f8419eb271a0f5381975afcb56f9876c787bff000000000))"
+  },
+  {
+    "label": "zero_fee_relay_policy",
+    "method": "send_transaction",
+    "error": "PoolRejectedTransactionByMinFeeRate: The min fee rate is 1000 shannons/KW, requiring a transaction fee of at least 1108 shannons, but the fee provided is only 0"
+  },
+  {
+    "label": "Bob_tiny_direct_exit_no_provider",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[1]): expected occupied capacity (0x16b969d00) <= capacity (0x1d43c2a0))"
+  },
+  {
+    "label": "funder_cannot_close_with_Alice_liability",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 32 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be.html#32 })"
+  }
+]

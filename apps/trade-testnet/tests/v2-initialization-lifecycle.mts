@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {verifyInitializationStage,nextInitializationStage} from '../lib/v2-engine/initialization-lifecycle.ts';
+const lock={codeHash:'0x'+'11'.repeat(32),hashType:'data1' as const,args:'0x'},genesis='0x'+'22'.repeat(32),block='0x'+'33'.repeat(32),anchor={txHash:'0x'+'44'.repeat(32),index:'0x0'};
+const tx=ccc.Transaction.from({inputs:[{previousOutput:anchor}],outputs:[{capacity:10000000000n,lock},{capacity:10000000000n,lock}],outputsData:['0x','0x']});
+const rpc=async(method:string,params:unknown[])=>method==='get_block_hash'?(params[0]==='0x0'?genesis:block):method==='get_transaction'?{transaction:cccA.JsonRpcTransformers.transactionFrom(tx),tx_status:{status:'committed',block_hash:block}}:method==='get_header'?{hash:block,number:'0x1'}:{status:'live',cell:{output:{capacity:'0x2540be400',lock:{code_hash:lock.codeHash,hash_type:'data1',args:'0x'},type:null},data:{content:'0x'}}};
+const setup=await verifyInitializationStage(rpc,genesis,'setup',tx,[anchor],[0,1]);
+nextInitializationStage(setup,'issuance',[setup.outputs[0]]);
+assert.throws(()=>nextInitializationStage(setup,'purchase',setup.outputs),/Previous/);
+assert.throws(()=>nextInitializationStage(setup,'issuance',[anchor]),/predecessor/);
+await assert.rejects(()=>verifyInitializationStage(async(m,p)=>m==='get_transaction'?{tx_status:{status:'pending'}}:rpc(m,p),genesis,'setup',tx,[anchor],[0]),/retain attempt/);
+await assert.rejects(()=>verifyInitializationStage(async(m,p)=>m==='get_block_hash'&&p[0]==='0x1'?genesis:rpc(m,p),genesis,'setup',tx,[anchor],[0]),/canonical/);
+await assert.rejects(()=>verifyInitializationStage(async(m,p)=>m==='get_live_cell'?{status:'dead'}:rpc(m,p),genesis,'setup',tx,[anchor],[0]),/unavailable/);
+console.log('Initialization stage reconciliation checks passed');

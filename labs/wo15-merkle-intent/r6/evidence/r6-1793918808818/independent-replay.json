@@ -1,0 +1,47 @@
+{
+  "verifiedSales": [
+    {
+      "tx": "0x15ce472d340c5455dda1d4a54c111a52c5207a00640940cb5ab73592be18fd23",
+      "index": 0,
+      "price": "8000000000",
+      "previousOwner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "newOwner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b"
+    },
+    {
+      "tx": "0x8c16631ec964384b063c2c3d07e581242811e45a2a822394f5c134df6a3e91b1",
+      "index": 1,
+      "price": "8100000000",
+      "previousOwner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "newOwner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b"
+    },
+    {
+      "tx": "0x8c16631ec964384b063c2c3d07e581242811e45a2a822394f5c134df6a3e91b1",
+      "index": 2,
+      "price": "8200000000",
+      "previousOwner": "0xaed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d",
+      "newOwner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b"
+    }
+  ],
+  "root": "0x3a9a0e4f03e70fb5b3d1d702ea0e53518f8370a73acd125e3084e695f3d4803d",
+  "positions": [
+    {
+      "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "4"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "100000000",
+      "revision": "2"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "125000000",
+      "b": "99000000",
+      "revision": "3"
+    }
+  ],
+  "trust": "Recorded private-node results; no independent consensus verification"
+}

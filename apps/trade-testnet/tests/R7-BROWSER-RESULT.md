@@ -1,0 +1,5 @@
+# R7 private browser experiment
+
+The isolated Chromium test in `r7-browser.cjs` started a private CKB node, deployed the R7 covenant, funded positions, and started the actual Next app. A disposable CCC software signer signed the seller intent in the browser. After disconnecting that signer, an unrelated redemption committed. A disposable buyer signed and submitted a transaction through the app and private-only RPC bridge. Transaction `0xa0b0c2eb68c61f7afb3016fd37772a96ae222b9faf0a47bc9209178b11c51666` committed. Reloading the app hid the filled offer.
+
+Evidence: `labs/wo15-merkle-intent/r7/evidence/browser-1793972937700`. `r7-browser-verify.cjs` independently replays its transactions and verifies signature, position, payout and Merkle root; it trusts recorded private-node history. The buyer owns position 0 with unchanged backing and revision 2. This is not a real extension or hardware wallet test. Browser logged a CCC JoyID provider error. No browser cancellation, service restart, or duplicate purchase test has passed. UI transaction status remains pending and private-chain recovery/selection are bounded experiments. Do not deploy publicly.

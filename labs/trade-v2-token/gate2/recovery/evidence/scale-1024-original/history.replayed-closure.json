@@ -1,0 +1,751 @@
+{
+  "custody_amount": "1031",
+  "domain": {
+    "args_len": 128,
+    "custody_marker_type_hash": "0x01d8bd8066168bfd7fd3bb0b1581d4312e2884e9097e4550274a6552cee76c78",
+    "genesis_hash": "0xfc1a34fc5c01afd38d16d8343fda33da5dfe4906e82927c5734829511ab5e2ab",
+    "market_script_hash": "0xba367f052f3f07440ce056f98770a4fe5a1def7e3f03c4e8a84e6c94a5464e81",
+    "xudt_type_script_hash": "0x11a43f937acde76b86bc3936d4746890332468e103caa33e8f66818440ba27e7"
+  },
+  "entitlement_total": "1031",
+  "format": "trade-v2-recovery-result-v1",
+  "init_tx_hash": "0x693cfac1ec415d227f679291ab7fa2ca302f6d98bede93c1feae742d46a41c3e",
+  "network_scope": "reconstruction only; native withdrawal requires compatible built script and a signed CKB transaction",
+  "owner": {
+    "active": true,
+    "balance": "5",
+    "revision": "3"
+  },
+  "owner_lock_hash": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+  "owner_membership_proof": {
+    "compiled_proof": "0x4c4ff351f3bf2a26241ae842aceb28c9e38c186925296371a50457839e71bba17b3d3849fe21e76e9c0eba98c8367acff6bc23ee1bd0a8453e84b9635d187585bf116700004f0151f5ef72027ff43e01c7005db0a9a231d193eb02317a80a2787882701c5d75045513c2cd89ebe6cfea3f5dabdb7cf90e21bddc42d7feb9f84c0676c6e503908c060051f6283fe65f2fddcbdc5b919108de8fe0aa2fccbd3730f21d48552528691cbb5c59639d999a6738744d8fabe31f867bbd7a1d0f46c80cdce2062fff3e3df5fd0d0051f7802bf8cfd75772ffc0598eb7f9a313564efae49fc042f336a8f0ea9a812e8daa96206c75f60bdabfaec63075eb8686052fe73944978e2487d4ddf594a9c25c0050a85325878fd9d58dc6767752bb015e29ba2c76dc13478ec574b98ceeefdd5ccb50bc808b04ecfec343d00ba5c2d2b91de77b60cd6058e2abaedbd9d6196b9cc5e0509ab82fbce3e5d905054cdb582268354512ffa9b6a6b2b50a75255fe4678e720850341d08fcc23d0468cfa755ae60176d4dd424dc20b19c2072b3cbc1253eb9545d50c5abd8648ca149a91c09d48739f9a4ee1af97e2b70795167946becd4c2a5b45a508588d65635bcc5bb30d37173e567c964595257426959f15ee1d84021099d192f5082b6b182e312fe42b485971eecfe2c6e1715b8c0cb412b85e598211496d53459504146d3ebb70d5b1a5d26e65d1b854588233f8c05d6d27d28641fad2fd97ae412",
+    "key": "0x946afc8ef4b6605f726be85e7830627004db54a20f11eda56f8c261b9e0c837c",
+    "leaf_value": "0x0500000000000000030000000000000001000000000000000000000000000000",
+    "proof_bytes": 533,
+    "root_verified": true
+  },
+  "ownership_root": "0x54d4729791daab7aadeace09f5916719a7a614aab67387d722d26dd3c33e59b1",
+  "tip_outpoint": {
+    "index": "0x0",
+    "tx_hash": "0x7e18c5448f21adbf78d6a5297af22214cacfe08cfd37dff26271fa41ccd709d3"
+  },
+  "tip_tx_hash": "0x7e18c5448f21adbf78d6a5297af22214cacfe08cfd37dff26271fa41ccd709d3",
+  "transitions": [
+    {
+      "block_number": "0x23",
+      "custody_amount": "7",
+      "op": 0,
+      "reconstructed_entitlement_total": "7",
+      "root": "0x6993324ca42d2f68efac7145d6adf61fd15e8d406a3c267da10a2745a610b35f",
+      "tx_hash": "0x693cfac1ec415d227f679291ab7fa2ca302f6d98bede93c1feae742d46a41c3e",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x27",
+      "custody_amount": "8",
+      "op": 1,
+      "reconstructed_entitlement_total": "8",
+      "root": "0xe3281cf3a2480249ec054c2099d82a83b2ec0f4b2029c1ba60a1074bae20596e",
+      "tx_hash": "0xb61e47e123c86a567806ac8b4c91dd1b07926ea3e6e61a09660594a2c5e760d8",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x2b",
+      "custody_amount": "10",
+      "op": 1,
+      "reconstructed_entitlement_total": "10",
+      "root": "0x414dcaf068a9d84b48cbd7e08bb5b75e4b8f366040d9439d8fdff76810542c61",
+      "tx_hash": "0xc5d8289f86e1d6ccd27ecd0cddaa476b3222cf032131b15e02e43b5903ccfaee",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x33",
+      "custody_amount": "26",
+      "op": 2,
+      "reconstructed_entitlement_total": "26",
+      "root": "0x65464d8c91111f46bd429fd956def7148c1e6f61b50c30838d3eb16d27409ede",
+      "tx_hash": "0xd6f3211a1c8b64e8d77bf2c0979ca71b986edcaa150b51ba525af3caa3f5af4d",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x37",
+      "custody_amount": "42",
+      "op": 2,
+      "reconstructed_entitlement_total": "42",
+      "root": "0xbe016939dddf0be8bca558f4812d96c4bf1f79bbcad4f314e355a6ff9275c6cd",
+      "tx_hash": "0x444b5bf24ad599e7ed2d38361c614ac55601d1ca18c6294f79227c389a90cd5f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x3b",
+      "custody_amount": "58",
+      "op": 2,
+      "reconstructed_entitlement_total": "58",
+      "root": "0x91e311d04d314ae2e96c36496871978409b6549729d7c12fa4c33bb8d16f50fa",
+      "tx_hash": "0x6b6c1ecb166349e89c26f3fe9bc9cc4088578be48ca78826c0cafcc9b0a1a31f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x3f",
+      "custody_amount": "74",
+      "op": 2,
+      "reconstructed_entitlement_total": "74",
+      "root": "0xc97c951438e3204055e657b91067b694d5d74aca0d775e3331904b247b0f507a",
+      "tx_hash": "0x983a5c952a04fc6233804d478f2cdda400b846c5a41681c92b707007b6abce4f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x43",
+      "custody_amount": "90",
+      "op": 2,
+      "reconstructed_entitlement_total": "90",
+      "root": "0x80e75fe651ea7d81da479d8e749debf6c398af000db6eb34508bf115cc3c0672",
+      "tx_hash": "0x6716c409b95d9c8f7321dc8967be1ca19f007174df5da0c8ba040d95d9748dc3",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x47",
+      "custody_amount": "106",
+      "op": 2,
+      "reconstructed_entitlement_total": "106",
+      "root": "0x6a8e46f7afcb97ea887a66bad7e45e60bf053831a772adaeca44f22e0a624f77",
+      "tx_hash": "0x644e4a97e18fec8e1ce2f5a445425502a750bde7b4c7698cfd3b62cc5b995171",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x4b",
+      "custody_amount": "122",
+      "op": 2,
+      "reconstructed_entitlement_total": "122",
+      "root": "0x82a86a011226a765ebe7bd78444c6dbefcfe68006296d023205631c63536734d",
+      "tx_hash": "0x0ab03af85719b05a19c02ec46d3ee0005abf35cda4400a8a510b5370b384409b",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x4f",
+      "custody_amount": "138",
+      "op": 2,
+      "reconstructed_entitlement_total": "138",
+      "root": "0xc3810567d1ace451a77516dff15726d69dc07993550fe94846e2e8a1a86e3f77",
+      "tx_hash": "0x808965bf1156e7aa8c33877563e4334676ddda35ef2732aceec6df4aae22a93c",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x53",
+      "custody_amount": "154",
+      "op": 2,
+      "reconstructed_entitlement_total": "154",
+      "root": "0x4512d7d213af1d838dfea05741a0b43cba36a92a2aab7576c93420186dc842b7",
+      "tx_hash": "0xec5ab2ce78caa1eca38bd7f108f43dc3c171bfe5dd3a83362adc96b2636a4617",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x57",
+      "custody_amount": "170",
+      "op": 2,
+      "reconstructed_entitlement_total": "170",
+      "root": "0x92aaea2b1e3a9d77de593816293b71a7e2e00b8a669053dcd910adeb676bc07e",
+      "tx_hash": "0x13465ba7a67bf60cceb8428c8aa91cd9c8470d63ecae0fd07eaa8b2da2b59967",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x5b",
+      "custody_amount": "186",
+      "op": 2,
+      "reconstructed_entitlement_total": "186",
+      "root": "0x718e16513bfe0a7636b6f2e6819d4cb2c8fd426c1cf83b717f99e72e24f38214",
+      "tx_hash": "0xd4da0efbf8b77f8301b006c1d29c03024479669bfd8792c374e2f7af6c29f734",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x5f",
+      "custody_amount": "202",
+      "op": 2,
+      "reconstructed_entitlement_total": "202",
+      "root": "0xf741ef33c9502e2ef03fe2c43979b141723d0bc4551b65dc9247000dbc24870c",
+      "tx_hash": "0xd71ad4c23b0effe608e4ba91de5dcb0090e19251a8f0494d636ba2ea9174490a",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x63",
+      "custody_amount": "218",
+      "op": 2,
+      "reconstructed_entitlement_total": "218",
+      "root": "0xac8afdb39d9e3404aabf78fa197e295306eebf695ce34de02a1d1ec404873bec",
+      "tx_hash": "0xff41fbfa314eca5e67786774cf8e1b34e64ba215502906b67f41f2401cf28e71",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x67",
+      "custody_amount": "234",
+      "op": 2,
+      "reconstructed_entitlement_total": "234",
+      "root": "0xabd0361c6c891df393d9c13b7b729dfb25c289d20ee2996ac84d113692386196",
+      "tx_hash": "0x590fd4886ff04393097ada8a8fb8360b6e478bbee8d4ff545f2b760ad03af25b",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x6b",
+      "custody_amount": "250",
+      "op": 2,
+      "reconstructed_entitlement_total": "250",
+      "root": "0xb8b204a7d04eef88dad10a022cc13cdecdf5bb8e669c16ee1f42c43b7cbcc7fd",
+      "tx_hash": "0xe932436b707e4e7f9909671ed5fe85a855ff9fb7ff37f9634526ed5b44cbbdcd",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x6f",
+      "custody_amount": "266",
+      "op": 2,
+      "reconstructed_entitlement_total": "266",
+      "root": "0x11654737addec7b98996491d41eccf820be336f1af2bf3e2a81000269914bfa0",
+      "tx_hash": "0xf7b3913fcdbc7738de979d726d698c9db40a2abf4fc416821d55f2aa7c4988de",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x73",
+      "custody_amount": "282",
+      "op": 2,
+      "reconstructed_entitlement_total": "282",
+      "root": "0xfdb7f1c927c4103caf116f2c6249623a6f4e035f4c60b59d174f92ea555b40df",
+      "tx_hash": "0xe6b93a3fea8c362d6ac23a902a9124ed9f46852afd81a09c2811cef1456f296e",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x77",
+      "custody_amount": "298",
+      "op": 2,
+      "reconstructed_entitlement_total": "298",
+      "root": "0x919b290e5b6040d25faeb2a4bc0cb24063206acf696e1c80b0720a970a5a513f",
+      "tx_hash": "0x5e0855da56d6daacad0ad96876602f94403bb310fadafbe13dbd125e4b8fe685",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x7b",
+      "custody_amount": "314",
+      "op": 2,
+      "reconstructed_entitlement_total": "314",
+      "root": "0x93cfe9d44809c7b14bb2c58c143cd868012f562816256f625d6bf3d5b8d7e6e1",
+      "tx_hash": "0x46060c912ece5cceeb7bd90005fa97d3849bf0e602c6542e93d26c50e1edcd11",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x7f",
+      "custody_amount": "330",
+      "op": 2,
+      "reconstructed_entitlement_total": "330",
+      "root": "0xd0688168bcd022d834f23018a8dfd4f9c161a885e1cc9712422334c878c1928e",
+      "tx_hash": "0xf982a6d42107f2184dbc06f6b70bc1cf100bea0cba7735ddb86f2f2eb616632e",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x83",
+      "custody_amount": "346",
+      "op": 2,
+      "reconstructed_entitlement_total": "346",
+      "root": "0xaeee5bd306888f096ce8775f0f20470c406df1a2a233dd9e326b01d3db4bc01c",
+      "tx_hash": "0x1de39adf75a640d4bcf1b33b798d02f0e2bcea3e88f881df5659579ab863a72f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x87",
+      "custody_amount": "362",
+      "op": 2,
+      "reconstructed_entitlement_total": "362",
+      "root": "0xf369a87da5ce132a04b911c30dc71988d646b3c008d75349ca7d1d2e609116b0",
+      "tx_hash": "0x1ee7ea100b606becdce1d835ea5bee41de172c09aa56135168d5cf57bc84feb0",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x8b",
+      "custody_amount": "378",
+      "op": 2,
+      "reconstructed_entitlement_total": "378",
+      "root": "0x8ba4390b052aadb1d4c7f145ae5df713d9305d9e369aa324a1547cb936255ac2",
+      "tx_hash": "0x7252c724793540d2e58739fa9ec39fdec852c3e94fe073d57a410c1339786b75",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x8f",
+      "custody_amount": "394",
+      "op": 2,
+      "reconstructed_entitlement_total": "394",
+      "root": "0x87f576c7fd0d8abdf37cef9031d0f065894f37472e2164e2de63594bee97dc69",
+      "tx_hash": "0x074ff3c2d4305ad7af9c861274bab3bf15e1e2c6777dcdffcef6664188082a46",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x93",
+      "custody_amount": "410",
+      "op": 2,
+      "reconstructed_entitlement_total": "410",
+      "root": "0xa477b25e0746fc7f3fa08f2b049d1828cc705ebeb7021b407f65e37b578e204b",
+      "tx_hash": "0x09fcdae8544198939ef082e3ea7d7bc49fd97001aed5912481efaa3d32075bd3",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x97",
+      "custody_amount": "426",
+      "op": 2,
+      "reconstructed_entitlement_total": "426",
+      "root": "0xecf0b894182025096aa2e07eac940007683e42097e3642910961aa7cf742313b",
+      "tx_hash": "0xa3f4595330c4f707e451da64d22f9a5c55f76ce5c893c0862d22535c59e675c9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x9b",
+      "custody_amount": "442",
+      "op": 2,
+      "reconstructed_entitlement_total": "442",
+      "root": "0x46c4b21318a49e5e803fd8f454c12431a42c06e49b8230d08bf66393d77ff371",
+      "tx_hash": "0x7ce614483fbeece9a8d41f105ccf5d96ab582f6ea755874446e7a921e96717da",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x9f",
+      "custody_amount": "458",
+      "op": 2,
+      "reconstructed_entitlement_total": "458",
+      "root": "0xcdbf308b1af9d00515687a27f1995730b256f4737e22e1f74c5c3009f26c3384",
+      "tx_hash": "0x275dd166037b25fc9f13ce161f54fcb7e8a3e973de09be4522aacad737ca94ac",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xa3",
+      "custody_amount": "474",
+      "op": 2,
+      "reconstructed_entitlement_total": "474",
+      "root": "0x7f8f07872d085401298d324929d60aeca017436a91236613a1d8b593d60d56d7",
+      "tx_hash": "0x4161a0c6dcb9b12171942081696efef700f99bd7d28af7e46274e619f419aa9d",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xa7",
+      "custody_amount": "490",
+      "op": 2,
+      "reconstructed_entitlement_total": "490",
+      "root": "0x325b889adeb169e3ab1776ee0846442da2e20b577b987f1bac395e62bbd25229",
+      "tx_hash": "0xf1091bff39f57395c511512f41cc5d6d3097bb2f28d5944a58c222d67da84257",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xab",
+      "custody_amount": "506",
+      "op": 2,
+      "reconstructed_entitlement_total": "506",
+      "root": "0x91f6eb360d484ee5b7de39d6e482d1def268836c1c931505990326312f83d134",
+      "tx_hash": "0x2de300a1cfffd4cdf8e590ecb66fe854495cd91a21828966cf989e722ad009c9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xaf",
+      "custody_amount": "522",
+      "op": 2,
+      "reconstructed_entitlement_total": "522",
+      "root": "0xf42cd5fe0af07a62a7c2ab7545305065b975756ce6ad3a606611141e398d3bc4",
+      "tx_hash": "0xfa39a77e2c72f223bd737b859d012b442f4c9eca8a03f8df5981da9fe91b4ee7",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xb3",
+      "custody_amount": "538",
+      "op": 2,
+      "reconstructed_entitlement_total": "538",
+      "root": "0x2c32c23ab6fb4a7b25bec422a458fcc60a67c6401a90bb32d34f175ecb3a65af",
+      "tx_hash": "0xa393564b390f7726dd541595e44062f5d97bdec02084614c5ca73283bce2d0da",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xb7",
+      "custody_amount": "554",
+      "op": 2,
+      "reconstructed_entitlement_total": "554",
+      "root": "0x7bfba31b86ec23013aae547472050d8dfd88073e0ea2ac00258cfaf38e524bcd",
+      "tx_hash": "0x75120b91fe2f9e12ee43e7810457b95fed6d19797d72056593797f13ad6eadd3",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xbb",
+      "custody_amount": "570",
+      "op": 2,
+      "reconstructed_entitlement_total": "570",
+      "root": "0x3d106fc612a02934962fba39533a31fe1350308d08dad70f07cc131549d51251",
+      "tx_hash": "0x3b1ddd1730713f9c69e6d67f74d49b98ba2c9d92c13f5586e27ea1c310f39d3b",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xbf",
+      "custody_amount": "586",
+      "op": 2,
+      "reconstructed_entitlement_total": "586",
+      "root": "0xac3d237095939f6e7d074312f324f7ebc895f0e0571c6c1264b92e43bf64ab3a",
+      "tx_hash": "0xcfcf2545f4d5ee5bbf0a46e939cbf86cb9587812885a3205558d4f5f4a2cf1c5",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xc3",
+      "custody_amount": "602",
+      "op": 2,
+      "reconstructed_entitlement_total": "602",
+      "root": "0x3b179da8107feec1aab7d2dda3c8a7ee6a9caafd885d66778ec865deadaf2902",
+      "tx_hash": "0x9f0e0087ec0b7bf76d8351c8e78e500010bd97abadd8ffbaa66af5b5e2343d3f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xc7",
+      "custody_amount": "618",
+      "op": 2,
+      "reconstructed_entitlement_total": "618",
+      "root": "0x5eb2cbdd9e0464fae408b161ce524440319740508dbe53e337666249a144ad9c",
+      "tx_hash": "0xc816680e9c84b42f4a88c223a2cf5f0ee0afb7d6741ee64a26d733c5804cb42e",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xcb",
+      "custody_amount": "634",
+      "op": 2,
+      "reconstructed_entitlement_total": "634",
+      "root": "0x51c151fc1f1e782d3b85045a52978e6a27392633900d25f885971830263872ff",
+      "tx_hash": "0xe1bce4c0aac7600678dee2e4db1d60335d0715f6ba102f51ecb581fdf9dc30d9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xce",
+      "custody_amount": "650",
+      "op": 2,
+      "reconstructed_entitlement_total": "650",
+      "root": "0x34029d6dcb43c25b601c709bef39ea75ec59da20435a76933a12003283c4a164",
+      "tx_hash": "0xd98ba441fc0e9892d05ea90096d55614637d121d5ec25cb8d1b674d73bbc02a9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xd2",
+      "custody_amount": "666",
+      "op": 2,
+      "reconstructed_entitlement_total": "666",
+      "root": "0x0ff8aea79db305db8b0af843c3873b0f6e2a961e449446945b662fad2cfc3ff6",
+      "tx_hash": "0xa56d7422c6456977502495e8131d993a270e2f89d5cda77f0f02b6bec37be450",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xd6",
+      "custody_amount": "682",
+      "op": 2,
+      "reconstructed_entitlement_total": "682",
+      "root": "0x77484ec95086b253d5b126b71bdaef8f3a0fadac1fe88f4aa84368a20c3cabf5",
+      "tx_hash": "0x6844a76ece074eda6a5c4793200a5f91acd4df35ca9bf96b03ba380949e0529f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xda",
+      "custody_amount": "698",
+      "op": 2,
+      "reconstructed_entitlement_total": "698",
+      "root": "0xd072913b4595be766431a5672d40ced13eb3b18d1ebcd4d0cbd5321d5e9edbbf",
+      "tx_hash": "0x4b7d19f379dccf465d85a678d826c059be8b0611270f26c96a8543afcd32810f",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xde",
+      "custody_amount": "714",
+      "op": 2,
+      "reconstructed_entitlement_total": "714",
+      "root": "0x53a3084c3137709cf24e7210039f17dc1337e31eb0b4b01d4a79e36662f410df",
+      "tx_hash": "0x43ccf4c3420079d225ac76996a3d378f4df634b730a5213f06f9f908784498d5",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xe2",
+      "custody_amount": "730",
+      "op": 2,
+      "reconstructed_entitlement_total": "730",
+      "root": "0xe5b7dd48e6c89a8ac160fb4d9894abac48dab0545480c0f7aa21a5e1ce19c895",
+      "tx_hash": "0x7b53433d4186a4bc9b2a214f75452277ba3d0eda47a4b3b16d71ee4a0a09719c",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xe6",
+      "custody_amount": "746",
+      "op": 2,
+      "reconstructed_entitlement_total": "746",
+      "root": "0xb2d32927c1b60eae5891a71ddf972bab9844863106db826fa6bfe4073942b8a2",
+      "tx_hash": "0x2b7c55c8b24d93634cc455a0cfc153eb44f8c5db91622ba0291304920a1b31ea",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xea",
+      "custody_amount": "762",
+      "op": 2,
+      "reconstructed_entitlement_total": "762",
+      "root": "0x4018cda8347521c85f59364abafa9402ecd9a25a56113dced563ac2ecd05363a",
+      "tx_hash": "0x37636dee567b142a31b470a260453017bbc89343777003aeecab138b80ebe980",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xee",
+      "custody_amount": "778",
+      "op": 2,
+      "reconstructed_entitlement_total": "778",
+      "root": "0x0e254b22276a00b2155c4460bbad03f64d5d4bff2ba68c139276fb8d2f9ce5b2",
+      "tx_hash": "0x92ee94c81d8bfa7c23ee55f30107a4bb53de529e0d80d926b57c3f22168475d2",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xf2",
+      "custody_amount": "794",
+      "op": 2,
+      "reconstructed_entitlement_total": "794",
+      "root": "0x1b914518a4c2bc57cd55c03d35bc62ba5a9bc34342e934040e4e9f70571329fe",
+      "tx_hash": "0x7134b9e4ea424a91325cb7895314909a9725dd16acc4025f8eed32a86d18f6c0",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xf6",
+      "custody_amount": "810",
+      "op": 2,
+      "reconstructed_entitlement_total": "810",
+      "root": "0xbea8dfbc895d6d28fd8d306fa1171b1c7e422398e523235a630ce3118c2a6d30",
+      "tx_hash": "0x1c5f3c9cce3ec2bd9901d56158ff9e75b36c596ddd8e46992de302b04de788e7",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xfa",
+      "custody_amount": "826",
+      "op": 2,
+      "reconstructed_entitlement_total": "826",
+      "root": "0x91678e2210ed4033f3adfd3b6ca27b74c23966cd3c293c29c9a0b6b7609eb2ac",
+      "tx_hash": "0x92e99e5b4bf9afe4422dde8d8f1e9477361aa0f9e737ff53e02a1668d7bfbbee",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0xfe",
+      "custody_amount": "842",
+      "op": 2,
+      "reconstructed_entitlement_total": "842",
+      "root": "0x9a1ba3c8cd269f51ed199a9c3699f2fc6ed71f19be4566d3e342e7f1531f6004",
+      "tx_hash": "0x4deb50fbafbc29f649f1a2e558dade98413c20a593cfce4ec9df613e9e252892",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x102",
+      "custody_amount": "858",
+      "op": 2,
+      "reconstructed_entitlement_total": "858",
+      "root": "0x02acb981c8b8ad8d7f7d1271f3f952a3d6ed966b4eeac32c82c070d3e4292462",
+      "tx_hash": "0xf6a4044267918bc9377f866320f7f53c948cfe4fc47c2ca47ce865a00f843f7e",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x106",
+      "custody_amount": "874",
+      "op": 2,
+      "reconstructed_entitlement_total": "874",
+      "root": "0x7f6e9210128223adcd5c3263b56b530d3c427b7f3180abaed7a2085f53249ce9",
+      "tx_hash": "0x0909bd983d5bd18e483cdb517d8499ffb23dccd9a05fa269c7f7c142471bb860",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x10a",
+      "custody_amount": "890",
+      "op": 2,
+      "reconstructed_entitlement_total": "890",
+      "root": "0xf3589ab72d6abcd83dafa6391554b9c81eb8ae8bcfbd671516246afc5810f85c",
+      "tx_hash": "0x6b3105bcbdcb62324b4256f39bf1fe77ae2b77381f2dc09d3bb9bfc16dcdaf6e",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x10e",
+      "custody_amount": "906",
+      "op": 2,
+      "reconstructed_entitlement_total": "906",
+      "root": "0xa3e6bc64717fe3fad1601f6e75ebbff946140b2da73681851910af5c56b7876f",
+      "tx_hash": "0x67cd8a587459fc653d0824dc620fd537409452f1401eb2ac3a890c045c046a05",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x112",
+      "custody_amount": "922",
+      "op": 2,
+      "reconstructed_entitlement_total": "922",
+      "root": "0x37c7247755c585ca0702de14b6dc5b9e1c078e348dad01d77fdf5a77ec37d43c",
+      "tx_hash": "0x85c57e56bbca7dcee6ed748099075cf83e94e5248c48b2e4d661be29b92c27ba",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x116",
+      "custody_amount": "938",
+      "op": 2,
+      "reconstructed_entitlement_total": "938",
+      "root": "0x4cded9f03f75d961ff3e2ccd4b3d272880baea643aaa7e7098804b885d63ac95",
+      "tx_hash": "0xf0c5c722851462720302237f570539279e31ef73bd0e90d4691a36e96c5c81d1",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x11a",
+      "custody_amount": "954",
+      "op": 2,
+      "reconstructed_entitlement_total": "954",
+      "root": "0xdbd3080e64c4363f5a656d97f9a31e65cfae90ef83dc9ebb2c46f147750ad48f",
+      "tx_hash": "0xc33bf5e8eb1eeebd6e8d7295fd5eb489158c82a1cabf469c9c525ebe1be5d1b9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x11e",
+      "custody_amount": "970",
+      "op": 2,
+      "reconstructed_entitlement_total": "970",
+      "root": "0x84ab697622b32b772ee6d22d97d84589089152f7e3f816c00f76f0661d8ae064",
+      "tx_hash": "0xe798b3ca231727ad1e0bf92a80bb4932fbbfad79e2c1f193e22c19b43a522b4c",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x122",
+      "custody_amount": "986",
+      "op": 2,
+      "reconstructed_entitlement_total": "986",
+      "root": "0x2822dbba06cb7354970cfda08ea7bdc29dbb050dc68c61c7271a405160fcb36f",
+      "tx_hash": "0x2974cd01a854fdb15542378aab873eb2a0b28101277b49b66303f3fe952a6c50",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x126",
+      "custody_amount": "1002",
+      "op": 2,
+      "reconstructed_entitlement_total": "1002",
+      "root": "0x7d183d7215fb05e62d7eaa264ffa85c7ee7a14cf5afbffb9ca7e7fd392c00e00",
+      "tx_hash": "0xa3e9d2c5d1baf94e3cffe78532632102b182a108a90e057b96130c80aa01bf99",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x12a",
+      "custody_amount": "1018",
+      "op": 2,
+      "reconstructed_entitlement_total": "1018",
+      "root": "0xbe1eb1acb6b94123e202783b6f047acbd3367403910c0aaca3e3e8f5cabc2ed9",
+      "tx_hash": "0x12960707802de9018427b0e6a763f2b92fe14b3635428553fa1eec2997384bf9",
+      "tx_index": "0x1",
+      "update_count": 16
+    },
+    {
+      "block_number": "0x12e",
+      "custody_amount": "1032",
+      "op": 2,
+      "reconstructed_entitlement_total": "1032",
+      "root": "0xc4d293ed2fa5aa2ae7de3c05ef7975e4f9c53ace0d1b017760a5f4286908a72a",
+      "tx_hash": "0x00e7bae8e1682cf431786c7d8e91637a9a045f1a746d0c7af5a381fcc1033dc5",
+      "tx_index": "0x1",
+      "update_count": 14
+    },
+    {
+      "block_number": "0x132",
+      "custody_amount": "1032",
+      "op": 8,
+      "reconstructed_entitlement_total": "1032",
+      "root": "0x949d133a1fefd9475849c7beae11b35b14d18b908ff57f1a6b45704962b8e15c",
+      "tx_hash": "0xaf6c84af97b559b74c0ceb4aaea360b1f45b74fedb01c921680c77c645e34b9c",
+      "tx_index": "0x1",
+      "update_count": 2
+    },
+    {
+      "block_number": "0x136",
+      "custody_amount": "1032",
+      "op": 7,
+      "reconstructed_entitlement_total": "1032",
+      "root": "0xf33f78b41f7ddc879f1911d01fa4e7bd2d12bd6619f17dc82e1055f4818a2a17",
+      "tx_hash": "0x7c76f4fddde36a7a5bc2c988b6bb8ea3f68667326794d9bfdd8e5a6ca2dd8cf0",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x13a",
+      "custody_amount": "1031",
+      "op": 5,
+      "reconstructed_entitlement_total": "1031",
+      "root": "0x54d4729791daab7aadeace09f5916719a7a614aab67387d722d26dd3c33e59b1",
+      "tx_hash": "0x7e18c5448f21adbf78d6a5297af22214cacfe08cfd37dff26271fa41ccd709d3",
+      "tx_index": "0x1",
+      "update_count": 1
+    }
+  ],
+  "withdrawal_template": {
+    "authorization": "transaction must include an input locked by this owner and satisfy the compiled custody contract's withdrawal cell layout",
+    "input_custody_outpoint": {
+      "index": "0x0",
+      "tx_hash": "0x7e18c5448f21adbf78d6a5297af22214cacfe08cfd37dff26271fa41ccd709d3"
+    },
+    "new_leaf": "0x0000000000000000040000000000000002000000000000000000000000000000",
+    "new_root": "0x94e4eaeb06d3e6815e9403fba8f3c3ca1f3c7fbdcdd7c5dc652609f817c29fdb",
+    "old_leaf": "0x0500000000000000030000000000000001000000000000000000000000000000",
+    "old_root": "0x54d4729791daab7aadeace09f5916719a7a614aab67387d722d26dd3c33e59b1",
+    "op": 5,
+    "quantity": "5",
+    "remaining_custody_amount": "1026",
+    "tms1_witness": "0x544d53310105010015020000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38050000000000000003000000000000000100000000000000000000000000000000000000000000000400000000000000020000000000000000000000000000004c4ff351f3bf2a26241ae842aceb28c9e38c186925296371a50457839e71bba17b3d3849fe21e76e9c0eba98c8367acff6bc23ee1bd0a8453e84b9635d187585bf116700004f0151f5ef72027ff43e01c7005db0a9a231d193eb02317a80a2787882701c5d75045513c2cd89ebe6cfea3f5dabdb7cf90e21bddc42d7feb9f84c0676c6e503908c060051f6283fe65f2fddcbdc5b919108de8fe0aa2fccbd3730f21d48552528691cbb5c59639d999a6738744d8fabe31f867bbd7a1d0f46c80cdce2062fff3e3df5fd0d0051f7802bf8cfd75772ffc0598eb7f9a313564efae49fc042f336a8f0ea9a812e8daa96206c75f60bdabfaec63075eb8686052fe73944978e2487d4ddf594a9c25c0050a85325878fd9d58dc6767752bb015e29ba2c76dc13478ec574b98ceeefdd5ccb50bc808b04ecfec343d00ba5c2d2b91de77b60cd6058e2abaedbd9d6196b9cc5e0509ab82fbce3e5d905054cdb582268354512ffa9b6a6b2b50a75255fe4678e720850341d08fcc23d0468cfa755ae60176d4dd424dc20b19c2072b3cbc1253eb9545d50c5abd8648ca149a91c09d48739f9a4ee1af97e2b70795167946becd4c2a5b45a508588d65635bcc5bb30d37173e567c964595257426959f15ee1d84021099d192f5082b6b182e312fe42b485971eecfe2c6e1715b8c0cb412b85e598211496d53459504146d3ebb70d5b1a5d26e65d1b854588233f8c05d6d27d28641fad2fd97ae412",
+    "witness_bytes": 641
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "classification": "PUBLIC_GIT_REF_CHECK_ONLY_NOT_EXECUTED_COMPETITOR",
+  "repository": "https://github.com/alesfer001/CrowdCell.git",
+  "command": "git ls-remote https://github.com/alesfer001/CrowdCell.git HEAD refs/heads/main",
+  "head": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+  "main": "2fd13f6bae84b9beda0c5f67264c66cb7f89cd69",
+  "matches_preserved_public_source_pin": true,
+  "limitations": "No current live deployment, adoption, safety or comparable workload measurement"
+}

@@ -1,0 +1,10 @@
+{
+  "initialPoolSubmission": {
+    "error": "PoolRejectedRBF: RBF rejected: Tx's current fee is 10000, expect it to >= 11980 to replace old txs"
+  },
+  "staleAfterCommit": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0x0f2a6e155328e924690be70a123292f3dd96d3c41af0e828124ad093ba35d18200000000))",
+  "rebuildAndBuyerResignMilliseconds": 5.162169999999605,
+  "makersResigned": false,
+  "buyerResigned": true,
+  "scope": "single local process; no relay partition"
+}

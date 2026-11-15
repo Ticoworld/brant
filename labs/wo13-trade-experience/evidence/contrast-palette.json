@@ -1,0 +1,35 @@
+{
+  "qualification": "Selected computed palette checks, not complete WCAG conformance or every rendered pixel",
+  "pairs": [
+    {
+      "foreground": "#a3adbd",
+      "background": "#141a23",
+      "ratio": 7.71,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "#edf0f6",
+      "background": "#141a23",
+      "ratio": 15.31,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "#12223b",
+      "background": "#a8c9ff",
+      "ratio": 9.46,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "#c3d0e3",
+      "background": "#141a23",
+      "ratio": 11.19,
+      "minimum": 4.5
+    },
+    {
+      "foreground": "#64738a",
+      "background": "#141a23",
+      "ratio": 3.63,
+      "minimum": 3
+    }
+  ]
+}

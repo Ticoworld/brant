@@ -1,0 +1,66 @@
+{
+  "classification": "FRESH_PUBLIC_RPC_FUNDED_RIGHT_RECONSTRUCTION",
+  "root": "0x581dd4ade4ca51279fee372ef2df46370445a12a15364e7bde90be2631b8c861",
+  "target": 3,
+  "records": [
+    {
+      "owner": "0xb833469e0470d79c1398793de285cf0d4c4cc0522d2ca68c84a8ac1a6bcb3b5e",
+      "balance": "39990000",
+      "nonce": "1"
+    },
+    {
+      "owner": "0x70a3051f24d4002e4ad57d276f214ac86e0ffc4e67ad01d7869ac2ce09543cc1",
+      "balance": "510000000",
+      "nonce": "1"
+    },
+    {
+      "owner": "0x1d05196e069bee6019d619a68591c27bd5b501ec49e904023da44c64dde62615",
+      "balance": "7000000000",
+      "nonce": "0"
+    }
+  ],
+  "vault": {
+    "capacity": "0x852ecd0b0",
+    "lock": {
+      "args": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+      "code_hash": "0xa75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be",
+      "hash_type": "data1"
+    },
+    "type": {
+      "args": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+      "code_hash": "0xa75d9c4f161a4116880d60093c8a90f62d65f0a44871b95e36bc15af0e8281be",
+      "hash_type": "data1"
+    },
+    "data": "0x54434150303031000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7bf6aef0a7538d9b6c09d1155d688e5a107d1bfc639d33713d59a94f6fa5be79b00dad9900600000040420f000000000070b403c20100000003000000000000000300000000000000581dd4ade4ca51279fee372ef2df46370445a12a15364e7bde90be2631b8c861",
+    "out_point": {
+      "tx_hash": "0x2ee860323300615f01e9b9ee5b665699e066039973dc65aea810293ae469fe8b",
+      "index": "0x0"
+    }
+  },
+  "configuration": {
+    "funder": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+    "chain": "0xbf6aef0a7538d9b6c09d1155d688e5a107d1bfc639d33713d59a94f6fa5be79b",
+    "k": "28200000000",
+    "f": "1000000"
+  },
+  "index": 0,
+  "record": {
+    "owner": "0xb833469e0470d79c1398793de285cf0d4c4cc0522d2ca68c84a8ac1a6bcb3b5e",
+    "balance": "39990000",
+    "nonce": "1"
+  },
+  "path": [
+    "0x3caf1f02c6d9e0217332a22c0bc2c0cb2d3270cd1e7dade272e09b24214d6dfc",
+    "0x5fba2470064e6c025a37b0949eb00dc09bba271fa945d4d4da17069ef48bc7b1"
+  ],
+  "transactions": 5,
+  "rpc_calls": 79,
+  "elapsed_ms": 220,
+  "history": [
+    "0x98f9ac61e2357579abb8535f2aa6c88fdf624a14a0d06e2779b10ab7071eecca",
+    "0x070d34b1fd861343da5e249fe8f127c81b93e58e5cf093355efdc223f3e72808",
+    "0xd4215ac22dcac18b6ee9a44062cab17344cb5d9a5ada6d52fd04d55b32218a73",
+    "0xea300d205a8bcee47c02ea9d8680f00fe58f40ed0310a4e49062471b9c3484a2",
+    "0x2ee860323300615f01e9b9ee5b665699e066039973dc65aea810293ae469fe8b"
+  ]
+}

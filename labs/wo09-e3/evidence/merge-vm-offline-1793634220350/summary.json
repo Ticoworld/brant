@@ -1,0 +1,269 @@
+{
+  "classification": "CONSTRUCTED_STATE_CKB_TESTTOOL_WITH_STATEFUL_RESOLUTION",
+  "stateful": [
+    {
+      "order": [
+        0,
+        1,
+        2
+      ],
+      "role": 0,
+      "transaction_hash": "0xa2ede6da8f6292bdffc204847e9505d5471c501fba0332350ddb359257e11855",
+      "remaining_total": "10100000000",
+      "anchor_capacity": "60100000000"
+    },
+    {
+      "order": [
+        0,
+        1,
+        2
+      ],
+      "role": 1,
+      "transaction_hash": "0x1d1f6eaeb59bf56bbba27a1a4a9b74c2cd0ed7a403f812549ee4694ae3999b68",
+      "remaining_total": "10000000000",
+      "anchor_capacity": "60000000000"
+    },
+    {
+      "order": [
+        0,
+        1,
+        2
+      ],
+      "role": 2,
+      "transaction_hash": "0x7eaf22a37ec7c8deb18e3f32498627aaabfae69fc2a2cf7be375fdb513176b8e",
+      "remaining_total": "0",
+      "anchor_capacity": "50000000000"
+    },
+    {
+      "order": [
+        2,
+        1,
+        0
+      ],
+      "role": 2,
+      "transaction_hash": "0xeb4b1b77c061b69e69107d31b52c02d934e7d78c3486e3dbe8b5f490930649fd",
+      "remaining_total": "110000000",
+      "anchor_capacity": "50110000000"
+    },
+    {
+      "order": [
+        2,
+        1,
+        0
+      ],
+      "role": 1,
+      "transaction_hash": "0xed384222191db83ef405f1d86dd3638047fe8968e735d817b854423ec16ea4a8",
+      "remaining_total": "10000000",
+      "anchor_capacity": "50010000000"
+    },
+    {
+      "order": [
+        2,
+        1,
+        0
+      ],
+      "role": 0,
+      "transaction_hash": "0xea7510a2cf1af46e2bf29135289c73029e49ff29b2f5d89a0d20c03d0c477242",
+      "remaining_total": "0",
+      "anchor_capacity": "50000000000"
+    }
+  ],
+  "results": [
+    {
+      "label": "claim_0_full_signed_merge",
+      "accepted": true,
+      "cycles": 11695095,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "claim_0_missing_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }"
+    },
+    {
+      "label": "claim_0_invalid_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "claim_1_full_signed_merge",
+      "accepted": true,
+      "cycles": 11681091,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "claim_1_missing_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -2 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-2 } }"
+    },
+    {
+      "label": "claim_1_invalid_signature",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[1].Lock, cause: ValidationFailure: see error code -31 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-type-hash/9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8.html#-31 } }"
+    },
+    {
+      "label": "overflow",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "ambiguous_inputs",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "wrong_amount",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "excess_amount",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "wrong_identity",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "changed_data",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "changed_type",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "wrong_root",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#63 } }"
+    },
+    {
+      "label": "other_liability",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 63 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#63 } }"
+    },
+    {
+      "label": "ambiguous_outputs",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "stale_bob_proof_after_alice_exit",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 62 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#62 } }"
+    },
+    {
+      "label": "duplicate_claim_old_proof_against_successor",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 62 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#62 } }"
+    },
+    {
+      "label": "spent_anchor_resolution",
+      "accepted": false,
+      "error": "UNKNOWN_INPUT"
+    },
+    {
+      "label": "self_paid_fee_original_derivative",
+      "accepted": false,
+      "error": "Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 } }"
+    },
+    {
+      "label": "order_012_owner_0",
+      "accepted": true,
+      "cycles": 11695095,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "order_012_owner_1",
+      "accepted": true,
+      "cycles": 11654435,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "order_012_owner_2",
+      "accepted": true,
+      "cycles": 11695080,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "order_210_owner_2",
+      "accepted": true,
+      "cycles": 11697815,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "order_210_owner_1",
+      "accepted": true,
+      "cycles": 11699354,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "order_210_owner_0",
+      "accepted": true,
+      "cycles": 11687577,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_012_owner_0",
+      "accepted": true,
+      "cycles": 11675273,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_012_stale_competing_anchor",
+      "accepted": false,
+      "error": "UNKNOWN_INPUT"
+    },
+    {
+      "label": "stateful_012_owner_1",
+      "accepted": true,
+      "cycles": 11689011,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_012_owner_2",
+      "accepted": true,
+      "cycles": 11701038,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_210_owner_2",
+      "accepted": true,
+      "cycles": 11703140,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_210_stale_competing_anchor",
+      "accepted": false,
+      "error": "UNKNOWN_INPUT"
+    },
+    {
+      "label": "stateful_210_owner_1",
+      "accepted": true,
+      "cycles": 11662450,
+      "fee_shannons": "1000000"
+    },
+    {
+      "label": "stateful_210_owner_0",
+      "accepted": true,
+      "cycles": 11673996,
+      "fee_shannons": "1000000"
+    }
+  ],
+  "claims_shannons": [
+    "10000000",
+    "100000000",
+    "10000000000"
+  ],
+  "fee_shannons": "1000000",
+  "limitations": [
+    "VM contexts are constructed independently; no committed checkpoint creation",
+    "same-anchor consumption requires separate live-cell resolution validation",
+    "self-paid fee mode not implemented",
+    "no no-funded-Cell solution demonstrated"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-11-03T08:44:55.694Z",
+  "method": "get_tip_header",
+  "params": [],
+  "response": {
+    "jsonrpc": "2.0",
+    "result": {
+      "compact_target": "0x1918d2f7",
+      "dao": "0x04b7a8489901855b64a82a94a3e22a00c839a7c0af61910a00b846a477d63407",
+      "epoch": "0x708036e003b7b",
+      "extra_hash": "0xf48c20e2128dcf2a8318c030321f997438ae509446d40d0b62ad928c850314e5",
+      "hash": "0x6ed8e892d5e7888e7e4e16f4facf25908ca3bed662675e1e15c6f662617e4765",
+      "nonce": "0x34b5d63093c2a7100000001cdd2f615",
+      "number": "0x13f1d2d",
+      "parent_hash": "0xbd25cb897cea3c2c416bc4a463aab90d5cd43675af1856654f5f9a7b806ed66c",
+      "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": "0x1a1a0953313",
+      "transactions_root": "0xc170d6dfecb9897e8a12b91c6dd68d8c8fdf9abfd99e10b900c110e79224b2a4",
+      "version": "0x0"
+    },
+    "id": 1
+  }
+}

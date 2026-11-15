@@ -1,0 +1,7 @@
+# WO09-E3 proving environment
+
+Q1: ENVIRONMENT BLOCKED in this workspace. Measured available RAM about 4.1 GiB, free disk 4.2 GiB, total filesystem 7.9 GiB, no swap. The requested official proving resource guidance is 16 GB memory and 10 GB disk; it has not been independently fetched in this checkpoint. No large SP1 dependency download or proving attempt was made.
+
+Trusted upstream release API returned an empty release list (saved JSON). No guest ELF was found in the pinned checkout; sp1-sdk is absent from isolated Cargo cache. These searches do not prove that no compatible artifact exists elsewhere. No sufficiently provisioned alternate environment is exposed in the session. No remote prover credentials, verified version quote or authorized paid proving budget are available. No paid requests or external infrastructure were created.
+
+Resume requirements: SP1 SDK/guest 6.2.3; pinned guest k256 and sha3 precompile forks; matching recursion root/build compatibility; build or acquire authenticated guest ELF and verify program key exactly 0x00213af5b4cc8922754e5b8ee7e610de703d4cb17fabb0a187c95c37fe67c1e8. Preserve checksum and provenance; use newly generated legitimate three-owner deposits and proofs. Never alter the anchor key to accept a different guest. Remote proving remains an unpriced, unverified option requiring a compatibility/cost/credential review before authorization of spending.

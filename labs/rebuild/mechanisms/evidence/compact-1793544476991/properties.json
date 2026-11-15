@@ -1,0 +1,12 @@
+{
+  "witnessRecovery": "committed funding witness",
+  "partialAndFull": "direct xUDT to exact recipient",
+  "hybrid": "C CKB funds A2 successor; A2 tokens pay C recipient atomically",
+  "limitations": [
+    "New bounded bid-only functional reconstruction; not old file recovery",
+    "No standalone matching engine",
+    "One input per unique intent commitment; large-batch resource behavior measured separately",
+    "Owner authorization delegates to presence of a real owner-lock input; intended payout signing is separate unresolved policy",
+    "No general arbitrary A2 recovery or LO-01 proof"
+  ]
+}

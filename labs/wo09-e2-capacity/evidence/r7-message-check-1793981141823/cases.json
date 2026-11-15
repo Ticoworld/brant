@@ -1,0 +1,7 @@
+[
+  {
+    "label": "modified_price",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 85 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5210c9b8d16ecbbe0b32d5383887276ad1dd45e5312d9012507ca93b113a24e4.html#85 })"
+  }
+]

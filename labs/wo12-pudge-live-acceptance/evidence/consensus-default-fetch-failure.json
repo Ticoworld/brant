@@ -1,0 +1,7 @@
+{
+  "at_utc": "2026-11-03T22:11:12.601Z",
+  "method": "get_consensus",
+  "params": [],
+  "url": "https://testnet.ckb.dev/",
+  "error": "TypeError: fetch failed"
+}

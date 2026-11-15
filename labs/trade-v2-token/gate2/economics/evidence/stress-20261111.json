@@ -1,0 +1,166 @@
+{
+  "format": "trade-v2-gate2-economic-stress-v1",
+  "classification": "DERIVED_INTEGER_ARITHMETIC_PLUS_MEASURED_GATE2_BASELINE",
+  "formula": "reserve(N) = N*base + step*N*(N-1)/2; buy(sold,q) = q*base + step*(q*sold + q*(q-1)/2)",
+  "assumptions": {
+    "supply_units": "2000",
+    "shannons_per_ckb": "100000000",
+    "initial_market_inventory_cell_ckb": "300",
+    "market_marker_cell_ckb": "300",
+    "custody_cell_ckb": "350",
+    "custody_marker_cell_ckb": "350",
+    "capacities_are_locked_not_spendable_reserve": true,
+    "native_scenario_transactions_run": false
+  },
+  "scenarios": [
+    {
+      "name": "low-capital",
+      "curve": {
+        "supply": "2000",
+        "base_price_shannons_per_unit": "10000000",
+        "curve_step_shannons_per_unit": "10000",
+        "first_unit_price_ckb": "0.1",
+        "last_unit_price_ckb": "0.2999"
+      },
+      "100_unit_lot": {
+        "buy_at_launch_ckb": "10.495",
+        "buy_starting_after_1500_units_sold_ckb": "25.495",
+        "sell_payout_when_1900_units_are_sold_ckb": "28.495"
+      },
+      "reserve": {
+        "curve_reserve_at_1032_units_sold_ckb": "156.3996",
+        "curve_reserve_at_full_sellout_ckb": "399.9",
+        "market_cell_capacity_at_full_sellout_ckb": "699.9",
+        "fixed_protocol_singleton_capacity_ckb": "1300",
+        "total_fixed_plus_curve_capacity_at_full_sellout_ckb": "1699.9",
+        "curve_reserve_is_creator_withdrawable": false
+      },
+      "participant_funding": {
+        "minimum_plain_change_cell_ckb": "61",
+        "measured_transaction_fee_ckb": "0.01",
+        "minimum_input_for_100_unit_later_buy_including_plain_change_and_fee_ckb": "86.505",
+        "external_xudt_output_occupied_capacity_ckb": "142",
+        "external_withdrawal_fee_input_including_xudt_output_plain_change_and_fee_ckb": "203.01"
+      }
+    },
+    {
+      "name": "moderate-creator",
+      "curve": {
+        "supply": "2000",
+        "base_price_shannons_per_unit": "100000000",
+        "curve_step_shannons_per_unit": "100000",
+        "first_unit_price_ckb": "1",
+        "last_unit_price_ckb": "2.999"
+      },
+      "100_unit_lot": {
+        "buy_at_launch_ckb": "104.95",
+        "buy_starting_after_1500_units_sold_ckb": "254.95",
+        "sell_payout_when_1900_units_are_sold_ckb": "284.95"
+      },
+      "reserve": {
+        "curve_reserve_at_1032_units_sold_ckb": "1563.996",
+        "curve_reserve_at_full_sellout_ckb": "3999",
+        "market_cell_capacity_at_full_sellout_ckb": "4299",
+        "fixed_protocol_singleton_capacity_ckb": "1300",
+        "total_fixed_plus_curve_capacity_at_full_sellout_ckb": "5299",
+        "curve_reserve_is_creator_withdrawable": false
+      },
+      "participant_funding": {
+        "minimum_plain_change_cell_ckb": "61",
+        "measured_transaction_fee_ckb": "0.01",
+        "minimum_input_for_100_unit_later_buy_including_plain_change_and_fee_ckb": "315.96",
+        "external_xudt_output_occupied_capacity_ckb": "142",
+        "external_withdrawal_fee_input_including_xudt_output_plain_change_and_fee_ckb": "203.01"
+      }
+    },
+    {
+      "name": "high-demand",
+      "curve": {
+        "supply": "2000",
+        "base_price_shannons_per_unit": "500000000",
+        "curve_step_shannons_per_unit": "1000000",
+        "first_unit_price_ckb": "5",
+        "last_unit_price_ckb": "24.99"
+      },
+      "100_unit_lot": {
+        "buy_at_launch_ckb": "549.5",
+        "buy_starting_after_1500_units_sold_ckb": "2049.5",
+        "sell_payout_when_1900_units_are_sold_ckb": "2349.5"
+      },
+      "reserve": {
+        "curve_reserve_at_1032_units_sold_ckb": "10479.96",
+        "curve_reserve_at_full_sellout_ckb": "29990",
+        "market_cell_capacity_at_full_sellout_ckb": "30290",
+        "fixed_protocol_singleton_capacity_ckb": "1300",
+        "total_fixed_plus_curve_capacity_at_full_sellout_ckb": "31290",
+        "curve_reserve_is_creator_withdrawable": false
+      },
+      "participant_funding": {
+        "minimum_plain_change_cell_ckb": "61",
+        "measured_transaction_fee_ckb": "0.01",
+        "minimum_input_for_100_unit_later_buy_including_plain_change_and_fee_ckb": "2110.51",
+        "external_xudt_output_occupied_capacity_ckb": "142",
+        "external_withdrawal_fee_input_including_xudt_output_plain_change_and_fee_ckb": "203.01"
+      }
+    },
+    {
+      "name": "existing-synthetic-fixture",
+      "curve": {
+        "supply": "2000",
+        "base_price_shannons_per_unit": "1000000000",
+        "curve_step_shannons_per_unit": "100000000",
+        "first_unit_price_ckb": "10",
+        "last_unit_price_ckb": "2009"
+      },
+      "100_unit_lot": {
+        "buy_at_launch_ckb": "5950",
+        "buy_starting_after_1500_units_sold_ckb": "155950",
+        "sell_payout_when_1900_units_are_sold_ckb": "185950"
+      },
+      "reserve": {
+        "curve_reserve_at_1032_units_sold_ckb": "542316",
+        "curve_reserve_at_full_sellout_ckb": "2019000",
+        "market_cell_capacity_at_full_sellout_ckb": "2019300",
+        "fixed_protocol_singleton_capacity_ckb": "1300",
+        "total_fixed_plus_curve_capacity_at_full_sellout_ckb": "2020300",
+        "curve_reserve_is_creator_withdrawable": false
+      },
+      "participant_funding": {
+        "minimum_plain_change_cell_ckb": "61",
+        "measured_transaction_fee_ckb": "0.01",
+        "minimum_input_for_100_unit_later_buy_including_plain_change_and_fee_ckb": "156011.01",
+        "external_xudt_output_occupied_capacity_ckb": "142",
+        "external_withdrawal_fee_input_including_xudt_output_plain_change_and_fee_ckb": "203.01"
+      }
+    }
+  ],
+  "measured_scale_run": {
+    "evidence": "evidence/native-1794410154147/",
+    "owners": 1024,
+    "transactions": 73,
+    "owner_batches": 64,
+    "batch_owner_updates": 1022,
+    "total_fees_shannons": "73000000",
+    "max_batch_cycles": "38476490",
+    "max_batch_transaction_bytes": 12481,
+    "max_compiled_proof_bytes": 4715,
+    "max_tms_witness_payload_bytes": 6263,
+    "max_transaction_bytes": 111749,
+    "synthetic_curve_reserve_at_1032_units_sold_ckb": "542316",
+    "synthetic_market_cell_capacity_at_1032_units_sold_ckb": "542616"
+  },
+  "protection_counterexample": {
+    "classification": "DERIVED_SOLVENCY_COUNTEREXAMPLE",
+    "supply_units": "2",
+    "base_price_ckb": "1",
+    "curve_step_ckb": "99",
+    "first_buyer_cost_ckb": "1",
+    "second_buyer_cost_ckb": "100",
+    "reserve_after_both_buys_ckb": "101",
+    "first_buyer_exit_payout_ckb": "100",
+    "reserve_remaining_for_second_buyer_ckb": "1",
+    "second_buyer_80_percent_floor_ckb": "80",
+    "second_buyer_shortfall_ckb": "79",
+    "conclusion": "The reversible curve does not provide an individual 80% purchase-price floor under simultaneous exit obligations."
+  }
+}

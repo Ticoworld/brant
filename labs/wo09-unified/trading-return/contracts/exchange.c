@@ -1,0 +1,41 @@
+// Isolated two-asset funded RFQ ledger; original capacity/financial contracts remain frozen.
+#include "../../../wo09-open-markets/contracts/common.h"
+#define SZ 192
+#define MAXW 8192
+extern int trade_ed_verify(const uint8_t*,const uint8_t*,const uint8_t*);
+static uint8_t w[MAXW];
+static uint64_t cap(int i,size_t s){uint64_t v=0;return field(&v,8,i,s,CKB_CELL_FIELD_CAPACITY)?0:v;}
+static void hash(const void*p,size_t n,uint8_t*out){blake2b_state st;blake2b_init(&st,32);blake2b_update(&st,p,n);blake2b_final(&st,out,32);}
+static void branch(const uint8_t*l,const uint8_t*r,uint8_t*out){uint8_t p[65];p[0]=0x32;memcpy(p+1,l,32);memcpy(p+33,r,32);hash(p,65,out);}
+static int dep(int n){int d=0;while((1<<d)<n)d++;return d;}
+static int leafvalid(const uint8_t*x){if(!rd(x+32)&&!rd(x+40)){for(int i=0;i<56;i++)if(x[i])return 0;}return 1;}
+static void root(const uint8_t*id,uint64_t i,const uint8_t*x,const uint8_t*proof,int d,uint8_t*out){if(!rd(x+32)&&!rd(x+40))memset(out,0,32);else{uint8_t p[97];p[0]=0x31;memcpy(p+1,id,32);for(int j=0;j<8;j++)p[33+j]=(uint8_t)(i>>(8*j));memcpy(p+41,x,56);hash(p,97,out);}for(int j=0;j<d;j++){uint8_t h[32];if((i>>j)&1)branch(proof+32*j,out,h);else branch(out,proof+32*j,h);memcpy(out,h,32);}}
+static int token(int i,size_t s,const uint8_t*type,uint64_t*amount){uint8_t d[16];if(!type_is(i,s,type)||bytes(d,16,i,s)||rd(d+8))return 0;*amount=rd(d);return 1;}
+static int wallet(int i,int o){uint8_t a[32],b[32],x[16],y[16];uint64_t nx=16,ny=16;if(!standard_owner(i,CKB_SOURCE_INPUT)||!standard_owner(o,CKB_SOURCE_OUTPUT)||field(a,32,i,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(o,CKB_SOURCE_OUTPUT,a))return 0;int ti=field(a,32,i,CKB_SOURCE_INPUT,CKB_CELL_FIELD_TYPE_HASH),to=field(b,32,o,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_TYPE_HASH);if((ti==0)!=(to==0)||(!ti&&memcmp(a,b,32)))return 0;int ri=ckb_load_cell_data(x,&nx,0,i,CKB_SOURCE_INPUT),ro=ckb_load_cell_data(y,&ny,0,o,CKB_SOURCE_OUTPUT);return !ri&&!ro&&nx==ny&&nx<=16&&!memcmp(x,y,nx);}
+static int valid(const uint8_t*a,uint64_t c){return !memcmp(a,"T2AS001",8)&&rd(a+120)>0&&rd(a+120)<=1024&&rd(a+112)<=rd(a+120)&&(__uint128_t)rd(a+72)+rd(a+88)+rd(a+96)==c;}
+static int reserve(int i,size_t s,const uint8_t*a,const uint8_t*lock){uint64_t amount;return lock_is(i,s,lock)&&cap(i,s)==rd(a+80)&&token(i,s,a+128,&amount)&&amount==rd(a+104);}
+int main(void){uint8_t script[86],self[32];uint64_t sl=86;if(ckb_load_script(script,&sl,0))return 10;
+ // The reserve lock cannot spend without the unique paired market state at input0.
+ if(sl==86&&script[49]==33&&script[85]==1){script[0]=85;script[49]=32;hash(script,85,self);return type_is(0,CKB_SOURCE_INPUT,self)&&lock_is(0,CKB_SOURCE_INPUT,self)?0:11;}
+ if(sl!=85||script[49]!=32)return 12;hash(script,85,self);uint8_t reserve_script[86],reserve_hash[32];memcpy(reserve_script,script,85);reserve_script[0]=86;reserve_script[49]=33;reserve_script[85]=1;hash(reserve_script,86,reserve_hash);
+ int ni=count_cells(CKB_SOURCE_INPUT),no=count_cells(CKB_SOURCE_OUTPUT);if(ni<1||ni>3||no<1||no>4)return 13;int vi=-1,vo=-1;for(int side=0;side<2;side++)for(int i=0;i<(side?no:ni);i++){size_t s=side?CKB_SOURCE_OUTPUT:CKB_SOURCE_INPUT;int t=type_is(i,s,self),l=lock_is(i,s,self);if(t!=l)return 14;if(t){if((side?vo:vi)!=-1)return 15;if(side)vo=i;else vi=i;}}
+ uint64_t wn=MAXW;if(ckb_load_witness(w,&wn,0,ni,CKB_SOURCE_INPUT)||wn>MAXW||wn<24)return 16;uint64_t z=0;if(ckb_load_witness(0,&z,0,ni+1,CKB_SOURCE_INPUT)!=CKB_INDEX_OUT_OF_BOUND)return 16;uint64_t op=rd(w),n=rd(w+8);if(n>2)return 17;uint8_t a[SZ],b[SZ];
+ if(vi<0){if(vo!=0||op||n||wn!=24||rd(w+16)||no!=4||minted_id(script+53,0)||bytes(b,SZ,0,CKB_SOURCE_OUTPUT)||!valid(b,cap(0,CKB_SOURCE_OUTPUT))||rd(b+96)||rd(b+104)||rd(b+112)||!lock_is(0,CKB_SOURCE_INPUT,b+8)||!reserve(1,CKB_SOURCE_OUTPUT,b,reserve_hash))return 20;uint8_t h[32]={0};for(int j=0;j<dep(rd(b+120));j++){uint8_t t[32];branch(h,h,t);memcpy(h,t,32);}return memcmp(h,b+160,32)?21:0;}
+ if(vi!=0||ni<2||bytes(a,SZ,0,CKB_SOURCE_INPUT)||!valid(a,cap(0,CKB_SOURCE_INPUT))||!reserve(1,CKB_SOURCE_INPUT,a,reserve_hash))return 30;
+ uint8_t input0[44],input1[44];uint64_t sz=44;if(ckb_load_input(input0,&sz,0,0,CKB_SOURCE_INPUT)||sz!=44)return 31;sz=44;if(ckb_load_input(input1,&sz,0,1,CKB_SOURCE_INPUT)||sz!=44||memcmp(input0+8,input1+8,32)||input0[40]||input0[41]||input0[42]||input0[43]||input1[40]!=1||input1[41]||input1[42]||input1[43])return 31;
+ __uint128_t in=0,out=0;for(int i=0;i<ni;i++)in+=cap(i,CKB_SOURCE_INPUT);for(int i=0;i<no;i++)out+=cap(i,CKB_SOURCE_OUTPUT);if(in<out||in-out>FEE_LIMIT)return 32;
+ if(vo<0){if(op!=7||n||wn!=24||rd(w+16)||rd(a+96)||rd(a+104)||rd(a+112)||ni!=3||no!=1||!wallet(2,0)||!lock_is(2,CKB_SOURCE_INPUT,a+8))return 33;return 0;}
+ if(vo!=0||no<2||bytes(b,SZ,0,CKB_SOURCE_OUTPUT)||!valid(b,cap(0,CKB_SOURCE_OUTPUT))||memcmp(a,b,88)||memcmp(a+120,b+120,40)||!reserve(1,CKB_SOURCE_OUTPUT,b,reserve_hash))return 34;
+ int d=dep(rd(a+120));uint64_t stride=120+32*d,off=16+n*stride;if(off+8>wn)return 40;uint64_t na=rd(w+off);if(na<1||na>2||wn!=off+8+96*na)return 41;
+ __int128 cash=rd(a+96),udt=rd(a+104),live=rd(a+112);uint8_t current[32],required[2][32];memcpy(current,a+160,32);const uint8_t*old[2],*next[2];uint64_t indices[2];for(uint64_t j=0;j<n;j++){const uint8_t*p=w+16+j*stride,*x=p+8,*y=x+56;old[j]=x;next[j]=y;uint64_t i=rd(p);indices[j]=i;if(i>=rd(a+120)||(j&&i==indices[0])||!leafvalid(x)||!leafvalid(y))return 42;uint8_t h[32];root(script+53,i,x,y+56,d,h);if(memcmp(h,current,32))return 43;root(script+53,i,y,y+56,d,current);int before=rd(x+32)||rd(x+40),after=rd(y+32)||rd(y+40);if(before&&after&&(memcmp(x,y,32)||rd(x+48)==UINT64_MAX||rd(y+48)!=rd(x+48)+1))return 44;if(!before&&after&&rd(y+48))return 44;if(before)live--;if(after)live++;cash+=(__int128)rd(y+32)-rd(x+32);udt+=(__int128)rd(y+40)-rd(x+40);memcpy(required[j],before?x:y,32);}
+ if(cash<0||udt<0||cash>UINT64_MAX||udt>UINT64_MAX||cash!=rd(b+96)||udt!=rd(b+104)||live<0||live!=rd(b+112)||memcmp(current,b+160,32))return 45;
+ if(op==1){if(n!=1||na!=1||ni!=3||no!=3||rd(a+104)!=rd(b+104)||rd(b+96)<=rd(a+96)||!wallet(2,2)||rd(b+88)!=rd(a+88))return 50;}
+ else if(op==2){uint64_t ti,to;if(n!=1||na!=1||ni!=3||no!=3||rd(a+96)!=rd(b+96)||rd(b+104)<=rd(a+104)||!standard_owner(2,CKB_SOURCE_INPUT)||!standard_owner(2,CKB_SOURCE_OUTPUT)||!token(2,CKB_SOURCE_INPUT,a+128,&ti)||!token(2,CKB_SOURCE_OUTPUT,a+128,&to)||(__uint128_t)to+rd(b+104)-rd(a+104)!=ti||cap(2,CKB_SOURCE_INPUT)!=cap(2,CKB_SOURCE_OUTPUT))return 51;uint8_t l[32];if(field(l,32,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(2,CKB_SOURCE_OUTPUT,l))return 51;}
+ else if(op==3){if(n!=2||na!=2||ni!=2||no!=2||rd(a+104)!=rd(b+104)||rd(b+96)>rd(a+96)||rd(a+96)-rd(b+96)>in-out||rd(next[0]+32)>=rd(old[0]+32)||rd(next[0]+40)<=rd(old[0]+40)||rd(next[1]+32)<=rd(old[1]+32)||rd(next[1]+40)>=rd(old[1]+40))return 60;}
+ else if(op==4){uint64_t ti,to;if(n!=1||na!=1||ni!=3||no!=3||rd(b+104)>=rd(a+104)||rd(b+96)>rd(a+96)||rd(a+96)-rd(b+96)>in-out||!standard_owner(2,CKB_SOURCE_INPUT)||!standard_owner(2,CKB_SOURCE_OUTPUT)||!token(2,CKB_SOURCE_INPUT,a+128,&ti)||!token(2,CKB_SOURCE_OUTPUT,a+128,&to)||(__uint128_t)ti+rd(a+104)-rd(b+104)!=to||cap(2,CKB_SOURCE_INPUT)!=cap(2,CKB_SOURCE_OUTPUT))return 70;uint8_t l[32];if(field(l,32,2,CKB_SOURCE_INPUT,CKB_CELL_FIELD_LOCK_HASH)||!lock_is(2,CKB_SOURCE_OUTPUT,l))return 70;}
+ else if(op==5){if(n!=1||na!=1||ni!=3||no!=3||rd(a+104)!=rd(b+104)||rd(b+96)>=rd(a+96)||!wallet(2,2)||cap(2,CKB_SOURCE_OUTPUT)<cap(2,CKB_SOURCE_INPUT)||(__uint128_t)cap(2,CKB_SOURCE_OUTPUT)-cap(2,CKB_SOURCE_INPUT)>rd(a+96)-rd(b+96)||rd(a+96)-rd(b+96)-(cap(2,CKB_SOURCE_OUTPUT)-cap(2,CKB_SOURCE_INPUT))>in-out)return 71;}
+ else return 72;
+ if(rd(b+88)>rd(a+88)||rd(a+88)-rd(b+88)>in-out)return 73;
+ uint8_t signatures[2][64];for(uint64_t j=0;j<na;j++){uint8_t owner[32];hash(w+off+8+96*j,32,owner);if(memcmp(owner,required[j],32))return 80;memcpy(signatures[j],w+off+40+96*j,64);memset(w+off+40+96*j,0,64);}
+ uint8_t tx[32],msg[32];uint64_t tn=32;if(ckb_load_tx_hash(tx,&tn,0)||tn!=32)return 81;blake2b_state st;blake2b_init(&st,32);blake2b_update(&st,"TRADE_TWO_ASSET_V1",18);blake2b_update(&st,self,32);blake2b_update(&st,a+40,32);blake2b_update(&st,tx,32);blake2b_update(&st,w,wn);blake2b_final(&st,msg,32);for(uint64_t j=0;j<na;j++)if(trade_ed_verify(w+off+8+96*j,signatures[j],msg))return 82;return 0;
+}

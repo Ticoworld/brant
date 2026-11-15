@@ -1,0 +1,8 @@
+[package]
+name = "trade-e3-vm-runner"
+version = "0.1.0"
+edition = "2021"
+[dependencies]
+ckb-testtool = "=0.13.2"
+serde_json = "1"
+[workspace]

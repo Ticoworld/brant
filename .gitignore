@@ -2,6 +2,7 @@
 node_modules/
 **/node_modules/
 **/tools/
+labs/wo09-e2-capacity/build/
 **/.venv/
 **/__pycache__/
 **/target/
@@ -24,3 +25,7 @@ node_modules/
 .chain-data/
 **/.ckb-data/
 **/data/
+# Rebuild scratch clones and ephemeral node logs
+/work/
+/labs/rebuild/native/evidence/*/node.log
+/labs/rebuild/mechanisms/evidence/*/node.log

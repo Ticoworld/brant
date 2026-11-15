@@ -1,0 +1,118 @@
+[
+  {
+    "variant": "compact",
+    "n": 1024,
+    "stagedFunding": false,
+    "fundingBytes": 255327,
+    "settlementBytes": 176763,
+    "codeBytes": 15184,
+    "fundingCapacity": "102912000000000",
+    "filledCKB": "102912000000000",
+    "cycles": {
+      "cycles": "0x202b5052"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x3b42aad6207fcf9811270eec3b3f185eb7c966b4cbdd7a1eae40e274ef50761b",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 1024,
+    "stagedFunding": true,
+    "fundingBytes": 438600,
+    "settlementBytes": 323086,
+    "codeBytes": 34200,
+    "fundingCapacity": "133120000000000",
+    "filledCKB": "102912000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "fundingTransactions": 8
+  },
+  {
+    "variant": "a2-source",
+    "n": 1024,
+    "stagedFunding": true,
+    "fundingBytes": 438600,
+    "settlementBytes": 323086,
+    "codeBytes": 34528,
+    "fundingCapacity": "133120000000000",
+    "filledCKB": "102912000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5cebdbd34b8426ac7304b2ea885cc8d59854a8dcf57773ccf8474a14d004ab60.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "fundingTransactions": 8
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 1024,
+    "stagedFunding": false,
+    "fundingBytes": 435625,
+    "settlementBytes": 323086,
+    "codeBytes": 34528,
+    "fundingCapacity": "133120000000000",
+    "filledCKB": "102912000000000",
+    "cycles": {
+      "cycles": "0x3849d41"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xbc95e92bea3370a2d6afaf25f07ac04da0f83a1de20a77fe09e4058b13cfe1e1",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "compact",
+    "n": 1536,
+    "stagedFunding": false,
+    "fundingBytes": 382815,
+    "settlementBytes": 264827,
+    "codeBytes": 15184,
+    "fundingCapacity": "154368000000000",
+    "filledCKB": "154368000000000",
+    "cycles": {
+      "cycles": "0x4797d3f8"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0x520560b117dbb3e7f9c370dafa27ace18b4ffb1bc32b7a33fdf8b85d7c7664c1",
+    "fundingTransactions": 1
+  },
+  {
+    "variant": "a2",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "settlementBytes": 484366,
+    "codeBytes": 34200,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "fundingTransactions": 12
+  },
+  {
+    "variant": "a2-source",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "settlementBytes": 484366,
+    "codeBytes": 34528,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/5cebdbd34b8426ac7304b2ea885cc8d59854a8dcf57773ccf8474a14d004ab60.html#-1 })",
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "fundingTransactions": 12
+  },
+  {
+    "variant": "a2-optimized",
+    "n": 1536,
+    "stagedFunding": true,
+    "fundingBytes": 657900,
+    "settlementBytes": 484366,
+    "codeBytes": 34528,
+    "fundingCapacity": "199680000000000",
+    "filledCKB": "154368000000000",
+    "cycles": {
+      "cycles": "0x4c38aff"
+    },
+    "scope": "Full CKB bid fills; compact pays tokens directly, A2 retains tokens for master recovery; code deployment/funding not in settlement cycles",
+    "hash": "0xc46c8ae203d06cda3fa691b72c759ed675bc84746fb78e94ef73c3acfb83466f",
+    "fundingTransactions": 12
+  }
+]

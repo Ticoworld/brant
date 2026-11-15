@@ -1,0 +1,35 @@
+{
+  "fill": "0x0c5ac62e97e0fde1c550fe61560087c99082a8970736af056336751ae893b28b",
+  "cancel": "0x22c5ba50b29e6cae4dc2f48ec653bf8c2b937edcd524e726e8119d4c8dd8b2cc",
+  "curveAfterOrders": "0x0f96edbd241939b04b1e82cd0e94073d6ab0f4bf45cd8b1c4c2871dd12b23453",
+  "fees": [
+    "100000",
+    "100000",
+    "100000"
+  ],
+  "sellerAfterFill": {
+    "active": true,
+    "balance": "6",
+    "owner_lock_hash": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+    "revision": "1"
+  },
+  "sellerAfterCancel": {
+    "active": true,
+    "balance": "6",
+    "owner_lock_hash": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+    "revision": "2"
+  },
+  "canceledOrderRejected": true,
+  "canceledOrderVmError": 38,
+  "estimates": [
+    {
+      "cycles": "0x3bed05"
+    },
+    {
+      "cycles": "0x1f6177"
+    },
+    {
+      "cycles": "0x22307a"
+    }
+  ]
+}

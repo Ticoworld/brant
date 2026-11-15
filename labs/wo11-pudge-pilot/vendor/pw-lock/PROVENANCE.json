@@ -1,0 +1,11 @@
+{
+  "repository": "https://github.com/lay2dev/pw-lock",
+  "commit": "9445db0aece263df76255d84c55c3b538b188435",
+  "license_note": "No top-level LICENSE file observed in inspected checkout; no license assertion or build/redistribution qualification.",
+  "source_review": "Signature-present branch verifies; signature-absent branch calls check_payment_unlock. Not a native proof of this deployed binary.",
+  "source_sha256": {
+    "README.md": "80087e4f3ed14aa64676457f8f7c16d75de6ba3dc81b237aed6b59b2cb86cef9",
+    "c/secp256k1_keccak256_sighash_all_acpl.c": "564086a735f6e76ebb2d9e1a92026ee29093ac3f4271c68958334e6477c05d84",
+    "c/anyone_can_pay_lock.h": "f0b6e6411c5c5c0883c880ab5a52926ac3a2c188b039fb1e015e7dc3c764f901"
+  }
+}

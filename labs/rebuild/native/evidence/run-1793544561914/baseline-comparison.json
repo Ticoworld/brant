@@ -1,0 +1,14 @@
+{
+  "workload": "Two 1005-token full fills of identical funded A2 bids; funding excluded from both settlement totals",
+  "serial": {
+    "cycles": "3456667",
+    "bytes": 1900,
+    "fee": "2000000"
+  },
+  "shared": {
+    "cycles": "1734521",
+    "bytes": 1156,
+    "fee": "1000000"
+  },
+  "limits": "Serial preserves one empty token cell and two direct CKB payouts; shared coalesces empty-token capacity and payout. Both keep masters and full successors. Fixed fixture fee policy; no custom competitor or maximum heap claim."
+}

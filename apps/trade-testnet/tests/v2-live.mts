@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { readLiveSingletons } from '../lib/v2-engine/live.ts';
+const le = (n: bigint, size: number) => Array.from({length:size}, (_, i) => Number((n >> BigInt(i * 8)) & 255n).toString(16).padStart(2,'0')).join('');
+const genesis = '0x' + '11'.repeat(32);
+const points = [1,2,3,4].map(i => ({tx_hash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'})) as [{tx_hash:string,index:string},{tx_hash:string,index:string},{tx_hash:string,index:string},{tx_hash:string,index:string}];
+const args = '0x'+'00'.repeat(32)+le(10n,8)+le(1n,8)+le(100n,8)+'00'.repeat(32);
+const cell = (data: string) => ({status:'live',cell:{output:{capacity:'0x1000',lock:{code_hash:genesis,hash_type:'data1',args},type:null},data:{content:data}}});
+const rows = [cell('0x'+le(90n,16)+'00'.repeat(32)),cell('0x'),cell('0x'+le(10n,16)+'22'.repeat(32)),cell('0x')];
+const rpc = async (method:string, params:unknown[]) => method === 'get_block_hash' ? genesis : rows[points.findIndex(p => p.tx_hash === (params[0] as typeof points[0]).tx_hash)];
+const state = await readLiveSingletons(rpc, points, genesis);
+assert.equal(state.curve.inventory, 90n);
+assert.equal(state.custodyAmount, 10n);
+await assert.rejects(() => readLiveSingletons(rpc, points, '0x'+'33'.repeat(32)), /genesis/);
+await assert.rejects(() => readLiveSingletons(async (m,p) => m === 'get_live_cell' ? {status:'dead'} : rpc(m,p), points, genesis), /dead/);
+console.log('Live singleton reader checks passed');

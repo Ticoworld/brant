@@ -1,0 +1,93 @@
+{
+  "label": "genuine-xudt-quantity-inflation-on-external-transfer",
+  "classification": "VERIFIED_NATIVE_REJECTION",
+  "exploitHypothesis": "genuine-xudt-quantity-inflation-on-external-transfer",
+  "positiveControl": {
+    "label": "positive_genuine_xudt_quantity_preserving_transfer",
+    "transactionHash": "0x30783ef9ae16964338d257a51e8419c471b6298616f599eaf72cb6fb589a7059",
+    "committedAfterRejection": true
+  },
+  "rawTransactionHash": "0x0ef599b85255101ac7d2c03c4c3e071c39f8913ff73dd5ee68df31dcc05765eb",
+  "fullSignedTransactionSha256": "ad2002a589de227a74738041638b1ff50c477e9f489ebc66b234a0d23c0d811d",
+  "witnessesSha256": "d34f6d04e7fc7bfe356e18940af754139ac2da619033cf86f0191ecf33c60f5d",
+  "alteredCondition": "attempted to increase the genuine xUDT amount from 3 to 4 without owner-mode input or a matching authorized issuance",
+  "rejectingSource": "Inputs[0].Type",
+  "rejectingScript": "xudt Type Script",
+  "rejectingCodeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+  "rejectingCode": -52,
+  "estimateCyclesError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 } }\"}",
+  "sendTransactionError": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 })\",\"data\":\"Verification(Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 } })\"}",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x61554eb4108c97fe19a13ea75be0febd582079be29d2e2a12f60a76f023a491c",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0xdbfa357582fc42edca29035d581ab739867d9401e5437da7639e5e552197466a",
+          "index": "0x6"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0xc3a272aca06c5ee56eec44e295839b445ad1282a0ea26530efa28eba60ea4c0f",
+          "index": "0x2"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0xd7d93e018526f657d0ff7aa578e9666217bf417e52483a3f91744fbb3629cace",
+          "index": "0x3"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x34e62ce00",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x6666db3b6b4cc50bed85316bb91f04513f1258c2"
+        },
+        "type": {
+          "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hashType": "data1",
+          "args": "0x034aee83be4611d50e596bddae0bc1e32e50496fa85f177c54a2e6688bcc5b83"
+        }
+      },
+      {
+        "capacity": "0x158930f400",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x6666db3b6b4cc50bed85316bb91f04513f1258c2"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x04000000000000000000000000000000",
+      "0x"
+    ],
+    "witnesses": [
+      "0x5500000010000000550000005500000041000000193b5ea84b4c4c3ce21a1fafedb84973965b17a8b9c779a53e860ee010b00f055f05888f7ae3f53c24364c246a5f8e6dd071c611badb23d12fb1f888c0f8f3ba01",
+      "0x"
+    ]
+  },
+  "sourceHashes": {
+    "market_smt_c": "fa0f0db4f1eb545468deacc2d81e0ebc9a56983e616e3e0727ba6591700b4cfa",
+    "custody_smt_c": "cac3356341e5197809a03909a7684e9971796fe1e7305c51572cfe5e07734eea",
+    "owner_lineage_candidate_c": "a10fb1968054c3ad96b5ed4475fb008b27b51a60547394e1f980585c4891cb3e"
+  },
+  "binarySha256": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349"
+}

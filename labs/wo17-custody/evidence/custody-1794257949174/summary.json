@@ -1,0 +1,45 @@
+{
+  "hashes": {
+    "marker_candidate": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "market_custody": "0x34ee29fa3d74fb15f47c006d85e30e1d4ed7353a0f94ebc7c24c7de478c6502e",
+    "owner_lineage_candidate": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "custody": "0x0698c3fa9c86b3e9ebf16a111d5a702c9869429603ab218bc4ebb00ecd2de65d",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "market": {
+    "codeHash": "0x34ee29fa3d74fb15f47c006d85e30e1d4ed7353a0f94ebc7c24c7de478c6502e",
+    "hashType": "data1",
+    "args": "0xbac592ddd11a4a547ab2589a1bbe0116f95cc8a1484f7da24eab668bac53836300ca9a3b0000000000e1f50500000000e80300000000000067615f8e312e55f8561b2fee8b0ce99c03f7f6d9fb40770d280b1dbf13f42842"
+  },
+  "marker": {
+    "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "hashType": "data1",
+    "args": "0x4108f16ca2c0ce16ffd3b2c8bc471793a96763a76f301f2f44d369b569689beb"
+  },
+  "owner": {
+    "codeHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "hashType": "data1",
+    "args": "0x78ec958ee61bb958fbc22356d0f5ab9321d4c92a71939a818c4eafb9e758e97b0e00000050bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b9556d743350d524d100fe767ab776f5c1f9da86a74d681717ed812d4bcdefabc97e8030000000000000000000000000000"
+  },
+  "token": {
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "args": "0x8a698d8804558956cabdd06137b68285cb0475d6868e6d5f402a849c7f515c27"
+  },
+  "custody": {
+    "codeHash": "0x0698c3fa9c86b3e9ebf16a111d5a702c9869429603ab218bc4ebb00ecd2de65d",
+    "hashType": "data1",
+    "args": "0x56d743350d524d100fe767ab776f5c1f9da86a74d681717ed812d4bcdefabc9759297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b27c101fc66b58929916c1b6ff433b9cad8b8a32cff38ce3beb4fe7e5076c500d"
+  },
+  "buyer": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+  "leaf": "0xaf409d2370579a66c80d4aef2ee5b670027c3b5e98104cb2eacdc63a4bf4f58f",
+  "root": "0x829d920fc2c2bf10833d8ea52116f936c077135cc4945133e2b086893303986b",
+  "supply": 1000,
+  "quantity": 2,
+  "inventory": 998,
+  "external": 2,
+  "withdrawn": {
+    "txHash": "0x832f2348c6a57511abce63004ccd1bfb8dd2a1d7a489cdaa0109ddcd08404f79",
+    "index": "0x0"
+  }
+}

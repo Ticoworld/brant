@@ -1,0 +1,27 @@
+[
+  {
+    "label": "funding_resource_failure_a2_1536",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })"
+  },
+  {
+    "label": "resource_failure_a2_1536",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a.html#-1 })"
+  },
+  {
+    "label": "funding_resource_failure_a2-source_1536",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/551cca7623cdc3b157dc1f3bd9e7d2ef76eb2073152e81c15e1cda947dd4c17c.html#-1 })"
+  },
+  {
+    "label": "resource_failure_a2-source_1536",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/551cca7623cdc3b157dc1f3bd9e7d2ef76eb2073152e81c15e1cda947dd4c17c.html#-1 })"
+  },
+  {
+    "label": "funding_resource_failure_a2-optimized_1536",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[1].Type, cause: ValidationFailure: see error code -1 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/cfc7d94fa1486cac4548e21abec9a5bbe71287af1c5487b21da84782b8cc6986.html#-1 })"
+  }
+]

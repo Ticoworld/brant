@@ -1,0 +1,78 @@
+{
+  "nativeVersion": "0.210.0 (2592ddf 2026-09-17)",
+  "committedTransactions": 6,
+  "lineages": {
+    "A": {
+      "marketHash": "0x75fac7e3eb03ed0ec306287689617f373bb05f10fbdd09bc7a59a6772b279ef5",
+      "tokenHash": "0x8dae641a9909678a836b4bee87f46a69f8830508399487324cf8948a462d304f",
+      "markerHash": "0x1f20b6384b6eafe99bb9f72a404b683f3bd28d09e2ade748437a0df90a95f015",
+      "issueHash": "0x8561e6733c0bf60b43ca034403140b2ee9f1d8ebca0e2bf7241c7a499c10211d"
+    },
+    "B": {
+      "marketHash": "0x19edb6419e755db8da9f7cacb2e77ed721ea78795f227345ca2579796aeeeaab",
+      "tokenHash": "0x9e6f68912b0c7038a520765e24995520582d6db037735f12fe5c01e02b9c6bea",
+      "markerHash": "0x3ea1b5e57400448533d73f147bf3bcc59c826e37da20d918f5f0870db7a3e6c1",
+      "issueHash": "0xa6b6fc266915b9c5eb2370417aad9798bd8bac745481a5e260ea38edd00d3dfd"
+    }
+  },
+  "transactions": [
+    {
+      "label": "fund-two-lineage-test-wallets",
+      "hash": "0x3e6e0e9ec59bad8a06815ebd82a0babaf4392dbd1864e7a5cce35e505743364b",
+      "cycles": "1635336",
+      "fee": "1000000",
+      "bytes": 1197
+    },
+    {
+      "label": "issue-market-A-independent-anchor",
+      "hash": "0x8561e6733c0bf60b43ca034403140b2ee9f1d8ebca0e2bf7241c7a499c10211d",
+      "cycles": "1722590",
+      "fee": "1000000",
+      "bytes": 1118
+    },
+    {
+      "label": "issue-market-B-independent-anchor",
+      "hash": "0xa6b6fc266915b9c5eb2370417aad9798bd8bac745481a5e260ea38edd00d3dfd",
+      "cycles": "1713912",
+      "fee": "1000000",
+      "bytes": 1118
+    },
+    {
+      "label": "initialize-market-A-custody",
+      "hash": "0x496d428b8d6c9796bfba7e0834df879221e4ee65c9a8e398c4f846e956574b81",
+      "cycles": "1887930",
+      "fee": "1000000",
+      "bytes": 2395
+    },
+    {
+      "label": "initialize-market-B-custody",
+      "hash": "0x4edcdf4593cddff7054b0b697ccb971b1230222011fc7e40f215ff37a98cb7b4",
+      "cycles": "1893343",
+      "fee": "1000000",
+      "bytes": 2395
+    },
+    {
+      "label": "positive-control-market-B-continuation",
+      "hash": "0x93e422592e620b957d872064d6dc062b517e93e1c2f93b5085d9d77c68d77f17",
+      "cycles": "2057690",
+      "fee": "1000000",
+      "bytes": 3074
+    },
+    {
+      "label": "cross-market-A-custody-credited-by-market-B",
+      "hash": "0x560e4384941ad13615b8ea08d821ad1c1b57e621027ce44e95d798c97973c422",
+      "cycles": "rejected-before-estimate-result",
+      "fee": "1000000",
+      "bytes": 3074
+    }
+  ],
+  "rejection": {
+    "label": "cross-market-A-custody-credited-by-market-B",
+    "source": "Inputs[0].Lock",
+    "code": 22,
+    "codeHash": "0xd797b672806e016bb90c82bef5b2c75f1c9fccd7ce5358a981d98bd0f464c1f1",
+    "txHash": "0x560e4384941ad13615b8ea08d821ad1c1b57e621027ce44e95d798c97973c422",
+    "fee": "1000000",
+    "bytes": 3074
+  }
+}

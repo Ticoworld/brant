@@ -1,0 +1,112 @@
+{
+  "sha": "e08e6016f16072fc2f44cf889ae063fa5b7e10c7",
+  "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/e08e6016f16072fc2f44cf889ae063fa5b7e10c7",
+  "tree": [
+    {
+      "path": ".github",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "27cade019c21b83c7118e462d3d02c75778aef79",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/27cade019c21b83c7118e462d3d02c75778aef79"
+    },
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "83107c47ab9957c5331a8fb44b59b6a0597e300c",
+      "size": 472,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/83107c47ab9957c5331a8fb44b59b6a0597e300c"
+    },
+    {
+      "path": ".gitmodules",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a0a2cc545b739a5c0f7d0f43531a914735e7a974",
+      "size": 102,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/a0a2cc545b739a5c0f7d0f43531a914735e7a974"
+    },
+    {
+      "path": ".npm",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "811b888dd63de967294b8521e1924698d6f3676f",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/811b888dd63de967294b8521e1924698d6f3676f"
+    },
+    {
+      "path": "Cargo.lock",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "547e2efce4de574172b05952c782fbd04fe790e4",
+      "size": 62854,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/547e2efce4de574172b05952c782fbd04fe790e4"
+    },
+    {
+      "path": "Cargo.toml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "eb0bc3801dd8926bd75c96451bc2975057012d9c",
+      "size": 1122,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/eb0bc3801dd8926bd75c96451bc2975057012d9c"
+    },
+    {
+      "path": "Makefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1ff6346cdceb1c9cbaa8afb429269c1ba4c766bf",
+      "size": 3705,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/1ff6346cdceb1c9cbaa8afb429269c1ba4c766bf"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2cc655be8e73153d49849a3557a52facf0c504ed",
+      "size": 571,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/2cc655be8e73153d49849a3557a52facf0c504ed"
+    },
+    {
+      "path": "build.rs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aef9c03030dd02448b791123e629a835c938c1a4",
+      "size": 2654,
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/blobs/aef9c03030dd02448b791123e629a835c938c1a4"
+    },
+    {
+      "path": "c",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9f740095b7bb786ebb6b86870f636a7c048a4431",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/9f740095b7bb786ebb6b86870f636a7c048a4431"
+    },
+    {
+      "path": "deps",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bc50b650eefe4ad8dea20f5733231074cbab0a7e",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/bc50b650eefe4ad8dea20f5733231074cbab0a7e"
+    },
+    {
+      "path": "docs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8cbd1c29e5199b3b98b2d22a88cdb4b6c21cbdf1",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/8cbd1c29e5199b3b98b2d22a88cdb4b6c21cbdf1"
+    },
+    {
+      "path": "specs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b6211c143bf75788e2d3102783e6ef4e3db78e1e",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/b6211c143bf75788e2d3102783e6ef4e3db78e1e"
+    },
+    {
+      "path": "src",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "adfd2e5558a07a33bd58414a761ee17e67e8365b",
+      "url": "https://api.github.com/repos/nervosnetwork/ckb-system-scripts/git/trees/adfd2e5558a07a33bd58414a761ee17e67e8365b"
+    }
+  ],
+  "truncated": false
+}

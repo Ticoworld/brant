@@ -1,0 +1,61 @@
+[
+  {
+    "id": "nirvana-index",
+    "url": "https://docs.nirvana.finance/llms.txt",
+    "requested_at": "2026-11-02T05:26:17.579460+00:00",
+    "status": 200,
+    "sha256": "8959108db1ced68645c4dd951624f8ed4f3f662b148548b4b9144897b45d5c4b",
+    "bytes": 2017
+  },
+  {
+    "id": "baseline-docs",
+    "url": "https://docs.baseline.markets/",
+    "requested_at": "2026-11-02T05:26:18.668315+00:00",
+    "status": 200,
+    "sha256": "c17fe11d59d24de38ff1f24e701b4a92e645a5a2a9094d5fc58d2d83d07e0abd",
+    "bytes": 49688
+  },
+  {
+    "id": "pyth-ckb-feed",
+    "url": "https://hermes.pyth.network/v2/price_feeds?query=CKB&asset_type=crypto",
+    "requested_at": "2026-11-02T05:26:20.064993+00:00",
+    "status": 200,
+    "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "bytes": 2
+  },
+  {
+    "url": "https://docs.nirvana.finance/s3-nirvana/p2-the-assured-value-machine.md",
+    "requested_at": "2026-11-02T05:30:24.064486+00:00",
+    "status": 200,
+    "sha256": "8efb7558f011c17e15a63b7c29e5d6272a576c110edea88c61d4d306fea4520e",
+    "file": "s3-nirvana__p2-the-assured-value-machine.md"
+  },
+  {
+    "url": "https://docs.nirvana.finance/s3-nirvana/p3-the-floor.md",
+    "requested_at": "2026-11-02T05:30:24.065699+00:00",
+    "status": 200,
+    "sha256": "abd44f5030ffc963b0086f750e37bec5d1fda8116535d1d1504200c4702a14ce",
+    "file": "s3-nirvana__p3-the-floor.md"
+  },
+  {
+    "url": "https://docs.nirvana.finance/s4-samsara/p3-assured-value-assets.md",
+    "requested_at": "2026-11-02T05:30:24.066175+00:00",
+    "status": 200,
+    "sha256": "02755d1e9a4950a3c12d6f18d2ff65dcd2b1f1daf07c640645d41d268d02fdf9",
+    "file": "s4-samsara__p3-assured-value-assets.md"
+  },
+  {
+    "url": "https://docs.nirvana.finance/s4-samsara/p4-launch-mechanics.md",
+    "requested_at": "2026-11-02T05:30:24.066721+00:00",
+    "status": 200,
+    "sha256": "4c4818c0cc8b8f35b5e0118facf9c0418a81c25c84951c12d26913fa93aefe8c",
+    "file": "s4-samsara__p4-launch-mechanics.md"
+  },
+  {
+    "url": "https://docs.nirvana.finance/s7-resources/p4-addresses.md",
+    "requested_at": "2026-11-02T05:30:24.852650+00:00",
+    "status": 200,
+    "sha256": "0ba78fa1df1ee5acec91fbd07f9a7c8d481bda936d53ebf17be368c729d472a7",
+    "file": "s7-resources__p4-addresses.md"
+  }
+]

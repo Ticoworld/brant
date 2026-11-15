@@ -1,0 +1,11 @@
+# Ownership and paid assignment
+
+VERIFIED bounded native cohort and full-snapshot variants. Every right stores its current owner's canonical secp lock hash, original contribution and remaining native CKB backing. No launched token is used as a surrogate for the redemption right.
+
+Enrollment consumes an actual funded input under the credited owner's standard secp lock, increases vault capacity by exactly the contribution, and gives the owner signed change. Transfer changes exactly one owner field, preserves that record's contribution/backing and all other records, and consumes seller and buyer wallets. Seller output under the original owner lock must increase by a strictly positive amount; buyer output under the new owner lock funds that consideration and the bounded transaction fee. Both actual secp signatures authorize the entire transaction. Vault capacity and liability sum remain unchanged. No off-chain range signature or OTX implementation is claimed.
+
+Native example: Alice partially redeems 0.05 of a 0.1 CKB protected right. Bob then pays 0.01 CKB to buy its remaining 0.05 CKB entitlement. Bob, already holding his own right, can own both records. Former Alice-owner redemption rejects; Bob subsequently redeems both independently. A purchase changes ownership, not the size of protected backing. The 0.01 CKB test price is real disposable-chain consideration, not a market quote or evidence of liquidity.
+
+Authorization for payouts intentionally requires an existing plain funded secp Cell. Small payouts merge into that Cell with no dedicated persistent claim output. Tested self-paid lifecycle fees are 0.0001 CKB each. The v2 policy forbids reducing the old recipient wallet principal: fee may not exceed the value redeemed. Standalone payout without such an authorization input is not implemented; a generic permissionless trigger can alter a holder's financial optionality, so this narrower policy should not be loosened without a defined product rule.
+
+A fixed three-member cohort is the only financial cohort size executed. Sale then redemption is full-transaction coordinated settlement, not instantaneous or guaranteed secondary liquidity. Real buyer demand, spreads, wallet UX and alternative key/lock forms remain unproved.

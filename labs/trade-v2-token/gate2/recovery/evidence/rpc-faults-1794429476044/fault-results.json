@@ -1,0 +1,47 @@
+{
+  "format": "trade-v2-recovery-mocked-rpc-fault-evidence-v1",
+  "execution_boundary": "mocked JSON-RPC; no CKB-VM execution is claimed by this file",
+  "cases": [
+    {
+      "case": "full-block recovery without local proof cache or indexer",
+      "outcome": "reconstructed",
+      "transitions": 2,
+      "indexer_used": false
+    },
+    {
+      "case": "incomplete indexer history",
+      "outcome": "failed closed",
+      "detail": "missing custody successor was not treated as current state"
+    },
+    {
+      "case": "conflicting indexer and full-node positions",
+      "outcome": "failed closed",
+      "detail": "block-position mismatch"
+    },
+    {
+      "case": "missing committed transaction body",
+      "outcome": "failed closed",
+      "detail": "full node returned no transaction body"
+    },
+    {
+      "case": "chain reorganization during history collection",
+      "outcome": "failed closed",
+      "detail": "tip changed during collection"
+    },
+    {
+      "case": "concurrent custody successor after proof collection",
+      "outcome": "failed closed",
+      "broadcasts": 0
+    },
+    {
+      "case": "already-withdrawn retry",
+      "outcome": "failed closed",
+      "broadcasts_after_retry": 0
+    },
+    {
+      "case": "mocked RPC withdrawal control",
+      "outcome": "reported committed by mock only",
+      "native_vm_execution": false
+    }
+  ]
+}

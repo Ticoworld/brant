@@ -1,0 +1,77 @@
+{
+  "classification": "OFFLINE_NATIVE_CKB_UTXO_xUDT_AND_EXACT_EXECUTION_AMOUNT_REPLAY",
+  "committed_transactions": 10,
+  "rows": [
+    {
+      "label": "deploy_a2opt",
+      "hash": "0x13f6ed8081c8259257115dc2ed2fc999d82bfa802b0f02d584221bab4c1e6d17",
+      "fee": "1000000",
+      "token_input": "0",
+      "token_output": "0"
+    },
+    {
+      "label": "issue_1000000000",
+      "hash": "0xefd0a7714cf0441ff4b85944475f7dc462640b0ac0bf4b1a41e540ab362554a9",
+      "fee": "1000000",
+      "token_input": "0",
+      "token_output": "1000000000"
+    },
+    {
+      "label": "fund_existing_customer_asset_wallet_for_direct_RFQ",
+      "hash": "0x5dfa7529fc5d62066b46fa44bae6e87304c8e8c7b5a790e57b36c4cc1ce753d9",
+      "fee": "10000",
+      "token_input": "1000000000",
+      "token_output": "1000000000"
+    },
+    {
+      "label": "direct_two_secp_wallet_atomic_RFQ_same_price_quantity",
+      "hash": "0xb2b3d295192d0ca034df92df0f21a94bae3043ebb4b2a1f0da6cc4a646d02a23",
+      "fee": "10000",
+      "token_input": "1000000000",
+      "token_output": "1000000000"
+    },
+    {
+      "label": "sponsor_funds_a2_exact_funded_bid",
+      "hash": "0x59882dbc8294a62de20b6b1672631af783ff5935b8e9855f26b1cfe21e30645e",
+      "fee": "10000",
+      "token_input": "0",
+      "token_output": "0"
+    },
+    {
+      "label": "maker_fills_a2_same_CKB_xUDT_amounts",
+      "hash": "0x60c488a58271bc70bc37657043117d635e9632cc7c08446eddc005acc8073025",
+      "fee": "10000",
+      "token_input": "999800000",
+      "token_output": "999800000"
+    },
+    {
+      "label": "owner_recovers_self_created_a2_delivered_xUDT",
+      "hash": "0x9dc747862161743796ce83f277daa27c638d6db946922cc7387c333cb643af01",
+      "fee": "10000",
+      "token_input": "200000",
+      "token_output": "200000"
+    },
+    {
+      "label": "sponsor_funds_a2opt_exact_funded_bid",
+      "hash": "0x7190fd3db41c1cfdbb3664a2301b9fe55d681a8f4b27b82fe804c6b529db3731",
+      "fee": "10000",
+      "token_input": "0",
+      "token_output": "0"
+    },
+    {
+      "label": "maker_fills_a2opt_same_CKB_xUDT_amounts",
+      "hash": "0xe0bc82495ab3c05734a5e8374f74b68d2c69e6a3047b3c88d44c0548bbce4220",
+      "fee": "10000",
+      "token_input": "999600000",
+      "token_output": "999600000"
+    },
+    {
+      "label": "owner_recovers_self_created_a2opt_delivered_xUDT",
+      "hash": "0xa0282742d38fb955abcd95415e6afe2230dc364c522d2096e150e6abced74b3c",
+      "fee": "10000",
+      "token_input": "200000",
+      "token_output": "200000"
+    }
+  ],
+  "scope": "Node checked real secp/A2 scripts; this replay independently checks resolved funding/conservation/amounts. Known self-created master lineage only; no LO-01/arbitrary-history qualification."
+}

@@ -1,0 +1,131 @@
+{
+  "preferred_binary_sha256": "c569360ba498e715899635410dc0474003e8f61c6afc08a5c3f2a87527711c1f",
+  "last_verified_remote_before_final_reporting": "c1939860c507673a62691ca684deaa1a8d5d2575",
+  "runs": [
+    {
+      "directory": "merkle-configured-scale-1793671167711",
+      "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+      "committed_transactions": 14,
+      "leaf_updates": 10,
+      "markets": [
+        {
+          "id": "0x53c788133aa21df1f543f391332e32fdf02397b6966830f624655b56a559a86e",
+          "n": 3,
+          "closed": true,
+          "transactions": 11,
+          "market_fees_shannons": "200000",
+          "remaining_backing": "0"
+        }
+      ],
+      "critical_transactions": []
+    },
+    {
+      "directory": "merkle-configured-scale-1793671317288",
+      "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+      "committed_transactions": 1156,
+      "leaf_updates": 2238,
+      "markets": [
+        {
+          "id": "0x980f7ac8c7d2e212e10520429199c5ad08e4f7bfae1889f5aca2ec2ad543da95",
+          "n": 16,
+          "closed": true,
+          "transactions": 22,
+          "market_fees_shannons": "400000",
+          "remaining_backing": "0"
+        },
+        {
+          "id": "0x1753b22d0547df236f9ce5896fe5dd685c2261ad2d9a8d31bff091c3f2d78d2f",
+          "n": 100,
+          "closed": true,
+          "transactions": 106,
+          "market_fees_shannons": "1240000",
+          "remaining_backing": "0"
+        },
+        {
+          "id": "0x3244d82a806f75cbe1c9f58a0d4f39d6240c6e9e611c5323d587d0e23b3fc047",
+          "n": 1000,
+          "closed": true,
+          "transactions": 1015,
+          "market_fees_shannons": "11140000",
+          "remaining_backing": "0"
+        }
+      ],
+      "critical_transactions": [
+        {
+          "label": "activate_market_1000",
+          "hash": "0xa6f7c699526a40978aa4660cae5df69a2e0aeb3acc0f5c08f52f99d63de8d8c9",
+          "bytes": 854,
+          "cycles": {
+            "cycles": "0x1a688d"
+          }
+        },
+        {
+          "label": "partial_redemption_1000",
+          "hash": "0x95acda54570dc90ff2baf5d944a339864a2c23cf297f8dc094553084900fdfab",
+          "bytes": 1278,
+          "cycles": {
+            "cycles": "0x1f68d3"
+          }
+        },
+        {
+          "label": "paid_assignment_1000",
+          "hash": "0x847a5e554b8c12a88798226bef64d831b36966277b71a99c078cf5e90852850d",
+          "bytes": 1524,
+          "cycles": {
+            "cycles": "0x38d5a7"
+          }
+        },
+        {
+          "label": "final_closure_1000",
+          "hash": "0xfe3f333a16accc8aa1fac1cacdfd7ba90a4b27aee7a89c5995c535bdddca55f8",
+          "bytes": 464,
+          "cycles": {
+            "cycles": "0x1a0cc6"
+          }
+        }
+      ]
+    },
+    {
+      "directory": "merkle-configured-security-1793671720169",
+      "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+      "committed_transactions": 22,
+      "leaf_updates": 16,
+      "markets": [
+        {
+          "id": "0x4894642a1654e9b11cd9980c189b89cb43468beb68eeee70e0c04c063e5011c2",
+          "n": 3,
+          "closed": true,
+          "transactions": 12,
+          "market_fees_shannons": "120000",
+          "remaining_backing": "0"
+        },
+        {
+          "id": "0x1be751355e9c44badf995d75a82f13cf3a80c6d7f5c2f0197894ed62dca68887",
+          "n": 3,
+          "closed": true,
+          "transactions": 9,
+          "market_fees_shannons": "90000",
+          "remaining_backing": "0"
+        }
+      ],
+      "critical_transactions": []
+    },
+    {
+      "directory": "merkle-configured-scale-1793672136292",
+      "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+      "committed_transactions": 25,
+      "leaf_updates": 34,
+      "markets": [
+        {
+          "id": "0xdbc6da3e6afffeeedd779756640fb30d557b9ab84209959026a61c395767a5fa",
+          "n": 16,
+          "closed": true,
+          "transactions": 22,
+          "market_fees_shannons": "400000",
+          "remaining_backing": "0"
+        }
+      ],
+      "critical_transactions": []
+    }
+  ]
+}

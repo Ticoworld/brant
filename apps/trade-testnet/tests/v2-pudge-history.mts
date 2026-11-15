@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {POST} from '../app/api/v2/pudge-init-proof/route.ts';
+import {prepareCodeDeployment} from '../lib/v2-engine/deployment.ts';
+import {deriveMarketIdentity,buildInitializationSetup,buildIssuance,buildFirstPurchase} from '../lib/v2-engine/initialization.ts';
+import {recoverPudgeHistory} from '../lib/v2-engine/pudge-history.ts';
+import {createPudgeManifest,loadPudgeManifest} from '../lib/v2-engine/pudge-manifest.ts';
+assert(process.env.ROVEKO_GATE2_BINARIES&&process.env.TRADE_NATIVE_ROOT&&process.env.ROVEKO_SMT_BINARY&&process.env.ROVEKO_PROOF_BINARY&&process.env.ROVEKO_RECOVERY_COLLECTOR,'Set test binary paths');
+const genesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606',block='0x'+'cc'.repeat(32),unit=100_000_000n;
+const lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'22'.repeat(20)},owner=ccc.Script.from(lock).hash();
+const names=['custody_smt','market_smt','custody_marker','marker_candidate','owner_lineage_candidate'],codes=names.map(name=>{const data='0x'+fs.readFileSync(path.join(process.env.ROVEKO_GATE2_BINARIES!,name)).toString('hex');return {name,data,expectedDataHash:ccc.hashCkb(data)};});
+const xdata='0x'+fs.readFileSync(path.join(process.env.TRADE_NATIVE_ROOT,'vendor/ickb/build/release/xudt')).toString('hex'),hashes={custody:codes[0].expectedDataHash,market:codes[1].expectedDataHash,custodyMarker:codes[2].expectedDataHash,marker:codes[3].expectedDataHash,owner:codes[4].expectedDataHash,xudt:ccc.hashCkb(xdata)};
+const secp={outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup' as const},xudt={outPoint:{txHash:'0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f',index:'0x0'},depType:'code' as const};
+const secpData='0x020000008f8c79eb6671709633fe6a46de93c0fedc9c1b8a6527a18d3983879542635c9f030000008f8c79eb6671709633fe6a46de93c0fedc9c1b8a6527a18d3983879542635c9f01000000';
+const funding=ccc.Transaction.from({outputs:[{capacity:1000n*unit,lock},{capacity:5000n*unit,lock},{capacity:150000n*unit,lock}],outputsData:['0x','0x','0x']});
+const point=(tx:ccc.Transaction,i:number)=>({txHash:tx.hash(),index:'0x'+i.toString(16)}),cell=(tx:ccc.Transaction,i:number)=>({outPoint:point(tx,i),capacity:tx.outputs[i].capacity,lock:tx.outputs[i].lock,...(tx.outputs[i].type?{type:tx.outputs[i].type}:{}),data:tx.outputsData[i]});
+const anchor=point(funding,0),candidate={...cell(funding,2),lock,data:'0x'},prepared=prepareCodeDeployment(codes,[candidate],lock,secp,1000n);assert.equal(prepared.status,'review');if(prepared.status!=='review')throw Error('Code preparation failed');
+const deployed=prepared.transaction,dep=(i:number)=>({outPoint:point(deployed,i),depType:'code' as const}),id=deriveMarketIdentity({anchor,genesis,base:10n*unit,step:unit,supply:2000n,codes:hashes});
+const setup=buildInitializationSetup({identity:id,anchor,inputs:[cell(funding,1)],ownerCapacity:200n*unit,buyerCapacity:2000n*unit,fee:1000000n,secpDep:secp});
+const issuance=buildIssuance({identity:id,anchor:cell(funding,0),ownerCell:cell(setup,0),supply:2000n,inventoryCapacity:300n*unit,markerCapacity:300n*unit,fee:1000000n,deps:[secp,dep(4),xudt,dep(3)]});
+const getProof=async(a:{txHash:string;index:string},o:string)=>{const response=await POST(new Request('http://127.0.0.1:3000/api/v2/pudge-init-proof',{method:'POST',headers:{host:'127.0.0.1:3000',origin:'http://127.0.0.1:3000','content-type':'application/json'},body:JSON.stringify({anchor:a,owner:o})}));assert.equal(response.status,200);return response.json();};
+const proof=await getProof(anchor,owner),purchase=buildFirstPurchase({identity:id,inventory:cell(issuance,0),marker:cell(issuance,1),buyer:cell(setup,1),supply:2000n,quantity:7n,price:91n*unit,custodyCapacity:350n*unit,custodyMarkerCapacity:350n*unit,fee:1000000n,newRoot:proof.newRoot,witness:proof.witness,genesis,deps:[secp,dep(1),dep(3),dep(0),dep(2),xudt]});
+const txs=[funding,deployed,setup,issuance,purchase],lookup=new Map<string,ccc.Transaction>(txs.map(tx=>[tx.hash(),tx]));
+let unavailable='';const rpc=async(method:string,params:unknown[])=>{
+ if(method==='get_block_hash')return params[0]==='0x0'?genesis:block;
+ if(method==='get_header')return {hash:block,number:'0x1'};
+ if(method==='get_transaction'){const tx=lookup.get(params[0] as string);return tx?{transaction:cccA.JsonRpcTransformers.transactionFrom(tx),tx_status:{status:'committed',block_hash:block}}:null;}
+ if(method==='get_live_cell'){const p=params[0] as {tx_hash:string;index:string};if(p.tx_hash===unavailable)return {status:'dead'};if(p.tx_hash===secp.outPoint.txHash)return {status:'live',cell:{data:{content:secpData,hash:ccc.hashCkb(secpData)}}};if(p.tx_hash===xudt.outPoint.txHash)return {status:'live',cell:{data:{content:xdata,hash:ccc.hashCkb(xdata)}}};const tx=lookup.get(p.tx_hash),index=Number(BigInt(p.index));if(!tx?.outputs[index])return {status:'dead'};return {status:'live',cell:{data:{content:tx.outputsData[index],hash:ccc.hashCkb(tx.outputsData[index])}}};}
+ throw Error('Unexpected RPC');
+};
+const attempt={version:1 as const,genesis,owner,txHash:deployed.hash(),codeHashes:codes.map(c=>c.expectedDataHash),state:'submitted' as const,anchor};
+const journal={version:1 as const,genesis,owner,entries:[{stage:'code' as const,txHash:deployed.hash(),state:'confirmed' as const,blockHash:block},{stage:'setup' as const,txHash:setup.hash(),state:'confirmed' as const,blockHash:block},{stage:'issuance' as const,txHash:issuance.hash(),state:'confirmed' as const,blockHash:block},{stage:'purchase' as const,txHash:purchase.hash(),state:'submitted' as const}]};
+const recovered=await recoverPudgeHistory(rpc,attempt,journal,getProof);assert.equal(recovered.stages.purchase.tx.hash(),purchase.hash());
+await assert.rejects(()=>recoverPudgeHistory(rpc,{...attempt,anchor:{...anchor,index:'0x1'}},journal,getProof));
+await assert.rejects(()=>recoverPudgeHistory(rpc,attempt,{...journal,entries:journal.entries.map((e,i)=>i===1?{...e,blockHash:'0x'+'dd'.repeat(32)}:e)},getProof),/block changed/);
+await assert.rejects(()=>recoverPudgeHistory(rpc,attempt,journal,async()=>({...proof,witness:'0x00'})),/proof differs/);
+unavailable=purchase.hash();await assert.rejects(()=>recoverPudgeHistory(rpc,attempt,journal,getProof),/successor/);
+const confirmed={...journal,entries:journal.entries.map(e=>({...e,state:'confirmed' as const,blockHash:block}))};
+const manifest=await createPudgeManifest(rpc,attempt,confirmed,getProof,false);assert.equal(manifest.initializationTransactionHash,purchase.hash());
+assert.equal((await loadPudgeManifest(rpc,JSON.stringify(manifest),getProof)).initializationTransactionHash,purchase.hash());
+await assert.rejects(()=>loadPudgeManifest(rpc,JSON.stringify({...manifest,initializationTransactionHash:'0x'+'99'.repeat(32)}),getProof),/identity/);
+await assert.rejects(()=>loadPudgeManifest(rpc,JSON.stringify({...manifest,scripts:{...manifest.scripts,market:{...manifest.scripts.market,args:'0x'}}}),getProof),/identity/);
+console.log('Pudge history reconstruction checks passed (mock canonical RPC)');

@@ -1,0 +1,44 @@
+[
+  {
+    "variant": "a2",
+    "transactions": 4,
+    "cycles": "6975602",
+    "bytes": 3820,
+    "fixedFees": "4000000",
+    "orderOccupied": "19500000000",
+    "masterOccupied": "9400000000",
+    "gateOccupied": "0",
+    "codeBytes": 34200,
+    "codeCellOccupied": "genesis-published-baseline",
+    "included": "Gate setup/cancel where applicable, common inventory issuance, grouped funding, one two-order partial fill and grouped melt; code deployment excluded and listed separately",
+    "ordering": "Valid fill commits before cancellation; valid next fill fails after gate spent; owner recovery does not depend on gate"
+  },
+  {
+    "variant": "a2-optimized",
+    "transactions": 4,
+    "cycles": "6873318",
+    "bytes": 3820,
+    "fixedFees": "4000000",
+    "orderOccupied": "19500000000",
+    "masterOccupied": "9400000000",
+    "gateOccupied": "0",
+    "codeBytes": 34528,
+    "codeCellOccupied": "3456900000000",
+    "included": "Gate setup/cancel where applicable, common inventory issuance, grouped funding, one two-order partial fill and grouped melt; code deployment excluded and listed separately",
+    "ordering": "Valid fill commits before cancellation; valid next fill fails after gate spent; owner recovery does not depend on gate"
+  },
+  {
+    "variant": "gated_order",
+    "transactions": 6,
+    "cycles": "10340553",
+    "bytes": 4973,
+    "fixedFees": "6000000",
+    "orderOccupied": "23100000000",
+    "masterOccupied": "13000000000",
+    "gateOccupied": "6100000000",
+    "codeBytes": 42072,
+    "codeCellOccupied": "4211300000000",
+    "included": "Gate setup/cancel where applicable, common inventory issuance, grouped funding, one two-order partial fill and grouped melt; code deployment excluded and listed separately",
+    "ordering": "Valid fill commits before cancellation; valid next fill fails after gate spent; owner recovery does not depend on gate"
+  }
+]

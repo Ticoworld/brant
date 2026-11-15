@@ -1,0 +1,35 @@
+{
+  "scope": "Exact witness-contribution/actual committed output audit; synthetic issuance price, not market valuation or beneficiary security",
+  "checks": [
+    {
+      "label": "scenario_0_settle",
+      "hash": "0xbf1cffb0ab393bac534ed3e2a4df6d43df24e0501fa6b950fcb36c827646df5e",
+      "senior_contribution_shannons": "83333333333",
+      "junior_contribution_shannons": "116666666667",
+      "actual_outputs_shannons": [
+        "131100000000",
+        "81100000000"
+      ]
+    },
+    {
+      "label": "outage_native_contribution_refund",
+      "hash": "0xa413ceb2f1533afde6ac8bac521026d9fe9e489424dc9a81f92ba909787d8d92",
+      "senior_contribution_shannons": "83333333333",
+      "junior_contribution_shannons": "116666666667",
+      "actual_outputs_shannons": [
+        "89433333333",
+        "122766666667"
+      ]
+    },
+    {
+      "label": "refund_before_late_publication",
+      "hash": "0xe007fcf118e49f8f3f9b1895a67d3fd0ee05e529499c3eaa67d46040c83a1b87",
+      "senior_contribution_shannons": "83333333333",
+      "junior_contribution_shannons": "116666666667",
+      "actual_outputs_shannons": [
+        "89433333333",
+        "122766666667"
+      ]
+    }
+  ]
+}

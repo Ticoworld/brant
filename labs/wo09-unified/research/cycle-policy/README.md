@@ -1,0 +1,1 @@
+Official CKB source reference: nervosnetwork/ckb v0.210.0. Used only to investigate configured max_tx_verify_cycles behavior. process.rs explicitly routes transactions above that configured value to a verification queue. Source observations do not replace native committed status. No pool configuration has been changed in these runs.

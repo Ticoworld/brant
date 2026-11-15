@@ -1,0 +1,16 @@
+{
+  "at_utc": "2026-11-03T08:41:02.410161+00:00",
+  "url": "https://data-api.binance.vision/api/v3/ticker/bookTicker?symbol=CKBUSDT",
+  "method": "GET",
+  "request_body": null,
+  "classification": "PUBLIC_READ_ONLY_RESPONSE_NOT_EXECUTION",
+  "status": 200,
+  "server_date": "Tue, 03 Nov 2026 08:41:03 GMT",
+  "body": {
+    "symbol": "CKBUSDT",
+    "bidPrice": "0.00115100",
+    "bidQty": "743880.00000000",
+    "askPrice": "0.00115300",
+    "askQty": "1302484.00000000"
+  }
+}

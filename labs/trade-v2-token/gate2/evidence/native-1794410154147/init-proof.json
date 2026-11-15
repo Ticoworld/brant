@@ -1,0 +1,52 @@
+{
+  "active_owners_after": 1,
+  "active_owners_before": 0,
+  "contract_witness": {
+    "bytes": 111,
+    "encoding": "TMS1/version/op/count/reserved/proof_len/owner-oldValue-newValue/proof",
+    "hex": "0x544d53310100010003000000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000010000000000000000000000000000004c4f00"
+  },
+  "domain": {
+    "custody_marker_type_hash": "0xee52d614eaaa9df27d86ac470181aa17fdcf6633b70539dcdfbfb8a735a0280d",
+    "genesis_hash": "0x5c3c260b88ed55984d9337d7fe95b3dbef9529c27a0e17688f2bec56c253659f",
+    "market_script_hash": "0x9d2cd4a1296a18cd2a9ecd609c97f31d15f6e91cbbfc021c1a1e3283892871cd",
+    "xudt_type_script_hash": "0xbcd0e5135ca8a0026b382556756bf7cf76ddac5c4291ff4ce359583a06a6371a"
+  },
+  "format": "trade-v2-smt-transition-v1",
+  "key_order": "sparse-merkle-tree-H256-Ord",
+  "new_root": "0x535a9987657a8ca9b8cf5f0a7cf6bd7e85ac89cec950fbcfd5198ab480c2a118",
+  "old_root": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "operation": 0,
+  "proof": {
+    "bytes": 3,
+    "csmt_new_root_verified": true,
+    "csmt_old_root_verified": true,
+    "encoding": "Nervos sparse-merkle-tree CompiledMerkleProof opcodes",
+    "hex": "0x4c4f00",
+    "new_root_verified": true,
+    "old_root_verified": true
+  },
+  "registered_records_before": 0,
+  "total_after": "7",
+  "total_before": "0",
+  "tree": "nervos-sparse-merkle-tree-0.6.1",
+  "tree_hash_personalization": "ckb-default-hash",
+  "updates": [
+    {
+      "key": "0x3330e8ad2c3a9fc1a699cbb415584856c935021136ccbcbc9efc50fbca0e61e6",
+      "new": {
+        "active": true,
+        "balance": "7",
+        "revision": "0"
+      },
+      "new_value": "0x0700000000000000000000000000000001000000000000000000000000000000",
+      "old": {
+        "active": false,
+        "balance": "0",
+        "revision": "0"
+      },
+      "old_value": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "owner_lock_hash": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38"
+    }
+  ]
+}

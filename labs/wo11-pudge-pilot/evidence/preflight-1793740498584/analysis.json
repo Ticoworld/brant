@@ -1,0 +1,91 @@
+{
+  "pins": [
+    {
+      "name": "Secp256k1Blake160",
+      "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      "hashType": "type",
+      "deployed_data_hash": "0x709f3fda12f561cfacf92273c57a98fede188a3f1a59b1f888d113f9cce08649",
+      "code_bytes": 52048,
+      "code_cell_lock": {
+        "args": "0x",
+        "code_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "hash_type": "data"
+      },
+      "qualified_for_market": true
+    },
+    {
+      "name": "OmniLock",
+      "codeHash": "0xf329effd1c475a2978453c8600e1eaf0bc2087ee093c3ee64cc96ec6847752cb",
+      "hashType": "type",
+      "deployed_data_hash": "0x6b29b6f10346b43c540e53806ba88ba0fe3a0c3a29d7448ef555840c8f8318fa",
+      "code_bytes": 139936,
+      "code_cell_lock": {
+        "args": "0x9c26427b733e19f774e74312382946db9548093a",
+        "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hash_type": "type"
+      },
+      "qualified_for_market": false
+    },
+    {
+      "name": "JoyId",
+      "codeHash": "0xd23761b364210735c19c60561d213fb3beae2fd6172743719eff6920e020baac",
+      "hashType": "type",
+      "deployed_data_hash": "0xd2c0f2f621a337007e046f0ed65f8fe29112c32a00ea1e43c2f8059fd42ca6d7",
+      "code_bytes": 100336,
+      "code_cell_lock": {
+        "args": "0xc13fd4f1bd05834ebf448685e6d086140462dc10",
+        "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hash_type": "type"
+      },
+      "qualified_for_market": false
+    },
+    {
+      "name": "AnyoneCanPay",
+      "codeHash": "0x3419a1c09eb2567f6552ee7a8ecffd64155cffe0f1796e6e61ec088d740c1356",
+      "hashType": "type",
+      "deployed_data_hash": "0xcd69ba816f7471e59110058aa37387c362ed9a240cd178f7bb1ecee386cb31e6",
+      "code_bytes": 66048,
+      "code_cell_lock": {
+        "args": "0x547683f9cbd361a9b4e043ac49c65ce480167945",
+        "code_hash": "0x5c5069eb0857efc65e1bca0c07df34c31663b3622fd3876c876320fc9634e2a8",
+        "hash_type": "type"
+      },
+      "qualified_for_market": false
+    },
+    {
+      "name": "PWLock",
+      "codeHash": "0x58c5f491aba6d61678b7cf7edf4910b1f5e00ec0cde2f42e0abb4fd9aff25a63",
+      "hashType": "type",
+      "deployed_data_hash": "0xeffe377419256d150d68368d7cb5731edad39d1805a8c2c73ce8e9615b9f9878",
+      "code_bytes": 79320,
+      "code_cell_lock": {
+        "args": "0xca911d8850e55caabe27c1fbf90b522db10774bc",
+        "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+        "hash_type": "type"
+      },
+      "qualified_for_market": false
+    }
+  ],
+  "historical_body_hash_verified": true,
+  "witness_count": 7,
+  "capacity_rule": "8+33+args_bytes CKB for empty-type/data wallet Cell; derive from exact supported script",
+  "funds": {
+    "scope": "Exact selected fee/one-input unspendable code deployment and 2-owner default market; analytical budgets, not funded Pudge transactions",
+    "deployment_code_ckb": "17889",
+    "deployment_transaction_bytes_reference": 18288,
+    "observed_median_shannons_per_1000_bytes": "19685",
+    "median_sized_fee_shannons": "360000",
+    "selected_deployment_fee_shannons": "1000000",
+    "standalone_deploy_input_shannons": "1795001000000",
+    "selected_market_fee_shannons": "100000",
+    "market_creation_input_shannons": "38300100000",
+    "alice_combined_code_market_contribution_input_shannons": "1827213700000",
+    "bob_contribution_and_purchase_input_shannons": "6113700000",
+    "assumptions": [
+      "Alice is code funder, market funder, creator and first contributor; Bob second contributor and buyer",
+      "0.125 CKB contribution each; 0.01 CKB consideration; all normal secp replacement Cells retain61CKB",
+      "Partial and full redemption fees come from gross claim payouts; final closure fee from returned cushion",
+      "If exact deployment inputs/outputs/witnesses or fee policy differ, recalculate; median is a mining estimate, not a relay promise"
+    ]
+  }
+}

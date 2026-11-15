@@ -1,0 +1,154 @@
+[
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 3,
+    "padded_leaves": 4,
+    "depth": 2,
+    "representation": "mutable_root",
+    "cell_capacity_shannons": "10500000000",
+    "state_bytes": 32,
+    "witness_bytes": 136,
+    "transaction_bytes": 729,
+    "cycles": 1676487,
+    "hash": "0x630088aa6e9119a45e80c0dd2b858841a0d15c552ade98cb14a1d8a81e31d617",
+    "initial_published_digest_bytes": 128,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 3,
+    "padded_leaves": 4,
+    "depth": 2,
+    "representation": "immutable_root_plus_bitmap",
+    "cell_capacity_shannons": "10600000000",
+    "state_bytes": 33,
+    "witness_bytes": 104,
+    "transaction_bytes": 698,
+    "cycles": 1676036,
+    "hash": "0x8f9f4b179faefe979d3a812d2596e50d529de9d00f27609c5d5a7d2d06a2288d",
+    "initial_published_digest_bytes": 128,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 16,
+    "padded_leaves": 16,
+    "depth": 4,
+    "representation": "mutable_root",
+    "cell_capacity_shannons": "10500000000",
+    "state_bytes": 32,
+    "witness_bytes": 200,
+    "transaction_bytes": 793,
+    "cycles": 1721127,
+    "hash": "0x50c0973eb4961398a58ee0bf39ab4d5aa26018b5c70ad58a1f60ab32bc6fa99a",
+    "initial_published_digest_bytes": 512,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 16,
+    "padded_leaves": 16,
+    "depth": 4,
+    "representation": "immutable_root_plus_bitmap",
+    "cell_capacity_shannons": "10700000000",
+    "state_bytes": 34,
+    "witness_bytes": 168,
+    "transaction_bytes": 763,
+    "cycles": 1637966,
+    "hash": "0x1a03fb86130b3b99931df16518796cc6d023569100c1ddaac733e5e3a02f0995",
+    "initial_published_digest_bytes": 512,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 100,
+    "padded_leaves": 128,
+    "depth": 7,
+    "representation": "mutable_root",
+    "cell_capacity_shannons": "10500000000",
+    "state_bytes": 32,
+    "witness_bytes": 296,
+    "transaction_bytes": 889,
+    "cycles": 1713923,
+    "hash": "0x8c524924325b9ba086208ded9692f5cb6e3f23a6373b22b6c61cf5a0928c7bb3",
+    "initial_published_digest_bytes": 4096,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 100,
+    "padded_leaves": 128,
+    "depth": 7,
+    "representation": "immutable_root_plus_bitmap",
+    "cell_capacity_shannons": "12100000000",
+    "state_bytes": 48,
+    "witness_bytes": 264,
+    "transaction_bytes": 873,
+    "cycles": 1693202,
+    "hash": "0xc4db4c6b4f40a1a58b4cc74c7ec5a3c9681a43bc70025b204b7be8cb525f2893",
+    "initial_published_digest_bytes": 4096,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 1000,
+    "padded_leaves": 1024,
+    "depth": 10,
+    "representation": "mutable_root",
+    "cell_capacity_shannons": "10500000000",
+    "state_bytes": 32,
+    "witness_bytes": 392,
+    "transaction_bytes": 985,
+    "cycles": 1769206,
+    "hash": "0x216037192523afb6147c725a13c4f5f1cfda6c09ad1de00d016562702d143509",
+    "initial_published_digest_bytes": 32768,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  },
+  {
+    "classification": "NATIVE_CRYPTOGRAPHIC_KERNEL_ONLY",
+    "count": 1000,
+    "padded_leaves": 1024,
+    "depth": 10,
+    "representation": "immutable_root_plus_bitmap",
+    "cell_capacity_shannons": "23300000000",
+    "state_bytes": 160,
+    "witness_bytes": 360,
+    "transaction_bytes": 1081,
+    "cycles": 1713954,
+    "hash": "0x38a04365c103384dab72f76020181f5cf547f4cfc6ae392f5b68066d71872525",
+    "initial_published_digest_bytes": 32768,
+    "limitations": [
+      "No financial formation or authorized claim assignment semantics",
+      "No closure implemented",
+      "Leaf digests only; financial records not represented"
+    ]
+  }
+]

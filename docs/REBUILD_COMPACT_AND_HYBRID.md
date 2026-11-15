@@ -1,0 +1,7 @@
+# WO05 compact intent and hybrid reconstruction
+
+VERIFIED native fixture: compact-1793544862572, 12 committed transactions and five expected rejections. Current compact binary 15,184 bytes (earlier uncached build 15,072) with source/build/content provenance retained. It executes real xUDT issuance, genuine signed CKB funding, funding-witness intent recovery from RPC, partial and full direct-token fills, owner-authorized recovery, atomic C/A2 exchange and tracked A2 owner recovery. Missing/wrong preimages, underpayment, wrong recipient and token inflation are rejected by actual VM scripts.
+
+The first compact run failed after successful recovery because the harness reused a spent wallet change outpoint. Corrected wallet tracking makes the full run pass; all raw runs remain. Cached repeated owner checks reduce redundant syscall work without removing checks; the updated binary is reexecuted and measured.
+
+The primitive is intentionally bounded and bid-only, with one input per unique commitment. It is a reusable isolated exchange constraint, not a rebuilt generic matching engine. Commitment uniqueness/global discovery, arbitrary-history authenticated signing, broad routing combinations, LO-01 and production security are not proven by these cases. These are explicit missing adversarial proofs in the registry. The historical C candidate's commercial superiority was never established; large equivalent resource comparisons are a separate experiment, not inferred from this successful path.

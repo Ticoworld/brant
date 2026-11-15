@@ -1,0 +1,55 @@
+{
+  "classification": "FRESH_PROCESS_CURRENT_PUBLIC_CELL_RECOVERY",
+  "transaction": "0x5d98545a4bee3527ada5d31a25f4631bfc1df668c89ab3f20da765f2cb73efd3",
+  "phase": "1",
+  "k": "17000000000",
+  "r": [
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "p": "12500000",
+      "b": "5000000"
+    },
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "p": "125000000",
+      "b": "100000000"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "p": "12500000000",
+      "b": "10000000000"
+    }
+  ],
+  "total": "10105000000",
+  "live": {
+    "block_hash": "0x49e274058a35b5e554e8b2987a5b81cef0e7fe58c22847bbbec27b8ea71b6436",
+    "cell": {
+      "data": {
+        "content": "0xe3c58f7ec6a3ab1f1d76ecbe60663f271c72a530a63adfa59dd5a268e74ac5dd",
+        "hash": "0x18387834d23615be92ee167eddeafae6ce035f6279a7917dd300181519bcdd12"
+      },
+      "output": {
+        "capacity": "0x64f957a40",
+        "lock": {
+          "args": "0xfbd4717d17fb7a4f9725cf7aae9113eeb866d26e7e1f1d023342dd598cb56d28",
+          "code_hash": "0x7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e",
+          "hash_type": "data1"
+        },
+        "type": {
+          "args": "0xfbd4717d17fb7a4f9725cf7aae9113eeb866d26e7e1f1d023342dd598cb56d28",
+          "code_hash": "0x7b68b3bb705f16dc37d963b6683a6b4937a8b0f3d3cb913c6a2b40694040989e",
+          "hash_type": "data1"
+        }
+      }
+    },
+    "status": "live"
+  },
+  "committed": {
+    "block_hash": "0x49e274058a35b5e554e8b2987a5b81cef0e7fe58c22847bbbec27b8ea71b6436",
+    "block_number": "0x2c",
+    "reason": null,
+    "status": "committed",
+    "tx_index": "0x1"
+  },
+  "elapsed_source": "current transaction witness plus current live output root; no local state or historical replay database"
+}

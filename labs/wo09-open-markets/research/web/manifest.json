@@ -1,0 +1,144 @@
+[
+  {
+    "id": "uniswap-launcher",
+    "url": "https://developers.uniswap.org/docs/liquidity/liquidity-launchpad/overview",
+    "requested_at": "2026-11-02T05:20:58.296137+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://developers.uniswap.org/docs/liquidity/liquidity-launchpad/overview",
+    "content_type": "text/html",
+    "sha256": "7ba5fd2a49c9ccbe029cecfd590e6bb3727886ea370016369a2766b540a5b1d7",
+    "bytes": 319310
+  },
+  {
+    "id": "baseline",
+    "url": "https://www.baseline.markets/faq",
+    "requested_at": "2026-11-02T05:20:58.297105+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://www.baseline.markets/faq",
+    "content_type": "text/html; charset=utf-8",
+    "sha256": "9d1e005b9d5e32fc8e929e73f4c7000c7ececb640007a7b6a38f74b6ccfc0f05",
+    "bytes": 103545
+  },
+  {
+    "id": "nirvana",
+    "url": "https://docs.nirvana.finance/",
+    "requested_at": "2026-11-02T05:20:58.297697+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://docs.nirvana.finance/s1-overview/p1-introduction",
+    "content_type": "text/html; charset=utf-8",
+    "sha256": "c62f733ae981439977913ed542af78dc786de923169df6b8c6b45253671703aa",
+    "bytes": 131493
+  },
+  {
+    "id": "ohrex",
+    "url": "https://talk.nervos.org/t/ohrex-protocol-decentralized-token-launchpad-with-auto-dex-deployment-on-ckb/10162.json",
+    "requested_at": "2026-11-02T05:20:58.298317+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://talk.nervos.org/t/ohrex-protocol-decentralized-token-launchpad-with-auto-dex-deployment-on-ckb/10162.json",
+    "content_type": "application/json; charset=utf-8",
+    "sha256": "d9cafc44a1f8525373c4827347131f58afe2cb2225989553cac4f61130adc58d",
+    "bytes": 30648
+  },
+  {
+    "id": "crowdcell-search",
+    "url": "https://talk.nervos.org/search.json?q=CrowdCell",
+    "requested_at": "2026-11-02T05:20:58.298838+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://talk.nervos.org/search.json?q=CrowdCell",
+    "content_type": "application/json; charset=utf-8",
+    "sha256": "dd24262264591eceb68f41954ff863402a1bba437601d46c443582b1e40d3660",
+    "bytes": 13797
+  },
+  {
+    "id": "ckb-bonding-search",
+    "url": "https://talk.nervos.org/search.json?q=bonding%20curve",
+    "requested_at": "2026-11-02T05:20:58.299334+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://talk.nervos.org/search.json?q=bonding%20curve",
+    "content_type": "application/json; charset=utf-8",
+    "sha256": "58e5fc2914ed649a64338fd671080d3b072808d0eb03d2829c414418c225ad06",
+    "bytes": 13556
+  },
+  {
+    "id": "lucent-search",
+    "url": "https://talk.nervos.org/search.json?q=Lucent",
+    "requested_at": "2026-11-02T05:20:59.163991+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 429,
+    "error": "HTTP Error 429: Too Many Requests"
+  },
+  {
+    "id": "ckbswap-search",
+    "url": "https://talk.nervos.org/search.json?q=CKBSwap",
+    "requested_at": "2026-11-02T05:20:59.252287+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 429,
+    "error": "HTTP Error 429: Too Many Requests"
+  },
+  {
+    "id": "remit-search",
+    "url": "https://talk.nervos.org/search.json?q=Remit",
+    "requested_at": "2026-11-02T05:20:59.324576+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 429,
+    "error": "HTTP Error 429: Too Many Requests"
+  },
+  {
+    "id": "sluice-search",
+    "url": "https://talk.nervos.org/search.json?q=Sluice",
+    "requested_at": "2026-11-02T05:20:59.338711+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 429,
+    "error": "HTTP Error 429: Too Many Requests"
+  },
+  {
+    "id": "deribit-fees",
+    "url": "https://www.deribit.com/pages/information/fees",
+    "requested_at": "2026-11-02T05:20:59.411188+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://www.deribit.com/kb/fees",
+    "content_type": "text/html",
+    "sha256": "dbb9ee756ad14de2e406f294e80ef7a537faa5e80542a106f39d7a831a5c94fb",
+    "bytes": 17542
+  },
+  {
+    "id": "deribit-api",
+    "url": "https://docs.deribit.com/",
+    "requested_at": "2026-11-02T05:20:59.552663+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://docs.deribit.com/",
+    "content_type": "text/html; charset=utf-8",
+    "sha256": "f1a9c70d49b70674355e8783b14047dfcb6365c8cc95f5bde5299e7106c3b324",
+    "bytes": 303983
+  },
+  {
+    "id": "ckb-price",
+    "url": "https://api.coingecko.com/api/v3/simple/price?ids=nervos-network&vs_currencies=usd&include_last_updated_at=true",
+    "requested_at": "2026-11-02T05:20:59.660319+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://api.coingecko.com/api/v3/simple/price?ids=nervos-network&vs_currencies=usd&include_last_updated_at=true",
+    "content_type": "application/json; charset=utf-8",
+    "sha256": "43cb7d2a82637822fd556d9dc4d131406d5fe3f3331c2ae871e21f5fbc948bf0",
+    "bytes": 66
+  },
+  {
+    "id": "ckb-book",
+    "url": "https://api.gateio.ws/api/v4/spot/order_book?currency_pair=CKB_USDT&limit=10",
+    "requested_at": "2026-11-02T05:20:59.689643+00:00",
+    "source_role": "Public reference or market snapshot; no customer-demand inference",
+    "status": 200,
+    "final_url": "https://api.gateio.ws/api/v4/spot/order_book?currency_pair=CKB_USDT&limit=10",
+    "content_type": "application/json",
+    "sha256": "129eedd1d065cc3522ac595f8cdaea84a6403f6e5abd32b83b3a7aa37620c6fc",
+    "bytes": 507
+  }
+]

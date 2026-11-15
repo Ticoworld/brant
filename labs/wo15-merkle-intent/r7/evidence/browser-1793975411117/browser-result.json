@@ -1,0 +1,99 @@
+{
+  "hash": "0xeb5b20f6f323b63d2f75c649013a98079eb2f0030bd6ec9a7da5db95e1f5fc91",
+  "status": "Submitted 0xeb5b20f6f323b63d2f75c649013a98079eb2f0030bd6ec9a7da5db95e1f5fc91",
+  "transaction": {
+    "cycles": "0x4c2a55",
+    "fee": null,
+    "min_replace_fee": null,
+    "time_added_to_pool": null,
+    "transaction": {
+      "cell_deps": [
+        {
+          "dep_type": "dep_group",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0xbde5adf5e24d9af6093e829769654850ddd2f067a1185b566a17f5b5f66d1795"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0x4bb9be2a35ee23dc92752734e4f8c5df0e597f9b07c1dca9d61c02dcc24180ef"
+          }
+        }
+      ],
+      "hash": "0xeb5b20f6f323b63d2f75c649013a98079eb2f0030bd6ec9a7da5db95e1f5fc91",
+      "header_deps": [],
+      "inputs": [
+        {
+          "previous_output": {
+            "index": "0x0",
+            "tx_hash": "0xd3d4ddb58acbd0a52623034afc6a64ff7f7b6bdad07c0bc0be1badde132d4865"
+          },
+          "since": "0x0"
+        },
+        {
+          "previous_output": {
+            "index": "0x1",
+            "tx_hash": "0x4bb9be2a35ee23dc92752734e4f8c5df0e597f9b07c1dca9d61c02dcc24180ef"
+          },
+          "since": "0x0"
+        }
+      ],
+      "outputs": [
+        {
+          "capacity": "0x84fd382c0",
+          "lock": {
+            "args": "0x560d7b1f19808115245ca259a22182a67de12a5b1b166b7cd461c4e92559a3e7",
+            "code_hash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+            "hash_type": "data1"
+          },
+          "type": {
+            "args": "0x560d7b1f19808115245ca259a22182a67de12a5b1b166b7cd461c4e92559a3e7",
+            "code_hash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+            "hash_type": "data1"
+          }
+        },
+        {
+          "capacity": "0x1dcd65000",
+          "lock": {
+            "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        },
+        {
+          "capacity": "0x23824a81a15e20",
+          "lock": {
+            "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "outputs_data": [
+        "0x54434d30303033000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7aed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d0022013e0800000001000000000000000000000000000000c00b5a1600000000c060d21100000000030000000000000003000000000000001667e67049795d2ea08c51b40d92f00d112d5f5b2bab0c5ecb3852d9b77138c220bcbe000000000060343c0200000000000000000000000061f02db4ef8f881fdea9a778abd4854d7f28192b765445b69b9de4b73960d18a",
+        "0x",
+        "0x"
+      ],
+      "version": "0x0",
+      "witnesses": [
+        "0x",
+        "0x55000000100000005500000055000000410000005d0ec0fda138ef0a0dfe6c339e5610b87f7f3548900271c01c52dec04d7ed03821b1f9607a81cab56e070ad47911e652112b6ba9d1c36e97700c7880f494e27200",
+        "0x0800000000000000010000000000000000000000000000000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7405973070000000000e1f50500000000010000000000000059297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b405973070000000000e1f505000000000200000000000000a4631147d752783a255ef918f96017898d1d281f95008da0893ccfaa390570cf4e2a083c2822979c1933e013919619b4348651e76d6617e75941ec866693bc930050d6dc010000000279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798dc273557d116cd103b3819c3a03ed8586e7e14c0d96797cefdea79963821372e0bdf27553e4722d1e553c780963fa44eafaedd97762c6ebd45edd3c39b07be8401"
+      ]
+    },
+    "tx_status": {
+      "block_hash": "0xb7cd4552207c3876b5402a372e6f77607ed9666c70d8ce615e5b8ea576e82a01",
+      "block_number": "0x2a",
+      "reason": null,
+      "status": "committed",
+      "tx_index": "0x1"
+    }
+  },
+  "submissions": 1,
+  "pendingReload": true
+}

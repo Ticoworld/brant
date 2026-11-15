@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {ccc} from '@ckb-ccc/core';
+import {deriveMarketIdentity} from '../lib/v2-engine/initialization.ts';
+import {prepareLocalInitializationStage} from '../lib/v2-engine/initialization-orchestrator.ts';
+const fixture=JSON.parse(fs.readFileSync(new URL('../../../labs/trade-v2-token/gate2/evidence/native-1794484243927/browser-bootstrap.json',import.meta.url),'utf8'));
+const a=fixture.scripts.owner.args,identity=deriveMarketIdentity({anchor:{txHash:'0x'+a.slice(2,66),index:'0x'+a.slice(66,74).match(/../g).reverse().join('')},genesis:fixture.genesis,base:1000000000n,step:100000000n,supply:2000n,codes:{market:fixture.hashes.market_smt,marker:fixture.hashes.marker_candidate,owner:fixture.hashes.owner_lineage_candidate,custody:fixture.hashes.custody_smt,custodyMarker:fixture.hashes.custody_marker,xudt:fixture.hashes.xudt}});
+const hash='0x'+'11'.repeat(32),depHash='0x'+'22'.repeat(32),lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type' as const,args:'0x'+'33'.repeat(20)},input={outPoint:{txHash:hash,index:'0x0'},capacity:500000000000n,lock,data:'0x'};
+const deps=[{outPoint:{txHash:depHash,index:'0x0'},dataHash:ccc.hashCkb('0x1234')}],params={identity,anchor:{txHash:'0x'+a.slice(2,66),index:'0x'+a.slice(66,74).match(/../g).reverse().join('')},inputs:[input],ownerCapacity:20000000000n,buyerCapacity:200000000000n,fee:100000n,secpDep:{outPoint:deps[0].outPoint,depType:'depGroup' as const}};
+const rpc=async(method:string,values:unknown[])=>method==='get_block_hash'?fixture.genesis:(values[0] as {tx_hash:string}).tx_hash===hash?{status:'live',cell:{output:{capacity:'0x'+input.capacity.toString(16),lock:{code_hash:lock.codeHash,hash_type:lock.hashType,args:lock.args}},data:{content:'0x'}}}:{status:'live',cell:{data:{content:'0x1234'}}};
+process.env.NEXT_PUBLIC_LOCAL_FIXTURE='1';Object.defineProperty(globalThis,'window',{value:{location:{hostname:'localhost'}},configurable:true});
+const reviewed=await prepareLocalInitializationStage(rpc,fixture.genesis,{stage:'setup',params},[input],deps);
+assert.equal(reviewed.stage,'setup');assert.equal(reviewed.transaction.outputs.length,3);
+await assert.rejects(()=>prepareLocalInitializationStage(rpc,'0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606',{stage:'setup',params},[input],deps),/Private/);
+await assert.rejects(()=>prepareLocalInitializationStage(rpc,fixture.genesis,{stage:'setup',params},[{...input,capacity:1n}],deps),/content/);
+await assert.rejects(()=>prepareLocalInitializationStage(rpc,fixture.genesis,{stage:'setup',params},[input],[]),/dependency/);
+console.log('Local initialization preparation checks passed');

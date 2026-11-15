@@ -1,0 +1,8 @@
+{
+  "alerts": [],
+  "chain": "ckb",
+  "difficulty": "0xa50046222dcf671",
+  "epoch": "0x7080362003b7b",
+  "is_initial_block_download": false,
+  "median_time": "0x1a1a090b032"
+}

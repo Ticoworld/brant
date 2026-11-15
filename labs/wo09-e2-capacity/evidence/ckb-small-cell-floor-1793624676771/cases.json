@@ -1,0 +1,12 @@
+[
+  {
+    "label": "0_1_ckb_ordinary_secp_output_rejected_by_live_ckb_occupied_capacity",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[0]): expected occupied capacity (0x16b969d00) <= capacity (0x989680))"
+  },
+  {
+    "label": "1_ckb_ordinary_secp_output_rejected_by_live_ckb_occupied_capacity",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[0]): expected occupied capacity (0x16b969d00) <= capacity (0x5f5e100))"
+  }
+]

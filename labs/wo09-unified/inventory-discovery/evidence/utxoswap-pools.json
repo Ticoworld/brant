@@ -1,0 +1,15 @@
+{
+  "at_utc": "2026-11-03T08:40:59.898778+00:00",
+  "url": "https://mainnet-api.utxoswap.xyz/utxo-swap/api/v1/sequencer/pools",
+  "method": "POST",
+  "request_body": {
+    "pageNo": 1,
+    "pageSize": 20,
+    "searchKey": "RUSD"
+  },
+  "classification": "PUBLIC_READ_ONLY_RESPONSE_NOT_EXECUTION",
+  "status": 403,
+  "body": {
+    "message": "Forbidden"
+  }
+}

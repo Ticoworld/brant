@@ -1,0 +1,101 @@
+{
+  "repository": "LusoCryptoLabs/Liquid-Cells",
+  "commit": "47492b51673c94635ab23de2c55477625e94ccbf",
+  "source_and_tests_modified": false,
+  "contract_target": "riscv64imac-unknown-none-elf",
+  "compiler": {
+    "name": "Zig",
+    "version": "0.14.1",
+    "archive_sha256": "24aeeec8af16c381934a6cd7d95c807a8cb2cf7df9fa40d359aa884195c4716c",
+    "adapter": "Maps --target=riscv64 to riscv64-freestanding and upstream C ISA rv64imc_zba_zbb_zbc_zbs to Zig -mcpu=baseline_rv64-a-f-d+zba+zbb+zbc+zbs -mabi=lp64. Clean rebuild required to avoid stale CARGO_TARGET artifacts.",
+    "upstream_ci_equivalence": false
+  },
+  "contract_binary": {
+    "sha256": "dcc6bf2708fef85c0f529ff62c5f745b399d08ec81b0b08ee9c34b13973c8925",
+    "format": "ELF 64-bit RISC-V RVC soft-float, statically linked, stripped",
+    "riscv_arch": "rv64imac_zba_zbb_zbc_zbs; no F/D attributes"
+  },
+  "harness": "upstream ckb-testtool 0.13.2 running unmodified test sources",
+  "suites": {
+    "forceexit": {
+      "passed": 7,
+      "failed": 0,
+      "log": "../evidence/liquid-cells-ckbvm-forceexit.log",
+      "exit_code": 0,
+      "log_sha256": "518812250a71e75befd44fa422cef5263fd9504d5299ae2b301622a3d7d3807d",
+      "exit_code_file": "../evidence/liquid-cells-ckbvm-forceexit.exit"
+    },
+    "withdrawal": {
+      "passed": 4,
+      "failed": 0,
+      "log": "../evidence/liquid-cells-ckbvm-withdrawal.log",
+      "exit_code": 0,
+      "log_sha256": "c9de7efc645484983f1ff349ddf6f647e37485db1ceed78230338459e592f19e",
+      "exit_code_file": "../evidence/liquid-cells-ckbvm-withdrawal.exit"
+    },
+    "anchor": {
+      "passed": 13,
+      "failed": 0,
+      "log": "../evidence/liquid-cells-ckbvm-anchor.log",
+      "exit_code": 0,
+      "log_sha256": "094376fa8b4cf4312de876f5bbfe488e226a42190e15fa954d7e1a302d43f5e8",
+      "exit_code_file": "../evidence/liquid-cells-ckbvm-anchor.exit"
+    }
+  },
+  "total": {
+    "passed": 24,
+    "failed": 0
+  },
+  "private_devnet_transaction": false,
+  "production_or_commercial_security_pass": false,
+  "remaining": "No real-epoch private-chain lifecycle, DA reconstruction from chain RPC, independent operator-loss recovery, or deployed contract identity check.",
+  "suite_log_sha256": {
+    "forceexit": "518812250a71e75befd44fa422cef5263fd9504d5299ae2b301622a3d7d3807d",
+    "withdrawal": "c9de7efc645484983f1ff349ddf6f647e37485db1ceed78230338459e592f19e",
+    "anchor": "094376fa8b4cf4312de876f5bbfe488e226a42190e15fa954d7e1a302d43f5e8",
+    "full_reproduction": "3348a25a552d0185bc5d8c097629acbe20aa5d68cc506422ccfb9e7cdc0c4a3c",
+    "successful_contract_build": "3348a25a552d0185bc5d8c097629acbe20aa5d68cc506422ccfb9e7cdc0c4a3c",
+    "elf_inspection": "c5c7e582e349c6b386d819de6b7299a4d0f243cf9b66a37c3c408d8846cc88b4"
+  },
+  "reproduction_script": "scripts/run-liquid-cells-ckbvm.sh",
+  "reproduction_script_initial_failure": {
+    "cause": "RUSTUP_HOME was not propagated to the isolated cargo invocation.",
+    "exit_code": 1,
+    "evidence_log": "../evidence/liquid-cells-ckbvm-reproduction-missing-rustup-home.log",
+    "correction": "Require TRADE_RUSTUP_HOME, export it as RUSTUP_HOME, rerun all suites.",
+    "rerun_exit_code": 0
+  },
+  "failed_native_toolchain_attempts": {
+    "host_target": "exit 101; no_std panic_handler missing",
+    "riscv_target_without_adapter": "exit 101; ckb-std could not find riscv64-unknown-elf-gcc",
+    "preserved_logs": [
+      "../evidence/liquid-cells-contract-host-build.log",
+      "../evidence/liquid-cells-contract-riscv-build.log"
+    ]
+  },
+  "superseded_toolchain_trials": [
+    {
+      "trial": "Initial generic Zig baseline included F/D; all 24 CKB-VM tests passed, but this exceeded upstream C ISA",
+      "binary_sha256": "01904ea491352242733c82d0439223d4af46f86e92e0d2a18825d53d0c59f05d",
+      "logs": [
+        "../evidence/liquid-cells-ckbvm-forceexit-broad-cpu.log",
+        "../evidence/liquid-cells-ckbvm-withdrawal-broad-cpu.log",
+        "../evidence/liquid-cells-ckbvm-anchor-broad-cpu.log"
+      ]
+    },
+    {
+      "trial": "Runner reused a cached broad binary before clean was added",
+      "exit_code": 0,
+      "log": "../evidence/liquid-cells-ckbvm-reproduction-cached-binary.log"
+    }
+  ],
+  "reproduction_script_first_failure": {
+    "cause": "isolated RUSTUP_HOME not propagated; corrected runner requires TRADE_RUSTUP_HOME",
+    "exit_code": 1,
+    "log": "../evidence/liquid-cells-ckbvm-reproduction-missing-rustup-home.log"
+  },
+  "superseded_by": {
+    "manifest": "research/liquid-cells-private-devnet-results.json",
+    "clarification": "This records the initial binary CKB-testtool result only; the binary later failed actual CKB 0.210.0 VM validation. The single-hart compatibility variant has separate CKB-testtool and actual private-devnet evidence."
+  }
+}

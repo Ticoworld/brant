@@ -1,0 +1,92 @@
+{
+  "a2": {
+    "hash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "outPoint": {
+      "txHash": "0xcd301ee5a21325e00ebf2a1feabf41ca24164441e6e7a949293c16835cf2b42d",
+      "index": "0x5"
+    },
+    "script": {
+      "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "xudt": {
+    "hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "outPoint": {
+      "txHash": "0xcd301ee5a21325e00ebf2a1feabf41ca24164441e6e7a949293c16835cf2b42d",
+      "index": "0x6"
+    },
+    "script": {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "ickb_logic": {
+    "hash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "outPoint": {
+      "txHash": "0xcd301ee5a21325e00ebf2a1feabf41ca24164441e6e7a949293c16835cf2b42d",
+      "index": "0x7"
+    },
+    "script": {
+      "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "owned_owner": {
+    "hash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+    "outPoint": {
+      "txHash": "0xcd301ee5a21325e00ebf2a1feabf41ca24164441e6e7a949293c16835cf2b42d",
+      "index": "0x8"
+    },
+    "script": {
+      "codeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "maturity_event": {
+    "hash": "0x340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08",
+    "outPoint": {
+      "txHash": "0x0b575e73df846ec9740dfd08595f442b6b16ebcf261acbac3b2a9db197befb6b",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x340fc15c36ae3fe7d913d5cfa2eb160433a169dcf0ca723919d2e58c36072b08",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 13912,
+    "occupied": "1395300000000"
+  },
+  "consumable_beneficiary": {
+    "hash": "0x3e33d6bde805f37b57c33525397110dc4f8bfe6a38504b264f47d25b19166bac",
+    "outPoint": {
+      "txHash": "0xee62a1b5093ee6a180d782bba14468c90ff02e9ae0bd5f9705758942838d30db",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x3e33d6bde805f37b57c33525397110dc4f8bfe6a38504b264f47d25b19166bac",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 13608,
+    "occupied": "1364900000000"
+  },
+  "consumable_risk": {
+    "hash": "0x6764b416374a04488c09383c528239a7d534af261af30a831b566ea821945727",
+    "outPoint": {
+      "txHash": "0x473d1dd9cb54d017ee5686ed553cf3c17f9b32698c20249ad64426f5721a76bf",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x6764b416374a04488c09383c528239a7d534af261af30a831b566ea821945727",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 15416,
+    "occupied": "1545700000000"
+  }
+}

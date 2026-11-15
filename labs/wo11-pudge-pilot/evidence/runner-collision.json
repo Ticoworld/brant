@@ -1,0 +1,8 @@
+{
+  "browser_run": "apps/trade-pilot/evidence/browser-native-1793740836043",
+  "overlapping_security_run": "regression-merkle-configured-security-1793740832927",
+  "qualification": "NOT_USED_FOR_PASS_COUNTS; shared19224port collision caused browser unknown outpoint; subsequent primary runs executed sequentially",
+  "primary_browser_run": "apps/trade-pilot/evidence/browser-native-1793740864353",
+  "primary_security": "regression-merkle-configured-security-1793740925311",
+  "primary_scale": "regression-merkle-configured-scale-1793740928296"
+}

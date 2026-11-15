@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { orderMessage, orderPayload, signOrder } from '../lib/v2-engine/order.ts';
+import { ccc } from '@ckb-ccc/core';
+const hash = (n: string) => '0x' + n.repeat(64);
+const terms = {genesis:hash('1'),market:hash('2'),asset:hash('3'),custody:hash('4'),seller:hash('5'),revision:2n,quantity:3n,minimum:7000000000n,payout:hash('6'),orderId:hash('7')};
+const signer = new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(), '0x'+'01'.padStart(64,'0'));
+terms.seller = (await signer.getRecommendedAddressObj()).script.hash();
+const signed = await signOrder(terms, signer);
+assert.equal(signed.message, orderMessage(terms));
+const encoded = orderPayload(terms, signed.publicKey, signed.signature);
+assert.equal((encoded.length-2)/2, 210);
+assert.equal(encoded.slice(2,18), '0300000000000000');
+assert.throws(()=>orderMessage({...terms, quantity:0n}));
+assert.throws(()=>orderPayload(terms,signed.publicKey,'0x00'));
+console.log('Gate 2 signed order message and payload checks passed');

@@ -1,0 +1,26 @@
+[
+  {
+    "profile": "ordinary-A2",
+    "transactions": 5,
+    "bytes": 3926,
+    "cycles": "8548426",
+    "fees": "5000000",
+    "masterOccupied": "9400000000",
+    "minimumPairOccupied": "28900000000",
+    "deadline": "42",
+    "lateFillBlock": "0x30",
+    "note": "Same two partial customer fills and owner recovery; mining time not a fee/cycle saving."
+  },
+  {
+    "profile": "bounded-owner-commitment",
+    "transactions": 5,
+    "bytes": 3995,
+    "cycles": "8571105",
+    "fees": "5000000",
+    "masterOccupied": "10200000000",
+    "minimumPairOccupied": "29700000000",
+    "deadline": "82",
+    "lateFillBlock": "0x58",
+    "note": "Same two partial customer fills and owner recovery; mining time not a fee/cycle saving."
+  }
+]

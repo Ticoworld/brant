@@ -1,0 +1,325 @@
+{
+  "at": "2026-11-04T10:57:50.892Z",
+  "qualification": "UI PRESENTATION FIXTURES ARE NOT WALLET OR CHAIN EXECUTION",
+  "axe": {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.3/axe.min.js",
+    "sha256": "880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb"
+  },
+  "checks": [
+    "production markets 1440 reflow",
+    "Positions1440 reflow",
+    "Create market1440 reflow",
+    "Activity1440 reflow",
+    "production markets 768 reflow",
+    "Positions768 reflow",
+    "Create market768 reflow",
+    "Activity768 reflow",
+    "production markets 375 reflow",
+    "Positions375 reflow",
+    "Create market375 reflow",
+    "Activity375 reflow",
+    "Real dynamic market route and reload fail closed without a deployment; Markets is default, no Trade tab",
+    "Production fixtures disabled; creation and discovery unavailable without deployment",
+    "market 1440 reflow",
+    "selected position 1440 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 1440",
+    "market 768 reflow",
+    "selected position 768 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 768",
+    "market 375 reflow",
+    "selected position 375 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 375",
+    "Distinct market uses its own funding state; owner refund and empty-slot contribution are contextual",
+    "disconnected reflow",
+    "disconnected bounded presentation state",
+    "unsupported reflow",
+    "unsupported bounded presentation state",
+    "nodeploy reflow",
+    "nodeploy bounded presentation state",
+    "empty reflow",
+    "empty bounded presentation state",
+    "loading reflow",
+    "loading bounded presentation state",
+    "rpc reflow",
+    "rpc bounded presentation state",
+    "stale reflow",
+    "stale bounded presentation state",
+    "missing-history reflow",
+    "missing-history bounded presentation state",
+    "pending reflow",
+    "pending bounded presentation state",
+    "committed reflow",
+    "committed bounded presentation state",
+    "funding-ready reflow",
+    "funding-ready bounded presentation state",
+    "settled reflow",
+    "settled bounded presentation state",
+    "maturity reflow",
+    "maturity bounded presentation state",
+    "partial reflow",
+    "partial bounded presentation state",
+    "Offer file exchange and exact review dialog/focus (labelled fixture, no signing)",
+    "No page errors or public broadcast"
+  ],
+  "accessibility": [
+    {
+      "label": "production markets 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "production markets 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "production markets 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "fixture directory 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 21
+    },
+    {
+      "label": "selected position 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 25
+    },
+    {
+      "label": "fixture directory 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 21
+    },
+    {
+      "label": "selected position 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26
+    },
+    {
+      "label": "fixture directory 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 21
+    },
+    {
+      "label": "selected position 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 25
+    },
+    {
+      "label": "disconnected",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 21
+    },
+    {
+      "label": "unsupported",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 21
+    },
+    {
+      "label": "nodeploy",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "empty",
+      "violations": [],
+      "incomplete": [],
+      "passes": 21
+    },
+    {
+      "label": "loading",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "rpc",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "stale",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "missing-history",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "pending",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "committed",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "funding-ready",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 21
+    },
+    {
+      "label": "settled",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 20
+    },
+    {
+      "label": "maturity",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 25
+    },
+    {
+      "label": "partial",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 25
+    },
+    {
+      "label": "paid assignment review",
+      "violations": [],
+      "incomplete": [],
+      "passes": 14
+    }
+  ],
+  "pageErrors": [],
+  "rpcMethods": [],
+  "complete": true
+}

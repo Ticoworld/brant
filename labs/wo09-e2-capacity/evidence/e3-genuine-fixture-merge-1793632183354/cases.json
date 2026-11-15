@@ -1,0 +1,22 @@
+[
+  {
+    "label": "stale_cp1_proof_rejected_against_cp4_live_anchor",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 62 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#62 })"
+  },
+  {
+    "label": "1000_shannon_owner_exit_rejected_by_real_node_or_contract",
+    "method": "send_transaction",
+    "error": "TransactionFailedToVerify: Verification failed Transaction(InsufficientCellCapacity(Outputs[1]): expected occupied capacity (0x16b969d00) <= capacity (0x3e8))"
+  },
+  {
+    "label": "sponsored_standard_cell_rejected_by_exact_balance_payout_rule",
+    "method": "estimate_cycles",
+    "error": "TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code 67 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/a9e30b4e0bad4e169393daa0c2601fd109b8313f0d8b0158d5a1789ddbe0e92b.html#67 })"
+  },
+  {
+    "label": "duplicate_spent_anchor_rejected",
+    "method": "send_transaction",
+    "error": "TransactionFailedToResolve: Resolve failed Unknown(OutPoint(0xf66ae4384c33be857ff11ad4b6cd1a9d354675ff323c66d68c6066dbabb28a7200000000))"
+  }
+]

@@ -1,0 +1,174 @@
+{
+  "at": "2026-11-04T10:47:19.421Z",
+  "qualification": "UI PRESENTATION FIXTURES ARE NOT WALLET OR CHAIN EXECUTION",
+  "axe": {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.3/axe.min.js",
+    "sha256": "880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb"
+  },
+  "checks": [
+    "production markets 1440 reflow",
+    "Positions1440 reflow",
+    "Create market1440 reflow",
+    "Activity1440 reflow",
+    "production markets 768 reflow",
+    "Positions768 reflow",
+    "Create market768 reflow",
+    "Activity768 reflow",
+    "production markets 375 reflow",
+    "Positions375 reflow",
+    "Create market375 reflow",
+    "Activity375 reflow",
+    "Real dynamic market route and reload fail closed without a deployment; Markets is default, no Trade tab",
+    "Production fixtures disabled; creation and discovery unavailable without deployment",
+    "market 1440 reflow",
+    "selected position 1440 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 1440",
+    "market 768 reflow",
+    "selected position 768 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 768",
+    "market 375 reflow",
+    "selected position 375 reflow",
+    "Market → own position / other owner, exact fee, focus and reflow 375"
+  ],
+  "accessibility": [
+    {
+      "label": "production markets 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "production markets 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "production markets 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "Positions375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "Create market375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 15
+    },
+    {
+      "label": "fixture directory 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 21
+    },
+    {
+      "label": "selected position 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 25
+    },
+    {
+      "label": "fixture directory 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 21
+    },
+    {
+      "label": "selected position 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 26
+    },
+    {
+      "label": "fixture directory 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "market 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 21
+    },
+    {
+      "label": "selected position 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 25
+    }
+  ],
+  "pageErrors": [],
+  "rpcMethods": [],
+  "failure": "TimeoutError: locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Market financial state' }).getByText('0.025', { exact: true }) to be visible\u001b[22m\n"
+}

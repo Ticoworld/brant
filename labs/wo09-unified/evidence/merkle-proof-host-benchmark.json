@@ -1,0 +1,38 @@
+{
+  "classification": "HOST_ONLY_SYNTHETIC_STATE_BENCHMARK_NOT_NATIVE_LIFECYCLE",
+  "node": "v24.19.0",
+  "results": [
+    {
+      "n": 3,
+      "host_tree_build_ms": 1.3891809999999936,
+      "all_proofs_generate_and_verify_ms": 0.5800320000000028,
+      "proof_path_bytes_each": 64,
+      "rss_bytes": 43368448,
+      "peak_rss_bytes": 43499520
+    },
+    {
+      "n": 16,
+      "host_tree_build_ms": 1.9936270000000036,
+      "all_proofs_generate_and_verify_ms": 1.3858939999999933,
+      "proof_path_bytes_each": 128,
+      "rss_bytes": 44023808,
+      "peak_rss_bytes": 44023808
+    },
+    {
+      "n": 100,
+      "host_tree_build_ms": 11.997151000000002,
+      "all_proofs_generate_and_verify_ms": 8.031846999999999,
+      "proof_path_bytes_each": 224,
+      "rss_bytes": 46514176,
+      "peak_rss_bytes": 46514176
+    },
+    {
+      "n": 1000,
+      "host_tree_build_ms": 124.83154799999998,
+      "all_proofs_generate_and_verify_ms": 84.35444900000002,
+      "proof_path_bytes_each": 320,
+      "rss_bytes": 54185984,
+      "peak_rss_bytes": 54644736
+    }
+  ]
+}

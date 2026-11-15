@@ -1,0 +1,162 @@
+{
+  "classification": "INDEPENDENT_OFFLINE_NATIVE_UTXO_AND_MERKLE_REPLAY",
+  "committed_transactions": 10,
+  "leaf_updates": 6,
+  "total_paid_fees_shannons": "1900000",
+  "markets": [
+    {
+      "id": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "closed": true,
+      "transactions": 9,
+      "market_fees_shannons": "900000",
+      "remaining_backing": "0"
+    }
+  ],
+  "rows": [
+    {
+      "label": "browser_CCC_create",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 0,
+      "updates": 0,
+      "bytes": 802,
+      "cycles": 1666731,
+      "fee_shannons": "100000",
+      "inputs": 1,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "browser_CCC_enroll_0",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 1,
+      "updates": 1,
+      "bytes": 990,
+      "cycles": 1787222,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_enroll_1",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 1,
+      "updates": 1,
+      "bytes": 990,
+      "cycles": 1788606,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_creator_activation",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 2,
+      "updates": 0,
+      "bytes": 854,
+      "cycles": 1659422,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    },
+    {
+      "label": "browser_CCC_atomic_paid_assignment_two_signers",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 4,
+      "updates": 1,
+      "bytes": 1236,
+      "cycles": 3458288,
+      "fee_shannons": "100000",
+      "inputs": 3,
+      "outputs": 3,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_partial_owner_redemption",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 3,
+      "updates": 1,
+      "bytes": 990,
+      "cycles": 1777520,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_full_redemption_0",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 3,
+      "updates": 1,
+      "bytes": 990,
+      "cycles": 1781542,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_full_redemption_1",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 3,
+      "updates": 1,
+      "bytes": 990,
+      "cycles": 1804058,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 2,
+      "extra_witness_bytes": 152,
+      "witness_chunks": [
+        152
+      ]
+    },
+    {
+      "label": "browser_CCC_lawful_closure",
+      "market": "0x8d26c3360a8c27a74ebd6b60e75a314050a0ab24fbf09ce3f057d693899e3af0",
+      "n": 2,
+      "op": 7,
+      "updates": 0,
+      "bytes": 464,
+      "cycles": 1719244,
+      "fee_shannons": "100000",
+      "inputs": 2,
+      "outputs": 1,
+      "extra_witness_bytes": 16,
+      "witness_chunks": [
+        16
+      ]
+    }
+  ]
+}

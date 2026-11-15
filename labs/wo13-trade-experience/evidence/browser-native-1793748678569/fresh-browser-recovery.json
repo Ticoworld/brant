@@ -1,0 +1,15 @@
+{
+  "root": "0xe64cd46b8bceda00ee1d2259a926cabaae69de8e89f809eae407323cc1f8699c",
+  "records": [
+    {
+      "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "p": "12500000",
+      "b": "10000000"
+    },
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "p": "12500000",
+      "b": "10000000"
+    }
+  ]
+}

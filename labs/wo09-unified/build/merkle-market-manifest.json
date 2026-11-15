@@ -1,0 +1,25 @@
+{
+  "bytes": 17488,
+  "sha256": "925f4c387f34d8c0f2129dfa9cd3587ce6601158b18cdf5d1bbf2684cd2f5a7a",
+  "command": [
+    "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+    "cc",
+    "-target",
+    "riscv64-freestanding",
+    "-mcpu=generic_rv64+m+c",
+    "-Oz",
+    "-nostdlib",
+    "-fno-builtin",
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+    "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+    "-Wl,--gc-sections",
+    "-Wl,-e,_start",
+    "-Wl,--strip-all",
+    "-Wl,--image-base=0x10000",
+    "-o",
+    "/workspace/trade/labs/wo09-unified/build/merkle_market",
+    "/workspace/trade/labs/wo09-unified/contracts/merkle_market.c"
+  ]
+}

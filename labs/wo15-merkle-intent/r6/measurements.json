@@ -1,0 +1,29 @@
+[
+  {
+    "evidence": "r6-1793918808818",
+    "label": "offline_sale_after_unrelated_update",
+    "hash": "0x15ce472d340c5455dda1d4a54c111a52c5207a00640940cb5ab73592be18fd23",
+    "bytes": 1284,
+    "cycles": 4773156,
+    "feeShannons": "10000",
+    "committed": "committed"
+  },
+  {
+    "evidence": "r6-batch-1793918855752",
+    "label": "batch_8_offline_intents",
+    "hash": "0x2bff52501ff58aff8321890d06302d910c84fdbd4bbccbb204bb297668be9784",
+    "bytes": 4326,
+    "cycles": 22866323,
+    "feeShannons": "10000",
+    "committed": "committed"
+  },
+  {
+    "evidence": "r6-batch-1793918878589",
+    "label": "batch_50_offline_intents",
+    "hash": "0xb883d9d311f0cd520753f72d98ee4907a5bb099e848ecccf0f0c4a7e3cf677f2",
+    "bytes": 27186,
+    "cycles": 134623290,
+    "feeShannons": "50000",
+    "committed": "committed"
+  }
+]

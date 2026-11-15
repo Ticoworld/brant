@@ -1,0 +1,23 @@
+{
+  "buy": "0x6275c850544e087550ba5b88c335d42acd904642762521c05b7994c40a9b860c",
+  "sell": "0x1fe8275ce7cc7b7ba190af405d82baea16c6c638a104a18864da77acc8d3ce3e",
+  "feeShannonsEach": "100000",
+  "curvePriceShannons": "1700000000",
+  "initialMarketCapacity": "39100000000",
+  "initialWalletCapacity": "200000000000",
+  "finalMarketCapacity": "39100000000",
+  "finalWalletCapacity": "199999800000",
+  "reconnectedInventory": "1993",
+  "estimateCycles": [
+    {
+      "cycles": "0x21ddae"
+    },
+    {
+      "cycles": "0x2298af"
+    }
+  ],
+  "proofRequestMilliseconds": [
+    1349.5593000000008,
+    277.6359999999986
+  ]
+}

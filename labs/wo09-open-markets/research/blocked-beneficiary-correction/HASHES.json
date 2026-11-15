@@ -1,0 +1,22 @@
+{
+  "status": "Preservation only, no validation",
+  "files": {
+    "README.md": "4606b27eb77e5c5e4a57c33f24816fef28893a1db99c9e42bad7573adf199032",
+    "attempt.log.gz": "f124cede02321450a4daac8036536978c88dc894b3770990ee0fca8be8978f54",
+    "VALIDATION_STATUS.json": "d2013d3a0202207507930d0500289dadcd18a90360d3e3af566bb8be4c153a4a",
+    "contracts/common.h": "136d5cfebe9fe73c90c827d101ab2baaabecb85e1ddfa77232b891b77a411484",
+    "contracts/consumable_beneficiary.c": "1fc5161558ac90a676e328912a416d2038b454a051e5eeb5cf61b0e1f00271ff",
+    "contracts/consumable_beneficiary_hash.c": "13ddb3a2ac1e4ae797b59af6dcda88dfe56d118d8a40fa1d299e5d235ed064e0",
+    "contracts/consumable_risk.c": "e6e59e6f1670a0173611f1bd4defe611bf9ab0dc52f7428c4d688bc3afe9b269",
+    "contracts/consumable_risk_hash.c": "d7814d110959b22c64b48ee4cc62696cb96775eb89c1a52fe6657ed37a594378",
+    "build/consumable_beneficiary_hash": "5bab78eff13b01301886363501c0e11ae4c9ae3445a66203d604ae7332cdfc0e",
+    "build/consumable_risk": "532e15715a4dda8e7a5d4f9eeea846e67e1813cbf6c5d3c3684fb6caf35e4b07",
+    "build/consumable_risk_hash": "0cbfe4cc1988128aa71ce95ae830dc9fb56b48cae8d5ed69d10d3d80aa1fc80d",
+    "build/consumable_beneficiary": "ce963e61f441e650f65ffc2cedae79b752fcb72839a99085bfaaec5ccee4eec6",
+    "build/manifest.json": "6b2f620bc78fc4166a4de0b85354a799cdb773e0ca98fb2c2472a8e016392b98",
+    "src/run-consumable-risk.cjs": "e6e59e6f1670a0173611f1bd4defe611bf9ab0dc52f7428c4d688bc3afe9b269",
+    "src/reproduce.py": "0e136a041ee5ec97268e663d110fd18023be46d49a1cefb469e2714f982dbe18",
+    "src/run-hash-owner-counterexample.cjs": "88f4ef3f02abd793c9977624b4951b1921e33314a8b39f87c1c83e27f8ef7586",
+    "src/build.py": "ba3aa56c3f18c3bfaa788d0822b37a04c15479e9be08bb4bfa4871a9d43f3038"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "bytes": 50400,
+  "sha256": "3b367c36ff57bea842b28850d9c310cf9a78dfb785ec5671fb877b9ad8035ee8",
+  "commands": [
+    [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "build-obj",
+      "/workspace/trade/labs/wo09-unified/trading-return/contracts/auth.zig",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-O",
+      "ReleaseSmall",
+      "-femit-bin=/workspace/trade/labs/wo09-unified/trading-return/build/auth.o"
+    ],
+    [
+      "/workspace/trade/labs/rebuild/mechanisms/tools/python/ziglang/zig",
+      "cc",
+      "-target",
+      "riscv64-freestanding",
+      "-mcpu=generic_rv64+m+c",
+      "-Oz",
+      "-nostdlib",
+      "-fno-builtin",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib",
+      "-I/workspace/trade/labs/rebuild/mechanisms/deps/ckb-c-stdlib/libc",
+      "-Wl,-e,_start",
+      "-Wl,--gc-sections",
+      "-Wl,--strip-all",
+      "-Wl,--image-base=0x10000",
+      "-o",
+      "/workspace/trade/labs/wo09-unified/trading-return/build/exchange",
+      "/workspace/trade/labs/wo09-unified/trading-return/contracts/exchange.c",
+      "/workspace/trade/labs/wo09-unified/trading-return/build/auth.o"
+    ]
+  ],
+  "signature_library": "Zig0.14.1 std.crypto.sign.Ed25519",
+  "qualification": "Two-asset isolated derivative; native qualification required",
+  "source_sha256": {
+    "contracts/exchange.c": "80ce5dae99f73490778d07ea2739a1ec0df177ef720d8173e74d8a40fd3fc4e3",
+    "contracts/auth.zig": "1618402e37369de3f836984872bc91fe0b1012ad269568b10aa523f96e652293"
+  },
+  "common_header_sha256": "c7633718e20592879de8020dd472c5b4d208e652fbf588ee227e39faae48a558"
+}

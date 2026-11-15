@@ -1,0 +1,184 @@
+{
+  "hashes": {
+    "marker_candidate": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "market": "0xa28dc4fbcff2dbd92a1695d28198288f2d81c9a6081c1819f36dd1d2cefe9b6f",
+    "owner_lineage_candidate": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "custody": "0xe426af7af59a0f8f6ea87ed50a19f5fb3262163668672bda2375fd8ac699f81b",
+    "custody_marker": "0xbfe1b5590761df1bba8727719f08a1da4d00e944e0ff28a747039ea13e931178",
+    "xudt": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+  },
+  "market": {
+    "codeHash": "0xa28dc4fbcff2dbd92a1695d28198288f2d81c9a6081c1819f36dd1d2cefe9b6f",
+    "hashType": "data1",
+    "args": "0x01e0f04874495fc94ae677206067785c9dc367619e66547c37a213368acee05800ca9a3b0000000000e1f50500000000e803000000000000a174f3c6d0eb13570fe2a33e4225833ea2f6363b91f65e2f0384b69f53a9d547"
+  },
+  "marker": {
+    "codeHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+    "hashType": "data1",
+    "args": "0x3261dc488ed84902b2ae5bf1bbf7f04c4de13d181a622adc7ae4e461888fcc92"
+  },
+  "owner": {
+    "codeHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+    "hashType": "data1",
+    "args": "0x4b410ed5d64a739ca2e45c6eee357c0c3abf1a21b216c0a951572a66def619990f00000050bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b955c6b9624d724b1d8f5a4e48d79cf62ab691a27e7d7612ea12c0c6be97cf6f4cee8030000000000000000000000000000"
+  },
+  "token": {
+    "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "hashType": "data1",
+    "args": "0xbc7f8bdd8724f3e8ba40ce946e222102870199b938ca0c1e1920a18c90f8bc1a"
+  },
+  "custody": {
+    "codeHash": "0xe426af7af59a0f8f6ea87ed50a19f5fb3262163668672bda2375fd8ac699f81b",
+    "hashType": "data1",
+    "args": "0x5c6b9624d724b1d8f5a4e48d79cf62ab691a27e7d7612ea12c0c6be97cf6f4ce4be5227ad45f2a45426c01572e4c1f77a93a955347a250b8d0d9354cd5b36b756e66be994676179f80daf029637950801ea50ab54510c8a1e9fde0abdce6eab37d9a0f416083313ccc1f446d2ee690157121dd10ed88ab929553c662d956d5e4"
+  },
+  "custodyMarker": {
+    "codeHash": "0xbfe1b5590761df1bba8727719f08a1da4d00e944e0ff28a747039ea13e931178",
+    "hashType": "data1",
+    "args": "0x60a97cdfc8ff4bf721fc1842dd38a06a259223431afe2f5e652b0733c44b7dd5"
+  },
+  "genesis": "0x6e66be994676179f80daf029637950801ea50ab54510c8a1e9fde0abdce6eab3",
+  "identities": [
+    "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+    "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+    "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+    "0xaed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d"
+  ],
+  "initial": [
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "balance": "3",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "balance": "2",
+      "revision": "0"
+    },
+    {
+      "owner": "0xaed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d",
+      "balance": "2",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    }
+  ],
+  "records": [
+    {
+      "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+      "balance": "0",
+      "revision": "3"
+    },
+    {
+      "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "balance": "1",
+      "revision": "1"
+    },
+    {
+      "owner": "0xaed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d",
+      "balance": "1",
+      "revision": "1"
+    },
+    {
+      "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "balance": "0",
+      "revision": "3"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    },
+    {
+      "owner": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "balance": "0",
+      "revision": "0"
+    }
+  ],
+  "orders": [
+    {
+      "role": 1,
+      "index": 0,
+      "amount": "1",
+      "price": "10000000000",
+      "orderId": "0xa1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+      "msg": "TRADE V2 TOKEN SALE v1\nGenesis: 0x6e66be994676179f80daf029637950801ea50ab54510c8a1e9fde0abdce6eab3\nMarket: 0x5c6b9624d724b1d8f5a4e48d79cf62ab691a27e7d7612ea12c0c6be97cf6f4ce\nAsset: 0x4be5227ad45f2a45426c01572e4c1f77a93a955347a250b8d0d9354cd5b36b75\nCustody: 0xb407e759781e01f0d3b0b5961f3d64544ab1dc60028b4874d97ef2d363e40711\nSeller index: 0\nSeller: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nRevision: 0\nQuantity: 1\nMinimum shannons: 10000000000\nPayout: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nOrder id: 0xa1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1\nBuyer: any\nExpiry: none",
+      "sig": "0x5a8019a46ff8805565b88aaa8e1bfab6062772157573934989e9bf7bb5ec30964d8224fb485b9d1ee0dff0780389f2f448b3f992ae744e0b2f56f66a27e77f7e01",
+      "pub": "0x02c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+      "revision": "0"
+    },
+    {
+      "role": 0,
+      "index": 1,
+      "amount": "1",
+      "price": "10000000000",
+      "orderId": "0xb2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2",
+      "msg": "TRADE V2 TOKEN SALE v1\nGenesis: 0x6e66be994676179f80daf029637950801ea50ab54510c8a1e9fde0abdce6eab3\nMarket: 0x5c6b9624d724b1d8f5a4e48d79cf62ab691a27e7d7612ea12c0c6be97cf6f4ce\nAsset: 0x4be5227ad45f2a45426c01572e4c1f77a93a955347a250b8d0d9354cd5b36b75\nCustody: 0xb407e759781e01f0d3b0b5961f3d64544ab1dc60028b4874d97ef2d363e40711\nSeller index: 1\nSeller: 0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7\nRevision: 0\nQuantity: 1\nMinimum shannons: 10000000000\nPayout: 0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7\nOrder id: 0xb2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2b2\nBuyer: any\nExpiry: none",
+      "sig": "0x2e9b35db3dd687b7eef5cc4038d6506cf7b4d4539e37c5e35e9d777db04ab733767eabcad25d0619b6396628aff1d1033d75413ab440d3c82b1ea5db92f9783f01",
+      "pub": "0x0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
+      "revision": "0"
+    },
+    {
+      "role": 1,
+      "index": 0,
+      "amount": "1",
+      "price": "9900000000",
+      "orderId": "0xc3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3",
+      "msg": "TRADE V2 TOKEN SALE v1\nGenesis: 0x6e66be994676179f80daf029637950801ea50ab54510c8a1e9fde0abdce6eab3\nMarket: 0x5c6b9624d724b1d8f5a4e48d79cf62ab691a27e7d7612ea12c0c6be97cf6f4ce\nAsset: 0x4be5227ad45f2a45426c01572e4c1f77a93a955347a250b8d0d9354cd5b36b75\nCustody: 0xb407e759781e01f0d3b0b5961f3d64544ab1dc60028b4874d97ef2d363e40711\nSeller index: 0\nSeller: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nRevision: 1\nQuantity: 1\nMinimum shannons: 9900000000\nPayout: 0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38\nOrder id: 0xc3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3\nBuyer: any\nExpiry: none",
+      "sig": "0x587894cd47b160f033480ab17e665906ca714370ae8d07618b98c6da1be36df813666ffbedb7fcb6bef0514ec8e71a5a914c0ab31bee9c11af8acb362693e46a01",
+      "pub": "0x02c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5",
+      "revision": "1"
+    }
+  ],
+  "supply": 1000,
+  "inventory": 993,
+  "finalCustody": {
+    "txHash": "0x794396717dfd8d2205f60e0130b8f271462055b3c4ec59690c03f51a679b2a62",
+    "index": "0x0"
+  },
+  "benOut": {
+    "txHash": "0x096537d34aa03fcf8dab7008b797573c54e717b4f07c9a5a4d8c4af2fde129d9",
+    "index": "0x2"
+  },
+  "aliceOut": {
+    "txHash": "0x794396717dfd8d2205f60e0130b8f271462055b3c4ec59690c03f51a679b2a62",
+    "index": "0x2"
+  },
+  "daveOut": {
+    "txHash": "0xd63928d87cab17e7fa21c8b77276a29b381ba13b630d49814548659c25a3d2c7",
+    "index": "0x2"
+  }
+}

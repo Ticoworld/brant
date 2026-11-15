@@ -1,0 +1,1196 @@
+[
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 20,
+    "direction": "CKB_TO_iCKB",
+    "amount": "1728608470181",
+    "source_amount": "1728608470181",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "1430902465752",
+      "ckbFee": "172860847",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1430902465752",
+          "udtScale": "1728608470181"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "1430902465752",
+      "ckbFee": "172860847",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1430902465752",
+          "udtScale": "1728608470181"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 20,
+    "direction": "iCKB_TO_CKB",
+    "amount": "1728608470181",
+    "source_amount": "1431045570308",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "1728435609334",
+      "ckbFee": "172860846",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "715522785154",
+          "udtScale": "864217804667"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "1728435609334",
+      "ckbFee": "172860846",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "715522785154",
+          "udtScale": "864217804667"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 50,
+    "direction": "CKB_TO_iCKB",
+    "amount": "4321521175453",
+    "source_amount": "4321521175453",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "3577256164380",
+      "ckbFee": "432152118",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "3577256164380",
+          "udtScale": "4321521175453"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "3577256164380",
+      "ckbFee": "432152118",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "3577256164380",
+          "udtScale": "4321521175453"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 50,
+    "direction": "iCKB_TO_CKB",
+    "amount": "4321521175453",
+    "source_amount": "3577613925772",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "4321089023336",
+      "ckbFee": "432152116",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "894403481443",
+          "udtScale": "1080272255834"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "4321089023336",
+      "ckbFee": "432152116",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "894403481443",
+          "udtScale": "1080272255834"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 100,
+    "direction": "CKB_TO_iCKB",
+    "amount": "8643042350907",
+    "source_amount": "8643042350907",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "7154512328761",
+      "ckbFee": "864304235",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "7154512328761",
+          "udtScale": "8643042350907"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "7154512328761",
+      "ckbFee": "864304235",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "7154512328761",
+          "udtScale": "8643042350907"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.001157,
+    "usd_ticket": 100,
+    "direction": "iCKB_TO_CKB",
+    "amount": "8643042350907",
+    "source_amount": "7155227851545",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "8642178046672",
+      "ckbFee": "864304234",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "7155227851545",
+          "udtScale": "8642178046672"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "8642178046672",
+      "ckbFee": "864304234",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "7155227851545",
+          "udtScale": "8642178046672"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 20,
+    "direction": "CKB_TO_iCKB",
+    "amount": "4000000000",
+    "source_amount": "4000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "3311108306",
+      "ckbFee": "400000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "3311108306",
+      "ckbFee": "400000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 20,
+    "direction": "iCKB_TO_CKB",
+    "amount": "4000000000",
+    "source_amount": "3311439449",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "3999600000",
+      "ckbFee": "399999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "3311439449",
+          "udtScale": "3999600000"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "3999600000",
+      "ckbFee": "399999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "3311439449",
+          "udtScale": "3999600000"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 50,
+    "direction": "CKB_TO_iCKB",
+    "amount": "10000000000",
+    "source_amount": "10000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "8277770765",
+      "ckbFee": "1000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "8277770765",
+      "ckbFee": "1000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 50,
+    "direction": "iCKB_TO_CKB",
+    "amount": "10000000000",
+    "source_amount": "8278598624",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "9999000000",
+      "ckbFee": "999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "9999000000",
+      "ckbFee": "999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 100,
+    "direction": "CKB_TO_iCKB",
+    "amount": "20000000000",
+    "source_amount": "20000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "16555541529",
+      "ckbFee": "2000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "16555541529",
+          "udtScale": "20000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "16555541529",
+      "ckbFee": "2000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "16555541529",
+          "udtScale": "20000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 0.5,
+    "usd_ticket": 100,
+    "direction": "iCKB_TO_CKB",
+    "amount": "20000000000",
+    "source_amount": "16557197248",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "19998000000",
+      "ckbFee": "1999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "19998000000",
+      "ckbFee": "1999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 20,
+    "direction": "CKB_TO_iCKB",
+    "amount": "2000000000",
+    "source_amount": "2000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "1655554153",
+      "ckbFee": "200000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "1655554153",
+      "ckbFee": "200000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 20,
+    "direction": "iCKB_TO_CKB",
+    "amount": "2000000000",
+    "source_amount": "1655719724",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "1999799999",
+      "ckbFee": "199999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "1655719724",
+          "udtScale": "1999799999"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "1999667778",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "827859862",
+          "udtScale": "999833889"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 50,
+    "direction": "CKB_TO_iCKB",
+    "amount": "5000000000",
+    "source_amount": "5000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "4138885383",
+      "ckbFee": "500000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "4138885383",
+          "udtScale": "5000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "4138885383",
+      "ckbFee": "500000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "4138885383",
+          "udtScale": "5000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 50,
+    "direction": "iCKB_TO_CKB",
+    "amount": "5000000000",
+    "source_amount": "4139299312",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "4999500000",
+      "ckbFee": "499999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "4999500000",
+      "ckbFee": "499999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 100,
+    "direction": "CKB_TO_iCKB",
+    "amount": "10000000000",
+    "source_amount": "10000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "8277770765",
+      "ckbFee": "1000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "8277770765",
+      "ckbFee": "1000000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "1655554153",
+          "udtScale": "2000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 1,
+    "usd_ticket": 100,
+    "direction": "iCKB_TO_CKB",
+    "amount": "10000000000",
+    "source_amount": "8278598624",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "9999000000",
+      "ckbFee": "999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "9999000000",
+      "ckbFee": "999999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 20,
+    "direction": "CKB_TO_iCKB",
+    "amount": "1000000000",
+    "source_amount": "1000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "827777077",
+      "ckbFee": "100000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "827777077",
+          "udtScale": "1000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "827777077",
+      "ckbFee": "100000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "827777077",
+          "udtScale": "1000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 20,
+    "direction": "iCKB_TO_CKB",
+    "amount": "1000000000",
+    "source_amount": "827859862",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "999900000",
+      "ckbFee": "99999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "413929931",
+          "udtScale": "499950000"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "999667779",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "827859862",
+          "udtScale": "999667779"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 50,
+    "direction": "CKB_TO_iCKB",
+    "amount": "2500000000",
+    "source_amount": "2500000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "2069442692",
+      "ckbFee": "249999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "517360673",
+          "udtScale": "625000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "2069442692",
+      "ckbFee": "249999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "517360673",
+          "udtScale": "625000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 50,
+    "direction": "iCKB_TO_CKB",
+    "amount": "2500000000",
+    "source_amount": "2069649656",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "2499750000",
+      "ckbFee": "249999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "2499667779",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "2069649656",
+          "udtScale": "2499667779"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 100,
+    "direction": "CKB_TO_iCKB",
+    "amount": "5000000000",
+    "source_amount": "5000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "4138885383",
+      "ckbFee": "500000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "4138885383",
+          "udtScale": "5000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "4138885383",
+      "ckbFee": "500000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "4138885383",
+          "udtScale": "5000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 2,
+    "usd_ticket": 100,
+    "direction": "iCKB_TO_CKB",
+    "amount": "5000000000",
+    "source_amount": "4139299312",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "4999500000",
+      "ckbFee": "499999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "4999500000",
+      "ckbFee": "499999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "258706207",
+          "udtScale": "312468750"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 20,
+    "direction": "CKB_TO_iCKB",
+    "amount": "200000000",
+    "source_amount": "200000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "165555416",
+      "ckbFee": "20000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "20694427",
+          "udtScale": "25000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "165555416",
+      "ckbFee": "20000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "20694427",
+          "udtScale": "25000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 20,
+    "direction": "iCKB_TO_CKB",
+    "amount": "200000000",
+    "source_amount": "165571972",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "199980000",
+      "ckbFee": "19999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "41392993",
+          "udtScale": "49995000"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "199667779",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "165571972",
+          "udtScale": "199667779"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 50,
+    "direction": "CKB_TO_iCKB",
+    "amount": "500000000",
+    "source_amount": "500000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "413888539",
+      "ckbFee": "50000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "413888539",
+          "udtScale": "500000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "413888539",
+      "ckbFee": "50000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "413888539",
+          "udtScale": "500000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 50,
+    "direction": "iCKB_TO_CKB",
+    "amount": "500000000",
+    "source_amount": "413929931",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "499950000",
+      "ckbFee": "49999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "413929931",
+          "udtScale": "499950000"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "499667779",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "413929931",
+          "udtScale": "499667779"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 100,
+    "direction": "CKB_TO_iCKB",
+    "amount": "1000000000",
+    "source_amount": "1000000000",
+    "minimum": "3322210000",
+    "quote": {
+      "convertedAmount": "827777077",
+      "ckbFee": "100000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "827777077",
+          "udtScale": "1000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "827777077",
+      "ckbFee": "100000",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "827777077",
+          "udtScale": "1000000000"
+        },
+        "udtToCkb": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "ckbMinMatchLog": 36
+      }
+    }
+  },
+  {
+    "classification": "SDK_NEW_ORDER_SIMULATION_NOT_STANDING_OFFER_OR_FILL",
+    "ckb_price_usd": 10,
+    "usd_ticket": 100,
+    "direction": "iCKB_TO_CKB",
+    "amount": "1000000000",
+    "source_amount": "827859862",
+    "minimum": "275033",
+    "quote": {
+      "convertedAmount": "999900000",
+      "ckbFee": "99999",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "413929931",
+          "udtScale": "499950000"
+        },
+        "ckbMinMatchLog": 36
+      }
+    },
+    "estimate": {
+      "convertedAmount": "999667779",
+      "ckbFee": "332220",
+      "info": {
+        "ckbToUdt": {
+          "ckbScale": "0",
+          "udtScale": "0"
+        },
+        "udtToCkb": {
+          "ckbScale": "827859862",
+          "udtScale": "999667779"
+        },
+        "ckbMinMatchLog": 36
+      },
+      "maturity": "1793695776838"
+    }
+  }
+]

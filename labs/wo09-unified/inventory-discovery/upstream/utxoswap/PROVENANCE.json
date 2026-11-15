@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/UTXOSwap/utxoswap-sdk-js",
+  "commit": "3912cb61ed1f4d9882f4ba14b87f1eb665c7b845",
+  "scope": "read endpoint/contract/capacity source inspection only; no upstream code executed",
+  "license": "MIT; see LICENSE",
+  "no_credentials": "No API key supplied or sourced from public examples"
+}

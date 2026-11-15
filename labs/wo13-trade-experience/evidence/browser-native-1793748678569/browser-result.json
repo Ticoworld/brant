@@ -1,0 +1,9 @@
+{
+  "transactions": 10,
+  "chain": "controlled native CKB0.210.0",
+  "browser": "system Chromium",
+  "signers": "actual CCC SignerCkbPrivateKey in Node only; browser never received keys",
+  "wallet_extension_tested": false,
+  "page_errors": [],
+  "contract_hash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f"
+}

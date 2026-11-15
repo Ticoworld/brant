@@ -1,0 +1,11 @@
+{
+  "source": "Pudge live dep group of official CCC1.23.0 KnownScript.AnyoneCanPay",
+  "outpoint": {
+    "tx_hash": "0xce29e27734b3eb6f8b6a814cef217753ac2ccb4e4762ecc8b07d05634d8ba374",
+    "index": "0x0"
+  },
+  "code_hash": "0x3419a1c09eb2567f6552ee7a8ecffd64155cffe0f1796e6e61ec088d740c1356",
+  "data_hash": "0xcd69ba816f7471e59110058aa37387c362ed9a240cd178f7bb1ecee386cb31e6",
+  "hash_type": "type",
+  "local_fixture_note": "Native local fixture relocates same bytes using data1; not public wallet support qualification"
+}

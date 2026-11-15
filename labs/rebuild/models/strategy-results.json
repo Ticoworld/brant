@@ -1,0 +1,26 @@
+{
+  "classification": "SYNTHETIC; no observed prices, fees, demand or competitive returns",
+  "strategies": [
+    {
+      "spread": "1",
+      "replacement": "1",
+      "profit_at_fixture_marks": "-1",
+      "native_inventory": "0"
+    },
+    {
+      "spread": "101/100",
+      "replacement": "6/5",
+      "profit_at_fixture_marks": "-20",
+      "native_inventory": "0"
+    },
+    {
+      "spread": "51/50",
+      "replacement": "1",
+      "profit_at_fixture_marks": "1",
+      "native_inventory": "0"
+    }
+  ],
+  "transfer_fee_loss": "1",
+  "reserved_equity": "20",
+  "dao_liquid_inventory": "0"
+}

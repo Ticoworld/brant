@@ -1,0 +1,917 @@
+{
+  "launch": {
+    "classification": "TESTED SYNTHETIC / bounded exact accounting",
+    "financing_cases": [
+      {
+        "floor_fraction": "1",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "0",
+        "reserve": "1000",
+        "issuer_receives": "0",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "1",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "1/100",
+        "reserve": "1000",
+        "issuer_receives": "-10",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "1",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "0",
+        "reserve": "1000",
+        "issuer_receives": "0",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "1",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "1/100",
+        "reserve": "1000",
+        "issuer_receives": "-10",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "17/20",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "0",
+        "reserve": "850",
+        "issuer_receives": "150",
+        "financing_viable": true
+      },
+      {
+        "floor_fraction": "17/20",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "1/100",
+        "reserve": "850",
+        "issuer_receives": "140",
+        "financing_viable": true
+      },
+      {
+        "floor_fraction": "17/20",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "0",
+        "reserve": "850",
+        "issuer_receives": "150",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "17/20",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "1/100",
+        "reserve": "850",
+        "issuer_receives": "140",
+        "financing_viable": false
+      },
+      {
+        "floor_fraction": "1/2",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "0",
+        "reserve": "500",
+        "issuer_receives": "500",
+        "financing_viable": true
+      },
+      {
+        "floor_fraction": "1/2",
+        "issuer_required_fraction": "1/10",
+        "fee_fraction": "1/100",
+        "reserve": "500",
+        "issuer_receives": "490",
+        "financing_viable": true
+      },
+      {
+        "floor_fraction": "1/2",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "0",
+        "reserve": "500",
+        "issuer_receives": "500",
+        "financing_viable": true
+      },
+      {
+        "floor_fraction": "1/2",
+        "issuer_required_fraction": "3/10",
+        "fee_fraction": "1/100",
+        "reserve": "500",
+        "issuer_receives": "490",
+        "financing_viable": true
+      }
+    ],
+    "all_claim_redemption_sizes": [
+      1,
+      2,
+      8,
+      32
+    ],
+    "counterexamples": {
+      "hidden_team_claims": "Uncounted team redemption claims exceed backing",
+      "unsupported_ratchet": "110% floor on100 supply with100 backing fails;90% can use real surplus",
+      "instant_DAO_exit": "Balance-sheet backing does not imply spendable cash",
+      "full_failed_launch_refund": "850 retained after150 spent cannot refund1000",
+      "sybil_allocation": "Two identities get2/3 vs1/2",
+      "early_premium": "50 early bonus consumes50 of issuer150 budget, not free appreciation"
+    },
+    "six_WO06_classes": {
+      "selective_admission": "Still present unless inclusion independently enforced; open self-service claims only remove a redemption solver dependency",
+      "sequential_manipulation": "Price scheduling still matters; uniform clearing inside each batch is not uniform across time",
+      "creator_roundtrip": "Cash-backed claim conservation prevents reserve theft, not unrelated speculative-price manipulation",
+      "split_gaming": "Address caps do not defeat Sybil coalitions",
+      "artificial_demand": "Creator-funded issuance remains self-capital, not independent demand",
+      "revocable_liquidity": "Individually funded redemption removes issuer reserve withdrawal for that right, not secondary-market disappearance"
+    },
+    "survivor": "Fixed, individually funded native-asset claims as an enforcement primitive; generic protected token launch lacks demonstrated value over cash retention plus risky financing",
+    "not_proved": [
+      "Fair allocation",
+      "Useful issuer demand/funding needs",
+      "Permanent USD value",
+      "Global atomic floor ratchet across independent cells",
+      "Full refund of already-spent at-risk grant"
+    ]
+  },
+  "risk": {
+    "classification": "FORMALLY CHECKED / BOUNDED exact payoff grid; all premiums/probabilities synthetic",
+    "payoffs": [
+      {
+        "settlement_price_usd": "4/5",
+        "senior_ckb": "1250",
+        "junior_ckb": "750",
+        "senior_usd": "1000",
+        "junior_usd": "600",
+        "target_met": true,
+        "junior_usd_return": "-2/5"
+      },
+      {
+        "settlement_price_usd": "1/2",
+        "senior_ckb": "2000",
+        "junior_ckb": "0",
+        "senior_usd": "1000",
+        "junior_usd": "0",
+        "target_met": true,
+        "junior_usd_return": "-1"
+      },
+      {
+        "settlement_price_usd": "1/5",
+        "senior_ckb": "2000",
+        "junior_ckb": "0",
+        "senior_usd": "400",
+        "junior_usd": "0",
+        "target_met": false,
+        "junior_usd_return": "-1"
+      },
+      {
+        "settlement_price_usd": "1/100",
+        "senior_ckb": "2000",
+        "junior_ckb": "0",
+        "senior_usd": "20",
+        "junior_usd": "0",
+        "target_met": false,
+        "junior_usd_return": "-1"
+      },
+      {
+        "settlement_price_usd": "1",
+        "senior_ckb": "1000",
+        "junior_ckb": "1000",
+        "senior_usd": "1000",
+        "junior_usd": "1000",
+        "target_met": true,
+        "junior_usd_return": "0"
+      },
+      {
+        "settlement_price_usd": "5/4",
+        "senior_ckb": "800",
+        "junior_ckb": "1200",
+        "senior_usd": "1000",
+        "junior_usd": "1500",
+        "target_met": true,
+        "junior_usd_return": "1/2"
+      },
+      {
+        "settlement_price_usd": "2",
+        "senior_ckb": "500",
+        "junior_ckb": "1500",
+        "senior_usd": "1000",
+        "junior_usd": "3000",
+        "target_met": true,
+        "junior_usd_return": "2"
+      },
+      {
+        "settlement_price_usd": "51/100",
+        "senior_ckb": "100000/51",
+        "junior_ckb": "2000/51",
+        "senior_usd": "1000",
+        "junior_usd": "20",
+        "target_met": true,
+        "junior_usd_return": "-49/50"
+      }
+    ],
+    "premium_sensitivity": [
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 30,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 30,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 180,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 180,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 30,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 30,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 180,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/2",
+          "1",
+          "2"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "4000/3",
+        "days": 180,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "0"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 30,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "103139/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 30,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "105110/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 180,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "106739/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 180,
+        "annual_capital_cost": "1/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "108710/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 30,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "104579/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 30,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "106550/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 180,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "1",
+        "break_even_premium_usd": "115379/219"
+      },
+      {
+        "prices": [
+          "1/5",
+          "4/5",
+          "1"
+        ],
+        "weights": [
+          "1/3",
+          "1/3",
+          "1/3"
+        ],
+        "junior_expected_terminal_usd": "1600/3",
+        "days": 180,
+        "annual_capital_cost": "3/25",
+        "fees_usd": "10",
+        "break_even_premium_usd": "117350/219"
+      }
+    ],
+    "band_alternative": [
+      {
+        "p": "1/5",
+        "ckb_put": "500"
+      },
+      {
+        "p": "4/5",
+        "ckb_put": "250"
+      },
+      {
+        "p": "1",
+        "ckb_put": "0"
+      },
+      {
+        "p": "2",
+        "ckb_put": "0"
+      }
+    ],
+    "barrier_price": "1/2",
+    "effective_junior_delta_leverage_before_extra_costs": "2",
+    "counterexamples": {
+      "unlimited_USD_protection": "For any finite C, price=target/(2C) leaves only half the promised purchasing power",
+      "native_conservation_not_protection": "Both payouts sum toC at99% price loss, while senior target still fails",
+      "dust": "AtP=0.51, positive junior payout<61 CKB cannot form an ordinary output without reserve/sponsorship",
+      "oracle_outage": "Original collateral refund conserves units but does not preserve dollars",
+      "oracle_conflict": "A single accepted event can be made immutable; publisher can still choose a false price under a trusted-publisher model",
+      "late_publisher": "Lower-bound maturity does not enforce publication before a fallback expiry; ordering must be explicit"
+    },
+    "survivors": [
+      "Fully collateralized fixed-term capped payoff with declared maturity publisher and refund semantics",
+      "Band-limited protection as a distinct capital/coverage tradeoff"
+    ],
+    "not_proved": [
+      "External price truth",
+      "Current reliable CKB maturity feed",
+      "Willing junior counterparties or fair premium",
+      "Production oracle/finality security",
+      "Secondary sale of the risk positions"
+    ]
+  },
+  "trading": {
+    "classification": "TESTED SYNTHETIC",
+    "ring_net": {
+      "X": 0,
+      "Y": 0,
+      "Z": 0
+    },
+    "incomplete_net": {
+      "X": -10,
+      "Y": 0,
+      "Z": 10
+    },
+    "residual_maker_vector": {
+      "X": 10,
+      "Z": -10
+    },
+    "LP_income_without_funded_fee": "0",
+    "authorization": {
+      "fully_signed_body": "Any output edit changes transaction hash; all affected parties must sign again",
+      "OTX": "Reference source signs selected input/output/data/dependency ranges; security and wallet integration are separate prerequisites"
+    },
+    "survivor": "Reuse rails for genuine claim exchange; generic three-party composition is prior art, not a competitive breakthrough",
+    "limits": [
+      "No native OTX signature implementation in this model",
+      "No assurance compatible owners/bids exist",
+      "External RGB++ settlement remains outside frozen foreign-finality proof"
+    ]
+  },
+  "liquidity": {
+    "classification": "TESTED SYNTHETIC",
+    "service_cases": [
+      {
+        "flow": "0",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "99"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "90"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "99"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "90"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "99"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "0",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "90"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "99"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "90"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-51"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "49"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-60"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "40"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-251"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "-151"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-260"
+      },
+      {
+        "flow": "500",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "-160"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "0",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "99"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "0",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "90"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-101"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/10",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "-1"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-110"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/10",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "-10"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "0",
+        "maker_net": "-501"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/2",
+        "service_cost": "1",
+        "issuer_retainer": "100",
+        "maker_net": "-401"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "0",
+        "maker_net": "-510"
+      },
+      {
+        "flow": "1000",
+        "adverse_move": "1/2",
+        "service_cost": "10",
+        "issuer_retainer": "100",
+        "maker_net": "-410"
+      }
+    ],
+    "self_consumption_counterexample": "Maker can consume finite inventory with controlled counterparties; locked inventory alone does not prove public third-party service",
+    "unbounded_demand_counterexample": "1001 valid demand cannot be guaranteed by1000 finite inventory",
+    "compensation_source": "An issuer-funded availability retainer or explicit executed spread/fee; not unrelated P2P principal",
+    "survivor": "Finite quota/firm RFQ commitments with truthful depletion and compensation terms",
+    "not_proved": [
+      "Independent demand/identity",
+      "Replenishment obligation",
+      "Price quality/freshness",
+      "Profitable capital supply",
+      "Enforceable third-party-service SLA"
+    ]
+  },
+  "combinations": [
+    {
+      "case": "launch alone",
+      "distinct_funded_assets": "850",
+      "maximum_native_liability": "850",
+      "additional_value_or_limit": "Issuer receives150 of1000 entry before costs; strongest rival is retained cash plus risky grant",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "risk alone",
+      "distinct_funded_assets": "2000",
+      "maximum_native_liability": "2000",
+      "additional_value_or_limit": "Two sides fund complementary capped payoffs; oracle and term capital cost remain",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "trading alone",
+      "distinct_funded_assets": "0",
+      "maximum_native_liability": "0",
+      "additional_value_or_limit": "Owners exchange existing claims; no new backing or liquidity appears",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "commitments alone",
+      "distinct_funded_assets": "1000",
+      "maximum_native_liability": "1000",
+      "additional_value_or_limit": "Finite inventory/quota; issuer retainer is a real extra contribution",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "launch + secondary trading",
+      "distinct_funded_assets": "850",
+      "maximum_native_liability": "850",
+      "additional_value_or_limit": "Ownership changes without duplicate reserve; secondary buyer must actually exist",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "risk claims + secondary trading",
+      "distinct_funded_assets": "2000",
+      "maximum_native_liability": "2000",
+      "additional_value_or_limit": "Requires enforceable transferrable beneficiaries, not just a UI balance; fixed-recipient pool is insufficient",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "launch + funded protection",
+      "distinct_funded_assets": "2850",
+      "maximum_native_liability": "2850",
+      "additional_value_or_limit": "Independent850 backing plus2000 risk collateral is safe; sharing the same850 twice is not",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "launch + liquidity commitment",
+      "distinct_funded_assets": "1850",
+      "maximum_native_liability": "1850",
+      "additional_value_or_limit": "850 redemption reserve and1000 executable quote inventory must remain distinct",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    },
+    {
+      "case": "modular funded rights + shared event oracle/discovery",
+      "distinct_funded_assets": "2850",
+      "maximum_native_liability": "2850",
+      "additional_value_or_limit": "Share verified code, event observations and discovery, not pledged principal",
+      "evidence": "TESTED SYNTHETIC; native qualification tracked separately",
+      "commercial": "MARKET UNKNOWN"
+    }
+  ],
+  "observations": {
+    "classification": "EXTERNAL MARKET OBSERVATION, one public reference and one book snapshot; not executions or demand",
+    "reference_usd_per_ckb": "60943/50000000",
+    "reference_updated_at_unix": 1793596846,
+    "book_updated_at_unix_ms": 1793596859872,
+    "best_bid": [
+      "0.0012166",
+      "1053"
+    ],
+    "best_ask": [
+      "0.0012199",
+      "105710"
+    ],
+    "capacity_mark_usd": {
+      "61": "3717523/50000000",
+      "122": "3717523/25000000",
+      "150": "182829/1000000",
+      "206": "6277129/25000000",
+      "406": "12371429/25000000"
+    },
+    "fees": "UNKNOWN",
+    "usable_native_hedging_or_replenishment": "UNKNOWN",
+    "CKB_Pyth_feed_query": "[] at this capture; availability not established"
+  }
+}

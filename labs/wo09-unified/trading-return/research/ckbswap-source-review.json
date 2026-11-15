@@ -1,0 +1,21 @@
+{
+  "observed_date": "2026-11-03",
+  "repository": "https://github.com/ckbswap/contracts",
+  "commit": "b7cd8458a798b4386c1b401ce7dd10333a728443",
+  "committed_at": "2026-10-27T14:15:52Z",
+  "qualification": "PUBLIC SOURCE/README REVIEW ONLY; not executed by Trade",
+  "source_excerpt_scope": "Paraphrase only; no claim of deployed-code equivalence",
+  "findings": [
+    "CKB/xUDT and xUDT/xUDT constant product AMM, 0.3 percent retained pool fee",
+    "Documented fixed state capacity500CKB plus CKB reserve; token reserve200CKB each",
+    "Documented actor lock hash must appear among transaction inputs",
+    "Documented reserve/state predecessor and output pairing",
+    "Different constrained xUDT type hash/args configuration from this Trade fixture; compatibility not demonstrated",
+    "Repository README lists integration transaction builder/deployment/test gaps; author claims not independently executed benchmarks"
+  ],
+  "missing": [
+    "No actual firm native quote or funded LP inventory obtained",
+    "No same-workload VM benchmark performed",
+    "No public maker contacted"
+  ]
+}

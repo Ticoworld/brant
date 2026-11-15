@@ -1,0 +1,3 @@
+{
+  "error": "page.evaluate: Error: This covenant requires ordinary CKB secp256k1 wallet Cells; this connected lock is unsupported\n    at standard (webpack-internal:///(app-pages-browser)/./lib/market.ts:137:166)\n    at pure (webpack-internal:///(app-pages-browser)/./lib/market.ts:140:5)\n    at Module.create (webpack-internal:///(app-pages-browser)/./lib/market.ts:175:5)\n    at eval (eval at evaluate (:290:30), <anonymous>:1:119)\n    at UtilityScript.evaluate (<anonymous>:292:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at prepare (/workspace/trade/apps/trade-testnet/tests/native.mts:16:72)\n    at /workspace/trade/apps/trade-testnet/tests/native.mts:19:13"
+}

@@ -1,0 +1,30 @@
+{
+  "genesis": "0x70eca2c694e85926bf36ca95dbd30031d99dfc7252021b3621020513089c45a5",
+  "retainedMint": "0x42d384deccad98f5c623098e229232a9b5c49c951238f067fa8b39b08831fc7c",
+  "master": {
+    "txHash": "0x42d384deccad98f5c623098e229232a9b5c49c951238f067fa8b39b08831fc7c",
+    "index": "0x1"
+  },
+  "currentOrder": {
+    "txHash": "0x1885648a58ad9531543b8c9e7fa0a02d1afa33ebc28224677096feaf7cf32b40",
+    "index": "0x0"
+  },
+  "trace": [
+    {
+      "txHash": "0x1885648a58ad9531543b8c9e7fa0a02d1afa33ebc28224677096feaf7cf32b40",
+      "index": "0x0"
+    },
+    {
+      "index": "0x0",
+      "txHash": "0x42d384deccad98f5c623098e229232a9b5c49c951238f067fa8b39b08831fc7c"
+    }
+  ],
+  "recipient": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+  },
+  "expectedCKB": "38899000000",
+  "expectedTokens": "9994432257408",
+  "scope": "Authenticated retained-mint client policy on trusted private RPC; no on-chain LO-01 fix"
+}

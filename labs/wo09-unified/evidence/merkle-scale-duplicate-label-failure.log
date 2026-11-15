@@ -1,0 +1,19 @@
+deploy_market 0x02d7a293b5102d16db3e0d41f10160d0e0aa134e84d7015b87bc469c814506be
+fund_creator_wallet_once 0x4db27201b1e789643b92bc994d07d8235dc217bafdb2dce757c5f5f9622137b0
+fund_16_independent_wallets_0 0xd2795ba4abb6a28b8ac2a56b532d954bc7edeb552886fcbd8ce98af7f14d8272
+create_market_16 0x73deebd496b193bc14dfa0f65262ee74985bbb29f63ac07e9be31ba507e46bea
+FAILED /workspace/trade/labs/wo09-unified/evidence/merkle-scale-1793668268008
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Duplicate|duplicate|Duplicated|duplicated/. Input:
+
+'TransactionFailedToResolve: Resolve failed Dead(OutPoint(0xd2795ba4abb6a28b8ac2a56b532d954bc7edeb552886fcbd8ce98af7f14d827200000000))'
+
+    at Engine.reject (/workspace/trade/labs/wo09-e2-capacity/src/engine.cjs:17:249)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspace/trade/labs/wo09-unified/src/run-merkle-scale.cjs:21:230 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'TransactionFailedToResolve: Resolve failed Dead(OutPoint(0xd2795ba4abb6a28b8ac2a56b532d954bc7edeb552886fcbd8ce98af7f14d827200000000))',
+  expected: /Duplicate|duplicate|Duplicated|duplicated/,
+  operator: 'match',
+  diff: 'simple'
+}

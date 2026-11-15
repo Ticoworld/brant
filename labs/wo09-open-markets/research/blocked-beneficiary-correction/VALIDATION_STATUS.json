@@ -1,0 +1,10 @@
+{
+  "status": "UNRESOLVED / NOT SECURITY VALIDATED",
+  "remote_checkpoint": "11c87a6141d5893e5da1b87483e2855324b1dea1",
+  "source_proposal": "Canonical20-byte normal-wallet args instead of unconstrained32-byte beneficiary hash; proposed correction only.",
+  "compilation": "Proposed C artifacts compiled; not evidence of settlement-liveness security.",
+  "execution": "Attempted correction replay stopped at JavaScript SyntaxError because a file-generation variable wrote C into the JS runner. No proposed-correction native transaction executed.",
+  "boundary": "User-reported cybersecurity content restriction. No further beneficiary-address settlement-liveness adversarial reproduction/correction validation will be attempted in this continuation.",
+  "historical_evidence": "Completed pre-warning original-prototype traces retained; happy-path or counterexample observations do not establish corrected security.",
+  "active_scripts": "Restored original consumable source/harness from11c87a6, explicitly unresolved. Default reproduction now runs independent claims/hybrid/fixed-risk/snapshot-risk only."
+}

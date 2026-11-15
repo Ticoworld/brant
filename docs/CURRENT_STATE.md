@@ -1,3 +1,25 @@
+# Current state update — 2026-11-15
+
+## Roveko application status
+
+- **VERIFIED (source tree):** `apps/trade-testnet` contains Discover, Portfolio, Activity, and Launch routes plus Pudge market and deployment interfaces. The Discover board's sample market rows are demo fixtures, not live data.
+- **DERIVED (source inspection):** the default app client is configured for public CKB Pudge testnet RPC, and the source includes wallet-mediated transaction signing and submission paths. This describes code behavior, not a verified public deployment or successful public transaction.
+- **UNVERIFIED:** current public Pudge code identity and availability; a complete deployment, initialization, trading, withdrawal, and recovery lifecycle on Pudge; external-wallet compatibility; independent public-chain verification; security review; maker commitments; and profitable exchange economics.
+- **UNIMPLEMENTED:** independent authentication of public RPC observations and a production-grade validation of the full product workflow. Local mock-RPC, disposable-chain, and protocol-lab results do not close these gaps.
+- No mainnet use, externally funded testnet transaction, or production deployment is authorized by this status document.
+
+The notes below preserve the protocol-research migration state and its historical next-task instructions. They are not evidence that the Roveko public Pudge product workflow has been verified.
+
+---
+
+# Current rebuild pointer — 2026-11-01
+
+WO05–WO08 comprehensive native reconstruction is isolated in labs/rebuild on rebuild/wo05-wo08. Read REBUILD_WO05_WO08_STATUS.md, TRADE_CAPABILITY_REGISTRY.md and WO09_READINESS.md for current evidence and limits. Substantial compact/hybrid, clearing, commitment/revocation, launch/quote/economic and DAO proofs are preserved; arbitrary-history authenticated recovery/LO-01 remains unresolved/blocked. Full recovery/readiness is not claimed and no WO09 implementation has begun.
+
+The original WO01–WO04 foundation state below is preserved as historical context. Do not resume WO04 cross-chain implementation under the rebuild mission.
+
+---
+
 # Current project state — October 30, 2026
 
 ## Goal

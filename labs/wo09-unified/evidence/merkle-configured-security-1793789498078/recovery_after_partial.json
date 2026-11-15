@@ -1,0 +1,32 @@
+{
+  "classification": "FRESH_PROCESS_COMMITTED_RPC_MERKLE_REPLAY",
+  "tip": "0x3de09290cf7a3e0292f227be4cf5295ba4a74b7da7ffcea31bddb861357c4878",
+  "closed": false,
+  "target": 3,
+  "history_transactions": 6,
+  "rpc_calls": 7,
+  "root": "0x48d676c4465ef000819e18c3f9f4bee247d13a56f69b7bb42e964e57f78599b7",
+  "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+  "claim": {
+    "p": "12500000",
+    "b": "5000000"
+  },
+  "index": 0,
+  "proof": [
+    "0x1b654ad0b089c5b13873dd74605dab5a05010409ac1dae79eb774be2831f89f6",
+    "0x1724f4cb531ad084df6a6dd662365c4ded6156c109a95fe197e621ec1b1c4ac9"
+  ],
+  "elapsed_ms": 90.942606,
+  "rss_bytes": 62349312,
+  "peak_rss_bytes": 62349312,
+  "remaining_backing": "10105000000",
+  "history": [
+    "0xbdcda073495a49ca4118c903851931227445c19acb91ac54d1477dfac78ccc52",
+    "0xc35403daaedd9ce23e187d40b83e3fd85dd02cb40a364b82c495db0c8f0f0c56",
+    "0xc1d61ac9dec110673c4cf90063d6efab3e0f7874a7994554170d6afd864a104b",
+    "0xb4bab7b90b9b0e7c85f64133b4967d630f0dd212ba1f44ff66dadee7448effec",
+    "0xf06e2b7d6424d23a8393b5b975c141042713d02c6eac165277d1e77f30a05e0f",
+    "0x3de09290cf7a3e0292f227be4cf5295ba4a74b7da7ffcea31bddb861357c4878"
+  ],
+  "dependencies": "archival committed transaction witnesses plus latest live Cell; no local receipts or private indexer"
+}

@@ -1,0 +1,7 @@
+# Private extension account preparation
+
+Run `node apps/trade-testnet/tests/r7-extension-prepare.cjs` from the repository root in WSL with the existing private CKB and R7 dependencies. Port 19224 must be free. The process creates a fresh disposable CKB node, deploys the recorded R7 binary, creates and funds an active vault, and transfers 200 CKB of disposable capacity to the public lock supplied for this test. It writes an unsigned-for-buyer, fixture-seller-signed assignment to its new evidence directory and keeps the node alive until interrupted. Never use this transaction on a public network.
+
+The fixture assigns position 0 with 1.25 CKB principal and 1 CKB backing to the supplied lock, at 80 CKB consideration and a 10,000 shannon fee. This is a test value, not a market valuation. The external account must inspect and sign the exact private-chain transaction before it can own the position. R7 currently has no extension-facing interface for this preparatory assignment; do not ask the user to sign a pasted transaction. The position is not owned by the external account until the signed transaction commits. A subsequent seller intent is a separate wallet approval.
+
+Recorded preparation `extension-prepare-1793976871264` committed the private funding cell and produced the transaction review. That node was stopped; its transaction cannot be used as a live request. The extension network and message-signing behavior remain unverified.

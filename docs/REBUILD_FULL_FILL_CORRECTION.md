@@ -1,0 +1,9 @@
+# Full-fill correction — VERIFIED, previous labels narrowed
+
+New run-1793544609163 executes 76 committed private-chain transactions and 18 rejections, including zero-unoccupied-capacity CKB bid fills, corrected 2/8/32 batch and serial baselines, and an authentic iCKB bid fill followed by DAO maturity and spend. verify.cjs now asserts occupied capacity for every output labeled a completed bid in this run.
+
+Discovery: earlier bid successors at 289 CKB were above their occupied minimum, so their "complete/full fill" labels were wrong. Actual order occupancy with fixture xUDT args32 is 195 CKB; iCKB args36 has a 199 CKB minimum. 289 CKB in the historical manifest described an ordinary minimum order/master pair, not a single order cell. Earlier transactions/VM receipts remain valid partial fills and their recovery results remain narrow fixture evidence; they do not establish full execution merely from their old labels. Earlier shared/serial comparisons measured those partial fills, not the newly corrected full fills.
+
+Correction: lib.cjs derives occupied capacity from capacity bytes, actual lock/type args and data length. The complete order, serial/batch full fills and DAO reserve are updated accordingly. A first correction run-1793544561914 passed genuine xUDT full fills but failed the DAO bid because its extra four type-arg bytes were omitted from a hard-coded reserve; A2's checked arithmetic rejected that below-occupancy candidate. The final run derives DAO reserve too and passes actual VM/chain execution. Both raw runs are preserved.
+
+This is a material claim correction, not a rewritten old result. Authenticated arbitrary-history recovery and LO-01 remain unresolved/blocked, independently of this native fill validation. No WO09 implementation or comprehensive recovery claim follows.

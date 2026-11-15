@@ -1,0 +1,38 @@
+[
+  {
+    "name": "TICO",
+    "supply": "1000",
+    "base": "1000000000",
+    "step": "100000000",
+    "cost": "2100000000",
+    "marketHash": "0xd7ab05b617a54f3989e79ffebeffac5a7c16f77629a62c31abd64e5baa5703b4",
+    "tokenHash": "0xa16bdf90f5fbf12b4cd525a52382dea6f2282caa1948fe48c58089ec6ddded25",
+    "markerHash": "0xc36b988d6e4adc2b1da62f681da3f50e7cc69bafb23d25422d4e4d24ddc70be1",
+    "initialInventory": {
+      "txHash": "0xabf10713c22d50ab04cef52dea4d17a766b1b1e7b5495c90a1870821957e91fa",
+      "index": "0x0"
+    },
+    "initialMarker": {
+      "txHash": "0xabf10713c22d50ab04cef52dea4d17a766b1b1e7b5495c90a1870821957e91fa",
+      "index": "0x1"
+    }
+  },
+  {
+    "name": "NEON",
+    "supply": "700",
+    "base": "500000000",
+    "step": "200000000",
+    "cost": "1200000000",
+    "marketHash": "0x57f9f64da0ac3c2806b657d2dee53c6787405eaab3630cedc5ef9e493facd66f",
+    "tokenHash": "0x47398a9dea3e8389a5b8769f5fc5936cd724e74b92839ad0993d5dd327dbe220",
+    "markerHash": "0x8fe75f6616c7eca6f7cf366f79802b522ecebccf8d74397074c9a0c2a84a446a",
+    "initialInventory": {
+      "txHash": "0xa6923a7b7cafd9d6ddcf7f5668ff8c8de410b5be07d60263bc56cae99c01a54f",
+      "index": "0x0"
+    },
+    "initialMarker": {
+      "txHash": "0xa6923a7b7cafd9d6ddcf7f5668ff8c8de410b5be07d60263bc56cae99c01a54f",
+      "index": "0x1"
+    }
+  }
+]

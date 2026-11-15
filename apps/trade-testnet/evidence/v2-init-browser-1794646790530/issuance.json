@@ -1,0 +1,118 @@
+{
+  "stage": "issuance",
+  "hash": "0xb1c214730ce78a11bd8720d5ecb85b957b2e4db2fabc9d421da5ebf828dd8499",
+  "tx": {
+    "cycles": "0x1a0e8d",
+    "fee": null,
+    "min_replace_fee": null,
+    "time_added_to_pool": null,
+    "transaction": {
+      "cell_deps": [
+        {
+          "dep_type": "dep_group",
+          "out_point": {
+            "index": "0x0",
+            "tx_hash": "0x6bc8ef22d46b4819dce1d3ec52ab526fdd65dc74a15a2f3a418dae059ffb958a"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x4",
+            "tx_hash": "0x58c6e3c6c1de92dac68bdf4027ab3c3f0962470056bddca6ac65de04c70d7148"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x6",
+            "tx_hash": "0x008fae915666a2d41bae050e3694dd786ab448e73f46878c11cb79aeb1bdfff1"
+          }
+        },
+        {
+          "dep_type": "code",
+          "out_point": {
+            "index": "0x3",
+            "tx_hash": "0x58c6e3c6c1de92dac68bdf4027ab3c3f0962470056bddca6ac65de04c70d7148"
+          }
+        }
+      ],
+      "hash": "0xb1c214730ce78a11bd8720d5ecb85b957b2e4db2fabc9d421da5ebf828dd8499",
+      "header_deps": [],
+      "inputs": [
+        {
+          "previous_output": {
+            "index": "0x0",
+            "tx_hash": "0xf5a24a4a40d3e8d722d8bccec26982fff04e5797e8818da137d2e7c9d11583dc"
+          },
+          "since": "0x0"
+        },
+        {
+          "previous_output": {
+            "index": "0x0",
+            "tx_hash": "0xc9223b64e5bf246786762af94e08a6b9c6ba5f4f239b66f60fa7ac94907dd278"
+          },
+          "since": "0x0"
+        }
+      ],
+      "outputs": [
+        {
+          "capacity": "0x6fc23ac00",
+          "lock": {
+            "args": "0xd76d5121896de1fec777dd0dde79652118a8f7ebdd8bbbe9d5b0a09079134dd900ca9a3b0000000000e1f50500000000d007000000000000f29dafaaabb1efd0abb1f464aaf595d48faff104d1d4410eabbcf23c2a862d20",
+            "code_hash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+            "hash_type": "data1"
+          },
+          "type": {
+            "args": "0xafd0b21b09696a919098e3bbd8cbfdcb3580dd161a61c2ecf27a0f1f03092c92",
+            "code_hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+            "hash_type": "data1"
+          }
+        },
+        {
+          "capacity": "0x6fc23ac00",
+          "lock": {
+            "args": "0xd76d5121896de1fec777dd0dde79652118a8f7ebdd8bbbe9d5b0a09079134dd900ca9a3b0000000000e1f50500000000d007000000000000f29dafaaabb1efd0abb1f464aaf595d48faff104d1d4410eabbcf23c2a862d20",
+            "code_hash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+            "hash_type": "data1"
+          },
+          "type": {
+            "args": "0x2ba8bb71d7b3ae0f7a2ff0f668d9525c5289d451ecdc4f80bdc286203a91c3ee",
+            "code_hash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+            "hash_type": "data1"
+          }
+        },
+        {
+          "capacity": "0xdf83815c0",
+          "lock": {
+            "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d",
+            "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+            "hash_type": "type"
+          },
+          "type": null
+        }
+      ],
+      "outputs_data": [
+        "0xd0070000000000000000000000000000",
+        "0x72ad707b7f2682f3dbae81f9eda2536421470db904d4fec44ebb541c31ef22ea887e7a3d0d43ebb078fe2bab2e6e29ea74a4900b56bd2c42acec530d816209fe",
+        "0x"
+      ],
+      "version": "0x0",
+      "witnesses": [
+        "0x5500000010000000550000005500000041000000216cae1e8946acd2d0f4c5227e8cac7506031eb870d5469557342f64fb05d35b0ce28c785ecce39f114fe90711001b41fe10b180f03020886341d805791a21eb00",
+        "0x"
+      ]
+    },
+    "tx_status": {
+      "block_hash": "0x6b164ecfb0514890fc4b7e032a4caa8451376cf4a388b3da4dde4993728480f8",
+      "block_number": "0x1b",
+      "reason": null,
+      "status": "committed",
+      "tx_index": "0x1"
+    }
+  },
+  "fee": "1000000",
+  "estimate": {
+    "cycles": "0x1a0e8d"
+  }
+}

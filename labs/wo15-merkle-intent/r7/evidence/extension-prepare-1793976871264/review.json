@@ -1,0 +1,109 @@
+{
+  "privateGenesis": "0x64f7b997b4b3e6067500a6052a688a3f3009d0d62401abc8fd41551a36770802",
+  "covenant": {
+    "codeHash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+    "hashType": "data1",
+    "args": "0xa1872dcc13c3dd19f9652fe5147ad902778e9ebcdd3931a966c88128a4c7230d"
+  },
+  "vaultOutPoint": {
+    "txHash": "0xfc1880c0c04c692d203f4699842b0397123fceb9abd51bb971fab51201503123",
+    "index": "0x0"
+  },
+  "externalLock": {
+    "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "hashType": "type",
+    "args": "0x36ef38ed06300fa0f357f1f360b897c476c5c4f9"
+  },
+  "position": 0,
+  "principal": "125000000",
+  "backing": "100000000",
+  "revision": "1",
+  "price": "8000000000",
+  "fee": "10000",
+  "transaction": {
+    "version": "0x0",
+    "cellDeps": [
+      {
+        "outPoint": {
+          "txHash": "0x8f323409a3ca64c607662cdfe69a06b2c294b98eb47720141ddf5afafa472066",
+          "index": "0x0"
+        },
+        "depType": "depGroup"
+      },
+      {
+        "outPoint": {
+          "txHash": "0x568bb322389be6f6f6f5ecfd781bb3ba16903dba24c4c724188a848a7ec7f98d",
+          "index": "0x0"
+        },
+        "depType": "code"
+      }
+    ],
+    "headerDeps": [],
+    "inputs": [
+      {
+        "previousOutput": {
+          "txHash": "0xfc1880c0c04c692d203f4699842b0397123fceb9abd51bb971fab51201503123",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0xa4035b89dc4dfb4ac0bdf0f4f45507378e2f6c9cad3eb13df057f13fb3de00b0",
+          "index": "0x1"
+        },
+        "since": "0x0"
+      },
+      {
+        "previousOutput": {
+          "txHash": "0x7cee4c7427bfeec366d309155fe10b97f488d9227755b75c309a34ac62a28eba",
+          "index": "0x0"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x84fe2c500",
+        "lock": {
+          "codeHash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+          "hashType": "data1",
+          "args": "0xa1872dcc13c3dd19f9652fe5147ad902778e9ebcdd3931a966c88128a4c7230d"
+        },
+        "type": {
+          "codeHash": "0x6870b841e2b873ca563b95313bcac6f20e299d17c395e1f907d0723d4fa16c36",
+          "hashType": "data1",
+          "args": "0xa1872dcc13c3dd19f9652fe5147ad902778e9ebcdd3931a966c88128a4c7230d"
+        }
+      },
+      {
+        "capacity": "0x2386e9b316a2a0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x75178f34549c5fe9cd1a0c57aebd01e7ddf9249e"
+        }
+      },
+      {
+        "capacity": "0x2cb4150f0",
+        "lock": {
+          "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hashType": "type",
+          "args": "0x36ef38ed06300fa0f357f1f360b897c476c5c4f9"
+        }
+      }
+    ],
+    "outputsData": [
+      "0x54434d30303033000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7aed997c777bac31a227b24f451ea2711c0a790739324e6839e3da094d6ebf35d0022013e0800000001000000000000000000000000000000c00b5a160000000000a3e11100000000030000000000000003000000000000009cc9eb2a500e221e286d84b8414e68b02dd0d980c73c504f8f622072396704c720bcbe000000000060343c0200000000000000000000000064f7b997b4b3e6067500a6052a688a3f3009d0d62401abc8fd41551a36770802",
+      "0x",
+      "0x"
+    ],
+    "witnesses": [
+      "0x",
+      "0x550000001000000055000000550000004100000070ac744d4affbdd32b80fd3e2d59ec6a367bb1f45e6158175077fd6dd6bd569c3df8059ecde2f41c912a4f85b2e8e3097f76f5a4571618cca50703355b5086a201",
+      "0x",
+      "0x0400000000000000010000000000000000000000000000000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7405973070000000000e1f505000000000100000000000000c47b33f79bb3439876bf5be3af7d790eca8ae73779346297b5290ad73e4436ca405973070000000000e1f5050000000002000000000000002eb7153972a344900ab469ce9e0a2f72d475235c64e5d7abbbb1560f65fe41bfb705479ace88141cd148bd1db28c4bcd9dcb6c764d79c5dbf479cb71767b1ec7"
+    ]
+  },
+  "note": "Seller fixture has signed. Buyer input requires the supplied address to sign this exact private-chain transaction. Do not submit on public networks."
+}

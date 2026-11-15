@@ -1,0 +1,266 @@
+{
+  "classification": "QUALIFIED_NATIVE_EVIDENCE_INDEX_NOT_PRODUCTION_SECURITY",
+  "baseline_remote": "b94684fdd8c18701fb0facc8ab7080c85924ac2a",
+  "verified_native_milestone_remote": "a92a1cc0eae330429598991262c2017b878e9f77",
+  "preferred_recovery_run": "native-1793683642752",
+  "binary_sha256": "5097f45ba10565837ee7ef7d82b31bc8dbb332272c19255f8da9466f6f19d81e",
+  "guarantees": {
+    "A": "NATIVE_TESTED",
+    "B": "BOUNDED_NATIVE_TESTED_NOT_AUDITED",
+    "C": "CONDITIONAL_FOR_SMALL_ORDINARY_EXITS"
+  },
+  "runs": [
+    {
+      "directory": "native-1793681058034",
+      "committed_transactions": 26,
+      "independent_owner_signatures": 25,
+      "markets": [
+        {
+          "id": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "closed": true,
+          "remaining_principal": "0"
+        },
+        {
+          "id": "0xd9756c661c4693b93f3d73c03efb0881b9931ba086eadccfa4eb3a1c244c21dd",
+          "closed": true,
+          "remaining_principal": "0"
+        }
+      ],
+      "critical_transactions": [
+        {
+          "label": "Bob_rebuilds_and_transfers_without_operator_or_funder",
+          "hash": "0xe1563a80278f382ae09f2a69059049059ca905ab30906d8a4d272c29235a4ec9",
+          "op": 2,
+          "market": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "bytes": 1104,
+          "cycles": 11304582,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "Carol_independent_ordinary_L1_withdrawal_from_claim_funds",
+          "hash": "0xbc8d84aa54590dcb35aa6c88e0351a55783c7c5a089317bb1cc4d3aef52f3c76",
+          "op": 3,
+          "market": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "bytes": 949,
+          "cycles": 5715426,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 2,
+          "user_signatures": 1,
+          "extra_witness_bytes": 288
+        },
+        {
+          "label": "Alice_Bob_trade_without_any_personal_or_sponsor_input",
+          "hash": "0xb4f9be283bcc7156e94ba1d349b5b5bc56874ac603155936e16ecc18477bee14",
+          "op": 2,
+          "market": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "bytes": 1104,
+          "cycles": 11341468,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "claim_paid_fee_works_after_sponsor_budget_exhaustion",
+          "hash": "0x54b437d6f87e4c6d9bdb67ab393566a784e07e2ea9858299dc2f28ebbe80d616",
+          "op": 2,
+          "market": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "bytes": 1104,
+          "cycles": 11438094,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "lawful_empty_pool_capacity_return",
+          "hash": "0x0b7771ce37e069db8fbf182036bb2bcc9b91d66e9ca4fb8fd19cab9368951f9c",
+          "op": 7,
+          "market": "0xcba964c15261113be8d05d97af92f3ba569ce7bf447809c4b78f81ae5f351a91",
+          "bytes": 472,
+          "cycles": 1721724,
+          "fee_shannons": "10000",
+          "inputs": 2,
+          "outputs": 1,
+          "user_signatures": 0,
+          "extra_witness_bytes": 24
+        }
+      ]
+    },
+    {
+      "directory": "native-1793682981911",
+      "committed_transactions": 26,
+      "independent_owner_signatures": 25,
+      "markets": [
+        {
+          "id": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "closed": true,
+          "remaining_principal": "0"
+        },
+        {
+          "id": "0x629c189681015fcc7100ecb4a527254d139a361abebc6c70b0a3bcb0893b6cbb",
+          "closed": true,
+          "remaining_principal": "0"
+        }
+      ],
+      "critical_transactions": [
+        {
+          "label": "Bob_rebuilds_and_transfers_without_operator_or_funder",
+          "hash": "0xc38e986f60d2d17630f3af511918a216d1a7fa7bf9627be9215ad862c620b492",
+          "op": 2,
+          "market": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "bytes": 1104,
+          "cycles": 11402166,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "Carol_independent_ordinary_L1_withdrawal_from_claim_funds",
+          "hash": "0xf7b03f1af042adb3009909e512890e95f0e74f22e1e54bd06ecf8b238ee0f852",
+          "op": 3,
+          "market": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "bytes": 949,
+          "cycles": 5677578,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 2,
+          "user_signatures": 1,
+          "extra_witness_bytes": 288
+        },
+        {
+          "label": "Alice_Bob_trade_without_any_personal_or_sponsor_input",
+          "hash": "0x09c9be910f67c5d63bc66f42911e49cf0b962b4031ce0edc41cdedd54807573c",
+          "op": 2,
+          "market": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "bytes": 1104,
+          "cycles": 11459586,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "claim_paid_fee_works_after_sponsor_budget_exhaustion",
+          "hash": "0xc308395979ed236627f0daabefbd1fd4caeadca95bb0a9a74c853e1be256cc68",
+          "op": 2,
+          "market": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "bytes": 1104,
+          "cycles": 11453854,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "lawful_empty_pool_capacity_return",
+          "hash": "0x2d07406ca2c47edbe3bf8c9495e5e51bec0341c5974290056e965ff206626ced",
+          "op": 7,
+          "market": "0x69e64c92a877371a5b0d4d4b8ddd0dd9f25b2035091e9183722857fbb3e482b9",
+          "bytes": 472,
+          "cycles": 1703508,
+          "fee_shannons": "10000",
+          "inputs": 2,
+          "outputs": 1,
+          "user_signatures": 0,
+          "extra_witness_bytes": 24
+        }
+      ]
+    },
+    {
+      "directory": "native-1793683642752",
+      "committed_transactions": 26,
+      "independent_owner_signatures": 25,
+      "markets": [
+        {
+          "id": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "closed": true,
+          "remaining_principal": "0"
+        },
+        {
+          "id": "0xbc0cd65975114bc06e1a80a1a13196b7e891ce303f6eb0e2c47805838c632759",
+          "closed": true,
+          "remaining_principal": "0"
+        }
+      ],
+      "critical_transactions": [
+        {
+          "label": "Bob_rebuilds_and_transfers_without_operator_or_funder",
+          "hash": "0x250232b8a40db5c61ad9bdc060e2808338e243e3538a686fa59c3daba01759f5",
+          "op": 2,
+          "market": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "bytes": 1104,
+          "cycles": 11464832,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "Carol_independent_ordinary_L1_withdrawal_from_claim_funds",
+          "hash": "0x04af223472ed3fb2c76fc85c9aeff97ffe31bdd8b76a5d86c881c48a2d1f81ee",
+          "op": 3,
+          "market": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "bytes": 949,
+          "cycles": 5743444,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 2,
+          "user_signatures": 1,
+          "extra_witness_bytes": 288
+        },
+        {
+          "label": "Alice_Bob_trade_without_any_personal_or_sponsor_input",
+          "hash": "0x85f47fa3b568d68e40c694014a08baf7a0252169b99fc268b015b69b349c9e01",
+          "op": 2,
+          "market": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "bytes": 1104,
+          "cycles": 11485540,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "claim_paid_fee_works_after_sponsor_budget_exhaustion",
+          "hash": "0x382ab641eeae5b87b26f9b0f3d55c85af099baed8d92a7a281761d9eade61e90",
+          "op": 2,
+          "market": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "bytes": 1104,
+          "cycles": 11380532,
+          "fee_shannons": "10000",
+          "inputs": 1,
+          "outputs": 1,
+          "user_signatures": 2,
+          "extra_witness_bytes": 552
+        },
+        {
+          "label": "lawful_empty_pool_capacity_return",
+          "hash": "0x1f823954cfa70980629f7c614d3e46a555d3048f76201993c92d47fa4ef560b9",
+          "op": 7,
+          "market": "0xdfb35a1cd1c4bf47a6d2142b2f0893105427a534e86891e3dd4a50646b046ce0",
+          "bytes": 472,
+          "cycles": 1711793,
+          "fee_shannons": "10000",
+          "inputs": 2,
+          "outputs": 1,
+          "user_signatures": 0,
+          "extra_witness_bytes": 24
+        }
+      ]
+    }
+  ]
+}

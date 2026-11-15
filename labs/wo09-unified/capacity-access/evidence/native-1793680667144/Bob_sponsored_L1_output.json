@@ -1,0 +1,17 @@
+{
+  "cell": {
+    "capacity": "6590990000",
+    "lock": {
+      "codeHash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+      "hashType": "type",
+      "args": "0x4324dfe01f5fc272c8584b57e683c74cfbb92766"
+    },
+    "data": "0x",
+    "outPoint": {
+      "txHash": "0x3a89f5b0777d059030bb371b92443ae12febceed9cd2933f0a59c7e007c52663",
+      "index": "0x1"
+    }
+  },
+  "capacity_gift_shannons": "6100000000",
+  "qualification": "Provider-cooperative irrevocable gift; not unconditional sponsorless withdrawal or recoverable lease"
+}

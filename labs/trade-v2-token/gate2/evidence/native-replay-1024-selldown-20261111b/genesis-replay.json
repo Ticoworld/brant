@@ -1,0 +1,12 @@
+{
+  "source_genesis_hash": "0xa05234b21039171c7ef1811a15eceb07e076bc96adf3656845416c918fe372f2",
+  "replay_genesis_hash": "0xa05234b21039171c7ef1811a15eceb07e076bc96adf3656845416c918fe372f2",
+  "source_genesis_transaction_0_hash": "0x9327ac1216bdf3310dd27ddd0c06746cf542ee4f5699bc484ef4b68d8f8cfe03",
+  "replay_genesis_transaction_0_hash": "0x9327ac1216bdf3310dd27ddd0c06746cf542ee4f5699bc484ef4b68d8f8cfe03",
+  "source_genesis_cell_data": "0x31373934343138373733383136",
+  "replay_genesis_cell_data": "0x31373934343138373733383136",
+  "source_genesis_message": "1794418773816",
+  "source_rpc_log_sha256": "0846b326a9fc5746b254281ec5952082dc8de7f2b177523a9e442d25f4f92a8f",
+  "source_genesis_rpc_response_sha256": "0fd34736a68ae0d2e70cbf42f6dbf1db1499ceaeb61907b416a7456b2738ba48",
+  "exact_genesis_match": true
+}

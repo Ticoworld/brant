@@ -1,0 +1,9 @@
+{
+  "scope": "Bounded lower-bound maker commitment; ordinary immediate owner exit estimated and commitment early exit rejected by consensus",
+  "limits": [
+    "No upper quote expiry",
+    "No permanent redemption or guaranteed depth",
+    "No arbitrary-history recovery/LO-01 fix",
+    "Exact matched-profile fixture costs, not public market fee estimates"
+  ]
+}

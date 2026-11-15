@@ -1,0 +1,23 @@
+{
+  "at_utc": "2026-11-03T21:14:59.624Z",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "tip": {
+    "compact_target": "0x1d087632",
+    "dao": "0xf267e23333c31d59a85712fa37712a0029bf269f1058900a00f7f5c7640b8609",
+    "epoch": "0x70801fe00372e",
+    "extra_hash": "0xe762865873da3b5305806301f1132c8322c67075435cb5a97cb9a3d817114564",
+    "hash": "0x4308a564b96d0034f89bed686b282a6045ad41571676f90f3b29a32ec6082324",
+    "nonce": "0xf2b1eb17e1e2d7f45f24def615c81c40",
+    "number": "0x15e53c7",
+    "parent_hash": "0x7c65327d5ddd4a3e39e06915f108bf38a10e3f59e114341527c796ba8b9f4b6b",
+    "proposals_hash": "0x6168ba207f0a56ae476300079763fd40860ac7208f04071bdfe7e886ad1fa0ff",
+    "timestamp": "0x1a1a343a819",
+    "transactions_root": "0x82b22a14ffc2fc865157af828e25f7aa90743d9b9b75ea356acc664580a26c0d",
+    "version": "0x0"
+  },
+  "fee_statistics": {
+    "mean": "0x4ce9",
+    "median": "0x4ce5"
+  },
+  "qualification": "READ_ONLY_NO_FUNDING_SIGNING_OR_BROADCAST"
+}

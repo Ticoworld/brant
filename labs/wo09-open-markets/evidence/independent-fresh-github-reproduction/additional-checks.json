@@ -1,0 +1,8 @@
+{
+  "independent_alternatives_byte_identical": true,
+  "sha256": "69eff4635e3f625f1d78deccea5ce1e8b3e5f18b2cc83eeb517e7a89b4c11a21",
+  "original_registry_records_unchanged": 27,
+  "original_registry_markdown_preserved": true,
+  "beneficiary_experiments_executed": false,
+  "scope": "Exact model artifact and preserved registry checks; not security or commercial qualification"
+}

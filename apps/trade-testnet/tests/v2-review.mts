@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { ccc } from '@ckb-ccc/core';
+import { buildReviewedTransaction } from '../lib/v2-engine/review.ts';
+import type { Cell } from '../lib/v2-engine/transaction.ts';
+const lock=ccc.Script.from({codeHash:'0x'+'11'.repeat(32),hashType:'data1',args:'0x'});
+const owner=lock.hash(), hash=(n:number)=>'0x'+n.toString(16).padStart(64,'0');
+const data='0x'+'00'.repeat(48), cell=(n:number,d='0x'):Cell=>({outPoint:{txHash:hash(n),index:'0x0'},capacity:100000000000n,lock,data:d});
+const leaf=(balance:number)=>balance.toString(16).padStart(2,'0')+'00'.repeat(31);
+const witness='0x544d53310101010001000000'+owner.slice(2)+leaf(5)+leaf(6)+'4c';
+const input={curve:{base:100000000n,step:100000000n,supply:100n,inventory:90n},cells:[cell(1,data),cell(2),cell(3,data),cell(4),cell(5)] as [Cell,Cell,Cell,Cell,Cell],custodyAmount:10n,newRoot:hash(9),witness,fee:100000n,side:'buy' as const,quantity:1n};
+const result=buildReviewedTransaction(input,[],hash(10),owner);
+assert.equal(result.amount,1100000000n);
+assert.throws(()=>buildReviewedTransaction({...input,quantity:2n},[],hash(10),owner),/quantity/);
+assert.throws(()=>buildReviewedTransaction(input,[],hash(10),hash(8)),/owner/);
+assert.throws(()=>buildReviewedTransaction({...input,cells:[{...input.cells[0],capacity:1n},...input.cells.slice(1)] as typeof input.cells},[],hash(10),owner),/occupied/);
+console.log('Local review checks passed');

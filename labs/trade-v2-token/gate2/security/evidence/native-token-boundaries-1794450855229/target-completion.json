@@ -1,0 +1,234 @@
+{
+  "classification": "VERIFIED_NATIVE_TARGETED_RUN",
+  "ckbVersion": "0.210.0",
+  "privateDisposableChain": true,
+  "genesis": "0x745ac87d99ecd0bec569eef46f0d25bec52e209433dc038fb7333aabf29cce04",
+  "supply": "4294967295",
+  "maximumSupplyIssue": {
+    "label": "issue_fixed_supply",
+    "transactionHash": "0x8ade039b9a31f76a432f4f662a6cbebb580391b0a9b069aa78080ae905c42ffb",
+    "cycles": "0x1a4567",
+    "inputCount": 2,
+    "outputCount": 3,
+    "serializedTransactionSha256": "b6507d79cc506d714548726eb4e306194bd9507489c179668daa113a5c909f90",
+    "committed": true
+  },
+  "positiveControls": [
+    {
+      "label": "issue_fixed_supply",
+      "transactionHash": "0x8ade039b9a31f76a432f4f662a6cbebb580391b0a9b069aa78080ae905c42ffb",
+      "cycles": "0x1a4567",
+      "inputCount": 2,
+      "outputCount": 3,
+      "serializedTransactionSha256": "b6507d79cc506d714548726eb4e306194bd9507489c179668daa113a5c909f90",
+      "committed": true
+    },
+    {
+      "label": "offline_seller_initial_purchase",
+      "transactionHash": "0x734b911ecb7ebf9cbdda6721a948085350d18ab571e0fa639aec4093fc509f33",
+      "cycles": "0x1e4930",
+      "inputCount": 3,
+      "outputCount": 5,
+      "serializedTransactionSha256": "7d9c5ccb4640919fbcdfa2eb5e949195b0192c84cd89af0db98b0e3ab6929728",
+      "committed": true
+    },
+    {
+      "label": "positive_partial_external_withdrawal_three_units",
+      "transactionHash": "0xc3a272aca06c5ee56eec44e295839b445ad1282a0ea26530efa28eba60ea4c0f",
+      "cycles": "0x1f70c5",
+      "inputCount": 3,
+      "outputCount": 4,
+      "serializedTransactionSha256": "2970e53cf33e1fc58007d2ebb8948000a2a0877b46aab2326801015344fc4591",
+      "committed": true
+    },
+    {
+      "label": "positive_remaining_external_withdrawal_four_units",
+      "transactionHash": "0xd7d93e018526f657d0ff7aa578e9666217bf417e52483a3f91744fbb3629cace",
+      "cycles": "0x1f4b34",
+      "inputCount": 3,
+      "outputCount": 4,
+      "serializedTransactionSha256": "953f7d0f48b76e3aac632a66d20363ffa698710df9a78a3cd517b9821e84ffec",
+      "committed": true
+    },
+    {
+      "label": "positive_genuine_xudt_quantity_preserving_transfer",
+      "transactionHash": "0x30783ef9ae16964338d257a51e8419c471b6298616f599eaf72cb6fb589a7059",
+      "cycles": "0x196734",
+      "inputCount": 2,
+      "outputCount": 2,
+      "serializedTransactionSha256": "12232fa5355fa918ba9119d78bce7871b67d7a8fa631018ca124aed80899b9b1",
+      "committed": true
+    },
+    {
+      "label": "positive_canonical_external_curve_sale_one_unit",
+      "transactionHash": "0xdf10aeecec00b3aeb5a8c8e50f7eea2bf310fe9055d4326f5dda31b94e32aebd",
+      "cycles": "0x1a9282",
+      "inputCount": 4,
+      "outputCount": 4,
+      "serializedTransactionSha256": "504a5492008ccaf8292140657c677bc7a841a2b2d73f9d400e3eade4048d05b8",
+      "committed": true
+    }
+  ],
+  "attacks": [
+    {
+      "label": "owner-mode-reissue-with-consumed-anchor",
+      "classification": "VERIFIED_NATIVE_REJECTION",
+      "rawTransactionHash": "0xdbf9c43718346d689a93d43b1d91ee135ce2b168a833f8fc5b5e79f5eba603c3",
+      "fullSignedTransactionSha256": "3289126537a1b69ebcaf5f0798d4d37aef8591ae2d8afd24a4c40680f45aaef0",
+      "witnessesSha256": "c2c78dd0b0ab93b4284609610671566c0a9f9376b61caab9f05057d4eeecd058",
+      "rejectingSource": "Inputs[0].Lock",
+      "rejectingScript": "owner_lineage_candidate",
+      "rejectingScriptHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53",
+      "vmError": 4,
+      "nativeSendFailure": "TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/f8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53.html#4 })",
+      "estimateCyclesFailure": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/f8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53.html#4 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/f8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53.html#4 } }\"}",
+      "transactionFile": "owner-mode-reissue-with-consumed-anchor.json",
+      "exactTypeTokenTotals": {
+        "input": "0",
+        "output": "1",
+        "conserved": false
+      },
+      "positiveControl": {
+        "label": "issue_fixed_supply",
+        "transactionHash": "0x8ade039b9a31f76a432f4f662a6cbebb580391b0a9b069aa78080ae905c42ffb",
+        "cycles": "0x1a4567",
+        "committed": true
+      },
+      "exploitHypothesis": "attempt to create one additional genuine xUDT unit using a second owner-locked cell after the sole configured anchor was consumed"
+    },
+    {
+      "label": "alternate-xudt-type-substituted-for-market-inventory",
+      "classification": "VERIFIED_NATIVE_REJECTION",
+      "rawTransactionHash": "0x99cc871d8622254006f4368a8801392759853d938a2244072bb3847fb9c48d43",
+      "fullSignedTransactionSha256": "fdd03664c5542368955d0802ae5fac53571d210cfc80183d4cc3e39f2518e266",
+      "witnessesSha256": "e9dea76a0289bd539545f318cb043e3694118352567a908e659ab6533820bfa8",
+      "rejectingSource": "Inputs[0].Lock",
+      "rejectingScript": "market_smt",
+      "rejectingScriptHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+      "vmError": 6,
+      "nativeSendFailure": "TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 })",
+      "estimateCyclesFailure": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 6 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#6 } }\"}",
+      "transactionFile": "alternate-xudt-type-substituted-for-market-inventory.json",
+      "exactTypeTokenTotals": {
+        "input": "4294967295",
+        "output": "7",
+        "conserved": false
+      },
+      "positiveControl": {
+        "label": "offline_seller_initial_purchase",
+        "transactionHash": "0x734b911ecb7ebf9cbdda6721a948085350d18ab571e0fa639aec4093fc509f33",
+        "committedAfterRejection": true
+      },
+      "exploitHypothesis": "replaced the market inventory successor type with a syntactically valid xUDT Type Script sharing the pinned code but carrying a different owner-script hash"
+    },
+    {
+      "label": "unexpected-additional-xudt-output",
+      "classification": "VERIFIED_NATIVE_REJECTION",
+      "rawTransactionHash": "0x6d1e86e79dcf0f8e4f58ee1763c8842c43557fe13514eb8297e9b5ee22263c28",
+      "fullSignedTransactionSha256": "9803549a2af7ad7b38c58c54be26ad881108c4e28cba9e9e69d94f4a143afdc7",
+      "witnessesSha256": "f47e005e40d300b7b04fd64903d12b07cb2c8f8356112b7bc848b9b03d1a2762",
+      "rejectingSource": "Inputs[0].Lock",
+      "rejectingScript": "market_smt",
+      "rejectingScriptHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+      "vmError": 4,
+      "nativeSendFailure": "TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#4 })",
+      "estimateCyclesFailure": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#4 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 4 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#4 } }\"}",
+      "transactionFile": "unexpected-additional-xudt-output.json",
+      "exactTypeTokenTotals": {
+        "input": "4294967295",
+        "output": "4294967295",
+        "conserved": true
+      },
+      "positiveControl": {
+        "label": "offline_seller_initial_purchase",
+        "transactionHash": "0x734b911ecb7ebf9cbdda6721a948085350d18ab571e0fa639aec4093fc509f33",
+        "committedAfterRejection": true
+      },
+      "exploitHypothesis": "appended a standard-lock zero-quantity output under the genuine xUDT type; total token quantity and capacity remain conserved, but the market initialization layout gains an extra output"
+    },
+    {
+      "label": "genuine-xudt-quantity-inflation-on-external-transfer",
+      "classification": "VERIFIED_NATIVE_REJECTION",
+      "rawTransactionHash": "0x0ef599b85255101ac7d2c03c4c3e071c39f8913ff73dd5ee68df31dcc05765eb",
+      "fullSignedTransactionSha256": "ad2002a589de227a74738041638b1ff50c477e9f489ebc66b234a0d23c0d811d",
+      "witnessesSha256": "d34f6d04e7fc7bfe356e18940af754139ac2da619033cf86f0191ecf33c60f5d",
+      "rejectingSource": "Inputs[0].Type",
+      "rejectingScript": "xudt Type Script",
+      "rejectingScriptHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "vmError": -52,
+      "nativeSendFailure": "TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 })",
+      "estimateCyclesFailure": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 } }\"}",
+      "transactionFile": "genuine-xudt-quantity-inflation-on-external-transfer.json",
+      "exactTypeTokenTotals": {
+        "input": "3",
+        "output": "4",
+        "conserved": false
+      },
+      "positiveControl": {
+        "label": "positive_genuine_xudt_quantity_preserving_transfer",
+        "transactionHash": "0x30783ef9ae16964338d257a51e8419c471b6298616f599eaf72cb6fb589a7059",
+        "committedAfterRejection": true
+      },
+      "exploitHypothesis": "attempted to increase the genuine xUDT amount from 3 to 4 without owner-mode input or a matching authorized issuance"
+    },
+    {
+      "label": "unexpected-additional-xudt-input-to-external-sale",
+      "classification": "VERIFIED_NATIVE_REJECTION",
+      "rawTransactionHash": "0x80853527069d2b4a0f21c0cc7b85770dcab4ad91b22e96917dba1548a5f653b2",
+      "fullSignedTransactionSha256": "3dbd94f32e7f9290d42a5028497d83ba00ce011a6285aea7f648d4a02552a8f2",
+      "witnessesSha256": "056e9e8278dabea47173c33f6c84ee52066051e0c27ca16acc574854126ad620",
+      "rejectingSource": "Inputs[0].Lock",
+      "rejectingScript": "market_smt",
+      "rejectingScriptHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770",
+      "vmError": 23,
+      "nativeSendFailure": "TransactionFailedToVerify: Verification failed Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 23 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#23 })",
+      "estimateCyclesFailure": "{\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 23 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#23 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Inputs[0].Lock, cause: ValidationFailure: see error code 23 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/dfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770.html#23 } }\"}",
+      "transactionFile": "unexpected-additional-xudt-input-to-external-sale.json",
+      "exactTypeTokenTotals": {
+        "input": "4294967295",
+        "output": "4294967295",
+        "conserved": true
+      },
+      "positiveControl": {
+        "label": "positive_canonical_external_curve_sale_one_unit",
+        "transactionHash": "0xdf10aeecec00b3aeb5a8c8e50f7eea2bf310fe9055d4326f5dda31b94e32aebd",
+        "committedAfterRejection": true
+      },
+      "exploitHypothesis": "included a second genuine external xUDT input, preserved both input quantities into two outputs and kept transaction capacity balanced; the current market branch sees an unexpected external token cell where it requires the custody singleton"
+    }
+  ],
+  "rejectedAttackCount": 5,
+  "notProvenAttackCount": 0,
+  "conservationPreservingAttackCount": 2,
+  "caveat": "Counterfeit-type substitution is rejected by market lineage before the counterfeit or genuine xUDT Type Script result is relied on. The maximum remaining-supply curve quantity and arithmetic/capacity extremes are not tested here.",
+  "sourceHashes": {
+    "market_smt_c": "fa0f0db4f1eb545468deacc2d81e0ebc9a56983e616e3e0727ba6591700b4cfa",
+    "custody_smt_c": "cac3356341e5197809a03909a7684e9971796fe1e7305c51572cfe5e07734eea",
+    "owner_lineage_candidate_c": "a10fb1968054c3ad96b5ed4475fb008b27b51a60547394e1f980585c4891cb3e"
+  },
+  "binaryHashes": {
+    "market_smt": "b33d7396778340c3d6e66c62897a1dbd1561b32848715106a94d8a077bb7cd1f",
+    "owner_lineage_candidate": "661820b1d9ce5b384762e5e67389335c04bb2c34aac7bbcb7cb684e9ea13671b",
+    "xudt": "e9b92e5783f692f6ee99ca20eeda5f3da282e0f4010eb4fbd3db4e3058239349"
+  },
+  "files": {
+    "rawRpc": {
+      "path": "rpc.jsonl",
+      "sha256": "b407c30792c716a40785dfc2f03e14b741256898cbb684d4f36d6234883a6717",
+      "bytes": 4463570,
+      "storage": "local-only"
+    },
+    "rawEvents": {
+      "path": "events.jsonl",
+      "sha256": "cc0e18bce4666b439e172df3264e6f10fbcb7be9c95f20ab21de4265104fc249",
+      "bytes": 508550,
+      "storage": "local-only"
+    },
+    "nodeLog": {
+      "path": "node.log",
+      "sha256": "024c8bb7ddaaff2e068afd7dd4b22f30bd363d0381391b056521a9d6231feea8",
+      "bytes": 36601,
+      "storage": "local-only"
+    }
+  }
+}

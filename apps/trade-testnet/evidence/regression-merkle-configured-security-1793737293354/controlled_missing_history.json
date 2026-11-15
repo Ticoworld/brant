@@ -1,0 +1,5 @@
+{
+  "classification": "RECOVERY_FAILURE",
+  "error": "CONTROLLED_HISTORY_WITHHOLDING: 0xcfd04d111803eb299d09ae831e70b2e68716e6fab8d63c993b0e5353038d9f1f",
+  "history_withholding_simulated": true
+}

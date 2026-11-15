@@ -1,0 +1,37 @@
+{
+  "baseline_commit": "c2a2fb52cb633525931428409c455d24aa0a7fc9",
+  "bytes": 17848,
+  "sha256": "c569360ba498e715899635410dc0474003e8f61c6afc08a5c3f2a87527711c1f",
+  "expected_sha256": "c569360ba498e715899635410dc0474003e8f61c6afc08a5c3f2a87527711c1f",
+  "public_manifest": {
+    "network": "pudge",
+    "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+    "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+    "code": null,
+    "secp": {
+      "outPoint": {
+        "txHash": "0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37",
+        "index": "0"
+      },
+      "depType": "depGroup"
+    },
+    "status": "APPROVAL_REQUIRED_NO_PUBLIC_DEPLOYMENT",
+    "binary_bytes": 17848,
+    "code_capacity_ckb": 17889,
+    "vault_capacity_ckb": 322,
+    "lockPolicy": "ORIGINAL_SECP_ONLY",
+    "candidateCodeHash": null,
+    "publicSigningEnabled": false
+  },
+  "extension_inventory": {
+    "existing_chromium_profile_subdirectories": [
+      "Crash Reports"
+    ],
+    "installed_extension_directories_found": 0,
+    "scope": "Accessible container profile metadata only; no wallet stores/credentials read. Does not inspect user personal device."
+  },
+  "tools": "No attached interactive user browser/remote desktop capability; local Chromium diagnostic only",
+  "new_signers_created": false,
+  "funding_addresses_provided": false,
+  "ckb_data_hash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f"
+}

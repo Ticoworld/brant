@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {findExistingOwnerCode} from '../lib/v2-engine/existing-code.ts';
+const lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'11'.repeat(20)};
+const cell=(i:number,data:string)=>({outPoint:{txHash:'0x'+i.toString(16).padStart(64,'0'),index:'0x0'},capacity:100n,lock,data});
+const data='0x123456',hash=ccc.hashCkb(data),owner=ccc.Script.from(lock).hash();
+assert.deepEqual(findExistingOwnerCode([cell(1,'0x'),cell(2,data)],owner,[hash]),[{outPoint:cell(2,data).outPoint,dataHash:hash}]);
+assert.equal(findExistingOwnerCode([cell(2,data)],ccc.Script.from({...lock,args:'0x'+'22'.repeat(20)}).hash(),[hash]).length,0);
+assert.equal(findExistingOwnerCode([{...cell(2,data),type:{}}],owner,[hash]).length,0);
+assert.throws(()=>findExistingOwnerCode([cell(2,'0x1')],owner,[hash]),/Invalid cell data/);
+console.log('existing owner code discovery checks passed');

@@ -1,0 +1,64 @@
+{
+  "a2": {
+    "hash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+    "outPoint": {
+      "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+      "index": "0x5"
+    },
+    "script": {
+      "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "xudt": {
+    "hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+    "outPoint": {
+      "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+      "index": "0x6"
+    },
+    "script": {
+      "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "ickb_logic": {
+    "hash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+    "outPoint": {
+      "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+      "index": "0x7"
+    },
+    "script": {
+      "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "owned_owner": {
+    "hash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+    "outPoint": {
+      "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+      "index": "0x8"
+    },
+    "script": {
+      "codeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+      "hashType": "data1",
+      "args": "0x"
+    }
+  },
+  "market": {
+    "hash": "0x04a97d1560b2ad7704d456229cf3837383ac7eb65a9b94be5a500470770045e8",
+    "outPoint": {
+      "txHash": "0xa385ecdc87d9932a2102506f3ce44b523ec278d22ca0560089727ccb3f1318de",
+      "index": "0x0"
+    },
+    "script": {
+      "codeHash": "0x04a97d1560b2ad7704d456229cf3837383ac7eb65a9b94be5a500470770045e8",
+      "hashType": "data1",
+      "args": "0x"
+    },
+    "bytes": 61032,
+    "occupied": "6107300000000"
+  }
+}

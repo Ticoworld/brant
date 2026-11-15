@@ -4,6 +4,16 @@
 
 The initial package imports the preserved WO01–WO04 experiments and the working WO04-E1 execution-proof prototype. Its code and reports came from ChatGPT Work artifact archives. This is a **selective source migration**, not a claim that experiments were re-executed or security audited.
 
+## Roveko application
+
+`apps/trade-testnet` contains the experimental Roveko CKB trading interface. Its current UI includes Discover, Portfolio, Activity, Launch, and Pudge market/deployment workflows. Discover's sample rows are explicitly demo data; they are not live markets, prices, or liquidity.
+
+The application source targets the public CKB Pudge testnet by default and includes wallet-mediated transaction signing and submission paths. These are code capabilities only: a supported live deployment, complete public Pudge lifecycle, external-wallet compatibility, and production security have not been independently verified. The interface and its research labs are not a production exchange; no mainnet use or real-asset claim is supported. See [Current State](docs/CURRENT_STATE.md) and [the app notes](apps/trade-testnet/README.md) for the current evidence boundary.
+
+## Current native reconstruction
+
+The comprehensive WO05–WO08 reconstruction is tracked in [the capability registry](docs/TRADE_CAPABILITY_REGISTRY.md), [current rebuild status](docs/REBUILD_WO05_WO08_STATUS.md) and [readiness decision](docs/WO09_READINESS.md). Source and experiments are isolated under labs/rebuild. General authenticated arbitrary-history recovery/LO-01 remains unresolved/blocked; neither A–D execution nor new native proofs constitute full recovery or a WO09 authorization. No WO09 product implementation has begun.
+
 ## Read first
 
 1. `docs/CURRENT_STATE.md` — verified narrow findings, missing proof, and architecture candidates.

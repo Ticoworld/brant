@@ -1,0 +1,17 @@
+{
+  "network": "pudge",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+  "code": null,
+  "secp": {
+    "outPoint": {
+      "txHash": "0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37",
+      "index": "0"
+    },
+    "depType": "depGroup"
+  },
+  "status": "GENESIS_AND_SECP_READ_CODE_NOT_DEPLOYED",
+  "binary_bytes": 17848,
+  "code_capacity_ckb": 17889,
+  "vault_capacity_ckb": 322
+}

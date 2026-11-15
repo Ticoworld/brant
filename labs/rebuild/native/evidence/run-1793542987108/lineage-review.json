@@ -1,0 +1,1 @@
+{"status":"PASS","mints":49,"matches":51,"scope":"Read-only consistency of self-created event lineage; no arbitrary-forgery rejection or secure discovery proof","validation":"Removing a required mint history record is detected offline; no chain attack performed"}

@@ -1,0 +1,10 @@
+{
+  "qualification": "Read-only remote preservation check before the WO13 commit. No protected branch is a push target.",
+  "heads": {
+    "refs/heads/main": "ce7f27ec0d6657645e3198b0ea6a5831171003d0",
+    "refs/heads/wo09-unified-breakthrough": "a267ff6e73772bd8a3d58e2d746395276fddceb6",
+    "refs/heads/wo10-trade-testnet": "e443fe6745d81f3653fb66effacdca00fe8fc223",
+    "refs/heads/wo11-pudge-pilot": "c2a2fb52cb633525931428409c455d24aa0a7fc9",
+    "refs/heads/wo12-pudge-live-acceptance": "58ab7777e6388ab1cefc36a68aeb17617bb18380"
+  }
+}

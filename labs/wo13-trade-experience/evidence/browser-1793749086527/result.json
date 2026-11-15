@@ -1,0 +1,202 @@
+{
+  "at": "2026-11-03T23:38:06.531Z",
+  "qualification": "UI PRESENTATION FIXTURES ARE NOT WALLET OR CHAIN EXECUTION",
+  "axe": {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.3/axe.min.js",
+    "sha256": "880970c081707360e64f34cea25ff91892f5bc95675b0776925b9709dd8a68bb"
+  },
+  "checks": [
+    "markets 1440 reflow",
+    "My Positions 1440 reflow",
+    "Create Market 1440 reflow",
+    "Activity 1440 reflow",
+    "markets 768 reflow",
+    "My Positions 768 reflow",
+    "Create Market 768 reflow",
+    "Activity 768 reflow",
+    "markets 375 reflow",
+    "My Positions 375 reflow",
+    "Create Market 375 reflow",
+    "Activity 375 reflow",
+    "Unapproved manifest rejects recovery/signing before any wallet request",
+    "Production UI fixtures disabled",
+    "active reflow",
+    "active fixture reflow",
+    "active labelled presentation state",
+    "funding reflow",
+    "funding fixture reflow",
+    "funding labelled presentation state",
+    "unsupported fixture reflow",
+    "unsupported labelled presentation state",
+    "maturity reflow",
+    "maturity fixture reflow",
+    "maturity labelled presentation state",
+    "pending fixture reflow",
+    "pending labelled presentation state",
+    "committed fixture reflow",
+    "committed labelled presentation state",
+    "rpc fixture reflow",
+    "rpc labelled presentation state",
+    "stale fixture reflow",
+    "stale labelled presentation state",
+    "loading fixture reflow",
+    "loading labelled presentation state",
+    "nodeploy fixture reflow",
+    "nodeploy labelled presentation state",
+    "Offer file export (nontransaction fixture)",
+    "Native dialog Escape and focus return",
+    "Assignment review confirmation (no signing)",
+    "No page errors or public broadcast"
+  ],
+  "accessibility": [
+    {
+      "label": "markets 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 1440",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 1440",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "markets 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 768",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 768",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "markets 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 19
+    },
+    {
+      "label": "My Positions 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "Create Market 375",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "Activity 375",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 15
+    },
+    {
+      "label": "active",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "funding",
+      "violations": [],
+      "incomplete": [],
+      "passes": 20
+    },
+    {
+      "label": "maturity",
+      "violations": [],
+      "incomplete": [],
+      "passes": 22
+    },
+    {
+      "label": "assignment review dialog",
+      "violations": [],
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "impact": "serious"
+        }
+      ],
+      "passes": 14
+    }
+  ],
+  "pageErrors": [],
+  "rpcMethods": [],
+  "complete": true
+}

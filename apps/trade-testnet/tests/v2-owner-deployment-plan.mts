@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {planOwnerDeployment} from '../lib/v2-engine/owner-deployment-plan.ts';
+const unit=100_000_000n;
+const lock={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'11'.repeat(20)};
+const cell=(id:number,capacity:bigint)=>({outPoint:{txHash:'0x'+id.toString(16).padStart(64,'0'),index:'0x0'},capacity,lock,data:'0x'});
+const data='0x'+'12'.repeat(60),codes=[{name:'code',data,expectedDataHash:ccc.hashCkb(data)}];
+const dep={outPoint:{txHash:'0x'+'aa'.repeat(32),index:'0x0'},depType:'depGroup'};
+const anchor=cell(1,500n*unit),funding=cell(2,4000n*unit),other=cell(3,500n*unit);
+const plan=planOwnerDeployment(codes,[funding,anchor,other],lock,dep,1000n);
+assert.equal(plan.anchor.outPoint.txHash,anchor.outPoint.txHash);
+assert(!plan.code.selected.some(c=>c.outPoint.txHash===anchor.outPoint.txHash));
+assert.equal(planOwnerDeployment(codes,[funding,anchor,other],lock,dep,1000n,[`${anchor.outPoint.txHash}:0`]).anchor.outPoint.txHash,other.outPoint.txHash);
+assert.throws(()=>planOwnerDeployment(codes,[funding],lock,dep,1000n),/preparatory split/);
+assert.throws(()=>planOwnerDeployment(codes,[anchor,funding,anchor],lock,dep,1000n),/Duplicate/);
+console.log('owner deployment anchor planning checks passed');

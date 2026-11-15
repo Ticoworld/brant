@@ -1,0 +1,161 @@
+{
+  "genesis": {
+    "compact_target": "0x20010000",
+    "dao": "0x5fc352fc6fee0b2f0000c16ff2862300ba73e3e094050000005c40d3b808ff06",
+    "epoch": "0x0",
+    "extra_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "0xcaae37f562d138c009a10b4b70eb6c14a62f0efb8e8f6082f5e0b59e1473a3e5",
+    "nonce": "0x0",
+    "number": "0x0",
+    "parent_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "timestamp": "0x0",
+    "transactions_root": "0xba548427d11291779e1b99b03a80ccdf70971e5148f00d799237d96bc7ff4dc6",
+    "version": "0x0"
+  },
+  "codes": {
+    "a2": {
+      "hash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+      "outPoint": {
+        "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+        "index": "0x5"
+      },
+      "script": {
+        "codeHash": "0x49dfb6afee5cc8ac4225aeea8cb8928b150caf3cd92fea33750683c74b13254a",
+        "hashType": "data1",
+        "args": "0x"
+      }
+    },
+    "xudt": {
+      "hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+      "outPoint": {
+        "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+        "index": "0x6"
+      },
+      "script": {
+        "codeHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+        "hashType": "data1",
+        "args": "0x"
+      }
+    },
+    "ickb_logic": {
+      "hash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+      "outPoint": {
+        "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+        "index": "0x7"
+      },
+      "script": {
+        "codeHash": "0x2a8100ab5990fa055ab1b50891702e1e895c7bd1df6322cd725c1a6115873bd3",
+        "hashType": "data1",
+        "args": "0x"
+      }
+    },
+    "owned_owner": {
+      "hash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+      "outPoint": {
+        "txHash": "0xf1d659a505d86e42aeea84038bca70e3ebc162d6206997b35b38d08ce6d8b6dc",
+        "index": "0x8"
+      },
+      "script": {
+        "codeHash": "0xacc79e07d107831feef4c70c9e683dac5644d5993b9cb106dca6e74baa381bd0",
+        "hashType": "data1",
+        "args": "0x"
+      }
+    }
+  },
+  "versions": {
+    "active": true,
+    "addresses": [
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225",
+        "score": "0x1"
+      },
+      {
+        "address": "/ip4/127.0.0.1/tcp/19225/ws",
+        "score": "0x1"
+      }
+    ],
+    "connections": "0x0",
+    "node_id": "QmYEiW4ytVkgrNDvCdezv3T5CXU4AydLiBKmrwMFG8HnTN",
+    "protocols": [
+      {
+        "id": "0x64",
+        "name": "/ckb/syn",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x65",
+        "name": "/ckb/relay3",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x79",
+        "name": "/ckb/filter",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x66",
+        "name": "/ckb/tim",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x78",
+        "name": "/ckb/lightclient",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x2",
+        "name": "/ckb/identify",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x0",
+        "name": "/ckb/ping",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x1",
+        "name": "/ckb/discovery",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x3",
+        "name": "/ckb/flr",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x4",
+        "name": "/ckb/disconnectmsg",
+        "support_versions": [
+          "3"
+        ]
+      },
+      {
+        "id": "0x82",
+        "name": "/ckb/holepunching",
+        "support_versions": [
+          "3"
+        ]
+      }
+    ],
+    "version": "0.210.0 (2592ddf 2026-09-17)"
+  }
+}

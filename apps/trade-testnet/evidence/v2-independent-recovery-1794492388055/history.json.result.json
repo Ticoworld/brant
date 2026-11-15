@@ -1,0 +1,91 @@
+{
+  "custody_amount": "7",
+  "domain": {
+    "args_len": 128,
+    "custody_marker_type_hash": "0xf323a991209c804e46ae0db58f73d1d0f75e47f0da90e69c095ff4594cf1cd53",
+    "genesis_hash": "0x0f304b05dae6193bef3852cc7c95ca3920c412b8d78575bf82424aff075d3f2f",
+    "market_script_hash": "0x7b7d750fa124ac0ea1c40aeb5b35f5e6fd20d6b4c9f00dd2ecc2f68d068f99a9",
+    "xudt_type_script_hash": "0x49655d76c8a94460995b64c8ec821f3d71ecc88da31c35479c5b4e9ba7355108"
+  },
+  "entitlement_total": "7",
+  "format": "trade-v2-recovery-result-v1",
+  "init_tx_hash": "0xbb33b78df77979d2513d9ad4a517844b387cfcffcd1c81fd4d8b7180b49e2145",
+  "network_scope": "reconstruction only; native withdrawal requires compatible built script and a signed CKB transaction",
+  "owner": {
+    "active": true,
+    "balance": "7",
+    "revision": "0"
+  },
+  "owner_lock_hash": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+  "owner_membership_proof": {
+    "compiled_proof": "0x4c4ffc51fcb57de9cef45edb0f32a36e9ac9827589f49a4e1126f0f507bfe8e13900657ce5a8e67a3e8b30a96f29ec87d559dc178675ddb4d2661fcc4fd7f9c95c59eff60f4f03",
+    "key": "0x72089cfee7544753886e2dd6b341ffa68c41fc458e91e24bdd108e21a23c3848",
+    "leaf_value": "0x0700000000000000000000000000000001000000000000000000000000000000",
+    "proof_bytes": 71,
+    "root_verified": true
+  },
+  "ownership_root": "0x20771c4e152a49ee696827de97f4d5c7ea03d8ad84fccc864492592862f25f95",
+  "tip_outpoint": {
+    "index": "0x0",
+    "tx_hash": "0x06147629e5327d8b3a22275d8e265bf4af5de62175a89cbf82d90a13e58a3045"
+  },
+  "tip_tx_hash": "0x06147629e5327d8b3a22275d8e265bf4af5de62175a89cbf82d90a13e58a3045",
+  "transitions": [
+    {
+      "block_number": "0x18",
+      "custody_amount": "7",
+      "op": 0,
+      "reconstructed_entitlement_total": "7",
+      "root": "0x1dcb7a4b42b64804eeb33ef17f18d430d042c3bef6b9c5d92f2aa4f5634c7c6a",
+      "tx_hash": "0xbb33b78df77979d2513d9ad4a517844b387cfcffcd1c81fd4d8b7180b49e2145",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x1b",
+      "custody_amount": "9",
+      "op": 1,
+      "reconstructed_entitlement_total": "9",
+      "root": "0x8f072ccb4f48d3ff352b6c5c2aa4c59b3ae8115e7fea93107a1fd57cbf0fb8ee",
+      "tx_hash": "0x1f091669b08c7ebf78993abda633c2f50c69613f0b8e11740e8f4cd657d6feb0",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x1f",
+      "custody_amount": "8",
+      "op": 4,
+      "reconstructed_entitlement_total": "8",
+      "root": "0x7b274b79724577353e38d49f73f7f6736862995d15e29f30ae0d30006c24020f",
+      "tx_hash": "0x93ebb19b143ca9ef4948501d71f4f83213b1d30af1d73cbc6897618992f52b92",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x23",
+      "custody_amount": "7",
+      "op": 5,
+      "reconstructed_entitlement_total": "7",
+      "root": "0x20771c4e152a49ee696827de97f4d5c7ea03d8ad84fccc864492592862f25f95",
+      "tx_hash": "0x06147629e5327d8b3a22275d8e265bf4af5de62175a89cbf82d90a13e58a3045",
+      "tx_index": "0x1",
+      "update_count": 1
+    }
+  ],
+  "withdrawal_template": {
+    "authorization": "transaction must include an input locked by this owner and satisfy the compiled custody contract's withdrawal cell layout",
+    "input_custody_outpoint": {
+      "index": "0x0",
+      "tx_hash": "0x06147629e5327d8b3a22275d8e265bf4af5de62175a89cbf82d90a13e58a3045"
+    },
+    "new_leaf": "0x0000000000000000010000000000000002000000000000000000000000000000",
+    "new_root": "0x760aae53a1472272296869e719f5c87fc57fec98c97d25a51f3764e998a3ccda",
+    "old_leaf": "0x0700000000000000000000000000000001000000000000000000000000000000",
+    "old_root": "0x20771c4e152a49ee696827de97f4d5c7ea03d8ad84fccc864492592862f25f95",
+    "op": 5,
+    "quantity": "7",
+    "remaining_custody_amount": "0",
+    "tms1_witness": "0x544d53310105010047000000e681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38070000000000000000000000000000000100000000000000000000000000000000000000000000000100000000000000020000000000000000000000000000004c4ffc51fcb57de9cef45edb0f32a36e9ac9827589f49a4e1126f0f507bfe8e13900657ce5a8e67a3e8b30a96f29ec87d559dc178675ddb4d2661fcc4fd7f9c95c59eff60f4f03",
+    "witness_bytes": 179
+  }
+}

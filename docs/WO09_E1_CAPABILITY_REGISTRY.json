@@ -1,0 +1,110 @@
+{
+  "scope": "Additive WO09 research extension. Original27 WO05\u2013WO08 capability records remain unchanged.",
+  "baseline": "f72cfb4276efe2b180c69821f645168950c99e84",
+  "entries": [
+    {
+      "id": "WO09-CLAIMS",
+      "mechanism": "Individually funded fixed native claims",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/contracts/funded_claim.c",
+      "limitations": "Native partial/final redemption and hybrid exchange; no global floor, full campaign refund or production audit.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-FIXED-RISK",
+      "mechanism": "Fixed-recipient funded complementary maturity payoff",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/contracts/risk_pool.c",
+      "limitations": "Eight exact/native and snapshot-scale cases; trusted publisher, collateral cap and late-refund ordering. No external fixing truth or competitive premium proof.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-PRICING",
+      "mechanism": "Unequal tranche contributions and contribution-aware fallback",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/src/run-risk.cjs",
+      "limitations": "Selected synthetic pricing native17-transaction run; arithmetic fair value depends on stated assumptions, not market prices.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-HYBRID",
+      "mechanism": "Normal full-body claim/xUDT/CKB settlement",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/src/run-claims.cjs",
+      "limitations": "Separate absent xUDT issuer; actual payouts/signatures. Not independent OTX fragments or an engine-performance advantage.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-PERMANENT-RIGHT",
+      "mechanism": "Live transferable beneficiary records",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/contracts/beneficiary_record.c",
+      "limitations": "Native sale/current-holder settlement;316 CKB records stay permanently occupied. No comprehensive security qualification.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-CONSUMABLE-RIGHT",
+      "mechanism": "Settlement-consumed beneficiary records",
+      "status": "Missing adversarial proof",
+      "implementation": "labs/wo09-open-markets/contracts/consumable_beneficiary.c",
+      "limitations": "Original happy paths reproduced, but beneficiary-address joint-settlement liveness UNRESOLVED. Not a secure fallback or selected winner.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-ADDRESS-PROPOSAL",
+      "mechanism": "Canonical-address settlement-liveness proposal",
+      "status": "Reconstructed but not fully validated",
+      "implementation": "labs/wo09-open-markets/research/blocked-beneficiary-correction/VALIDATION_STATUS.json",
+      "limitations": "Compiled only; correction replay stopped at JS SyntaxError. Restricted validation paused; no security PASS.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-INDEPENDENT-ECON",
+      "mechanism": "Launch alternatives, debt/equity pricing, maker retainers and combination accounting",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/models/independent-alternatives.py",
+      "limitations": "Exact synthetic witnesses and read-only six-class launch rerun, not market demand or native staged-escrow/SLA proof.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-COMPETITOR-PINS",
+      "mechanism": "Primary-source competitive discovery and provenance-bearing market snapshots",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/research/github-sources.json",
+      "limitations": "Pinned source inspection is not third-party audit/live-bytecode validation. Remit/Sluice unresolved; fees/premiums/customer willingness unknown.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant"
+    },
+    {
+      "id": "WO09-REPRODUCTION",
+      "mechanism": "Fresh private GitHub checkout/install/build/private-chain replay",
+      "status": "Reproduced with executable evidence",
+      "implementation": "labs/wo09-open-markets/src/reproduce.py",
+      "limitations": "Original11c87a6 nine-run141/59 and independent fd590ed five-run118/47 fresh-clone reproductions preserved separately; no beneficiary experiment in latter. Repeated workloads do not establish security or demand.",
+      "historical_origin": "WO09-E1; inherited foundations documented in original registry and WO09 journal",
+      "future_reuse": "Conditional research reuse only; inspect property-specific evidence and limitations",
+      "security": "UNQUALIFIED; beneficiary liveness and upstream recovery/LO-01 explicitly unresolved where relevant",
+      "evidence": [
+        "labs/wo09-open-markets/evidence/fresh-github-reproduction/reproduction.json",
+        "labs/wo09-open-markets/evidence/independent-fresh-github-reproduction/reproduction.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+{
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'unknown' !== 'dead'\n\n    at /workspace/trade/labs/wo09-open-markets/src/run-consumable-risk.cjs:16:44\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+}

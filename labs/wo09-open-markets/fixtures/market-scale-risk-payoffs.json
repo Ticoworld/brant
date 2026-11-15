@@ -1,0 +1,66 @@
+[
+  {
+    "price": "97509",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "124999743614",
+    "junior_principal": "75000256386",
+    "relative_price_assumption": "0.8",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "60943",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "200000000000",
+    "junior_principal": "0",
+    "relative_price_assumption": "0.5",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "24377",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "200000000000",
+    "junior_principal": "0",
+    "relative_price_assumption": "0.2",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "1219",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "200000000000",
+    "junior_principal": "0",
+    "relative_price_assumption": "0.01",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "121886",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "100000000000",
+    "junior_principal": "100000000000",
+    "relative_price_assumption": "1",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "152358",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "79999737461",
+    "junior_principal": "120000262539",
+    "relative_price_assumption": "1.25",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "243772",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "50000000000",
+    "junior_principal": "150000000000",
+    "relative_price_assumption": "2",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  },
+  {
+    "price": "62162",
+    "target_usd_scaled": "121886000",
+    "senior_principal": "196077989769",
+    "junior_principal": "3922010231",
+    "relative_price_assumption": "0.51",
+    "rounding": "nearest1e-8 USD price, ceil1-shannon payout; illustrative relative shocks to captured reference"
+  }
+]

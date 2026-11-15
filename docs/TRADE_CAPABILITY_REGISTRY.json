@@ -1,0 +1,750 @@
+{
+  "schema": 1,
+  "baseline_commit": "079b263ba96862e9a7caafe8c84c766dda761cdc",
+  "scope": "Eight work orders WO05-E1 through WO08-E2; current status and immutable baseline classification. Not an exhaustive inventory of inaccessible files.",
+  "classification_definitions": {
+    "Reproduced with executable evidence": "Runnable implementation with supporting newly executed evidence, scoped by limitations.",
+    "Reconstructed but not fully validated": "Implementation exists but required validation or breadth remains incomplete.",
+    "Historical evidence only": "Only user-reported/upstream prior evidence; no fresh proof of that mechanism.",
+    "Missing implementation": "No runnable implementation of the named mechanism.",
+    "Missing adversarial proof": "Required adversarial property not independently demonstrated.",
+    "Superseded by a demonstrably better alternative": "Requires explicit equivalent-property evidence and measured comparison; preference alone does not qualify."
+  },
+  "capabilities": [
+    {
+      "id": "C-FUNDED",
+      "work_order": "WO05-E1",
+      "mechanism": "Compact C funded orders, direct payouts, partial/full execution",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1-native-clearing-and-strongest-a2-comparison",
+      "future_reuse": "Native trading/OTX clearing",
+      "baseline_079b263_status": [
+        "Missing implementation",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "C-INTENTS",
+      "work_order": "WO05-E2",
+      "mechanism": "Witness-recoverable compact intent commitments",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2-hybrid-and-genuine-native-asset-execution",
+      "future_reuse": "Stateless solver handoff and recovery",
+      "baseline_079b263_status": [
+        "Missing implementation",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "A2-NATIVE",
+      "work_order": "WO05-E1",
+      "mechanism": "Signed funded A2 CKB/xUDT orders and owner recovery",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/complete.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
+      ],
+      "limitations": [
+        "Fixture recovery succeeds; arbitrary chain provenance/LO-01 unresolved.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1-native-clearing-and-strongest-a2-comparison",
+      "future_reuse": "Baseline native order execution",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "LARGE-BATCH",
+      "work_order": "WO05-E1",
+      "mechanism": "Large compact-vs-optimized-A2 equivalent workload comparison",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/src/batch-run.cjs",
+        "labs/rebuild/mechanisms/src/build-rust.py"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793544998943/comparison.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/verification.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545200384/comparison.json",
+        "labs/rebuild/mechanisms/evidence/batch-comparison-1793545913859/verification.json"
+      ],
+      "limitations": [
+        "Compared 32/256/1024/1536 full CKB bids; compact and optimized A2 settle1536, ordinary/default-heap fail at tested larger points.",
+        "Staged funding fixes bulk-mint resource failure; maxima are not saturation bounds. Direct compact payouts vs A2 retained-token/master lifecycle differ and are disclosed. No improved maker-inventory/profit claim."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e1-native-clearing-and-strongest-a2-comparison",
+      "future_reuse": "Architecture/resource envelope comparisons",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation"
+      ]
+    },
+    {
+      "id": "HYBRID",
+      "work_order": "WO05-E2",
+      "mechanism": "Atomic compact-C/A2 composition and native asset routing",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/contracts/compact.c",
+        "labs/rebuild/mechanisms/src/compact-run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/verification.json",
+        "labs/rebuild/mechanisms/evidence/compact-1793544862572/properties.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Bounded new CKB-bid primitive and exact-recipient xUDT payouts; not original source identity, generic multi-asset matcher or commercially superior product.",
+        "One input per unique commitment; full arbitrary-history recovery/LO-01 security remains unresolved, and general composition adversarial coverage is incomplete."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2-hybrid-and-genuine-native-asset-execution",
+      "future_reuse": "Composable owner-controlled exchange",
+      "baseline_079b263_status": [
+        "Missing implementation",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "ATOMIC",
+      "work_order": "WO05-E2",
+      "mechanism": "Atomic multi-owner net settlement and direct CKB payouts",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/complete.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json"
+      ],
+      "limitations": [
+        "CKB/xUDT fixture domains only; not general arbitrary-asset router.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2-hybrid-and-genuine-native-asset-execution",
+      "future_reuse": "Clearing baseline",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence"
+      ]
+    },
+    {
+      "id": "RECOVERY",
+      "work_order": "WO05-E2",
+      "mechanism": "Authenticated chain lineage/live cells and payout-intent signing",
+      "status": [
+        "Reconstructed but not fully validated",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/recover.cjs",
+        "labs/rebuild/native/src/review-lineage.cjs",
+        "labs/rebuild/native/src/authenticated-recovery.cjs",
+        "labs/rebuild/native/src/run-recovery-policy.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/lineage-review.json",
+        "labs/rebuild/native/evidence/run-1793543880057/authenticated-recovery-validation.json"
+      ],
+      "limitations": [
+        "Candidate client policy and ordinary known-fixture execution only; required arbitrary forged-lineage/LO-01 security validation blocked/unresolved after user-reported platform warning.",
+        "No on-chain fix or secure general signer claim; baseline fixture signing worker retained."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo05-e2-hybrid-and-genuine-native-asset-execution",
+      "future_reuse": "Independent owner-controlled exits",
+      "baseline_079b263_status": [
+        "Reconstructed but not fully validated",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "LAUNCH-ADMISSION",
+      "work_order": "WO06-E1",
+      "mechanism": "Selective solver admission",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-SEQUENCE",
+      "work_order": "WO06-E1",
+      "mechanism": "Sequential auction/order price manipulation",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-ROUNDTRIP",
+      "work_order": "WO06-E1",
+      "mechanism": "Creator cross-batch roundtrip",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-SPLIT",
+      "work_order": "WO06-E1",
+      "mechanism": "Split allocation gaming",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-DEMAND",
+      "work_order": "WO06-E1",
+      "mechanism": "Artificial creator demand",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-LIQUIDITY",
+      "work_order": "WO06-E1",
+      "mechanism": "Revocable post-launch liquidity",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json",
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad/fair allocation adversarial checklist",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "LAUNCH-ARCH",
+      "work_order": "WO06-E1",
+      "mechanism": "Rejected launchpad architecture and alternative reserve/fairness mechanisms",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e1-fair-launch-hypothesis-and-counterexamples",
+      "future_reuse": "Launchpad design comparisons",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation"
+      ]
+    },
+    {
+      "id": "COMMITMENT",
+      "work_order": "WO06-E2",
+      "mechanism": "Ordinary A2 vs bounded owner commitment; valid late fill and mature recovery",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/run.cjs",
+        "labs/rebuild/mechanisms/src/commitment-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/commitment.json",
+        "labs/rebuild/mechanisms/evidence/commitment-comparison-1793545494748/costs.json"
+      ],
+      "limitations": [
+        "Matched native ordinary/committed profiles with immediate ordinary exit estimate, early/omitted-since/wrong-signature rejections, valid pre/late fills and mature recovery.",
+        "Minimum pair occupancy289 vs297 CKB is measured from actual layouts; no passive upper expiry, permanent redemption or market-depth guarantee."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e2-autonomous-discovery-and-bounded-maker-commitment",
+      "future_reuse": "Liquidity commitments and issuer treasury research",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "SPLIT-SEARCH",
+      "work_order": "WO06-E2",
+      "mechanism": "Adaptive allocation/split strategy parameter search",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/launch_architecture.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/launch-architecture-results.json"
+      ],
+      "limitations": [
+        "New exact stateful minimal counterexamples and allocation parameter search; not recovery of old curve files or a validated launch product.",
+        "Reserve-backed solvency alternative is an offline predicate/counterexample, not native floor/redemption proof."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo06-e2-autonomous-discovery-and-bounded-maker-commitment",
+      "future_reuse": "Fair issuance mechanism search",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation"
+      ]
+    },
+    {
+      "id": "QUOTE-EXPIRY",
+      "work_order": "WO07-E1",
+      "mechanism": "Since and historic header upper-expiry limitation",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/reference/ckb/transaction_verifier.rs",
+        "labs/rebuild/models/research.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/results.json"
+      ],
+      "limitations": [
+        "Source-derived and late-fill native witness; no passive upper expiry mechanism."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e1-native-quote-validity-analysis-and-deterministic-market-tool",
+      "future_reuse": "Quote validity requirements",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence"
+      ]
+    },
+    {
+      "id": "QUOTE-TOOLS",
+      "work_order": "WO07-E1",
+      "mechanism": "Exact market snapshot/depth/fee/route import tooling",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/quote_routes.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/quote-route-results.json"
+      ],
+      "limitations": [
+        "Exact provenance-aware depth/fee/venue/delay route plans with UNKNOWN and synthetic separation; not guaranteed fills, actual executable observed quotes or consensus upper expiry."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e1-native-quote-validity-analysis-and-deterministic-market-tool",
+      "future_reuse": "Executable quote comparison",
+      "baseline_079b263_status": [
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "GATE",
+      "work_order": "WO07-E2",
+      "mechanism": "Exact 36-byte live-outpoint group-revocation covenant",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2-exact-outpoint-gate-cancellation",
+      "future_reuse": "Group cancellation/issuer liquidity control",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "GATE-RACE",
+      "work_order": "WO07-E2",
+      "mechanism": "Fill/cancel ordering, owner melt after revoke and authentic lineage",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2-exact-outpoint-gate-cancellation",
+      "future_reuse": "Revocation semantics and recovery",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation",
+        "Missing adversarial proof"
+      ]
+    },
+    {
+      "id": "GATE-COST",
+      "work_order": "WO07-E2",
+      "mechanism": "Gated-vs-ordinary lifecycle bytes/cycles/capacity/code costs",
+      "status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ],
+      "implementation": [
+        "labs/rebuild/mechanisms/rust/contracts/gated_order/src/entry.rs",
+        "labs/rebuild/mechanisms/src/gate-run.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/verification.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793544982651/costs.json",
+        "labs/rebuild/mechanisms/evidence/group-revocation-1793545817946/verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Exact gate, omission/substitution/rebinding, deterministic fill-before-cancel and later-fill rejection, owner melt and current cost profile reproduced; no general ordering/finality or arbitrary-history LO-01 proof.",
+        "Separate adapted code hash; two-order 4-vs-6 transaction grouped profile differs intentionally from historical 7-vs-9 individual lifecycle."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo07-e2-exact-outpoint-gate-cancellation",
+      "future_reuse": "Cost/right comparisons",
+      "baseline_079b263_status": [
+        "Historical evidence only",
+        "Missing implementation"
+      ]
+    },
+    {
+      "id": "LEDGER",
+      "work_order": "WO08-E1",
+      "mechanism": "Separate native/CEX/in-transit assets and obligations accounting",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/portfolio_stress.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
+      ],
+      "limitations": [
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e1-market-making-economics",
+      "future_reuse": "Maker risk accounting",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "MM-STRESS",
+      "work_order": "WO08-E1",
+      "mechanism": "Stale quotes, adverse selection, fees, idle capital, delays and exhaustion",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/research.py",
+        "labs/rebuild/models/portfolio_stress.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
+      ],
+      "limitations": [
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e1-market-making-economics",
+      "future_reuse": "Competitive RFQ/market-maker evaluation",
+      "baseline_079b263_status": [
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "MARKET-DATA",
+      "work_order": "WO08-E1",
+      "mechanism": "Observed executable external price/depth and demand",
+      "status": [
+        "Historical evidence only"
+      ],
+      "implementation": [],
+      "evidence": [],
+      "limitations": [
+        "Historical zero external snapshots; none newly observed; UNKNOWN must remain unknown."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e1-market-making-economics",
+      "future_reuse": "Future observed economic calibration",
+      "baseline_079b263_status": [
+        "Historical evidence only"
+      ]
+    },
+    {
+      "id": "DAO",
+      "work_order": "WO08-E2",
+      "mechanism": "Published-contract authentic DAO receipt/iCKB/CKB lifecycle with mature redemption",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/run.cjs",
+        "labs/rebuild/native/src/run-compact-ickb.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/complete.json",
+        "labs/rebuild/native/evidence/run-1793542987108/dao-lifecycle.json",
+        "labs/rebuild/native/evidence/run-1793544609163/verification.json",
+        "labs/rebuild/native/evidence/run-1793545767593/compact-authentic-ickb.json",
+        "labs/rebuild/native/evidence/run-1793545767593/verification.json"
+      ],
+      "limitations": [
+        "Short integration epochs are not real network waiting time; not a business proof.",
+        "Earlier 289-CKB successor full-fill labels corrected: see REBUILD_FULL_FILL_CORRECTION.md; latest full fills assert actual occupied capacity."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2-native-ickb-liquidity-and-actual-dao-maturity",
+      "future_reuse": "Native liquid-staking/trading infrastructure",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence"
+      ]
+    },
+    {
+      "id": "DAO-ECON",
+      "work_order": "WO08-E2",
+      "mechanism": "DAO maker inventory/redemption/replenishment strategy economics",
+      "status": [
+        "Reproduced with executable evidence"
+      ],
+      "implementation": [
+        "labs/rebuild/models/strategy.py",
+        "labs/rebuild/models/portfolio_stress.py"
+      ],
+      "evidence": [
+        "labs/rebuild/models/strategy-results.json",
+        "labs/rebuild/models/portfolio-stress-results.json"
+      ],
+      "limitations": [
+        "Exact synthetic portfolio stress with FIFO/realized/MTM reconciliation, separate native/CEX/in-transit inventory, destination-vs-CEX USD and reserved obligations.",
+        "Actual DAO redemption amounts are sourced from native evidence; annual cost/delay/fees, all market depth/demand and prices are synthetic, not measured profitability or unique commercial advantage."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2-native-ickb-liquidity-and-actual-dao-maturity",
+      "future_reuse": "Inventory and maturity-aware capital models",
+      "baseline_079b263_status": [
+        "Reconstructed but not fully validated"
+      ]
+    },
+    {
+      "id": "PROVENANCE",
+      "work_order": "WO08-E2",
+      "mechanism": "Published binaries/source/license/dependency reproducibility",
+      "status": [
+        "Reproduced with executable evidence",
+        "Reconstructed but not fully validated"
+      ],
+      "implementation": [
+        "labs/rebuild/native/src/verify-provenance.cjs",
+        "labs/rebuild/mechanisms/src/build-rust.py",
+        "labs/rebuild/mechanisms/src/verify-source.cjs"
+      ],
+      "evidence": [
+        "labs/rebuild/native/evidence/run-1793542987108/provenance-verification.json",
+        "docs/REBUILD_COMPREHENSIVE_REPRODUCTION.json"
+      ],
+      "limitations": [
+        "Published bytes verified; independent source-to-release build not established.",
+        "Independent source variants now compile and execute; path-sensitive outputs separated from original tested bytes, source-to-published equality still unproved.",
+        "Four normalized source artifacts match fresh-checkout rebuilds with same pinned compiler cache; not an independent audit or published-release equality."
+      ],
+      "historical_origin": "docs/REBUILD_HISTORICAL_MANIFEST.md#wo08-e2-native-ickb-liquidity-and-actual-dao-maturity",
+      "future_reuse": "Reusable auditable experiments",
+      "baseline_079b263_status": [
+        "Reproduced with executable evidence",
+        "Missing adversarial proof"
+      ]
+    }
+  ],
+  "blocked_boundary": {
+    "capability": "RECOVERY",
+    "status": "Reconstructed but not fully validated; missing required adversarial proof",
+    "scope": "General arbitrary-history/malicious successor selection and upstream LO-01 reproduction/correction security validation",
+    "reason": "User-reported cybersecurity content warnings; user instructs no bypass. Ordinary completed design/review/fixture observations preserved without security-fix claim.",
+    "independent_work": "Compact funded intent execution, C/A2 and authentic iCKB composition, batch/resource and revocation semantics, economic/launch models continue independently."
+  },
+  "future_directions": [
+    "Better launchpads and reserve-backed fair issuance",
+    "Fixed-term protection, leverage and structured claims",
+    "OTX multi-asset owner-controlled exchange",
+    "Liquidity commitments and issuer treasury markets",
+    "Combinations remain open; no WO09 implementation authorized by passing this registry."
+  ],
+  "comprehensive_verdict": "PARTIAL: substantial mechanism families now have isolated executable evidence, but authenticated arbitrary-history recovery and required LO-01 security proof remain unresolved/blocked; no full-recovery or WO09-ready claim.",
+  "wo09_extension": "docs/WO09_E1_CAPABILITY_REGISTRY.json"
+}

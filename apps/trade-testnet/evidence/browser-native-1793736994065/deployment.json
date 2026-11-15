@@ -1,0 +1,16 @@
+{
+  "network": "local",
+  "genesis": "0x58e0d6758845a884e00ebfda366fed5b29de3e5398989ae68cb7e787b5986c34",
+  "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+  "code": {
+    "txHash": "0xa40800130250cf18cc187a6a29e0b322209eaad5a05a3b2c4db8ab571d34fad9",
+    "index": "0x0"
+  },
+  "secp": {
+    "outPoint": {
+      "txHash": "0x781c707e0327fecb57910fe99cef2b356d47e4b1e0952c3da267e023047976b4",
+      "index": "0x0"
+    },
+    "depType": "depGroup"
+  }
+}
