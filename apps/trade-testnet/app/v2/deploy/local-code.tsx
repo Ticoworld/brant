@@ -7,6 +7,7 @@ import {prepareCodeDeployment} from '../../../lib/v2-engine/deployment.ts';
 import {readFundingCell} from '../../../lib/v2-engine/funding.ts';
 import {verifyPudgeWitness} from '../../../lib/pudge-wallet-verify';
 import {verifyCodeDeployment} from '../../../lib/v2-engine/deployment-verification.ts';
+import {fetchLocalFixtureBootstrap} from '../../../lib/v2-engine/local-fixture.ts';
 
 const pinned:Record<string,string>={custody_smt:'0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000',market_smt:'0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770',custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',marker_candidate:'0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2',owner_lineage_candidate:'0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53'};
 const publicGenesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
@@ -18,11 +19,14 @@ export default function LocalCode({signer}:{signer:Signer}){
  const rpc=async(method:string,params:unknown[])=>{const response=await fetch('/api/local-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const body=await response.json();if(!response.ok||body.error)throw Error('Local RPC failed');return body.result;};
  async function prepare(){
   if(!signer)throw Error('Connect disposable signer');
-  const initResponse=await fetch('/api/v2-init-bootstrap');
-  const config=initResponse.ok?await initResponse.json():await (await fetch('/api/v2-local-bootstrap')).json();
-  if(initResponse.ok)config.codeFunding=config.wallets[1].outPoint;
+  const initResponse=await fetchLocalFixtureBootstrap();
+  let config;
+  if(initResponse.ok)config=await initResponse.json();
+  else if(initResponse.status===404){const legacy=await fetch('/api/v2-local-bootstrap');if(!legacy.ok)throw Error(`Fixture bootstrap unavailable (${legacy.status})`);config=await legacy.json();}
+  else throw Error(`Fixture bootstrap unavailable (${initResponse.status})`);
   if((await rpc('get_blockchain_info',[]) as {chain?:string})?.chain!=='ckb_dev'||!config.genesis||config.genesis===publicGenesis||await rpc('get_block_hash',['0x0'])!==config.genesis)throw Error('Private chain genesis required');
   const owner=(await signer.getRecommendedAddressObj()).script;
+  if(initResponse.ok){const candidates=[config.wallets[1],config.wallets[2]].filter(Boolean);const match=candidates.find((wallet:{lock:ccc.ScriptLike})=>ccc.Script.from(wallet.lock).hash().toLowerCase()===owner.hash().toLowerCase());if(!match)throw Error('Connected wallet has no private genesis funding cell');config.codeFunding=match.outPoint;}
   const funding=await readFundingCell(rpc,config.codeFunding,owner.hash());
   const genesis=await rpc('get_block_by_number',['0x0']) as {transactions:{hash:string}[]};
   if(!genesis.transactions?.[1]?.hash)throw Error('Missing local secp dependency');

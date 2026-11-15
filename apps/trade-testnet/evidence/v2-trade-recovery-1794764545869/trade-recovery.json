@@ -1,0 +1,17 @@
+{
+  "genesis": "0xbdf8e4c9df67ab2eb1a15ee77a061d22ef347b36c0f774e5d0b12d33df31e0de",
+  "tip": "0xe28c0964a96250a6876ed6d4ea2f13d5796e49ec90f380c290c2542372e697be",
+  "ownerRole": "disposable wallet 2",
+  "beforeReload": {
+    "inventory": "1993",
+    "custody": "7",
+    "entitlement": "Wallet entitlement: 7"
+  },
+  "afterReload": {
+    "inventory": "1993",
+    "custody": "7",
+    "entitlement": "Wallet entitlement: 7"
+  },
+  "transactionSubmissions": 0,
+  "chainTipUnchanged": true
+}

@@ -1,6 +1,8 @@
 # CKB Trading Opportunity — Research Engineering Repository
 
-**Status: protocol research, NOT a production exchange.**
+**Status: CKB protocol research and Roveko product work, NOT a production exchange.**
+
+The repository now includes the Roveko application alongside the preserved CKB research labs. `main` is the active Roveko development branch. The single-owner local Launch-to-Activity journey has passed against an isolated private CKB node; its final read-only `/v2` recovery result is [recorded here](apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json). Public Pudge deployment, supported market identity, transactions, wallet compatibility, liquidity, and production readiness remain **UNVERIFIED**.
 
 The initial package imports the preserved WO01–WO04 experiments and the working WO04-E1 execution-proof prototype. Its code and reports came from ChatGPT Work artifact archives. This is a **selective source migration**, not a claim that experiments were re-executed or security audited.
 
@@ -17,7 +19,7 @@ The comprehensive WO05–WO08 reconstruction is tracked in [the capability regis
 ## Read first
 
 1. `docs/CURRENT_STATE.md` — verified narrow findings, missing proof, and architecture candidates.
-2. `docs/NEXT_CODEX_TASK.md` — first bounded Codex Cloud task.
+2. `docs/NEXT_CODEX_TASK.md` — current local Roveko integration acceptance.
 3. `AGENTS.md` — engineering discipline, privacy, and preservation rules.
 4. `labs/wo04-e1/07_E1_DECISION.md` and `labs/wo04-e1/README.md` — most recent working baseline.
 5. `docs/PROVENANCE.md` — original artifact links and migration boundaries.

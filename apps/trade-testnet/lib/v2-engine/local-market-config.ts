@@ -3,11 +3,12 @@ import {cccA} from '@ckb-ccc/core/advanced';
 import {verifyCodeDeployment} from './deployment-verification.ts';
 import {deriveMarketIdentity} from './initialization.ts';
 import {assertLocalMarketScripts} from './local-manifest.ts';
+import {fetchLocalFixtureBootstrap} from './local-fixture.ts';
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 const codeNames=['custody_smt','market_smt','custody_marker','marker_candidate','owner_lineage_candidate'];
 /** Revalidate a browser-saved fixture manifest on every application load. */
 export async function loadLocalMarketConfig(rpc:Rpc){
- const response=await fetch('/api/v2-init-bootstrap');
+ const response=await fetchLocalFixtureBootstrap();
  if(!response.ok){const fallback=await fetch('/api/v2-local-bootstrap');if(!fallback.ok)throw Error('Local market configuration unavailable');return fallback.json();}
  const fixture=await response.json();if((await rpc('get_blockchain_info',[]) as {chain?:string})?.chain!=='ckb_dev'||await rpc('get_block_hash',['0x0'])!==fixture.genesis)throw Error('Wrong private chain');
  const raw=localStorage.getItem('roveko-local-market:'+fixture.genesis);if(!raw)throw Error('Verify initialized local market first');

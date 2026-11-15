@@ -1,14 +1,23 @@
 # Current state update — 2026-11-15
 
+## Roveko baseline
+
+- **VERIFIED:** PR #3 merged into `main` at merge commit `74cc12d4002c5459f4240e698dfe1ea9218cc818`. The current `main` HEAD is `cecc8e8098e832cc0ff9d5c9e3a990678028a7b4`; use `main` for ongoing Roveko development.
+- **VERIFIED:** the merge contains the latest Roveko UI and protocol implementation. A focused promotion audit is recorded in [MAIN_PROMOTION_AUDIT.md](MAIN_PROMOTION_AUDIT.md); two imported symlink entries need platform-aware handling, and GitHub reported no status checks for PR #3.
+- **VERIFIED (private-node browser acceptance):** one disposable owner completed Launch, Discover, buy, sell, Portfolio, and Activity on one isolated `ckb_dev` chain. Launch, buy, and sell committed as real native transactions; Portfolio reconstructed 7 units and Activity recovered the launch/buy/sell hashes and amounts from committed history.
+- **VERIFIED (read-only `/v2` recovery):** after the committed buy/sell history, `/v2` recovers current inventory `1993`, internal custody `7`, and owner entitlement `7`, then shows the same values after reload. The check submitted no transaction and left the chain tip unchanged. The summarized result is [trade-recovery.json](../apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json); raw receipts, logs, and screenshots remain in the preserved timestamped local evidence directories.
+- **VERIFIED (focused checks):** TypeScript typecheck and fixture-gate, local-manifest, transaction-layout, and lineage tests passed after the recovery fix. This is local integration evidence, not a production security audit.
+- **UNVERIFIED:** public Pudge deployment, market identity, transactions, external-wallet flow, liquidity, and production readiness. The public manifest's `code: null` remains no deployment evidence. Public Pudge transaction work is outside the current authorization scope.
+
 ## Roveko application status
 
-- **VERIFIED (source tree):** `apps/trade-testnet` contains Discover, Portfolio, Activity, and Launch routes plus Pudge market and deployment interfaces. The Discover board's sample market rows are demo fixtures, not live data.
+- **VERIFIED (source tree):** `apps/trade-testnet` contains Discover, Portfolio, Activity, and Launch routes plus private-chain local market discovery and wallet-mediated trading flows. Outside explicit local fixture mode, sample Discover rows remain demo fixtures, not live data.
 - **DERIVED (source inspection):** the default app client is configured for public CKB Pudge testnet RPC, and the source includes wallet-mediated transaction signing and submission paths. This describes code behavior, not a verified public deployment or successful public transaction.
 - **UNVERIFIED:** current public Pudge code identity and availability; a complete deployment, initialization, trading, withdrawal, and recovery lifecycle on Pudge; external-wallet compatibility; independent public-chain verification; security review; maker commitments; and profitable exchange economics.
 - **UNIMPLEMENTED:** independent authentication of public RPC observations and a production-grade validation of the full product workflow. Local mock-RPC, disposable-chain, and protocol-lab results do not close these gaps.
 - No mainnet use, externally funded testnet transaction, or production deployment is authorized by this status document.
 
-The notes below preserve the protocol-research migration state and its historical next-task instructions. They are not evidence that the Roveko public Pudge product workflow has been verified.
+The notes below preserve protocol-research state. Historical experiment conclusions remain context only and are not evidence that the Roveko public Pudge product workflow has been verified. The active task pointer is [NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md).
 
 ---
 

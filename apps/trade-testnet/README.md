@@ -2,6 +2,8 @@
 
 The default client is configured for the public CKB Pudge testnet. The source includes wallet-mediated signing and transaction submission flows for deployment, initialization, and trading. Their presence is not evidence of a currently supported deployment or a verified end-to-end public Pudge lifecycle. External-wallet compatibility, public transaction behavior, security, and maker economics remain unverified; do not treat this interface as production software or use it with real assets.
 
+The local-only Roveko flow connects Launch, Discover, Trade, Portfolio, and Activity against a private CKB node. Its single-owner native browser acceptance has passed on an isolated disposable chain, including verified holdings/history recovery and a read-only `/v2` reload check. The focused result is [recorded here](evidence/v2-trade-recovery-1794764545869/trade-recovery.json). This does not verify the public Pudge lifecycle. See the repository [current state](../../docs/CURRENT_STATE.md) and [acceptance record](../../docs/NEXT_CODEX_TASK.md).
+
 Use this directory for isolated local development. Start with `npm ci` then `npm run dev` on Node 24.19.0/npm 11.9.0. See [Windows handoff](../../docs/WO13_WINDOWS_HANDOFF.md), [WO13 evidence](../../docs/WO13_TRADE_EXPERIENCE_EVIDENCE.md), and the repository [current state](../../docs/CURRENT_STATE.md). Automated transaction tests must use private disposable chains, mocked RPC, and disposable test keys; they do not authorize public testnet transactions.
 
 The original WO10 instructions and evidence below are retained as historical context; the new interface shares/imports offer files with exact revalidation instead of displaying JSON by default.

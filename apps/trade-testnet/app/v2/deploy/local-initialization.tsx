@@ -9,6 +9,7 @@ import {verifyInitializationStage} from '../../../lib/v2-engine/initialization-l
 import {verifyInitializationSignature} from '../../../lib/v2-engine/initialization-signature.ts';
 import {verifyCodeDeployment} from '../../../lib/v2-engine/deployment-verification.ts';
 import {createLocalManifest} from '../../../lib/v2-engine/local-manifest.ts';
+import {fetchLocalFixtureBootstrap} from '../../../lib/v2-engine/local-fixture.ts';
 
 type Stage='setup'|'issuance'|'purchase';
 type Point={txHash:string;index:string};
@@ -26,7 +27,7 @@ export default function LocalInitialization({signer}:{signer:Wallet}){
  const signed=useRef<ccc.Transaction|null>(null), activeSigner=useRef(signer);activeSigner.current=signer;
  const rpc=async(method:string,params:unknown[])=>{const r=await fetch('/api/local-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});const j=await r.json();if(!r.ok||j.error)throw Error('Private RPC failed');return j.result;};
  const readJournal=(genesis:string):Saved[]=>{const raw=localStorage.getItem(key+':'+genesis);if(!raw)return [];const j=JSON.parse(raw);if(!Array.isArray(j)||j.length>3)throw Error('Invalid fixture initialization journal');return j;};
- const fixture=async()=>{if((await rpc('get_blockchain_info',[]) as {chain?:string})?.chain!=='ckb_dev')throw Error('Disposable ckb_dev node required');const response=await fetch('/api/v2-init-bootstrap');if(!response.ok)throw Error('Fixture bootstrap unavailable');const f=await response.json();if(!f.genesis||await rpc('get_block_hash',['0x0'])!==f.genesis)throw Error('Fixture genesis mismatch');
+ const fixture=async()=>{if((await rpc('get_blockchain_info',[]) as {chain?:string})?.chain!=='ckb_dev')throw Error('Disposable ckb_dev node required');const response=await fetchLocalFixtureBootstrap();if(!response.ok)throw Error('Fixture bootstrap unavailable');const f=await response.json();if(!f.genesis||await rpc('get_block_hash',['0x0'])!==f.genesis)throw Error('Fixture genesis mismatch');
   if(process.env.NEXT_PUBLIC_ROVEKO_REQUIRE_DEPLOYED_CODES==='1'){
    const raw=localStorage.getItem('roveko-local-code-confirmed:'+f.genesis);if(!raw)throw Error('Confirm local code deployment first');const saved=JSON.parse(raw),names=['custody_smt','market_smt','custody_marker','marker_candidate','owner_lineage_candidate'];
    if(saved.genesis!==f.genesis||!/^0x[0-9a-f]{64}$/i.test(saved.txHash)||!Array.isArray(saved.codeHashes)||saved.codeHashes.length!==names.length||names.some((n,i)=>saved.codeHashes[i]?.toLowerCase()!==f.hashes[n]?.toLowerCase()))throw Error('Invalid confirmed code record');

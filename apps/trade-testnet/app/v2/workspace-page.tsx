@@ -24,8 +24,30 @@ export default function WorkspacePage({ kind }: { kind: WorkspaceKind }) {
 
 function WorkspaceContent({ kind, localMode }: { kind: WorkspaceKind; localMode: boolean }) {
   const { t } = useLocale();
-  const signer = useSigner();
+  const connectedSigner = useSigner();
+  const [localTestSigner, setLocalTestSigner] = useState<typeof connectedSigner>(undefined);
+  const [ownerHash, setOwnerHash] = useState("");
+  const signer = localMode && localTestSigner ? localTestSigner : connectedSigner;
   const [uiDemo, setUiDemo] = useState(false);
+  useEffect(() => {
+    if (!localMode) return;
+    const target = window as Window & { rovWorkspaceTestConnect?: (value: NonNullable<typeof connectedSigner>) => void };
+    target.rovWorkspaceTestConnect = (value) => setLocalTestSigner(value);
+    return () => { delete target.rovWorkspaceTestConnect; };
+  }, [localMode]);
+  useEffect(() => {
+    let active = true;
+    if (!signer) {
+      setOwnerHash("");
+      return () => { active = false; };
+    }
+    signer.getRecommendedAddressObj().then((address) => {
+      if (active) setOwnerHash(address.script.hash());
+    }).catch(() => {
+      if (active) setOwnerHash("");
+    });
+    return () => { active = false; };
+  }, [signer]);
   useEffect(() => {
     setUiDemo(process.env.NODE_ENV !== "production" && new URLSearchParams(window.location.search).get("uiDemo") === "1");
   }, []);
@@ -52,13 +74,13 @@ function WorkspaceContent({ kind, localMode }: { kind: WorkspaceKind; localMode:
       <Navigation active={kind === "markets" ? "/" : kind === "withdrawal" ? "/v2/withdraw" : `/${kind}`} />
       <h1 className="sr-only">{title}</h1>
       {kind === "markets" ? (
-        <DiscoverBoard />
+        <DiscoverBoard localMode={localMode} />
       ) : kind === "portfolio" ? (
-        <PortfolioSection demo={uiDemo} />
+        <PortfolioSection demo={uiDemo} localMode={localMode} ownerHash={ownerHash} />
       ) : kind === "activity" ? (
-        <ActivitySection demo={uiDemo} />
+        <ActivitySection demo={uiDemo} localMode={localMode} ownerHash={ownerHash} />
       ) : kind === "launch" ? (
-        <LaunchSection />
+        <LaunchSection localMode={localMode} />
       ) : (
         <div className="w-full px-4 py-4 sm:px-5 lg:px-6">
           <div className="flex min-h-10 flex-wrap items-center justify-between gap-3 border-b border-[#2d3a35] pb-3">

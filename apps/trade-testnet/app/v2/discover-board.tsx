@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "../i18n-provider";
+import { createLocalRpc, discoverLocalMarket } from "../../lib/v2-engine/local-workspace.ts";
 
 type Lane = "new" | "curve" | "migrated";
-type Market = { symbol: string; name: string; id: string; buy: string; sell: string; inventory: string; lane: Lane; tone: string };
+type Market = { symbol: string; name: string; id: string; buy: string; sell: string; inventory: string; lane: Lane; tone: string; verified?: boolean };
 type SortKey = "listed" | "price" | "inventory";
 
 const fixtureMarkets: Market[] = [
@@ -40,13 +41,21 @@ const fixtureMarkets: Market[] = [
 
 const laneKeys: Lane[] = ["new", "curve", "migrated"];
 
-export default function DiscoverBoard() {
+function formatCkb(value: bigint) {
+  const whole = value / 100_000_000n;
+  const fraction = (value % 100_000_000n).toString().padStart(8, "0").replace(/0+$/, "");
+  return fraction ? `${whole}.${fraction}` : whole.toString();
+}
+
+export default function DiscoverBoard({ localMode = false }: { localMode?: boolean }) {
   const { t, locale } = useLocale();
   const copy = (en: string, zh: string) => locale === "zh-CN" ? zh : en;
   const [demo, setDemo] = useState(false);
   const [query, setQuery] = useState("");
   const [activeLane, setActiveLane] = useState<"all" | Lane>("all");
   const [sort, setSort] = useState<SortKey>("listed");
+  const [localMarket, setLocalMarket] = useState<Market | null>(null);
+  const [localError, setLocalError] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -54,13 +63,39 @@ export default function DiscoverBoard() {
     setQuery(params.get("q") ?? "");
   }, []);
 
+  useEffect(() => {
+    if (!localMode) return;
+    let active = true;
+    discoverLocalMarket(createLocalRpc()).then(({ snapshot }) => {
+      if (!active) return;
+      setLocalMarket({
+        symbol: "LOCAL",
+        name: copy("Private CKB market", "私有 CKB 市场"),
+        id: snapshot.id,
+        buy: formatCkb(snapshot.buyOne),
+        sell: formatCkb(snapshot.sellOne),
+        inventory: snapshot.curve.inventory.toString(),
+        lane: "new",
+        tone: "#72dfb0",
+        verified: true,
+      });
+      setLocalError("");
+    }).catch((error: unknown) => {
+      if (!active) return;
+      setLocalMarket(null);
+      setLocalError(error instanceof Error ? error.message : "Private market unavailable");
+    });
+    return () => { active = false; };
+  }, [localMode, locale]);
+
   const markets = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    const filtered = fixtureMarkets.filter((market) => `${market.symbol} ${market.name} ${market.id}`.toLowerCase().includes(normalized));
+    const source = localMode ? localMarket ? [localMarket] : [] : demo ? fixtureMarkets : [];
+    const filtered = source.filter((market) => `${market.symbol} ${market.name} ${market.id}`.toLowerCase().includes(normalized));
     if (sort === "price") return filtered.sort((a, b) => Number(b.buy) - Number(a.buy));
     if (sort === "inventory") return filtered.sort((a, b) => Number(b.inventory.replaceAll(",", "")) - Number(a.inventory.replaceAll(",", "")));
     return filtered;
-  }, [query, sort]);
+  }, [query, sort, demo, localMode, localMarket]);
 
   const visibleLanes = laneKeys.filter((lane) => activeLane === "all" || activeLane === lane);
   const laneGrid = activeLane === "all" ? "md:grid-cols-3" : "md:grid-cols-1";
@@ -80,10 +115,10 @@ export default function DiscoverBoard() {
           </nav>
         </div>
         <div className="flex h-12 items-center gap-4 text-[10px] text-[#85858a]">
-          {demo && <span className="text-[#b99a58]">{copy("Preview data", "预览数据")}</span>}
-          <label className={`flex items-center gap-2 ${!demo ? "text-[#55555a]" : ""}`}>
+          {demo && !localMode && <span className="text-[#b99a58]">{copy("Preview data", "预览数据")}</span>}
+          <label className={`flex items-center gap-2 ${!demo || localMode ? "text-[#55555a]" : ""}`}>
             <span>{copy("Sort", "排序")}</span>
-            <select aria-label={copy("Sort markets", "排序市场")} disabled={!demo} value={sort} onChange={(event) => setSort(event.target.value as SortKey)} className="min-h-8 border-0 bg-transparent p-0 pr-1 text-[11px] text-[#d9d9dc] outline-none focus-visible:ring-1 focus-visible:ring-[#77777d] disabled:cursor-not-allowed disabled:text-[#55555a]">
+            <select aria-label={copy("Sort markets", "排序市场")} disabled={!demo || localMode} value={sort} onChange={(event) => setSort(event.target.value as SortKey)} className="min-h-8 border-0 bg-transparent p-0 pr-1 text-[11px] text-[#d9d9dc] outline-none focus-visible:ring-1 focus-visible:ring-[#77777d] disabled:cursor-not-allowed disabled:text-[#55555a]">
               <option value="listed">{copy("Listed", "最新")}</option>
               <option value="price">{copy("Buy price", "买入价格")}</option>
               <option value="inventory">{copy("Inventory", "库存")}</option>
@@ -95,25 +130,26 @@ export default function DiscoverBoard() {
 
       <div className={`grid min-h-0 flex-1 grid-cols-1 overflow-x-auto ${laneGrid}`}>
         {visibleLanes.map((lane, index) => {
-          const rows = demo ? markets.filter((market) => market.lane === lane) : [];
+          const rows = markets.filter((market) => market.lane === lane);
           return (
             <section key={lane} aria-label={t(lane)} className={`flex min-h-[300px] flex-col border-b border-[#252527] md:min-h-0 md:border-b-0 ${activeLane === "all" && index < visibleLanes.length - 1 ? "md:border-r md:border-[#202022]" : ""}`}>
               <div className="flex h-10 shrink-0 items-center justify-between border-b border-[#202022] px-4">
                 <h3 className="m-0 text-[12px] font-semibold text-[#dddde0]">{t(lane)}</h3>
-                <span className="text-[10px] tabular-nums text-[#737378]">{demo ? rows.length : "—"}</span>
+                <span className="text-[10px] tabular-nums text-[#737378]">{demo || localMode ? rows.length : "—"}</span>
               </div>
               <div className="grid h-9 shrink-0 grid-cols-[minmax(0,1fr)_112px_84px] items-center gap-2 border-b border-[#1d1d1f] px-4 text-[10px] font-medium text-[#77777d]">
                 <span>{copy("Token", "代币")}</span><span className="text-right">{copy("Buy / sell · CKB", "买入 / 卖出 · CKB")}</span><span className="text-right">{copy("Inventory", "库存")}</span>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto">
-                {rows.map((market) => (
-                  <article key={market.symbol} className="grid min-h-[72px] grid-cols-[minmax(0,1fr)_112px_84px] items-center gap-2 border-b border-[#1e1e20] px-4 py-2 transition-colors hover:bg-[#111113]">
+                {rows.map((market) => {
+                  const row = <article key={market.symbol} className="grid min-h-[72px] grid-cols-[minmax(0,1fr)_112px_84px] items-center gap-2 border-b border-[#1e1e20] px-4 py-2 transition-colors hover:bg-[#111113]">
                     <div className="flex min-w-0 items-center gap-2.5">
                       <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-[3px] text-[12px] font-bold text-[#101012]" style={{ backgroundColor: market.tone }}>{market.symbol.slice(0, 1)}</span>
                       <div className="min-w-0">
                         <div className="flex min-w-0 items-baseline gap-1.5">
                           <strong className="truncate text-[12px] font-semibold text-[#eeeef0]">{market.symbol}</strong>
                           <span className="truncate text-[10px] text-[#85858a]">{market.name}</span>
+                          {market.verified && <span className="shrink-0 text-[9px] text-[#72dfb0]">{copy("Verified local", "本地已验证")}</span>}
                         </div>
                         <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[9px] text-[#77777d]">
                           <span className="truncate">{market.id}</span><span aria-hidden="true">·</span><span>CKB</span>
@@ -125,13 +161,14 @@ export default function DiscoverBoard() {
                       <div className="mt-0.5 text-[10px] text-[#85858a]">{market.sell}</div>
                     </div>
                     <div className="text-right text-[10px] tabular-nums text-[#c4c4c7]">{market.inventory}</div>
-                  </article>
-                ))}
+                  </article>;
+                  return market.verified ? <Link key={market.symbol} href="/v2" aria-label={`Trade ${market.symbol}`} className="block text-inherit no-underline">{row}</Link> : row;
+                })}
                 {!rows.length && (
                   <div className="flex min-h-32 items-center justify-center px-4 py-8 text-center">
                     <div>
-                      <p className="m-0 text-[12px] font-medium text-[#c9c9cc]">{demo ? copy("No matching CKB markets", "没有匹配的 CKB 市场") : t("noVerifiedMarkets")}</p>
-                      <p className="mb-0 mt-1 text-[11px] leading-5 text-[#77777d]">{demo ? copy("Try another filter", "试试其他筛选条件") : t("deploymentUnverified")}</p>
+                      <p className="m-0 text-[12px] font-medium text-[#c9c9cc]">{demo && !localMode ? copy("No matching CKB markets", "没有匹配的 CKB 市场") : localMode && localError ? copy("Local market unavailable", "本地市场不可用") : t("noVerifiedMarkets")}</p>
+                      <p className="mb-0 mt-1 text-[11px] leading-5 text-[#77777d]">{demo && !localMode ? copy("Try another filter", "试试其他筛选条件") : localMode && localError ? localError : t("deploymentUnverified")}</p>
                     </div>
                   </div>
                 )}
