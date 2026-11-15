@@ -7,7 +7,8 @@
 - **VERIFIED (private-node browser acceptance):** one disposable owner completed Launch, Discover, buy, sell, Portfolio, and Activity on one isolated `ckb_dev` chain. Launch, buy, and sell committed as real native transactions; Portfolio reconstructed 7 units and Activity recovered the launch/buy/sell hashes and amounts from committed history.
 - **VERIFIED (read-only `/v2` recovery):** after the committed buy/sell history, `/v2` recovers current inventory `1993`, internal custody `7`, and owner entitlement `7`, then shows the same values after reload. The check submitted no transaction and left the chain tip unchanged. The summarized result is [trade-recovery.json](../apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json); raw receipts, logs, and screenshots remain in the preserved timestamped local evidence directories.
 - **VERIFIED (focused checks):** TypeScript typecheck and fixture-gate, local-manifest, transaction-layout, and lineage tests passed after the recovery fix. This is local integration evidence, not a production security audit.
-- **UNVERIFIED:** public Pudge deployment, market identity, transactions, external-wallet flow, liquidity, and production readiness. The public manifest's `code: null` remains no deployment evidence. Public Pudge transaction work is outside the current authorization scope.
+- **AUTHORIZED, NOT YET VERIFIED:** a narrowly scoped owner-operated acceptance may use only official CKB Pudge Testnet, Pudge testnet CKB, and the existing Roveko contract architecture. Every transaction requires individual owner review and approval in the connected browser wallet; signing and broadcast remain separate owner actions. No automatic signing/broadcast, private-key extraction/import, fixture credentials, mainnet transaction, or unattended deployment is authorized.
+- **UNVERIFIED:** public Pudge deployment, market identity, transactions, external-wallet flow, independent public-chain verification, liquidity, security review, and production readiness. The public manifest's `code: null` remains no evidence of a deployed market.
 
 ## Roveko application status
 
@@ -15,7 +16,7 @@
 - **DERIVED (source inspection):** the default app client is configured for public CKB Pudge testnet RPC, and the source includes wallet-mediated transaction signing and submission paths. This describes code behavior, not a verified public deployment or successful public transaction.
 - **UNVERIFIED:** current public Pudge code identity and availability; a complete deployment, initialization, trading, withdrawal, and recovery lifecycle on Pudge; external-wallet compatibility; independent public-chain verification; security review; maker commitments; and profitable exchange economics.
 - **UNIMPLEMENTED:** independent authentication of public RPC observations and a production-grade validation of the full product workflow. Local mock-RPC, disposable-chain, and protocol-lab results do not close these gaps.
-- No mainnet use, externally funded testnet transaction, or production deployment is authorized by this status document.
+- This authorization does not establish public acceptance, production readiness, liquidity, or business viability. Do not advance dependent stages until each preceding public transaction is canonically confirmed and reconciled.
 
 The notes below preserve protocol-research state. Historical experiment conclusions remain context only and are not evidence that the Roveko public Pudge product workflow has been verified. The active task pointer is [NEXT_CODEX_TASK.md](NEXT_CODEX_TASK.md).
 

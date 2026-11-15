@@ -1,44 +1,38 @@
-# Completed milestone: Roveko local product integration
+# Active milestone: Pudge Testnet owner acceptance
 
 ## Objective
 
-Prove one complete customer journey in the existing Roveko application against a privately controlled isolated CKB node. This is a local product-integration milestone, not a public launch or a claim that Roveko is ready for public trading.
+Prepare the existing Roveko application on `main` for an owner-operated Pudge Testnet acceptance. Use the existing `/launch`, `/v2/deploy`, and trading implementations. The immediate handoff is a running application where the owner can connect UTXO Global, review a real deployment transaction, and decide whether to sign and broadcast it.
 
-## Acceptance
+The owner has authorized this milestone only on the official CKB Pudge Testnet, with Pudge testnet CKB, and the existing verified contract architecture. Each transaction requires its own review and approval by the owner in the connected browser wallet. Signing and broadcasting are separate owner actions. Never sign or broadcast automatically, import or extract keys, use fixture credentials, use mainnet, or deploy unattended.
 
-Using one disposable owner and one fresh private CKB node, run the application through these routes:
+## First checkpoint
 
-1. **Launch:** build and verify the pinned current market code, deploy it only to the fresh private node using the existing workflow, then create and initialize one market.
-2. **Discover:** find that market from verified private-chain state and open it in the application.
-3. **Trade:** buy and sell through the existing transaction review and wallet-signing path. Both transactions must commit on the private node.
-4. **Portfolio:** show the owner's verified post-trade holdings from reconstructed chain state.
-5. **Activity:** show the committed launch and trade transactions with their real hashes and correct actions/amounts.
-6. Reload the application and recover the same verified market, holdings, and history from chain data. A local-storage record alone is not proof of state.
+1. Preserve the current worktree, both stashes, historical branches/worktrees, and all prior evidence. Do not alter WO15, Arena, Fiber, protocol-fee work, or business-model material.
+2. Confirm the active checkout and branch. Inspect the existing Pudge configuration, pinned binary/tool identities, wallet controls, and recovery safeguards. Do not rebuild implemented features or weaken their checks.
+3. Run typecheck, production build, and focused existing checks for Pudge transaction preparation, signature verification, and the separately gated broadcast control. Do not repeat the complete private-chain lifecycle.
+4. Start the app in normal Pudge mode on localhost, confirm the exact URL responds and the launch/deployment view renders, and keep the process running for the owner's browser interaction. Ensure local fixture/test hooks are disabled.
+5. Report the URL, commit and branch, build/check results, available wallet controls, the first owner action, and any exact blocker. Do not claim a public transaction has occurred.
 
-Use native transfers and actual committed Cells; do not substitute mock balances or mock RPC for this acceptance. Preserve raw transaction receipts, reproducible commands, versions, and browser evidence in a new evidence directory. Classify each conclusion as VERIFIED, DERIVED, HYPOTHESIS, or UNIMPLEMENTED.
+## Owner-controlled transaction sequence
 
-## Boundaries
+1. The owner connects UTXO Global on Pudge and verifies the address and live eligible Cells.
+2. Prepare and inspect the deployment transaction's inputs, outputs, dependencies, capacity and fee. Use the guarded split workflow only if the verified eligible Cells require it; each split also needs an individual review and approval.
+3. After the owner approves the reviewed transaction, request a wallet signature. Verify the returned signed transaction against the review before exposing its separate broadcast action. The owner decides whether to broadcast. Do not work around a wallet rejection or unexpected transaction mutation.
+4. Capture the actual transaction hash and verify canonical confirmation, deployed code identities and exact outputs. Save durable recovery evidence and reconcile uncertain submission outcomes before retrying.
+5. Continue setup, issuance and initial curve purchase as separate reviewed transactions. Confirm and reconcile each stage before preparing its dependent stage.
+6. Register the verified public market identity only after initialization is confirmed. Then prepare owner-approved Buy and Sell transactions and verify them in Portfolio, Activity and recovered market state.
 
-- Work in the existing Roveko checkout on `main`. Do not change branches, delete worktrees, or disturb either preserved stash or WO15.
-- Reuse existing pinned contract code and the current market implementation. No new contract features, fee model, Arena work, or unrelated UI redesign.
-- Use only a locally controlled isolated CKB node and disposable test keys. No public Pudge or UTXO Global signing, funding, deployment, or broadcast is authorized by this task. No mainnet, public testnet, or real assets.
-- Preserve all existing source and historical evidence. Write new outputs only to a fresh evidence directory.
-- The public Pudge deployment and trading journey remains UNVERIFIED. Do not represent local results as public-chain, security, liquidity, or business validation.
+## Evidence and limits
 
-## Environment and verification
+- Label every result **VERIFIED**, **DERIVED**, **HYPOTHESIS**, or **UNIMPLEMENTED**.
+- A running server, connected wallet, prepared transaction, local proof, or mocked wallet test is not public transaction acceptance.
+- Do not request faucet funds unless read-only inspection confirms the connected owner's available funding is insufficient.
+- Preserve unsigned/signed transaction evidence and exact wallet errors safely. Never include secret material.
+- The public milestone is complete only with verified Pudge deployment, initialization, buy, sell, and chain-state recovery, each supported by actual public transaction hashes and canonical confirmation.
 
-First record the actual operating system, Node/npm versions, pinned native tool versions, browser, required binaries, available disk, and whether a private CKB node can be started. Do not relabel old receipts as a fresh run. If a required tool or network dependency is unavailable, record the exact command and error and keep the implementation result separate from the unrun acceptance.
+## Completed prerequisite: isolated local integration
 
-Run focused typecheck and production build checks after edits. Run the integrated browser/native acceptance only when its pinned binaries, private node, and disposable fixtures are available. Preserve all outputs; do not overwrite earlier evidence.
+**PASS (VERIFIED):** one disposable owner completed Launch, Discover, Buy, Sell, Portfolio, Activity, and reload recovery on one isolated private CKB node. Launch, buy, and sell committed as real private-chain transactions. After Buy/Sell, `/v2` followed the current market and custody successors and recovered inventory `1993`, custody `7`, and owner entitlement `7` before and after reload. The focused recovery check submitted no transaction and left the chain tip unchanged.
 
-## Follow-on gate
-
-Only after this local acceptance is complete should a separately scoped task address the physical UTXO Global and public Pudge journey. Correct the repository's authorization scope first and require explicit approval for any concrete public transaction. User demand, maker commitments, liquidity, security, and profitable economics remain unproven.
-
-## Acceptance result — 2026-11-15
-
-- **PASS (VERIFIED):** a single disposable owner completed Launch, Discover, Buy, Sell, Portfolio, Activity, and recovery on the same isolated private CKB node. The committed launch transaction is `0x5068a444fcac73731a1f16e654528b5931c51330a581100a9b1efe31c519773c`, Buy is `0x3a73b382f8925b978ba63940792f72618a993f6aaf2330f584d336808cc48e3b`, and Sell is `0x2e245d58ac6e1244af31aeb7f3c98d30c4866c4e9e4fb7a1088e9115231317f9`.
-- **VERIFIED:** after Buy/Sell, `/v2` follows the current market successor to its custody successor and uses the same committed-history owner recovery as Portfolio. The read-only browser regression recovered inventory `1993`, internal custody `7`, and owner entitlement `7` before and after reload; zero transactions were submitted and the chain tip did not change.
-- **VERIFIED:** TypeScript typecheck and the fixture-gate, local-manifest, transaction-layout, and lineage tests passed after the recovery change.
-- Evidence and failed diagnostic attempts remain preserved in their timestamped directories under `apps/trade-testnet/evidence`. The focused passing result is [trade-recovery.json](../apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json); full receipts and screenshots remain in the local evidence directories.
-- Public Pudge deployment, code identity, transaction lifecycle, external-wallet compatibility, liquidity, security, and business economics remain **UNVERIFIED**. No public Pudge or UTXO Global transaction is authorized by this local acceptance result.
+The summarized evidence is `apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json`; timestamped raw receipts, logs, and screenshots remain preserved. Focused typecheck and fixture-gate, local-manifest, transaction-layout, and lineage checks passed for that local recovery change. This prerequisite does not establish any public Pudge transaction, external-wallet compatibility, liquidity, security audit, or business viability.

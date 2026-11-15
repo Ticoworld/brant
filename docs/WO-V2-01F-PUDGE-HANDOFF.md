@@ -9,7 +9,7 @@
 
 ## Local launch on this computer
 
-From PowerShell, use the existing `v2/pudge-trading-app` worktree. The following paths identify the checked binaries and the temporary Node 24.19.0 runtime prepared for this session. The collector is a byte-identical copy of the repository's `recover.cjs` next to a freshly built recovery verifier. Temporary directories may be removed by the operating system; rebuild them if unavailable.
+From PowerShell, use the existing Roveko `main` worktree. The following paths identify the checked binaries and the temporary Node 24.19.0 runtime prepared for this session. The collector is a byte-identical copy of the repository's `recover.cjs` next to a freshly built recovery verifier. Temporary directories may be removed by the operating system; rebuild them if unavailable.
 
 ```powershell
 Set-Location 'C:\Users\timot\.codex\worktrees\pudge-trading-app\trade\apps\trade-testnet'
