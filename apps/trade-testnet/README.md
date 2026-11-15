@@ -1,6 +1,8 @@
-# Canonical Trade frontend — WO13
+# Roveko experimental CKB trading interface
 
-Use this directory for local development. Start with `npm ci` then `npm run dev` on Node24.19.0/npm11.9.0. See [Windows handoff](../../docs/WO13_WINDOWS_HANDOFF.md) and [WO13 evidence](../../docs/WO13_TRADE_EXPERIENCE_EVIDENCE.md). No trade-pilot symlink, WSL, local CKB node or keys are needed for connection. Public signing stays disabled pending separate deployment approval.
+The default client is configured for the public CKB Pudge testnet. The source includes wallet-mediated signing and transaction submission flows for deployment, initialization, and trading. Their presence is not evidence of a currently supported deployment or a verified end-to-end public Pudge lifecycle. External-wallet compatibility, public transaction behavior, security, and maker economics remain unverified; do not treat this interface as production software or use it with real assets.
+
+Use this directory for isolated local development. Start with `npm ci` then `npm run dev` on Node 24.19.0/npm 11.9.0. See [Windows handoff](../../docs/WO13_WINDOWS_HANDOFF.md), [WO13 evidence](../../docs/WO13_TRADE_EXPERIENCE_EVIDENCE.md), and the repository [current state](../../docs/CURRENT_STATE.md). Automated transaction tests must use private disposable chains, mocked RPC, and disposable test keys; they do not authorize public testnet transactions.
 
 The original WO10 instructions and evidence below are retained as historical context; the new interface shares/imports offer files with exact revalidation instead of displaying JSON by default.
 

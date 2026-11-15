@@ -12,7 +12,7 @@ import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-
 import {quote} from '../../lib/v2-engine/curve.ts';
 import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey} from '../../lib/v2-engine/pudge-trade-journal.ts';
 import {useLocale} from '../i18n-provider';
-import Navigation from './navigation';
+import Navigation, {UtilityBar} from './navigation';
 
 const genesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
 type Side='buy'|'sell';
@@ -50,56 +50,77 @@ export default function PudgeMarket(){
  async function restore(){try{const w=await wallet(),attempt=parseTradeAttempt(backup);if(attempt.genesis!==genesis||attempt.owner.toLowerCase()!==w.owner.toLowerCase())throw Error('Backup belongs to another wallet or network');if(!navigator.locks)throw Error('Exclusive trade lock unavailable');await navigator.locks.request(`roveko-pudge-trade-${w.owner.toLowerCase()}`,{ifAvailable:true},lock=>{if(!lock||active.current!==w.current)throw Error('Wallet changed or another trade action is in progress');const key=tradeKey(genesis,w.owner);if(localStorage.getItem(key)!==null)throw Error('Existing trade requires reconciliation');const raw=JSON.stringify(attempt);localStorage.setItem(key,raw);setSavedAttempt(raw);setPending(true);setBackup('');setMessage('Trade backup restored. Reconcile against Pudge before continuing.');});}catch(e){setMessage(e instanceof Error?e.message:'Backup restore failed');}}
  function resetReview(){revision.current++;setReview(null);setApproved(false);signed.current=null;setSignedReady(false);}
  return (
-  <main className="min-h-screen bg-[#0c1210] text-[#eef2ec] [font-family:'Segoe_UI',Arial,sans-serif]">
+  <main className="v2-app min-h-screen bg-[#0c1210] pb-12 text-[#eef2ec] [font-family:'Segoe_UI',Arial,sans-serif]">
    <Navigation active="/v2" />
-   <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-6 px-5 py-8 md:grid-cols-[minmax(0,1fr)_minmax(340px,400px)] md:gap-12 md:px-8 md:py-12">
-    <section className="min-w-0">
-     <p className="text-[11px] font-semibold tracking-widest text-[#9ebbad]">{t('pudgeTestnet')} / V2</p>
-     <h1 className="mt-3 text-3xl font-semibold leading-tight md:text-4xl">{t('marketTerminal')}</h1>
-     <p className="mt-2 max-w-xl text-sm leading-6 text-[#b5c1b9]">{t('marketUnavailableDetail')}</p>
-     <button className="mt-5" onClick={refresh} disabled={!signer}>{t('verifyMarketFirst')}</button>
-     <div className="mt-6 flex items-center gap-2 border-y border-[#2d3a35] py-3 text-sm"><i className="size-2 rounded-full bg-[#e2bb71]"/><span className="text-[#d8e1db]">{t('marketUnavailableTitle')}</span><span className="text-[#839289]">·</span><span className="text-[#a5b1a8]">{t('deploymentUnverified')}</span></div>
-     <dl className="mt-5 grid grid-cols-3 border-y border-[#2d3a35]">
-      {[[t('marketCapacity'),market?ckb(BigInt(market.cells[0].output.capacity)):'—'],[t('curveInventory'),market?.curve.inventory.toString()||'—'],[t('internalCirculation'),market?.custodyAmount.toString()||'—']].map(([label,value])=><div className="min-w-0 border-r border-[#2d3a35] py-4 pr-2 last:border-r-0 sm:px-4" key={label}><dt className="text-[10px] uppercase tracking-wider text-[#9ebbad] sm:text-xs">{label}</dt><dd className="mt-2 break-words text-lg font-semibold tabular-nums">{value}</dd></div>)}
-     </dl>
-     <dl className="grid grid-cols-2 border-b border-[#2d3a35]">
-      {[[t('marginalBuyPrice'),marginal('buy')],[t('marginalSellPrice'),marginal('sell')],[t('available'),review?review.ownerBalance.toString():'—'],[t('status'),market?t('deploymentConfigured'):t('deploymentUnverified')]].map(([label,value])=><div className="min-w-0 border-r border-[#2d3a35] py-3 pr-2 last:border-r-0 sm:px-4" key={label}><dt className="text-[10px] uppercase tracking-wider text-[#9ebbad] sm:text-xs">{label}</dt><dd className="mt-1.5 break-words text-sm font-medium tabular-nums">{value}</dd></div>)}
-     </dl>
-     <p className="mt-4 text-sm text-[#a5b1a8]" role="status">{message==='Connect a wallet and verify the market.'?t('connectVerifyMarket'):message}</p>
-     <a className="mt-2 inline-block text-sm text-[#72dfb0] underline underline-offset-4" href="/v2/deploy">{t('deployment')} / {t('independentRecovery')}</a>
-    </section>
-    <aside className="min-w-0 rounded-md border border-[#34443c] bg-[#151e1a] p-4 md:p-5">
-     <div className="mb-5 grid grid-cols-2 gap-1 rounded-md bg-[#0e1512] p-1">
-      <button className={side==='buy'?'!border-[#72dfb0] !bg-[#72dfb0] !text-[#10231a]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('buy');}}>{t('buyOnCurve')}</button>
-      <button className={side==='sell'?'!border-[#f08e89] !bg-[#f08e89] !text-[#301615]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('sell');}}>{t('sellBack')}</button>
+   <h1 className="sr-only">{t('marketTerminal')}</h1>
+   <div className="w-full px-3 sm:px-5 lg:px-6">
+    <div className="flex min-h-12 flex-wrap items-center justify-between gap-3 border-b border-[#2d3a35]">
+     <div className="flex min-w-0 items-center gap-3">
+      <span className="text-sm font-semibold">{t('pudgeTestnet')}</span>
      </div>
-     <label className="mb-2 block text-sm text-[#cbd5ce]" htmlFor="pudge-quantity">{t('tokenQuantity')}</label>
-     <div className="flex min-h-16 items-center gap-3 rounded-md border border-[#3b4b43] bg-[#0e1512] px-3 focus-within:border-[#72dfb0]">
-      <input className="min-w-0 flex-1 border-0 bg-transparent text-2xl tabular-nums outline-none" id="pudge-quantity" inputMode="numeric" value={quantity} onChange={e=>{resetReview();setQuantity(e.target.value.replace(/[^0-9]/g,''));}}/>
-      <span className="text-xs text-[#a5b1a8]">{t('token')}</span>
+     <div className="flex items-center gap-4 text-xs">
+      {market&&<><span><span className="text-[#8fa096]">{t('marginalBuyPrice')}</span> <b className="ml-1 tabular-nums text-[#dce8df]">{marginal('buy')}</b></span><span><span className="text-[#8fa096]">{t('marketCapacity')}</span> <b className="ml-1 tabular-nums text-[#dce8df]">{ckb(BigInt(market.cells[0].output.capacity))}</b></span></>}
+      <span className="inline-flex items-center gap-2 text-[#b6c1ba]"><i className={`size-1.5 rounded-full ${market?'bg-[#72dfb0]':'bg-[#e2bb71]'}`}/>{market?t('deploymentConfigured'):t('deploymentUnverified')}</span>
      </div>
-     <button className="mt-3 w-full" onClick={prepare} disabled={!signer||!market||pending}>{market?t('prepareTradeReview'):t('tradeUnavailable')}</button>
-     {review&&<div className="mt-4 space-y-3 border-t border-[#2d3a35] pt-4">
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm"><dt className="text-[#a5b1a8]">{t('available')}</dt><dd className="text-right tabular-nums">{review.ownerBalance.toString()}</dd><dt className="text-[#a5b1a8]">{review.side==='buy'?t('totalCost'):t('grossPayout')}</dt><dd className="text-right tabular-nums">{ckb(review.amount)}</dd><dt className="text-[#a5b1a8]">{t('exactFee')}</dt><dd className="text-right tabular-nums">{ckb(review.fee)}</dd></dl>
-      <p className="break-all text-xs text-[#a5b1a8]">{t('transaction')}: {review.transaction.hash()}</p>
-      <details className="text-sm text-[#a5b1a8]"><summary className="cursor-pointer">{t('advancedDetails')}</summary><ul aria-label={t('reviewTransaction')} className="mt-2 space-y-1 break-all text-xs">{review.transaction.outputs.map((o,i)=><li key={i}>Output {i} · {o.capacity.toString()} shannons · lock {o.lock.hash()} · type {o.type?.hash()||'none'} · data {review.transaction.outputsData[i]}</li>)}</ul><pre className="mt-2 max-h-72 overflow-auto rounded border border-[#34443c] bg-[#0c1210] p-3 text-xs">{JSON.stringify(review.transaction,(_,v)=>typeof v==='bigint'?v.toString():v,2)}</pre></details>
-      <label className="flex items-start gap-2 text-sm text-[#cbd5ce]"><input type="checkbox" checked={approved} onChange={e=>{setApproved(e.target.checked);signed.current=null;setSignedReady(false);}}/> {t('transactionNeedsReview')}</label>
-      <div className="flex flex-wrap gap-2"><button onClick={sign} disabled={!approved||pending}>{t('requestTradeSignature')}</button><button onClick={broadcast} disabled={!signedReady||!approved||pending}>{t('broadcastTrade')}</button></div>
-     </div>}
-     {pending&&<div className="mt-4 space-y-3 border-t border-[#2d3a35] pt-4"><p className="text-sm text-[#a5b1a8]">{t('reconcileBeforeRetry')}</p><button onClick={reconcile}>{t('reconcileTrade')}</button><label className="block text-sm">{t('exportRecoveryRecord')}<textarea className="mt-2 block w-full" readOnly rows={4} value={savedAttempt}/></label></div>}
-     {!pending&&!review&&<details className="mt-4 border-t border-[#2d3a35] pt-4 text-sm text-[#a5b1a8]"><summary className="cursor-pointer">{t('restoreBackup')}</summary><textarea className="mt-3 block w-full" aria-label={t('exportRecoveryRecord')} value={backup} onChange={e=>setBackup(e.target.value)}/><button className="mt-2" onClick={restore} disabled={!backup||!signer}>{t('restoreBackup')}</button></details>}
-    </aside>
-   <section className="col-span-full grid gap-5 border-t border-[#2d3a35] pt-5 md:grid-cols-[minmax(0,1.4fr)_minmax(280px,1fr)]">
-    <div className="min-w-0">
-     <div className="flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">{t('priceHistory')}</h2><span className="text-xs text-[#9eaaa2]">{market?t('verified'):t('unavailable')}</span></div>
-     <div className="mt-3 grid min-h-40 place-items-center border border-[#2d3a35] bg-[#0e1512] px-5 text-center text-sm text-[#9eaaa2]">{t('priceHistoryUnavailable')}</div>
     </div>
-    <div className="min-w-0">
-     <div className="flex items-center justify-between gap-3"><h2 className="text-sm font-semibold">{t('activity')}</h2><a className="text-xs text-[#9ce2bf] underline underline-offset-4" href="/v2/activity">{t('activity')}</a></div>
-     <p className="mt-3 min-h-40 border border-[#2d3a35] bg-[#0e1512] p-4 text-sm leading-6 text-[#9eaaa2]">{t('accountHistoryUnavailable')}</p>
+    <div className="grid min-h-[calc(100vh-296px)] grid-cols-1 gap-3 py-3 md:min-h-[calc(100vh-224px)] md:grid-cols-[minmax(0,1fr)_340px] md:gap-4">
+     <section className="flex min-h-[420px] min-w-0 flex-col overflow-hidden border border-[#2b3932] bg-[#0e1512]">
+      <div className="flex min-h-11 items-center justify-between gap-3 border-b border-[#2b3932] px-3">
+       <div className="flex items-center gap-4"><h2 className="m-0 text-sm font-semibold">{t('priceHistory')}</h2><span className="text-xs text-[#84948a]">{t('unavailable')}</span></div>
+       <a className="text-xs text-[#a9d7bd] underline-offset-4 hover:underline" href="/v2/activity">{t('activity')}</a>
+      </div>
+      <div className="grid min-h-0 flex-1 place-items-center px-5 py-8 text-center">
+       <div className="flex max-w-xl flex-col items-center gap-4">
+        <span aria-hidden="true" className="grid size-11 place-items-center border border-[#34443c] text-lg text-[#8fa096]">—</span>
+        <div className="space-y-2">
+         <p className="m-0 text-base font-semibold text-[#e2eae4]">{t('marketUnavailableTitle')}</p>
+         <p className="m-0 text-sm leading-6 text-[#9eaaa2]">{t('marketUnavailableDetail')}</p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
+         <button onClick={refresh} disabled={!signer} className="min-h-9 border border-[#506459] px-3 text-xs text-[#dbe6df] disabled:cursor-not-allowed disabled:opacity-50">{t('verifyMarketFirst')}</button>
+         <a href="/v2/discover" className="inline-flex min-h-9 items-center border border-[#506459] px-3 text-xs text-[#dbe6df] no-underline hover:bg-[#18251e]">{t('discover')}</a>
+         <a href="/v2/deploy" className="inline-flex min-h-9 items-center bg-[#72dfb0] px-3 text-xs font-semibold text-[#102219] no-underline hover:bg-[#8de8c0]">{t('deployTestMarket')}</a>
+        </div>
+       </div>
+      </div>
+     </section>
+     <aside className="min-w-0 border border-[#34443c] bg-[#151e1a] p-4 md:p-5">
+      <div className="mb-4 grid grid-cols-2 gap-1 border border-[#2d3a35] bg-[#0e1512] p-1">
+       <button className={side==='buy'?'!border-[#72dfb0] !bg-[#72dfb0] !text-[#10231a]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('buy');}}>{t('buyOnCurve')}</button>
+       <button className={side==='sell'?'!border-[#f08e89] !bg-[#f08e89] !text-[#301615]':'!text-[#a5b1a8]'} onClick={()=>{resetReview();setSide('sell');}}>{t('sellBack')}</button>
+      </div>
+      <div className="mb-3 flex items-center justify-between gap-3 text-xs"><span className="text-[#cbd5ce]">{t('tokenQuantity')}</span><span className="text-[#87988e]">{t('marketUnavailableTitle')}</span></div>
+      <label className="sr-only" htmlFor="pudge-quantity">{t('tokenQuantity')}</label>
+      <div className="flex min-h-14 items-center gap-3 border border-[#3b4b43] bg-[#0e1512] px-3 focus-within:border-[#72dfb0]">
+       <input className="min-w-0 flex-1 border-0 bg-transparent text-xl tabular-nums outline-none" id="pudge-quantity" inputMode="numeric" value={quantity} onChange={e=>{resetReview();setQuantity(e.target.value.replace(/[^0-9]/g,''));}}/>
+       <span className="text-xs text-[#a5b1a8]">{t('token')}</span>
+      </div>
+      <button className="mt-3 w-full" onClick={prepare} disabled={!signer||!market||pending}>{market?t('prepareTradeReview'):t('tradeUnavailable')}</button>
+      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-[#2d3a35] py-3 text-xs">
+       <span className="text-[#91a198]">{t('available')}</span><span className="text-right tabular-nums">{review?review.ownerBalance.toString():'—'}</span>
+       <span className="text-[#91a198]">{side==='buy'?t('totalCost'):t('grossPayout')}</span><span className="text-right tabular-nums">{review?ckb(review.amount):'—'}</span>
+       <span className="text-[#91a198]">{t('exactFee')}</span><span className="text-right tabular-nums">{review?ckb(review.fee):'—'}</span>
+      </div>
+      <p className="m-0 border-t border-[#2d3a35] py-3 text-xs leading-5 text-[#9eaaa2]" role="status">{message==='Connect a wallet and verify the market.'?t('connectVerifyMarket'):message}</p>
+      {review&&<div className="space-y-3 border-t border-[#2d3a35] pt-3">
+       <p className="break-all text-xs text-[#a5b1a8]">{t('transaction')}: {review.transaction.hash()}</p>
+       <details className="text-sm text-[#a5b1a8]"><summary className="cursor-pointer">{t('advancedDetails')}</summary><ul aria-label={t('reviewTransaction')} className="mt-2 space-y-1 break-all text-xs">{review.transaction.outputs.map((o,i)=><li key={i}>Output {i} · {o.capacity.toString()} shannons · lock {o.lock.hash()} · type {o.type?.hash()||'none'} · data {review.transaction.outputsData[i]}</li>)}</ul><pre className="mt-2 max-h-72 overflow-auto border border-[#34443c] bg-[#0c1210] p-3 text-xs">{JSON.stringify(review.transaction,(_,v)=>typeof v==='bigint'?v.toString():v,2)}</pre></details>
+       <label className="flex items-start gap-2 text-sm text-[#cbd5ce]"><input type="checkbox" checked={approved} onChange={e=>{setApproved(e.target.checked);signed.current=null;setSignedReady(false);}}/> {t('transactionNeedsReview')}</label>
+       <div className="flex flex-wrap gap-2"><button onClick={sign} disabled={!approved||pending}>{t('requestTradeSignature')}</button><button onClick={broadcast} disabled={!signedReady||!approved||pending}>{t('broadcastTrade')}</button></div>
+      </div>}
+      {pending&&<div className="mt-3 space-y-3 border-t border-[#2d3a35] pt-3"><p className="text-xs text-[#a5b1a8]">{t('reconcileBeforeRetry')}</p><button onClick={reconcile}>{t('reconcileTrade')}</button><label className="block text-xs">{t('exportRecoveryRecord')}<textarea className="mt-2 block w-full" readOnly rows={4} value={savedAttempt}/></label></div>}
+      {!pending&&!review&&<details className="mt-3 border-t border-[#2d3a35] pt-3 text-xs text-[#a5b1a8]"><summary className="cursor-pointer">{t('restoreBackup')}</summary><textarea className="mt-3 block w-full" aria-label={t('exportRecoveryRecord')} value={backup} onChange={e=>setBackup(e.target.value)}/><button className="mt-2" onClick={restore} disabled={!backup||!signer}>{t('restoreBackup')}</button></details>}
+     </aside>
     </div>
-   </section>
+    {market&&<dl className="mb-3 grid grid-cols-2 border-y border-[#2d3a35] sm:grid-cols-4">
+      {[[t('curveInventory'),market.curve.inventory.toString()],[t('internalCirculation'),market.custodyAmount.toString()],[t('marginalSellPrice'),marginal('sell')],[t('available'),review?review.ownerBalance.toString():'—']].map(([label,value])=><div className="flex items-center justify-between gap-3 border-r border-[#2d3a35] px-3 py-2 last:border-r-0" key={label}><dt className="text-xs text-[#9ebbad]">{label}</dt><dd className="m-0 text-xs font-medium tabular-nums">{value}</dd></div>)}
+    </dl>}
+    <nav aria-label={t('primaryNavigation')} className="flex min-h-11 items-center gap-1 overflow-x-auto border-t border-[#2d3a35]">
+     {[[t('openOrders'),'/v2/orders'],[t('portfolio'),'/v2/portfolio'],[t('activity'),'/v2/activity'],[t('independentRecovery'),'/v2/withdraw']].map(([label,href])=><a key={href} href={href} className="inline-flex min-h-10 shrink-0 items-center border-b-2 border-transparent px-4 text-xs text-[#8f9e95] no-underline hover:border-[#506459] hover:text-[#e8f5ed]">{label}</a>)}
+     <a className="ml-auto hidden text-xs text-[#a9d7bd] underline-offset-4 hover:underline sm:inline" href="/v2/deploy">{t('deployment')} / {t('independentRecovery')}</a>
+    </nav>
    </div>
+   <UtilityBar />
   </main>
  );
 }

@@ -14,5 +14,5 @@ export default function DeploymentBackup({journal,genesis,codeHashes,onRestore}:
       onRestore(attempt);setStatus(t('backupRestoredReconcile'));setText('');
     });
   }catch{setStatus(t('backupRestoreFailed'));}}
-  return <section><h2>{t('deploymentAttemptBackup')}</h2><p>{t('backupDisclosure')}</p>{journal?<><label>{t('publicBackupJson')}<br/><textarea readOnly value={JSON.stringify(parseDeploymentAttempt(JSON.stringify(journal)))} rows={5}/></label></>:<><label>{t('restorePublicBackupJson')}<br/><textarea value={text} onChange={event=>setText(event.target.value)} rows={5}/></label><br/><button onClick={restore} disabled={!text}>{t('restoreAttempt')}</button></>}<p role="status">{status}</p></section>;
+  return <section><h2>{t('deploymentAttemptBackup')}</h2><p>{t('backupDisclosure')}</p>{journal?<details><summary>{t('publicBackupJson')}</summary><label><textarea readOnly value={JSON.stringify(parseDeploymentAttempt(JSON.stringify(journal)))} rows={5}/></label></details>:<details><summary>{t('restorePublicBackupJson')}</summary><label><textarea value={text} onChange={event=>setText(event.target.value)} rows={5}/></label><button onClick={restore} disabled={!text}>{t('restoreAttempt')}</button></details>}<p role="status">{status}</p></section>;
 }

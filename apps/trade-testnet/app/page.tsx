@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import WorkspacePage from "./v2/workspace-page";
 
 export default function Page() {
-  redirect("/v2");
+  return <WorkspacePage kind="markets" />;
 }

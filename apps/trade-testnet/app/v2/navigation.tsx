@@ -6,19 +6,27 @@ import { useCcc, useSigner } from "@ckb-ccc/connector-react";
 import { LanguageSwitcher, useLocale } from "../i18n-provider";
 
 const items = [
-  ["/v2", "trade"],
-  ["/v2/discover", "discover"],
-  ["/v2/portfolio", "portfolio"],
-  ["/v2/orders", "openOrders"],
-  ["/v2/activity", "activity"],
+  ["/", "discover"],
+  ["/portfolio", "portfolio"],
+  ["/activity", "activity"],
+  ["/launch", "launch"],
 ] as const;
+
+function SearchIcon() {
+  return <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="size-4 shrink-0"><circle cx="8.75" cy="8.75" r="5.5" stroke="currentColor" strokeWidth="1.5" /><path d="m13 13 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>;
+}
 
 export default function Navigation({ active }: { active: string }) {
   const { t } = useLocale();
   const connector = useCcc();
   const signer = useSigner();
   const [address, setAddress] = useState("");
+  const [query, setQuery] = useState("");
+  const [uiDemo, setUiDemo] = useState(false);
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setQuery(params.get("q") ?? "");
+    setUiDemo(process.env.NODE_ENV !== "production" && params.get("uiDemo") === "1");
     let current = true;
     setAddress("");
     if (signer) signer.getRecommendedAddressObj().then((value) => {
@@ -27,33 +35,48 @@ export default function Navigation({ active }: { active: string }) {
     return () => { current = false; };
   }, [signer]);
   return (
-    <div className="border-b border-[#2d3a35] bg-[#0e1512]">
-      <div className="mx-auto flex min-h-14 max-w-7xl flex-wrap items-center gap-x-4 px-4 sm:flex-nowrap sm:px-6 lg:px-8">
-        <Link href="/v2" className="order-1 shrink-0 py-3 font-semibold tracking-wide text-[#eef2ec] no-underline">
-          ROVEKO <span className="text-xs font-normal text-[#9ebbad]">/ CKB</span>
+    <header className="relative z-10 border-b border-[#252527] bg-[#0b0b0c]">
+      <div className="flex min-h-[52px] w-full flex-wrap items-center gap-x-5 px-3 sm:flex-nowrap sm:px-5 lg:px-6">
+        <Link href={uiDemo ? "/?uiDemo=1" : "/"} style={{ color: "#f2f2f3" }} className="order-1 inline-flex shrink-0 items-center gap-2 py-2 text-[19px] font-bold tracking-normal no-underline">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-[21px] text-[#68d796]"><path d="M4 5.5 12 2l8 3.5v9L12 22l-8-7.5v-9Z" fill="currentColor"/><path d="M8 12h8M12 8v8" stroke="#0b0b0c" strokeWidth="1.6" strokeLinecap="round"/></svg>
+          <span>ROVEKO</span>
         </Link>
-        <div className="order-2 ml-auto flex shrink-0 items-center gap-2 sm:order-4">
-          <button type="button" onClick={() => connector.open()} className="max-w-36 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap rounded border border-[#486153] px-3 py-2 text-xs text-[#dce7dd] hover:bg-[#18261e] sm:max-w-52 sm:text-sm">
-            {address ? `${address.slice(0, 10)}…${address.slice(-5)}` : t("connectWallet")}
-          </button>
-          <LanguageSwitcher />
-        </div>
-        <nav aria-label={t("primaryNavigation")} className="order-3 -mx-4 flex w-[calc(100%+2rem)] min-w-0 items-center gap-1 overflow-x-auto border-t border-[#25312b] px-3 sm:order-2 sm:mx-0 sm:w-auto sm:flex-1 sm:border-0 sm:px-0">
+        <nav aria-label={t("primaryNavigation")} className="order-3 -mx-3 flex w-[calc(100%+1.5rem)] min-w-0 items-center gap-0 overflow-x-auto border-t border-[#202022] px-2 sm:order-2 sm:mx-0 sm:w-auto sm:flex-1 sm:border-0 sm:px-0">
           {items.map(([href, key]) => (
             <Link
               key={href}
-              href={href}
+              href={uiDemo ? `${href}${href.includes("?") ? "&" : "?"}uiDemo=1` : href}
               aria-current={active === href ? "page" : undefined}
-              className={`shrink-0 border-b-2 px-3 py-4 text-sm no-underline transition-colors ${active === href ? "border-[#72dfb0] text-[#e8f5ed]" : "border-transparent text-[#9eaaa2] hover:text-[#e8f5ed]"}`}
+              style={{ color: active === href ? "#63d994" : "#a0a0a5" }}
+              className={`shrink-0 px-3 py-[18px] text-[13px] font-medium no-underline transition-colors ${active === href ? "text-[#63d994]" : "text-[#a0a0a5] hover:text-[#f0f0f1]"}`}
             >
               {t(key)}
             </Link>
           ))}
         </nav>
-        <Link href="/v2/deploy" className="order-3 hidden shrink-0 rounded border border-[#486153] px-3 py-2 text-sm text-[#b8e6cc] no-underline hover:bg-[#18261e] sm:inline-flex">
-          {t("deployTestMarket")}
-        </Link>
+        <form action="/" method="get" className="order-4 flex h-[30px] w-full items-center gap-1.5 border-b border-[#29292c] bg-transparent px-2 text-[#8b8b90] transition-colors focus-within:border-[#85858a] sm:order-3 sm:ml-auto sm:w-[160px]">
+          <SearchIcon />
+          <input name="q" value={query} onChange={(event) => setQuery(event.target.value)} className="!h-full !min-h-0 !min-w-0 !flex-1 !rounded-none !border-0 !bg-transparent !p-0 text-[11px] text-[#e6e6e8] !outline-none !outline-offset-0 placeholder:text-[#77777d] focus:!ring-0 focus-visible:!outline-none" placeholder={t("searchMarkets")} aria-label={t("searchMarkets")} />
+          {uiDemo && <input type="hidden" name="uiDemo" value="1" />}
+        </form>
+        <div className="order-2 ml-auto flex shrink-0 items-center gap-2 sm:order-4 sm:ml-0">
+          <span className="hidden items-center gap-1.5 px-1 text-[11px] font-medium text-[#b1b1b5] md:inline-flex"><i aria-hidden="true" className="size-1.5 rounded-full bg-[#68d796]" />CKB</span>
+          <button type="button" onClick={() => connector.open()} style={{ minHeight: 32, padding: "7px 12px", border: 0, borderRadius: 6, backgroundColor: "#efeff0", color: "#101012" }} className="max-w-36 shrink-0 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] font-semibold transition-colors hover:bg-white sm:max-w-52 sm:text-xs">
+            {address ? `${address.slice(0, 10)}…${address.slice(-5)}` : t("connectWallet")}
+          </button>
+          <LanguageSwitcher />
+        </div>
       </div>
-    </div>
+    </header>
+  );
+}
+
+export function UtilityBar() {
+  const { t } = useLocale();
+  return (
+    <footer className="mt-auto flex min-h-8 items-center justify-between gap-3 border-t border-[#252a28] bg-[#090a0a] px-3 text-[11px] text-[#858b88] sm:px-5">
+      <span className="flex min-w-0 items-center gap-2 whitespace-nowrap"><i aria-hidden="true" className="size-1.5 rounded-full bg-[#d7b46a]" />{t("pudgeTestnet")} <span className="text-[#515653]">·</span> {t("deploymentUnverified")}</span>
+      <span className="truncate text-right">{t("testCkbOnly")}</span>
+    </footer>
   );
 }

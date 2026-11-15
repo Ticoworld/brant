@@ -1,17 +1,23 @@
-import { SignersController, type SignersControllerRefreshContext } from "@ckb-ccc/connector-react";
+import { SignersController } from "@ckb-ccc/connector-react";
+
+const refreshSigners = SignersController.prototype.refresh;
+SignersController.prototype.refresh = async function (...args: Parameters<typeof refreshSigners>) {
+  const [client, onUpdate] = args;
+  if (!client || typeof client.addressPrefix !== "string") {
+    onUpdate([]);
+    return;
+  }
+  await refreshSigners.apply(this, args);
+};
 
 class RovekoSignersController extends SignersController {
   override async refresh(...args: Parameters<SignersController["refresh"]>) {
-    try {
-      await super.refresh(...args);
-    } catch (error) {
-      console.warn("A wallet provider could not be discovered; remaining CCC wallet choices are available.", error);
-      this.disconnect();
-      const [client, onUpdate, configs] = args;
-      const { appName, appIcon, preferredNetworks } = this.getConfig(configs);
-      const context: SignersControllerRefreshContext = { client, appName, appIcon, preferredNetworks, onUpdate, wallets: [] };
-      await this.addDummySigners(context);
+    const [client, onUpdate] = args;
+    if (!client || typeof client.addressPrefix !== "string") {
+      onUpdate([]);
+      return;
     }
+    await super.refresh(...args);
   }
 }
 

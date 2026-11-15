@@ -39,11 +39,11 @@ export function useLocale() {
 export function LanguageSwitcher() {
   const { locale, setLocale, t: text } = useLocale();
   return (
-    <label className="inline-flex items-center gap-2 text-sm text-slate-300">
+    <label className="inline-flex items-center text-xs text-[#a6aca9]">
       <span className="sr-only">{text("language")}</span>
       <select
         aria-label={text("language")}
-        className="rounded border border-slate-600 bg-slate-900 px-2 py-2 text-slate-100"
+        className="!min-h-8 !rounded-none !border-0 !border-l !border-[#303533] !bg-[#090a0a] !px-2 !py-1 text-xs text-[#d7dbd9] focus-visible:outline focus-visible:outline-1 focus-visible:outline-[#858c88]"
         style={{ width: "auto" }}
         value={locale}
         onChange={(event) => setLocale(event.target.value as Locale)}

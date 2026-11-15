@@ -14,10 +14,11 @@ import WithdrawalPanel from './withdrawal-panel';
 import OrderPanel from './order-panel';
 import PudgeMarket from './pudge-market';
 import { rovekoSignersController } from './signers';
+import ConnectorClientBridge from './connector-client-bridge';
 
 const localMode = process.env.NODE_ENV!=='production' && process.env.NEXT_PUBLIC_LOCAL_FIXTURE === '1' && process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK!=='1';
 const client = ccc.ClientPublicTestnet.open({urls:localMode && typeof window !== 'undefined' ? [`${window.location.origin}/api/local-rpc`] : ['https://testnet.ckb.dev/', 'https://testnet.ckbapp.dev/']}).value;
-export default function Screen() { return <Provider name="ROVEKO" defaultClient={client} clientOptions={[{name:localMode ? 'Disposable local CKB' : 'CKB Pudge',client}]} signersController={rovekoSignersController}>{localMode?<Market />:<PudgeMarket/>}</Provider>; }
+export default function Screen() { return <Provider name="ROVEKO" defaultClient={client} clientOptions={[{name:localMode ? 'Disposable local CKB' : 'CKB Pudge',client}]} signersController={rovekoSignersController} connectorProps={{ style: { '--background': '#111714', '--divider': '#29352f', '--btn-primary': '#1b2721', '--btn-primary-hover': '#26362e', '--btn-secondary': '#29352f', '--btn-secondary-hover': '#37473e', '--btn-color': '#e9f0eb', '--btn-color-hover': '#ffffff', '--icon-primary': '#e9f0eb', '--icon-secondary': '#a5b1a8', color: '#e9f0eb', '--tip-color': '#a5b1a8', '--tip-color-hover': '#e9f0eb' } as React.CSSProperties }}><ConnectorClientBridge />{localMode?<Market />:<PudgeMarket/>}</Provider>; }
 function Market() {
   const connector = useCcc(), connectedSigner = useSigner();
   const [testSigner, setTestSigner] = useState<typeof connectedSigner>(undefined);
