@@ -2,7 +2,7 @@
 
 ## Roveko baseline
 
-- **VERIFIED:** PR #3 merged into `main` at merge commit `74cc12d4002c5459f4240e698dfe1ea9218cc818`. The current `main` HEAD is `cecc8e8098e832cc0ff9d5c9e3a990678028a7b4`; use `main` for ongoing Roveko development.
+- **VERIFIED:** PR #3 merged into `main` at merge commit `74cc12d4002c5459f4240e698dfe1ea9218cc818`. The working baseline for the Pudge owner-acceptance milestone was `af9cbfc070ea2ee74cdfc912ef3ee3d724e1d6bd`; use `main` for ongoing Roveko development.
 - **VERIFIED:** the merge contains the latest Roveko UI and protocol implementation. A focused promotion audit is recorded in [MAIN_PROMOTION_AUDIT.md](MAIN_PROMOTION_AUDIT.md); two imported symlink entries need platform-aware handling, and GitHub reported no status checks for PR #3.
 - **VERIFIED (private-node browser acceptance):** one disposable owner completed Launch, Discover, buy, sell, Portfolio, and Activity on one isolated `ckb_dev` chain. Launch, buy, and sell committed as real native transactions; Portfolio reconstructed 7 units and Activity recovered the launch/buy/sell hashes and amounts from committed history.
 - **VERIFIED (read-only `/v2` recovery):** after the committed buy/sell history, `/v2` recovers current inventory `1993`, internal custody `7`, and owner entitlement `7`, then shows the same values after reload. The check submitted no transaction and left the chain tip unchanged. The summarized result is [trade-recovery.json](../apps/trade-testnet/evidence/v2-trade-recovery-1794764545869/trade-recovery.json); raw receipts, logs, and screenshots remain in the preserved timestamped local evidence directories.
