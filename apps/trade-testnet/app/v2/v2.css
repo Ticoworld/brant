@@ -195,18 +195,25 @@ main.v2-app {
   background: #82e5a8;
 }
 .rov-launch .launch-button.launch-secondary {
-  padding-right: 2px;
-  padding-left: 2px;
-  border-color: transparent;
-  background: transparent;
-  color: #d0d0d3;
+	border-color: #414348;
+	background: #151618;
+	color: #e0e0e3;
 }
 .rov-launch .launch-button.launch-secondary:hover:not(:disabled) {
-  background: transparent;
+	border-color: #666a70;
+	background: #202124;
   color: #fff;
+}
+.rov-launch .launch-button:focus-visible {
+	outline: 2px solid #74dfbd;
+	outline-offset: 3px;
+}
+.rov-launch .launch-button[aria-busy="true"] {
+	cursor: progress;
 }
 .rov-launch .launch-button:disabled {
   opacity: .5;
+	cursor: not-allowed;
 }
 .rov-launch .launch-costs > div + div {
   border-top: 1px solid #202023;

@@ -18,5 +18,5 @@ const node=async(method:string)=>method==='get_tip_header'?{hash:tip,number:'0x1
 assert.equal((await discoverFunding(indexer,node,lock))[0].capacity,100n);
 assert.equal((await discoverFunding(indexer,async(method)=>method==='get_live_cell'?{status:'dead'}:node(method),lock)).length,0);
 await assert.rejects(()=>discoverFunding(indexer,async(method)=>method==='get_live_cell'?{status:'live',cell:{output:{capacity:'0x64',lock:{code_hash:lock.codeHash,hash_type:lock.hashType,args:'0x'+'22'.repeat(20)}},data:{content:'0x'}}}:node(method),lock),/unrelated/);
-await assert.rejects(()=>discoverFunding(async()=>({block_hash:'0x00',block_number:'0x1'}),node,lock),/synchronized/);
+await assert.rejects(()=>discoverFunding(async()=>({block_hash:'0x00',block_number:'0x1'}),node,lock),/indexer is at a different block from the full node.*Wait for synchronization, then retry/);
 console.log('multi-cell funding selection checks passed');

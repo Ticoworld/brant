@@ -9,7 +9,13 @@ export async function discoverFunding(indexer:Rpc, node:Rpc, lock:FundingCandida
   if (lock.codeHash.toLowerCase() !== SECP || lock.hashType !== 'type' || !/^0x[0-9a-f]{40}$/i.test(lock.args)) throw Error('Standard secp wallet required');
   const start=await node('get_tip_header',[]) as {hash?:string;number?:string};
   const indexed=await indexer('get_indexer_tip',[]) as {block_hash?:string;block_number?:string};
-  if(!start?.hash || !start.number || indexed?.block_hash?.toLowerCase()!==start.hash.toLowerCase() || BigInt(indexed.block_number||'0')!==BigInt(start.number)) throw Error('Indexer is not synchronized with node tip');
+  if(!start?.hash || !start.number) throw Error('Pudge node tip is unavailable; retry funding discovery.');
+  let nodeHeight:bigint,indexerHeight:bigint;
+  try{nodeHeight=BigInt(start.number);indexerHeight=BigInt(indexed?.block_number||'0');}catch{throw Error('Pudge funding indexer returned an invalid tip; retry funding discovery.');}
+  if(indexed?.block_hash?.toLowerCase()!==start.hash.toLowerCase() || indexerHeight!==nodeHeight){
+    const relation=indexerHeight<nodeHeight?'behind':indexerHeight>nodeHeight?'ahead of':'at a different block from';
+    throw Error(`Pudge funding indexer is ${relation} the full node (indexer height ${indexerHeight}, node height ${nodeHeight}). Wait for synchronization, then retry.`);
+  }
   const script={code_hash:lock.codeHash,hash_type:lock.hashType,args:lock.args};
   const result:FundingCandidate[]=[]; let cursor:string|undefined;
   for (let page=0;page<1000;page++) {

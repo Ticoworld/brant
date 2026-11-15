@@ -6,14 +6,15 @@ import {WIZARD_KEY,WIZARD_STAGES,appendWizardSubmission,confirmWizardSubmission,
 import {recoverPudgeHistory} from '../../../lib/v2-engine/pudge-history.ts';
 import {verifyPudgeInitialProof} from '../../../lib/v2-engine/pudge-proof-client.ts';
 import {useLocale} from '../../i18n-provider';
+import {safeSigningError} from '../../../lib/v2-engine/wallet-signing.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 /** Owner-facing recovery record. Stored entries are hints, not authorization. */
 export default function DeploymentWizard({rpc,genesis,codeHashes}:{rpc:Rpc;genesis:string;codeHashes:string[]}){
  const {locale,t}=useLocale();
- const [journal,setJournal]=useState<WizardJournal|null>(null),[message,setMessage]=useState(''),[backup,setBackup]=useState('');
+ const [journal,setJournal]=useState<WizardJournal|null>(null),[message,setMessage]=useState(''),[backup,setBackup]=useState(''),[busy,setBusy]=useState<'code'|'all'|'restore'|null>(null);
  useEffect(()=>{const load=()=>{try{const raw=localStorage.getItem(WIZARD_KEY);if(raw){const j=parseWizard(raw);setJournal(j);setMessage(t('deploymentProgressLoaded'));}}catch{setMessage(t('savedProgressInvalid'));}};load();window.addEventListener('roveko-wizard-updated',load);return()=>window.removeEventListener('roveko-wizard-updated',load);},[locale]);
- async function reconcileCode(){try{
+ async function reconcileCode(){if(busy)return;setBusy('code');setMessage('Checking canonical Pudge code cells…');try{
    if(!navigator.locks)throw Error('Exclusive deployment lock unavailable');
    await navigator.locks.request('roveko-v2-code-deployment',{mode:'exclusive',ifAvailable:true},async lock=>{
      if(!lock)throw Error('Another deployment operation is in progress');
@@ -28,10 +29,10 @@ export default function DeploymentWizard({rpc,genesis,codeHashes}:{rpc:Rpc;genes
      if(first.txHash.toLowerCase()!==attempt.txHash.toLowerCase())throw Error('Saved code stage differs from attempt');
      if(first.state==='submitted')current=confirmWizardSubmission(current,'code',attempt.txHash,verified.blockHash);
      else if(first.blockHash?.toLowerCase()!==verified.blockHash.toLowerCase())throw Error('Recorded code confirmation changed');
-     localStorage.setItem(WIZARD_KEY,JSON.stringify(current));setJournal(current);setMessage(`${t('codeCellsCanonicalVerified')} ${t('initializationStagesRequireReview')}`);
+     localStorage.setItem(WIZARD_KEY,JSON.stringify(current));setJournal(current);window.dispatchEvent(new Event('roveko-wizard-updated'));setMessage(`${t('codeCellsCanonicalVerified')} ${t('initializationStagesRequireReview')}`);
    });
- }catch{setMessage(t('initializationReconciliationFailed'));}}
- async function reconcileAll(imported?:string){try{
+ }catch(error){setMessage(`${t('initializationReconciliationFailed')} ${safeSigningError(error).message}`);}finally{setBusy(null);}}
+ async function reconcileAll(imported?:string){if(busy)return;setBusy(imported?'restore':'all');setMessage('Reconstructing confirmed stage history…');try{
   if(!navigator.locks)throw Error('Exclusive deployment lock unavailable');
   await navigator.locks.request('roveko-v2-code-deployment',{mode:'exclusive',ifAvailable:true},async lock=>{
    if(!lock)throw Error('Another deployment operation is in progress');
@@ -46,7 +47,7 @@ export default function DeploymentWizard({rpc,genesis,codeHashes}:{rpc:Rpc;genes
    const next=last.state==='submitted'?confirmWizardSubmission(current,last.stage,last.txHash,block):current;
    localStorage.setItem(WIZARD_KEY,JSON.stringify(next));setJournal(next);setBackup('');setMessage(t('recordedStagesReconstructed'));
   });
- }catch{setMessage(t('initializationReconciliationFailed'));}}
+ }catch(error){setMessage(`${t('initializationReconciliationFailed')} ${safeSigningError(error).message}`);}finally{setBusy(null);}}
  const stageLabels=[t('codeCellsStage'),t('initializationSetupStage'),t('fixedSupplyIssuanceStage'),t('firstPurchaseCustodyStage')];
- return <section><h2>{t('deploymentStages')}</h2><p>{t('savedProgressRecoveryHint')}</p><ol>{WIZARD_STAGES.map((stage,i)=><li key={stage}>{stageLabels[i]}: {journal?.entries[i]?`${t('recordedState')} ${journal.entries[i].state==='submitted'?t('deploymentStatusSubmitted'):t('confirmed')} · ${journal.entries[i].txHash}`:t('notRecorded')}</li>)}</ol><button onClick={reconcileCode}>{t('reconcileCodeStage')}</button>{journal&&<> <button onClick={()=>reconcileAll()}>{t('reconcileRecordedStages')}</button></>}<p role="status">{message||t('noVerifiedDeploymentRecorded')}</p>{journal?<details><summary>{t('publicWizardBackup')}</summary><label><textarea readOnly rows={5} value={JSON.stringify(journal)}/></label></details>:<details><summary>{t('restoreWizardBackup')}</summary><label><textarea rows={5} value={backup} onChange={e=>setBackup(e.target.value)}/></label><button disabled={!backup} onClick={()=>reconcileAll(backup)}>{t('verifyRestoreStages')}</button></details>}</section>;
+ return <section aria-busy={busy!==null}><h2>{t('deploymentStages')}</h2><p>{t('savedProgressRecoveryHint')}</p><ol>{WIZARD_STAGES.map((stage,i)=><li key={stage}>{stageLabels[i]}: {journal?.entries[i]?`${t('recordedState')} ${journal.entries[i].state==='submitted'?t('deploymentStatusSubmitted'):t('confirmed')} · ${journal.entries[i].txHash}`:t('notRecorded')}</li>)}</ol><div className="flex flex-wrap gap-x-4 gap-y-2"><button id="code-stage-action" className="launch-button launch-secondary" onClick={reconcileCode} disabled={busy!==null} aria-busy={busy==='code'}>{busy==='code'?'Checking Pudge…':t('reconcileCodeStage')}</button>{journal&&<> <button className="launch-button launch-secondary" onClick={()=>reconcileAll()} disabled={busy!==null} aria-busy={busy==='all'}>{busy==='all'?'Checking Pudge…':t('reconcileRecordedStages')}</button></>}</div><p role="status" aria-live="polite" aria-busy={busy!==null} className="[overflow-wrap:anywhere]">{message||t('noVerifiedDeploymentRecorded')}</p>{journal?<details><summary>{t('publicWizardBackup')}</summary><label><textarea readOnly rows={5} value={JSON.stringify(journal)}/></label></details>:<details><summary>{t('restoreWizardBackup')}</summary><label><textarea rows={5} value={backup} onChange={e=>setBackup(e.target.value)} disabled={busy!==null}/></label><button className="launch-button launch-secondary" disabled={!backup||busy!==null} onClick={()=>reconcileAll(backup)} aria-busy={busy==='restore'}>{busy==='restore'?'Verifying backup…':t('verifyRestoreStages')}</button></details>}</section>;
 }
