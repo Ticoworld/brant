@@ -7,6 +7,8 @@ import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {POST as initialProof} from '../app/api/v2/pudge-init-proof/route.ts';
 import {POST as tradeProof} from '../app/api/v2/pudge-proof/route.ts';
+import {POST as journey} from '../app/api/v2/pudge-journey/route.ts';
+import {validatePublicJourney} from '../lib/v2-engine/public-journey-validation.ts';
 import {createPudgeManifest} from '../lib/v2-engine/pudge-manifest.ts';
 assert(process.env.TRADE_NATIVE_ROOT&&process.env.ROVEKO_SMT_BINARY&&process.env.ROVEKO_PROOF_BINARY&&process.env.ROVEKO_RECOVERY_COLLECTOR,'Set test dependencies');
 const source=process.env.ROVEKO_PUDGE_EVIDENCE||path.resolve('evidence/v2-pudge-browser-1794645638090/transactions.json'),bundle=JSON.parse(fs.readFileSync(source,'utf8'));
@@ -31,6 +33,8 @@ try{
  const request=()=>new Request('http://127.0.0.1/api/v2/pudge-proof',{method:'POST',headers:{host:'127.0.0.1',origin:'http://127.0.0.1','content-type':'application/json'},body:JSON.stringify(body)});
  const response=await tradeProof(request());assert.equal(response.status,200,await response.clone().text());const result=await response.json(),last=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(entries.at(-1)!.transaction));
  assert.equal(result.genesis,genesis);assert.equal(result.proof.old_root,'0x'+last.outputsData[2].slice(34));assert.equal(result.proof.owner.balance,'7');assert.equal(result.proof.tip_outpoint.tx_hash,last.hash());
+ const jr=await journey(new Request('http://127.0.0.1/api/v2/pudge-journey',{method:'POST',headers:{host:'127.0.0.1',origin:'http://127.0.0.1','content-type':'application/json'},body:JSON.stringify({manifest,owner})}));assert.equal(jr.status,200,await jr.clone().text());const recovered=await jr.json();assert.equal(recovered.balance,'7');assert.equal(recovered.tip.tx_hash,last.hash());assert(recovered.transitions.some((t:{op:number})=>t.op===0));
+ const locks=[manifest.scripts.market,manifest.scripts.market,manifest.scripts.custody,manifest.scripts.custody],types=[manifest.scripts.token,manifest.scripts.marker,manifest.scripts.token,manifest.scripts.custodyMarker];const snake=(v:ccc.Script)=>({code_hash:v.codeHash,hash_type:v.hashType,args:v.args});const live={cells:locks.map((lock,i)=>({output:{lock:snake(lock),type:snake(types[i])}})),custodyRoot:recovered.root} as never;validatePublicJourney(live,manifest,recovered.root);assert.throws(()=>validatePublicJourney(live,manifest,'0x'+'11'.repeat(32)),/stale/);const wrongIdentity={cells:locks.map((lock,i)=>({output:{lock:snake(i===0?manifest.scripts.custody:lock),type:snake(types[i])}})),custodyRoot:recovered.root} as never;assert.throws(()=>validatePublicJourney(wrongIdentity,manifest,recovered.root),/identity/);const wrongOwner='0x'+'99'.repeat(32);const wr=await journey(new Request('http://127.0.0.1/api/v2/pudge-journey',{method:'POST',headers:{host:'127.0.0.1',origin:'http://127.0.0.1','content-type':'application/json'},body:JSON.stringify({manifest,owner:wrongOwner})}));if(wr.ok){const foreign=await wr.json();assert.equal(foreign.balance,'0');assert.equal(foreign.transitions.length,0);}else assert.equal(wr.status,503);
  process.env.ROVEKO_PUDGE_TEST_RPC='https://testnet.ckb.dev/';assert.equal((await tradeProof(request())).status,503);
  console.log('Pudge proof route reconstruction passed (localhost simulated RPC; no public submission)');
 }finally{await new Promise<void>(resolve=>server.close(()=>resolve()));}

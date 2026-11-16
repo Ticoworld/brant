@@ -12,6 +12,7 @@ import WithdrawalPanel from "./withdrawal-panel";
 import DiscoverBoard from "./discover-board";
 import ConnectorClientBridge from "./connector-client-bridge";
 import { ActivitySection, LaunchSection, PortfolioSection } from "./workspace-sections";
+import PublicJourney from "./public-journey";
 import "./v2.css";
 
 type WorkspaceKind = "markets" | "portfolio" | "orders" | "activity" | "withdrawal" | "launch";
@@ -76,9 +77,9 @@ function WorkspaceContent({ kind, localMode }: { kind: WorkspaceKind; localMode:
       {kind === "markets" ? (
         <DiscoverBoard localMode={localMode} />
       ) : kind === "portfolio" ? (
-        <PortfolioSection demo={uiDemo} localMode={localMode} ownerHash={ownerHash} />
+        localMode ? <PortfolioSection demo={uiDemo} localMode ownerHash={ownerHash} /> : <PublicJourney ownerHash={ownerHash} activity={false} />
       ) : kind === "activity" ? (
-        <ActivitySection demo={uiDemo} localMode={localMode} ownerHash={ownerHash} />
+        localMode ? <ActivitySection demo={uiDemo} localMode ownerHash={ownerHash} /> : <PublicJourney ownerHash={ownerHash} activity />
       ) : kind === "launch" ? (
         <LaunchSection localMode={localMode} />
       ) : (
