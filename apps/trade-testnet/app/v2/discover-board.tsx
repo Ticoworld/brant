@@ -4,9 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "../i18n-provider";
 import { createLocalRpc, discoverLocalMarket } from "../../lib/v2-engine/local-workspace.ts";
+import { loadPudgeManifest, PUDGE_MARKET_KEY } from "../../lib/v2-engine/pudge-manifest.ts";
+import { verifyPudgeInitialProof } from "../../lib/v2-engine/pudge-proof-client.ts";
+import { discoverCustodyPair, discoverMarketPair } from "../../lib/v2-engine/lineage.ts";
+import { readLiveSingletons } from "../../lib/v2-engine/live.ts";
+import { quote } from "../../lib/v2-engine/curve.ts";
 
 type Lane = "new" | "curve" | "migrated";
-type Market = { symbol: string; name: string; id: string; buy: string; sell: string; inventory: string; lane: Lane; tone: string; verified?: boolean };
+type Market = { symbol: string; name: string; id: string; buy: string; sell: string; inventory: string; lane: Lane; tone: string; verified?: boolean; verificationLabel?: string };
 type SortKey = "listed" | "price" | "inventory";
 
 const fixtureMarkets: Market[] = [
@@ -56,6 +61,9 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
   const [sort, setSort] = useState<SortKey>("listed");
   const [localMarket, setLocalMarket] = useState<Market | null>(null);
   const [localError, setLocalError] = useState("");
+  const [pudgeMarket, setPudgeMarket] = useState<Market | null>(null);
+  const [pudgeLoading, setPudgeLoading] = useState(false);
+  const [pudgeError, setPudgeError] = useState("");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -88,14 +96,59 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
     return () => { active = false; };
   }, [localMode, locale]);
 
+  useEffect(() => {
+    if (localMode) return;
+    let active = true;
+    const rpc = async (method: string, params: unknown[]) => {
+      const response = await fetch("/api/v2/pudge-rpc", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ method, params }) });
+      const body = await response.json();
+      if (!response.ok) throw Error(body.error || "Pudge RPC failed");
+      return body.result;
+    };
+    (async () => {
+      try {
+        const raw = localStorage.getItem(PUDGE_MARKET_KEY);
+        if (!raw) return;
+        setPudgeLoading(true);
+        const manifest = await loadPudgeManifest(rpc, raw, verifyPudgeInitialProof);
+        const [marketPair, custodyPair] = await Promise.all([
+          discoverMarketPair(rpc, [manifest.initial[0], manifest.initial[1]]),
+          discoverCustodyPair(rpc, manifest.initial[2]),
+        ]);
+        const state = await readLiveSingletons(rpc, [...marketPair, ...custodyPair], manifest.genesis);
+        if (!active) return;
+        setPudgeMarket({
+          symbol: "ROVEKO",
+          name: copy("Pudge testnet market", "Pudge 测试网市场"),
+          id: state.cells[0].output.type ? (state.cells[0].output.type as { args: string }).args : "",
+          buy: formatCkb(quote(state.curve, "buy", 1n)),
+          sell: formatCkb(quote(state.curve, "sell", 1n)),
+          inventory: state.curve.inventory.toString(),
+          lane: "curve",
+          tone: "#72dfb0",
+          verified: true,
+          verificationLabel: copy("Verified · Pudge", "已验证 · Pudge"),
+        });
+        setPudgeError("");
+      } catch (error) {
+        if (!active) return;
+        setPudgeMarket(null);
+        setPudgeError(error instanceof Error ? error.message : "Pudge market verification failed");
+      } finally {
+        if (active) setPudgeLoading(false);
+      }
+    })();
+    return () => { active = false; };
+  }, [localMode, locale]);
+
   const markets = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    const source = localMode ? localMarket ? [localMarket] : [] : demo ? fixtureMarkets : [];
+    const source = localMode ? localMarket ? [localMarket] : [] : demo ? fixtureMarkets : pudgeMarket ? [pudgeMarket] : [];
     const filtered = source.filter((market) => `${market.symbol} ${market.name} ${market.id}`.toLowerCase().includes(normalized));
     if (sort === "price") return filtered.sort((a, b) => Number(b.buy) - Number(a.buy));
     if (sort === "inventory") return filtered.sort((a, b) => Number(b.inventory.replaceAll(",", "")) - Number(a.inventory.replaceAll(",", "")));
     return filtered;
-  }, [query, sort, demo, localMode, localMarket]);
+  }, [query, sort, demo, localMode, localMarket, pudgeMarket]);
 
   const visibleLanes = laneKeys.filter((lane) => activeLane === "all" || activeLane === lane);
   const laneGrid = activeLane === "all" ? "md:grid-cols-3" : "md:grid-cols-1";
@@ -124,7 +177,7 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
               <option value="inventory">{copy("Inventory", "库存")}</option>
             </select>
           </label>
-          {!demo && <Link href="/launch" className="text-[11px] font-medium text-[#63d994] no-underline hover:text-[#8be3b0]">{copy("Launch market", "创建市场")} <span aria-hidden="true">↗</span></Link>}
+          {!demo && !pudgeMarket && <Link href="/launch" className="text-[11px] font-medium text-[#63d994] no-underline hover:text-[#8be3b0]">{copy("Launch market", "创建市场")} <span aria-hidden="true">↗</span></Link>}
         </div>
       </div>
 
@@ -135,7 +188,7 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
             <section key={lane} aria-label={t(lane)} className={`flex min-h-[300px] flex-col border-b border-[#252527] md:min-h-0 md:border-b-0 ${activeLane === "all" && index < visibleLanes.length - 1 ? "md:border-r md:border-[#202022]" : ""}`}>
               <div className="flex h-10 shrink-0 items-center justify-between border-b border-[#202022] px-4">
                 <h3 className="m-0 text-[12px] font-semibold text-[#dddde0]">{t(lane)}</h3>
-                <span className="text-[10px] tabular-nums text-[#737378]">{demo || localMode ? rows.length : "—"}</span>
+                <span className="text-[10px] tabular-nums text-[#737378]">{demo || localMode || pudgeMarket ? rows.length : "—"}</span>
               </div>
               <div className="grid h-9 shrink-0 grid-cols-[minmax(0,1fr)_112px_84px] items-center gap-2 border-b border-[#1d1d1f] px-4 text-[10px] font-medium text-[#77777d]">
                 <span>{copy("Token", "代币")}</span><span className="text-right">{copy("Buy / sell · CKB", "买入 / 卖出 · CKB")}</span><span className="text-right">{copy("Inventory", "库存")}</span>
@@ -149,7 +202,7 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
                         <div className="flex min-w-0 items-baseline gap-1.5">
                           <strong className="truncate text-[12px] font-semibold text-[#eeeef0]">{market.symbol}</strong>
                           <span className="truncate text-[10px] text-[#85858a]">{market.name}</span>
-                          {market.verified && <span className="shrink-0 text-[9px] text-[#72dfb0]">{copy("Verified local", "本地已验证")}</span>}
+                          {market.verified && <span className="shrink-0 text-[9px] text-[#72dfb0]">{market.verificationLabel || copy("Verified local", "本地已验证")}</span>}
                         </div>
                         <div className="mt-1 flex min-w-0 items-center gap-1.5 text-[9px] text-[#77777d]">
                           <span className="truncate">{market.id}</span><span aria-hidden="true">·</span><span>CKB</span>
@@ -167,8 +220,8 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
                 {!rows.length && (
                   <div className="flex min-h-32 items-center justify-center px-4 py-8 text-center">
                     <div>
-                      <p className="m-0 text-[12px] font-medium text-[#c9c9cc]">{demo && !localMode ? copy("No matching CKB markets", "没有匹配的 CKB 市场") : localMode && localError ? copy("Local market unavailable", "本地市场不可用") : t("noVerifiedMarkets")}</p>
-                      <p className="mb-0 mt-1 text-[11px] leading-5 text-[#77777d]">{demo && !localMode ? copy("Try another filter", "试试其他筛选条件") : localMode && localError ? localError : t("deploymentUnverified")}</p>
+                      <p className="m-0 text-[12px] font-medium text-[#c9c9cc]">{pudgeLoading ? copy("Checking the saved Pudge market…", "正在检查已保存的 Pudge 市场…") : demo && !localMode ? copy("No matching CKB markets", "没有匹配的 CKB 市场") : localMode && localError ? copy("Local market unavailable", "本地市场不可用") : pudgeError ? copy("Pudge market could not be verified", "无法验证 Pudge 市场") : t("noVerifiedMarkets")}</p>
+                      <p className="mb-0 mt-1 text-[11px] leading-5 text-[#77777d]">{pudgeLoading ? copy("Reading canonical chain state.", "正在读取规范链状态。") : demo && !localMode ? copy("Try another filter", "试试其他筛选条件") : localMode && localError ? localError : pudgeError || t("deploymentUnverified")}</p>
                     </div>
                   </div>
                 )}
