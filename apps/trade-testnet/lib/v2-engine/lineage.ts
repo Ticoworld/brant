@@ -1,4 +1,5 @@
 import { ccc } from '@ckb-ccc/core';
+import { cccA } from '@ckb-ccc/core/advanced';
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 export type Point={tx_hash:string;index:string};
 type Script={code_hash:string;hash_type:string;args:string};
@@ -17,6 +18,43 @@ async function fetchBlock(rpc:Rpc,height:bigint) {
   throw Error(`Block ${height} unavailable after 3 attempts: ${failure instanceof Error?failure.message:String(failure)}`);
 }
 async function live(rpc:Rpc,p:Point) {const r=await rpc('get_live_cell',[p,true]) as {status?:string;cell?:{output:Output;data:{content:string}}};if(r.status!=='live'||!r.cell) throw Error('Singleton no longer live');return r.cell;}
+/** An indexer proposes live cells only. Every predecessor is authenticated by
+ * the full node and the resulting chain must reach the original pair. */
+async function indexedPair(rpc:Rpc,initial:[Point,Point],a:Output,b:Output,tip:{number:string;hash:string}):Promise<[Point,Point]|null>{
+ let page:{objects?:{out_point:Point;output:Output}[]};
+ try{page=await rpc('get_cells',[{script:a.lock,script_type:'lock',script_search_mode:'exact'},'asc','0x64']) as typeof page;}catch{return null;}
+ if(!Array.isArray(page?.objects)||page.objects.length>=100)return null;
+ const objects=page.objects;
+ const find=(ref:Output)=>objects.filter(x=>x.output&&same(x.output.lock,ref.lock)&&same(x.output.type,ref.type));
+ const aa=find(a),bb=find(b);if(aa.length!==1||bb.length!==1)return null;
+ let pair:[Point,Point]=[aa[0].out_point,bb[0].out_point];
+ const candidate=pair;const cache=new Map<string,{tx:Tx; height:bigint; index:number}>();
+ async function canonical(hash:string){
+  const cached=cache.get(hash.toLowerCase());if(cached)return cached;
+  const row=await rpc('get_transaction',[hash]) as {transaction?:Tx;tx_status?:{status?:string;block_hash?:string;block_number?:string;tx_index?:string}};
+  if(row.tx_status?.status!=='committed'||!row.tx_status.block_hash||!row.tx_status.block_number||!row.tx_status.tx_index||!row.transaction)throw Error('Indexed lineage transaction unavailable');
+  const tx=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(row.transaction as never));if(tx.hash().toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction hash mismatch');
+  const height=BigInt(row.tx_status.block_number),index=Number(BigInt(row.tx_status.tx_index));if(height>BigInt(tip.number)||!Number.isSafeInteger(index))throw Error('Indexed lineage position invalid');
+  const block=await fetchBlock(rpc,height),blockTx=block.transactions?.[index];if(block.header?.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||blockTx?.hash?.toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction not in canonical block');
+  if(ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(blockTx as never)).hash().toLowerCase()!==hash.toLowerCase())throw Error('Indexed block transaction hash mismatch');
+  const canonicalHash=await rpc('get_block_hash',[row.tx_status.block_number]);if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Indexed lineage block changed');
+  const value={tx:row.transaction,height,index};cache.set(hash.toLowerCase(),value);return value;
+ }
+ let later:{height:bigint;index:number}|undefined;
+ for(let depth=0;depth<10000;depth++){
+  if(pair[0].tx_hash.toLowerCase()!==pair[1].tx_hash.toLowerCase())throw Error('Indexed market pair split');
+  const row=await canonical(pair[0].tx_hash);if(later&&(row.height>later.height||(row.height===later.height&&row.index>=later.index)))throw Error('Indexed lineage order invalid');
+  const outA=row.tx.outputs[Number(BigInt(pair[0].index))],outB=row.tx.outputs[Number(BigInt(pair[1].index))];if(!outA||!outB||!same(outA.lock,a.lock)||!same(outA.type,a.type)||!same(outB.lock,b.lock)||!same(outB.type,b.type))throw Error('Indexed market identity mismatch');
+  if(key(pair[0])===key(initial[0])&&key(pair[1])===key(initial[1])){
+   const cells=await Promise.all(candidate.map(p=>live(rpc,p)));if(!same(cells[0].output.lock,a.lock)||!same(cells[0].output.type,a.type)||!same(cells[1].output.lock,b.lock)||!same(cells[1].output.type,b.type))throw Error('Indexed live market identity mismatch');
+   const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase())throw Error('Chain reorganized; rescan');return candidate;
+  }
+  const inputs=await Promise.all(row.tx.inputs.map(async input=>{const prev=await canonical(input.previous_output.tx_hash);return {point:input.previous_output,output:prev.tx.outputs[Number(BigInt(input.previous_output.index))]};}));
+  const pa=inputs.filter(x=>x.output&&same(x.output.lock,a.lock)&&same(x.output.type,a.type)),pb=inputs.filter(x=>x.output&&same(x.output.lock,b.lock)&&same(x.output.type,b.type));
+  if(pa.length!==1||pb.length!==1)throw Error('Indexed market predecessor missing or ambiguous');later=row;pair=[pa[0].point,pb[0].point];
+ }
+ throw Error('Indexed lineage exceeds traversal limit');
+}
 /** Scan canonical blocks from initialization to locate the separately evolving
  * market pair. The full-node tip is checked again to detect reorganizations. */
 export async function discoverMarketPair(rpc:Rpc, initial:[Point,Point]) {
@@ -35,6 +73,7 @@ export async function discoverMarketPair(rpc:Rpc, initial:[Point,Point]) {
     const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase()) throw Error('Chain reorganized; rescan');
     return initial;
   }
+  const indexed=await indexedPair(rpc,initial,a,b,tip);if(indexed)return indexed;
   let pair:[Point,Point]=initial;
   let previousHash:string|undefined,foundInitialization=false;
   for(let first=lo;first<=hi;first+=blockBatchSize) {
