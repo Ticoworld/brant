@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { ccc } from "@ckb-ccc/core";
 import { useLocale } from "../i18n-provider";
 import { createLocalRpc, discoverLocalMarket } from "../../lib/v2-engine/local-workspace.ts";
 import { loadPudgeManifest, PUDGE_MARKET_KEY } from "../../lib/v2-engine/pudge-manifest.ts";
 import { verifyPudgeInitialProof } from "../../lib/v2-engine/pudge-proof-client.ts";
-import { discoverCustodyPair, discoverMarketPair } from "../../lib/v2-engine/lineage.ts";
-import { readLiveSingletons } from "../../lib/v2-engine/live.ts";
-import { quote } from "../../lib/v2-engine/curve.ts";
+import { discoverMarketPair } from "../../lib/v2-engine/lineage.ts";
+import { decodeCurve, quote } from "../../lib/v2-engine/curve.ts";
 
 type Lane = "new" | "curve" | "migrated";
 type Market = { symbol: string; name: string; id: string; buy: string; sell: string; inventory: string; lane: Lane; tone: string; verified?: boolean; verificationLabel?: string };
@@ -111,19 +111,22 @@ export default function DiscoverBoard({ localMode = false }: { localMode?: boole
         if (!raw) return;
         setPudgeLoading(true);
         const manifest = await loadPudgeManifest(rpc, raw, verifyPudgeInitialProof);
-        const [marketPair, custodyPair] = await Promise.all([
-          discoverMarketPair(rpc, [manifest.initial[0], manifest.initial[1]]),
-          discoverCustodyPair(rpc, manifest.initial[2]),
-        ]);
-        const state = await readLiveSingletons(rpc, [...marketPair, ...custodyPair], manifest.genesis);
+        if ((await rpc("get_block_hash", ["0x0"])) !== manifest.genesis) throw Error("Wrong CKB genesis");
+        const marketPair = await discoverMarketPair(rpc, [manifest.initial[0], manifest.initial[1]]);
+        type RpcScript = {code_hash:string; hash_type:string; args:string};
+        const row = await rpc("get_live_cell", [marketPair[0], true]) as {status?: string; cell?: {output: {lock: RpcScript; type: RpcScript | null}; data: {content: string}}};
+        if (row.status !== "live" || !row.cell?.data || !row.cell.output.type) throw Error("Market cell unavailable");
+        const scriptHash = (s: RpcScript) => ccc.Script.from({codeHash:s.code_hash, hashType:s.hash_type as ccc.HashType, args:s.args}).hash();
+        if (scriptHash(row.cell.output.lock) !== manifest.scripts.market.hash() || scriptHash(row.cell.output.type) !== manifest.scripts.token.hash()) throw Error("Market identity changed");
+        const curve = decodeCurve(row.cell.output.lock.args, row.cell.data.content);
         if (!active) return;
         setPudgeMarket({
           symbol: "ROVEKO",
           name: copy("Pudge testnet market", "Pudge 测试网市场"),
-          id: state.cells[0].output.type ? (state.cells[0].output.type as { args: string }).args : "",
-          buy: formatCkb(quote(state.curve, "buy", 1n)),
-          sell: formatCkb(quote(state.curve, "sell", 1n)),
-          inventory: state.curve.inventory.toString(),
+          id: row.cell.output.type.args,
+          buy: formatCkb(quote(curve, "buy", 1n)),
+          sell: formatCkb(quote(curve, "sell", 1n)),
+          inventory: curve.inventory.toString(),
           lane: "curve",
           tone: "#72dfb0",
           verified: true,

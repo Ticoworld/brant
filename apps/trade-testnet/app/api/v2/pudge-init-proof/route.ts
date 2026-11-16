@@ -20,9 +20,9 @@ export async function POST(request:Request){
   const text=await request.text();if(text.length>2048)return new Response('Request too large',{status:400});
   const body=JSON.parse(text) as {anchor?:{txHash?:string;index?:string};owner?:string};
   if(!body||!body.anchor||!hash.test(body.anchor.txHash||'')||!/^0x[0-9a-f]{1,8}$/i.test(body.anchor.index||'')||!hash.test(body.owner||''))return new Response('Invalid proof identity',{status:400});
-  const smt=process.env.ROVEKO_SMT_BINARY,verify=process.env.ROVEKO_PROOF_BINARY,collector=process.env.ROVEKO_RECOVERY_COLLECTOR;if(!smt||!verify||!collector)return new Response('Proof tools unavailable',{status:503});
-  const canonicalCollector=path.resolve(process.cwd(),'../../labs/trade-v2-token/gate2/recovery/recover.cjs'),collectorVerifier=path.join(path.dirname(collector),'target','release',process.platform==='win32'?'trade-v2-recovery.exe':'trade-v2-recovery');
-  const [canonical,configured]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(smt),access(verify),access(collectorVerifier)]);
+  const smt=process.env.ROVEKO_SMT_BINARY,verify=process.env.ROVEKO_PROOF_BINARY;if(!smt||!verify)return new Response('Proof tools unavailable',{status:503});
+  const canonicalCollector=path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs'),collector=process.env.ROVEKO_RECOVERY_COLLECTOR||canonicalCollector;
+  const [canonical,configured]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(smt),access(verify)]);
   if(createHash('sha256').update(canonical).digest('hex')!==createHash('sha256').update(configured).digest('hex'))throw Error('Recovery collector differs from repository');
   const id=deriveMarketIdentity({anchor:{txHash:body.anchor.txHash!,index:body.anchor.index!},genesis,base:1000000000n,step:100000000n,supply:2000n,codes});
   const domain={market_script_hash:id.market.hash(),xudt_type_script_hash:id.token.hash(),genesis_hash:genesis,custody_marker_type_hash:id.custodyMarker.hash()};

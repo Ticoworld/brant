@@ -30,8 +30,10 @@ export async function POST(request:Request){
   const custody=path.join(dir,'custody.json'),token=path.join(dir,'token.json'),bundle=path.join(dir,'bundle.json');
   const snake=(s:{codeHash:string;hashType:string;args:string})=>({code_hash:s.codeHash,hash_type:s.hashType,args:s.args});
   await Promise.all([writeFile(custody,JSON.stringify(snake(manifest.scripts.custody))),writeFile(token,JSON.stringify(snake(manifest.scripts.token)))]);
-  const recovery=process.env.ROVEKO_RECOVERY_COLLECTOR;if(!recovery)throw Error('Recovery collector unavailable');
-  await run(process.execPath,[recovery,'collect-blocks','--node',endpoint,'--init',manifest.initializationTransactionHash,'--owner',body.owner!,'--custody-lock',custody,'--xudt-type',token,'--max-blocks','100000','--out',bundle],{timeout:120000,maxBuffer:4*1024*1024});
+  const recovery=process.env.ROVEKO_RECOVERY_COLLECTOR||path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs');
+  const common=['--node',endpoint,'--init',manifest.initializationTransactionHash,'--owner',body.owner!,'--custody-lock',custody,'--xudt-type',token,'--out',bundle];
+  try { await run(process.execPath,[recovery,'collect',...common,'--indexer',endpoint],{timeout:120000,maxBuffer:4*1024*1024}); }
+  catch { await run(process.execPath,[recovery,'collect-blocks',...common,'--max-blocks','100000'],{timeout:120000,maxBuffer:4*1024*1024}); }
   const result=await run(binary,['transition',bundle,body.side!,body.quantity!],{timeout:120000,maxBuffer:4*1024*1024});
   return Response.json({proof:JSON.parse(result.stdout),genesis:manifest.genesis},{headers:{'Cache-Control':'no-store'}});
  }catch{return new Response('Pudge canonical history or proof unavailable',{status:503});}

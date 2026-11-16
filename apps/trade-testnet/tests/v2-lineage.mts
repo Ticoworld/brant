@@ -8,17 +8,27 @@ const mh=ccc.Script.from({codeHash:marker.code_hash,hashType:'data1',args:'0x'})
 const custody=s('4','0x'+'00'.repeat(96)+mh.slice(2));
 const outputs=[{lock,type:asset},{lock,type:marker}], tx=(h:string,ins:ReturnType<typeof p>[],outs:typeof outputs)=>({hash:hash(h),inputs:ins.map(previous_output=>({previous_output})),outputs:outs});
 const init=tx('a',[],outputs), move=tx('b',[p('a',0),p('a',1)],outputs), cTx=tx('c',[],[{lock:custody,type:asset},{lock:custody,type:marker}]);
-const blocks=[{header:{number:'0x1'},transactions:[init]},{header:{number:'0x2'},transactions:[move,cTx]}];
+const blocks=[{header:{number:'0x1',hash:hash('d'),parent_hash:hash('c')},transactions:[init]},{header:{number:'0x2',hash:hash('e'),parent_hash:hash('d')},transactions:[move,cTx]}];
 const rpc=async(method:string,args:unknown[])=>{
  if(method==='get_transaction') return {tx_status:{status:'committed',block_hash:hash('d')},transaction:(args[0]===hash('a')?init:cTx)};
  if(method==='get_header') return {number:'0x1'};
  if(method==='get_tip_header') return {number:'0x2',hash:hash('e')};
- if(method==='get_block_hash') return hash('e');
+ if(method==='get_block_hash') return args[0]==='0x1'?hash('d'):hash('e');
  if(method==='get_block_by_number') return blocks[Number(BigInt(args[0] as string))-1];
- if(method==='get_live_cell'){const point=args[0] as ReturnType<typeof p>;const source=point.tx_hash===hash('b')?move:cTx;return {status:'live',cell:{output:source.outputs[Number(BigInt(point.index))],data:{content:'0x'}}};}
+ if(method==='get_live_cell'){const point=args[0] as ReturnType<typeof p>;if(point.tx_hash===hash('a'))return {status:'dead'};const source=point.tx_hash===hash('b')?move:cTx;return {status:'live',cell:{output:source.outputs[Number(BigInt(point.index))],data:{content:'0x'}}};}
  throw Error(method);
 };
 assert.deepEqual(await discoverMarketPair(rpc,[p('a',0),p('a',1)]),[p('b',0),p('b',1)]);
 assert.deepEqual(await discoverCustodyPair(rpc,p('c',0)),[p('c',0),p('c',1)]);
-await assert.rejects(()=>discoverMarketPair(async(m,a)=>m==='get_block_hash'?hash('f'):rpc(m,a),[p('a',0),p('a',1)]),/reorganized/);
+await assert.rejects(()=>discoverMarketPair(async(m,a)=>m==='get_block_hash'&&a[0]==='0x2'?hash('f'):rpc(m,a),[p('a',0),p('a',1)]),/reorganized/);
+let scanned=false;
+assert.deepEqual(await discoverMarketPair(async(m,a)=>{if(m==='get_block_by_number')scanned=true;if(m==='get_live_cell'&&(a[0] as ReturnType<typeof p>).tx_hash===hash('a'))return {status:'live',cell:{output:outputs[Number(BigInt((a[0] as ReturnType<typeof p>).index))]}};return rpc(m,a);},[p('a',0),p('a',1)]),[p('a',0),p('a',1)]);
+assert.equal(scanned,false);
+let attempts=0;
+assert.deepEqual(await discoverMarketPair(async(m,a)=>{if(m==='get_block_by_number'&&a[0]==='0x1'&&++attempts<3)throw Error('temporary RPC failure');return rpc(m,a);},[p('a',0),p('a',1)]),[p('b',0),p('b',1)]);
+assert.equal(attempts,3);
+await assert.rejects(()=>discoverMarketPair(async(m,a)=>{if(m==='get_block_by_number'&&a[0]==='0x1')throw Error('offline');return rpc(m,a);},[p('a',0),p('a',1)]),/Block 1 unavailable after 3 attempts: offline/);
+await assert.rejects(()=>discoverMarketPair(async(m,a)=>m==='get_block_by_number'&&a[0]==='0x1'?blocks[1]:rpc(m,a),[p('a',0),p('a',1)]),/Canonical block unavailable/);
+await assert.rejects(()=>discoverMarketPair(async(m,a)=>m==='get_block_by_number'&&a[0]==='0x2'?{...blocks[1],header:{...blocks[1].header,parent_hash:hash('f')}}:rpc(m,a),[p('a',0),p('a',1)]),/Discontinuous/);
+await assert.rejects(()=>discoverMarketPair(async(m,a)=>m==='get_block_by_number'&&a[0]==='0x1'?{...blocks[0],transactions:[]}:rpc(m,a),[p('a',0),p('a',1)]),/Incomplete canonical history/);
 console.log('Separate market and custody lineage checks passed');

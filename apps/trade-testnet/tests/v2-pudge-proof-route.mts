@@ -16,7 +16,7 @@ const spent=new Set<string>();for(const e of entries)for(const i of e.transactio
 const rpc=async(method:string,params:any[])=>{
  if(method==='get_block_hash')return params[0]==='0x0'?genesis:block;
  if(method==='get_header'||method==='get_tip_header')return {hash:block,number:'0x1'};
- if(method==='get_block_by_number')return {header:{hash:block,number:'0x1'},transactions:entries.map(e=>({...e.transaction,hash:e.hash}))};
+ if(method==='get_block_by_number')return {header:{hash:block,number:'0x1',parent_hash:genesis},transactions:entries.map(e=>({...e.transaction,hash:e.hash}))};
  if(method==='get_transaction'){const e=lookup.get(params[0]);return e?{transaction:{...e.transaction,hash:e.hash},tx_status:{status:'committed',block_hash:block,block_number:'0x1',tx_index:'0x'+e.index.toString(16)}}:null;}
  if(method==='get_live_cell'){const p=params[0];if(p.tx_hash===secp)return {status:'live',cell:{data:{content:secpData,hash:ccc.hashCkb(secpData)}}};if(p.tx_hash===xudt)return {status:'live',cell:{data:{content:xdata,hash:ccc.hashCkb(xdata)}}};const e=lookup.get(p.tx_hash),i=Number(BigInt(p.index));if(!e?.transaction.outputs[i]||spent.has(`${p.tx_hash}:${BigInt(p.index)}`))return {status:'dead'};const data=e.transaction.outputs_data[i];return {status:'live',cell:{output:e.transaction.outputs[i],data:{content:data,hash:ccc.hashCkb(data)}}};}
  throw Error('Unexpected RPC '+method);
