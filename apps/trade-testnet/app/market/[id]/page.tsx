@@ -1,9 +1,6 @@
-import WalletEntry from "../../wallet-entry";
-export default async function MarketPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  return <WalletEntry initialMarketId={id} />;
+import {MarketScreen} from '../../trader/screens';
+
+export default async function Page({params}:{params:Promise<{id:string}>}){
+  const {id}=await params;
+  return <MarketScreen id={id}/>;
 }

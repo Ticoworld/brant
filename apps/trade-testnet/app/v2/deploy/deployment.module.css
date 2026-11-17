@@ -1,9 +1,0 @@
-.legacy > :global(section) { padding-top: 12px; border-top: 1px solid #252527; }
-.legacy > :global(section) > :global(h2) { display: none; }
-.legacy :global(section button) { min-height: 32px; margin: 4px 10px 4px 0; padding: 6px 2px; border: 0; border-bottom: 1px solid #3a3a3f; border-radius: 0; background: transparent; color: #d4d4d7; font: 500 12px/1.4 "Geist", "Microsoft YaHei", Arial, sans-serif; }
-.legacy :global(section button:hover:not(:disabled)) { border-color: #85858a; background: transparent; color: white; }
-.legacy :global(label) { display: block; margin: 12px 0; color: #b7b7bb; }
-.legacy :global(textarea) { display: block; width: 100%; min-height: 100px; margin-top: 8px; padding: 8px 2px; border: 0; border-bottom: 1px solid #38383d; border-radius: 0; background: transparent; color: #e4ece6; font: 12px/1.5 "Geist", "Microsoft YaHei", Arial, sans-serif; }
-.legacy :global(details) { margin: 12px 0; }
-.legacy :global(li), .legacy :global(p) { overflow-wrap: anywhere; }
-.legacy :global(pre) { max-width: 100%; overflow: auto; }

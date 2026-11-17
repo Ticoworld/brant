@@ -1,0 +1,54 @@
+"use client";
+
+import {useCallback,useEffect,useState} from 'react';
+import type {MarketData} from './types';
+
+const DEFAULT_MARKET='pudge-xudt';
+const MARKET_MANIFEST_KEY='roveko-pudge-market-v1';
+export const ACTIVE_MARKET_KEY='roveko-active-market-id-v1';
+type Snapshot={data:MarketData|null;loading:boolean;error:string;lastSuccess:number};
+const snapshots=new Map<string,Snapshot>(),requests=new Map<string,Promise<void>>(),listeners=new Map<string,Set<(value:Snapshot)=>void>>();
+const emptySnapshot=():Snapshot=>({data:null,loading:true,error:'',lastSuccess:0});
+
+function readSnapshot(id:string){return snapshots.get(id)||emptySnapshot();}
+function publish(id:string,value:Snapshot){
+  snapshots.set(id,value);
+  for(const listener of listeners.get(id)||[])listener(value);
+}
+
+export function useMarketData(requestedId?:string){
+  const [marketId,setMarketId]=useState(requestedId||DEFAULT_MARKET),[state,setState]=useState(()=>readSnapshot(requestedId||DEFAULT_MARKET));
+  useEffect(()=>{
+    if(requestedId){setMarketId(requestedId);return;}
+    try{const active=localStorage.getItem(ACTIVE_MARKET_KEY);setMarketId(active||DEFAULT_MARKET);}catch{setMarketId(DEFAULT_MARKET);}
+  },[requestedId]);
+  const refresh=useCallback(async()=>{
+    const current=readSnapshot(marketId);
+    if(current.lastSuccess&&Date.now()-current.lastSuccess<15_000)return;
+    const existing=requests.get(marketId);if(existing)return existing;
+    publish(marketId,{...current,loading:!current.data});
+    const request=(async()=>{
+      try{
+        let response:Response;
+        if(marketId===DEFAULT_MARKET)response=await fetch('/api/markets',{cache:'no-store'});
+        else{
+          const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
+          if(!manifest)throw Error('This market is not saved in this browser');
+          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest}),cache:'no-store'});
+        }
+        const body=await response.json();if(!response.ok)throw Error(body.error||'Pudge market is unavailable');
+        if(body.id!==marketId)throw Error('Market identity does not match the requested market');
+        publish(marketId,{data:body as MarketData,loading:false,error:'',lastSuccess:Date.now()});
+      }catch(cause){
+        publish(marketId,{...readSnapshot(marketId),loading:false,error:cause instanceof Error?cause.message:'Market refresh failed'});
+      }finally{requests.delete(marketId);}
+    })();
+    requests.set(marketId,request);return request;
+  },[marketId]);
+  useEffect(()=>{
+    const set=new Set(listeners.get(marketId)||[]);set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));void refresh();
+    const timer=setInterval(()=>void refresh(),20_000);
+    return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);};
+  },[marketId,refresh]);
+  return {...state,refresh};
+}

@@ -1,0 +1,24 @@
+export type Side='buy'|'sell';
+export type TradeEvent={hash:string;side:Side;owner:string;quantity:string;amountShannons:string;blockNumber:string;timestampMs:string;status:'confirmed'};
+export type MarketData={
+  id:string;
+  identity:string;
+  genesis:string;
+  token:{name:string;symbol:string;metadata:string;typeHash:string};
+  pair:string;
+  supply:string;
+  inventory:string;
+  circulating:string;
+  custody:string;
+  custodyRoot:string;
+  reserveShannons:string;
+  marketCellCapacity:string;
+  buyOneShannons:string;
+  sellOneShannons:string;
+  curve:{base:string;step:string;supply:string;sold:string};
+  tip:{number:string;hash:string};
+  refreshedAt:number;
+  history:TradeEvent[];
+  historyState:'verified'|'unavailable';
+  manifest:any;
+};

@@ -9,10 +9,10 @@ const mh=ccc.Script.from({codeHash:marker.code_hash,hashType:'data1',args:'0x'})
 const custody=s('4','0x'+'00'.repeat(96)+mh.slice(2));
 const outputs=[{lock,type:asset},{lock,type:marker}], tx=(h:string,ins:ReturnType<typeof p>[],outs:typeof outputs)=>({hash:hash(h),inputs:ins.map(previous_output=>({previous_output})),outputs:outs});
 const init=tx('a',[],outputs), move=tx('b',[p('a',0),p('a',1)],outputs), cTx=tx('c',[],[{lock:custody,type:asset},{lock:custody,type:marker}]);
-const blocks=[{header:{number:'0x1',hash:hash('d'),parent_hash:hash('c')},transactions:[init]},{header:{number:'0x2',hash:hash('e'),parent_hash:hash('d')},transactions:[move,cTx]}];
+const blocks=[{header:{number:'0x1',hash:hash('d'),parent_hash:hash('c'),timestamp:'0x64'},transactions:[init]},{header:{number:'0x2',hash:hash('e'),parent_hash:hash('d'),timestamp:'0xc8'},transactions:[move,cTx]}];
 const rpc=async(method:string,args:unknown[])=>{
  if(method==='get_transaction') return {tx_status:{status:'committed',block_hash:hash('d')},transaction:(args[0]===hash('a')?init:cTx)};
- if(method==='get_header') return {number:'0x1'};
+ if(method==='get_header') return {number:args[0]===hash('d')?'0x1':'0x2',hash:args[0] as string,timestamp:args[0]===hash('d')?'0x64':'0xc8'};
  if(method==='get_tip_header') return {number:'0x2',hash:hash('e')};
  if(method==='get_block_hash') return args[0]==='0x1'?hash('d'):hash('e');
  if(method==='get_block_by_number') return blocks[Number(BigInt(args[0] as string))-1];
@@ -44,10 +44,10 @@ const initialHash=realInit.hash(),moveHash=realMove.hash(),p0={tx_hash:initialHa
 let forged=false,blockCalls=0;
 const indexedRpc=async(method:string,args:unknown[])=>{
  if(method==='get_transaction'){const h=args[0] as string,t=h===initialHash?realInit:realMove,old=h===initialHash;return {transaction:raw(t),tx_status:{status:'committed',block_hash:old?hash('d'):hash('e'),block_number:old?'0x1':'0x2',tx_index:'0x0'}};}
- if(method==='get_header')return {number:'0x1'};
+ if(method==='get_header')return {number:args[0]===hash('d')?'0x1':'0x2',hash:args[0] as string,timestamp:args[0]===hash('d')?'0x64':'0xc8'};
  if(method==='get_tip_header')return {number:'0x2',hash:hash('e')};
  if(method==='get_block_hash')return args[0]==='0x1'?hash('d'):hash('e');
- if(method==='get_block_by_number'){blockCalls++;return args[0]==='0x1'?{header:{number:'0x1',hash:hash('d')},transactions:[raw(realInit)]}:{header:{number:'0x2',hash:hash('e')},transactions:[forged?raw(realInit):raw(realMove)]};}
+ if(method==='get_block_by_number'){blockCalls++;return args[0]==='0x1'?{header:{number:'0x1',hash:hash('d'),timestamp:'0x64'},transactions:[raw(realInit)]}:{header:{number:'0x2',hash:hash('e'),timestamp:'0xc8'},transactions:[forged?raw(realInit):raw(realMove)]};}
  if(method==='get_cells')return {objects:outputs.map((output,i)=>({output,out_point:{tx_hash:moveHash,index:'0x'+i}}))};
  if(method==='get_live_cell'){const point=args[0] as typeof p0;if(point.tx_hash===initialHash)return {status:'dead'};return {status:'live',cell:{output:outputs[Number(BigInt(point.index))],data:{content:'0x'}}};}
  throw Error(method);

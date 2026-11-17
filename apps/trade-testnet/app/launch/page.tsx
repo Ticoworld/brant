@@ -1,5 +1,1 @@
-import WorkspacePage from "../v2/workspace-page";
-
-export default function Page() {
-  return <WorkspacePage kind="launch" />;
-}
+export {LaunchScreen as default} from '../trader/screens';

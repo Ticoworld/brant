@@ -3,6 +3,7 @@ import {access,readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {deriveMarketIdentity} from '../../../../lib/v2-engine/initialization.ts';
+import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -20,7 +21,7 @@ export async function POST(request:Request){
   const text=await request.text();if(text.length>2048)return new Response('Request too large',{status:400});
   const body=JSON.parse(text) as {anchor?:{txHash?:string;index?:string};owner?:string};
   if(!body||!body.anchor||!hash.test(body.anchor.txHash||'')||!/^0x[0-9a-f]{1,8}$/i.test(body.anchor.index||'')||!hash.test(body.owner||''))return new Response('Invalid proof identity',{status:400});
-  const smt=process.env.ROVEKO_SMT_BINARY,verify=process.env.ROVEKO_PROOF_BINARY;if(!smt||!verify)return new Response('Proof tools unavailable',{status:503});
+  const tools=await resolveGate2NativeTools(),smt=tools.smt,verify=tools.recovery;if(!smt||!verify)return new Response('Proof tools unavailable',{status:503});
   const canonicalCollector=path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs'),collector=process.env.ROVEKO_RECOVERY_COLLECTOR||canonicalCollector;
   const [canonical,configured]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(smt),access(verify)]);
   if(createHash('sha256').update(canonical).digest('hex')!==createHash('sha256').update(configured).digest('hex'))throw Error('Recovery collector differs from repository');

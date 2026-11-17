@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@source "./";
+
+:root {
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0b0d0e;
+  color: #edf1ef;
+  --ink: #edf1ef;
+  --muted: #929d99;
+  --line: #28302f;
+  --surface: #141a19;
+  --surface-raised: #1a2220;
+  --buy: #72dfb0;
+  --sell: #f08e89;
+  --cyan: #5ed4df;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; background: #0b0d0e; }
+body { margin: 0; min-height: 100vh; background: #0b0d0e; }
+button, input, textarea, select { font: inherit; }
+button, a, input, select, summary { touch-action: manipulation; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+}
+button:disabled { cursor: not-allowed; opacity: .48; }
+a { color: inherit; text-underline-offset: 4px; }
+input::placeholder { color: #727c78; }
+::selection { color: #09120d; background: var(--buy); }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #3c4743; border-radius: 4px; }
+
+[data-sonner-toaster] { --normal-bg: #18201d; --normal-border: #394742; --normal-text: #edf1ef; --success-bg: #15251d; --success-border: #3d7659; --success-text: #dff7e9; --error-bg: #2a1918; --error-border: #8a4b49; --error-text: #ffe8e6; }
+
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+.v2-app { font-family: "Geist", "Microsoft YaHei", Arial, sans-serif; }
+.v2-app button {
+  display: inline-flex;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.v2-app button:hover:not(:disabled), .v2-app button:disabled { border-color: transparent; background: transparent; }
+.v2-app select { width: auto; min-height: 0; padding: 0 2px; border: 0; border-radius: 0; background: transparent; font: inherit; }
+.v2-app h1 { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.25; letter-spacing: 0; }
+
+.rov-launch { font-family: "Geist", "Microsoft YaHei", Arial, sans-serif; background: #090a0a; color: #eceeec; }
+.rov-launch > div { width: min(100%, 1280px); margin-inline: auto; padding: 10px 24px 24px; }
+.rov-launch > div > section:first-child, .rov-launch section { border-color: #252527; }
+.rov-launch h2, .rov-launch h3 { font-family: "Geist", "Microsoft YaHei", Arial, sans-serif; letter-spacing: 0; }
+.rov-launch p { max-width: 900px; }
+.rov-launch .launch-button {
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  transition: color .14s ease, background-color .14s ease, border-color .14s ease;
+}
+.rov-launch .launch-button.launch-primary { background: #63d994; color: #101612; }
+.rov-launch .launch-button.launch-primary:hover:not(:disabled) { background: #82e5a8; }
+.rov-launch .launch-next-action { border-color: #34383a; border-left: 3px solid #63d994; background: #111413; }
+.rov-launch .launch-continue { min-width: 148px; min-height: 40px; justify-content: center; font-size: 13px; }
+.rov-launch .launch-button.launch-secondary { border-color: #414348; background: #151618; color: #e0e0e3; }
+.rov-launch .launch-button.launch-secondary:hover:not(:disabled) { border-color: #666a70; background: #202124; color: #fff; }
+.rov-launch .launch-button:focus-visible { outline: 2px solid #74dfbd; outline-offset: 3px; }
+.rov-launch .launch-button[aria-busy="true"] { cursor: progress; }
+.rov-launch .launch-button:disabled { opacity: .5; cursor: not-allowed; }
+.rov-launch .launch-costs > div + div { border-top: 1px solid #202023; }
+.rov-launch details summary { color: #b7b7bb; }
+.rov-launch textarea { border: 0; border-bottom: 1px solid #38383d; border-radius: 0; background: transparent; color: #eceeec; font-family: "Geist", "Microsoft YaHei", Arial, sans-serif; }
+.rov-launch textarea:focus { border-bottom-color: #88888e; outline: none; }
+.rov-legacy > section { padding-top: 12px; border-top: 1px solid #252527; }
+.rov-legacy > section > h2 { display: none; }
+.rov-legacy section button { min-height: 32px; margin: 4px 10px 4px 0; padding: 6px 2px; border: 0; border-bottom: 1px solid #3a3a3f; border-radius: 0; background: transparent; color: #d4d4d7; font: 500 12px/1.4 "Geist", "Microsoft YaHei", Arial, sans-serif; }
+.rov-legacy section button:hover:not(:disabled) { border-color: #85858a; background: transparent; color: white; }
+.rov-legacy label { display: block; margin: 12px 0; color: #b7b7bb; }
+.rov-legacy textarea { display: block; width: 100%; min-height: 100px; margin-top: 8px; padding: 8px 2px; border: 0; border-bottom: 1px solid #38383d; border-radius: 0; background: transparent; color: #e4ece6; font: 12px/1.5 "Geist", "Microsoft YaHei", Arial, sans-serif; }
+.rov-legacy details { margin: 12px 0; }
+.rov-legacy li, .rov-legacy p { overflow-wrap: anywhere; }
+.rov-legacy pre { max-width: 100%; overflow: auto; }
+
+@media (max-width: 640px) {
+  .rov-launch > div { padding-inline: 16px; }
+  .rov-launch .launch-continue { width: 100%; }
+}

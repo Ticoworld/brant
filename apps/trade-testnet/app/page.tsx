@@ -1,5 +1,1 @@
-import WorkspacePage from "./v2/workspace-page";
-
-export default function Page() {
-  return <WorkspacePage kind="markets" />;
-}
+export {MarketsScreen as default} from './trader/screens';
