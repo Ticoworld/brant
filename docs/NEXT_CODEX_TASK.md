@@ -1,18 +1,24 @@
-# Next milestone: Checkpoint 2 — market and proof performance
+# Next milestone: Complete Checkpoint 2 — verified recovery and remote readiness
 
 ## Checkpoint 1 status
 
 Checkpoint 1 is implemented and pushed in commit `c3049f74faf9908334c8854fb5ace7176a9f9eb2` on `main`. It separates market capacity from curve liquidity, separates total CKB capacity from eligible spendable funding, improves CCC connection and quote UX, and binds the RVK display metadata to the verified Pudge market. Typecheck, production build, focused accounting/curve/review/dependency checks, and desktop/mobile browser checks passed. No wallet transaction was signed or broadcast for this checkpoint.
 
-## Objective
+## Checkpoint 2 status
 
-Build a reusable, verified checkpoint from canonical Gate 2 history and custody state. Bind it to its exact Pudge chain anchor and market identity; process confirmed successors incrementally; reconstruct owner balances and proofs; validate the current singleton and custody root before use; recover after restarts; and invalidate stale, reorganized, or inconsistent state. Preserve existing proof mechanisms and signing-time freshness checks.
+Checkpoint 2 is partial in commits `7169e5f` and `888b0f3` on `main`, both pushed to `origin/main`. The owner proof route has a registered-market allowlist, same-origin JSON checks, bounded body and RPC work, per-client rate limits, a two-request process concurrency cap, native execution timeouts, private temporary files, and a market/owner/anchor-bound custody history cache. Confirmed successor transactions append incrementally; native replay still checks the complete history. Cached proofs require the exact custody output and recorded anchor to remain live and canonical.
 
-Harden authorized remote proof requests with registered-market allowlisting, same-origin/request validation, bounded inputs and RPC work, rate and concurrency limits, timeouts, safe temporary files, and safe native process execution. Keep market discovery, history refresh, and balance checks nonblocking with explicit loading, stale, empty, failed, timeout, and retry states.
+The market service also writes a private atomic Gate 2 checkpoint, reloads it after a separate process start, rechecks canonical market and issuance anchors, all code dependencies, live singleton/custody Cells, exact curve accounting, quotes, metadata binding, and tip stability, and incrementally validates confirmed successors from the saved market pair. Invalid checkpoints fall back to bounded full recovery. The proof route also has localized loading, timeout, and retry behavior. Typecheck, production build, indexed successor/reorg fixtures, collector append/stale-anchor fixtures, request-security checks, accounting/metadata, and native Buy/Sell proof-transition checks passed. Read-only Pudge owner and market reads returned the registered owner's 7-token balance and current 1,993 inventory / 7 custody state. No signature or broadcast occurred.
 
-Measure cold and warm market reads, owner proof time, and arithmetic quote time separately. The recorded starting figures are cold market 7–13 seconds, warm market about 2.4 seconds, owner proof about 24.4 seconds, and arithmetic Buy/Sell quotes 96–141 ms. Treat these as prior recorded measurements until rerun.
+## Remaining work
 
-Inspect only the relevant market service, lineage/recovery, proof route, owner-position hook, and native adapters. Do not repeat unrelated private-chain benchmark suites or skip current state validation to meet a timing target. Preserve raw traces and independently rerunnable checks.
+1. Configure `ROVEKO_PUDGE_PROOF_CACHE_DIR` as a private, durable writable volume in the selected host. Without it, restart recovery of proof and market checkpoints is not enabled.
+2. Confirm the hosting reverse proxy strips client-supplied forwarding headers and sets the real client IP before relying on `x-forwarded-for` for rate limits.
+3. Run remote-origin proof checks and cache recovery after an actual application restart in that host. Keep the endpoint limited to registered markets and confirm rate, concurrency, history, and timeout rejections.
+4. Exercise the market checkpoint's successor extension and reorganization/conflict invalidation against a controlled changing-chain fixture or an authorized new transaction. The public market did not change during these read-only checks; unapproved trades must not be generated for testing.
+5. Repeat cold/warm market and owner-proof measurements on the same host and RPC path. Recent market samples varied from 4.6 to 17.7 seconds cold and 6.3 to 8.9 seconds across process restart with the saved snapshot, showing no stable timing improvement yet. Owner proof timings were 26.8 seconds cold, 18.0 seconds across restart, and 5.3 seconds warm in process. Sub-second warm proof has not been achieved. Arithmetic quote latency remains at its prior 96–141 ms measurement and was not rerun.
+
+Do not advance to Checkpoint 3 until these remaining Checkpoint 2 proofs are complete. Use only bounded, relevant tests. Do not repeat unrelated private-chain suites or skip current state validation to meet a timing target. Public Pudge reads remain read-only; do not sign or broadcast.
 
 ---
 
