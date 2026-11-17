@@ -45,14 +45,14 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
   const price=market.buyOneShannons;
   return <section className="flex min-h-[530px] min-w-0 flex-col overflow-hidden rounded-[5px] border border-[#28302f] bg-[#111615]">
     <div className="flex min-h-[62px] flex-wrap items-center justify-between gap-3 border-b border-[#28302f] px-4 py-3 sm:px-5">
-      <div className="min-w-0"><div className="flex items-center gap-3"><span className="text-[16px] font-semibold text-[#edf1ef]">{market.pair}</span></div><div className="mt-1 text-[11px] text-[#8f9b96]">{locale==='zh-CN'?'实时曲线':'Live bonding curve'}</div></div>
+      <div className="min-w-0"><div className="flex items-center gap-3"><span className="text-[16px] font-semibold text-[#edf1ef]">{market.pair}</span></div><div className="mt-1 text-[11px] text-[#8f9b96]">{copy(locale,'chartCurrent')}</div></div>
       <div aria-label={locale==='zh-CN'?'图表视图':'Chart view'} className="inline-flex rounded-[4px] border border-[#303a37] bg-[#0c1110] p-0.5">
         {(['curve','history'] as const).map(item=><button key={item} type="button" onClick={()=>setView(item)} aria-pressed={view===item} className={`min-h-7 rounded-[3px] px-3 text-[10px] font-medium transition-colors ${view===item?'bg-[#26322e] text-[#e8f4ed]':'text-[#87938e] hover:text-[#d7e0dc]'}`}>{copy(locale,item)}</button>)}
       </div>
     </div>
     <div className="flex items-end justify-between gap-3 border-b border-[#28302f] px-4 py-3 sm:px-5">
-      <div><div className="text-[10px] text-[#899590]">{copy(locale,'buyPrice')} · xUDT</div><div className="mt-1 text-[24px] font-semibold leading-7 tabular-nums text-[#edf1ef]">{formatCkb(price)} CKB</div></div>
-      <div className="pb-1 text-right text-[10px] text-[#78847f]">{locale==='zh-CN'?'当前边际曲线价格':'Current marginal curve price'}</div>
+      <div><div className="text-[10px] text-[#899590]">{copy(locale,'buyPrice')} · {market.token.symbol}</div><div className="mt-1 text-[24px] font-semibold leading-7 tabular-nums text-[#edf1ef]">{formatCkb(price)} CKB</div></div>
+      <div className="pb-1 text-right text-[10px] text-[#78847f]">{locale==='zh-CN'?'当前买入价格':'Current Buy Price'}</div>
     </div>
     {view==='history'&&market.historyState==='unavailable'?<div className="grid min-h-[360px] flex-1 place-items-center px-6 text-center"><div><p className="text-sm font-medium text-[#d7e0dc]">{copy(locale,'noHistory')}</p><p className="text-[11px] text-[#85918c]">{copy(locale,'transactionHistory')}</p></div></div>:view==='history'&&!historyPoints.length?<div className="grid min-h-[360px] flex-1 place-items-center px-6 text-center"><p className="text-sm text-[#9ba6a2]">{copy(locale,'noHistory')}</p></div>:<div ref={container} className="min-h-[360px] flex-1 px-1"/>}
     <div className="flex min-h-9 items-center justify-between border-t border-[#28302f] px-4 text-[10px] text-[#77827e] sm:px-5"><span>{view==='curve'?(locale==='zh-CN'?'已售代币':'Tokens sold'):(locale==='zh-CN'?'确认时间':'Confirmed time')}</span><a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noreferrer" className="text-[#8d9994] no-underline hover:text-[#c7d3ce]">TradingView Lightweight Charts™</a></div>

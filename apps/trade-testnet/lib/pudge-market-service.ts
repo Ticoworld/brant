@@ -4,6 +4,8 @@ import {quote,decodeCurve} from './v2-engine/curve.ts';
 import {discoverCustodyPair,discoverMarketPair,recoverMarketHistory,type Point} from './v2-engine/lineage.ts';
 import {deriveMarketIdentity} from './v2-engine/initialization.ts';
 import {loadPudgeManifest} from './v2-engine/pudge-manifest.ts';
+import {resolvePudgeTokenMetadata} from './pudge-market-metadata.ts';
+import {deriveMarketLiquidity} from './v2-engine/market-capacity.ts';
 import {verifyPudgeInitialProof} from './v2-engine/pudge-proof-client.ts';
 import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_ATTEMPT,PUDGE_GATE2_BUY,PUDGE_GATE2_CODES,PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_JOURNAL,PUDGE_GATE2_OWNER,PUDGE_GATE2_SELL,PUDGE_GATE2_STAGE_TXS,PUDGE_GATE2_XUDT_DEP} from './v2-engine/pudge-public-registry.ts';
 import type {MarketData,TradeEvent} from '../app/trader/types.ts';
@@ -162,6 +164,11 @@ function event(hash:string,side:'buy'|'sell',owner:string,quantity:bigint,amount
   return {hash,side,owner,quantity:quantity.toString(),amountShannons:amount.toString(),blockNumber:blockNumber.toString(),timestampMs:timestampMs.toString(),status:'confirmed'};
 }
 
+function marketLiquidity(cellCapacity:string,floorCapacity:string){
+  // The confirmed issuance output establishes structural capacity; later capacity is curve liquidity.
+  return deriveMarketLiquidity(cellCapacity,floorCapacity);
+}
+
 async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>{
   let possibleId='';try{possibleId=ccc.Script.from(JSON.parse(rawManifest)?.scripts?.market).hash().toLowerCase();}catch{}
   if(possibleId){const cached=await cachedMarket(possibleId,rawManifest);if(cached)return cached;}
@@ -182,6 +189,7 @@ async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>
     canonical(manifest.initializationTransactionHash,undefined,client),
     canonical(manifest.journal.entries[2].txHash,manifest.journal.entries[2].blockHash,client),
   ]);
+  verifyOutput(issued.transaction.outputs[0],issued.transaction.outputs_data[0],identity.market,identity.token);
   const recovered=await recoverMarketHistory(client,[initialPoints[0],initialPoints[1]],{maxIndexedDepth:256});
   if(recovered.lineage[0]?.transaction.hash.toLowerCase()!==manifest.initializationTransactionHash.toLowerCase())throw Error('Market history does not begin at the registered launch');
   const current=await canonical(recovered.pair[0].tx_hash,undefined,client),custodyPair=await discoverCustodyPair(client,{tx_hash:recovered.pair[0].tx_hash,index:'0x2'});
@@ -215,10 +223,12 @@ async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>
     }
     if(recovered.lineage.at(-1)?.transaction.hash.toLowerCase()!==current.transaction.hash.toLowerCase())throw Error('Current market is not the end of the verified history');
   }catch{history=[];historyState='unavailable';}
+  const liquidity=marketLiquidity(current.transaction.outputs[marketIndex].capacity,issued.transaction.outputs[0].capacity);
+  const token=resolvePudgeTokenMetadata({genesis:manifest.genesis,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:manifest.initializationTransactionHash});
   const data:MarketData={
     id:identity.market.hash().toLowerCase(),identity:identity.market.hash(),genesis:PUDGE_GATE2_GENESIS,
-    token:{name:'xUDT',symbol:'xUDT',metadata:'not-encoded',typeHash:identity.token.hash()},pair:'xUDT / CKB',supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
-    reserveShannons:current.transaction.outputs[marketIndex].capacity,marketCellCapacity:current.transaction.outputs[marketIndex].capacity,
+    token:{...token,typeHash:identity.token.hash()},pair:`${token.symbol} / CKB`,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
+    ...liquidity,
     buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now(),history,historyState,manifest,
   };
   checkpoint(data,[...recovered.pair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeCells,codeHashes,rawManifest);
@@ -290,10 +300,11 @@ export async function getPudgeMarketData():Promise<MarketData>{
       historyState='verified';
     }catch{history=[];historyState='unavailable';}
   }
+  const token=resolvePudgeTokenMetadata({genesis:PUDGE_GATE2_GENESIS,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:PUDGE_GATE2_INITIALIZATION});
   const data:MarketData={
     id:'pudge-xudt',identity:identity.market.hash(),genesis:PUDGE_GATE2_GENESIS,
-    token:{name:'xUDT',symbol:'xUDT',metadata:'not-encoded',typeHash:identity.token.hash()},pair:'xUDT / CKB',supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
-    reserveShannons:marketTransaction.outputs[marketIndex].capacity,marketCellCapacity:marketTransaction.outputs[marketIndex].capacity,
+    token:{...token,typeHash:identity.token.hash()},pair:`${token.symbol} / CKB`,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
+    ...marketLiquidity(marketTransaction.outputs[marketIndex].capacity,issuance.transaction.outputs[0].capacity),
     buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now(),history,historyState,
     manifest:{format:'roveko-pudge-market-v1',genesis:PUDGE_GATE2_GENESIS,attempt:PUDGE_GATE2_ATTEMPT,journal:PUDGE_GATE2_JOURNAL,initializationTransactionHash:PUDGE_GATE2_INITIALIZATION,codeDeploymentTransactionHash:PUDGE_GATE2_STAGE_TXS.code,initial:[0,1,2,3].map(index=>expectedPoint(PUDGE_GATE2_INITIALIZATION,index)),funding:{txHash:PUDGE_GATE2_INITIALIZATION,index:'0x4'},scripts:identity,deps:{custody_smt:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x0'},depType:'code'},market_smt:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x1'},depType:'code'},custody_marker:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x2'},depType:'code'},marker_candidate:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x3'},depType:'code'},owner_lineage_candidate:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x4'},depType:'code'},xudt:PUDGE_GATE2_XUDT_DEP}},
   };

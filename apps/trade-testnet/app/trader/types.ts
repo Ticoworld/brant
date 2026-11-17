@@ -4,7 +4,7 @@ export type MarketData={
   id:string;
   identity:string;
   genesis:string;
-  token:{name:string;symbol:string;metadata:string;typeHash:string};
+  token:{name:string;symbol:string;metadata:string;description:string;typeHash:string};
   pair:string;
   supply:string;
   inventory:string;
@@ -13,6 +13,7 @@ export type MarketData={
   custodyRoot:string;
   reserveShannons:string;
   marketCellCapacity:string;
+  marketCapacityFloorShannons:string;
   buyOneShannons:string;
   sellOneShannons:string;
   curve:{base:string;step:string;supply:string;sold:string};

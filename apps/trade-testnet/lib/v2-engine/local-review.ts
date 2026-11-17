@@ -7,6 +7,8 @@ import type { Cell } from './transaction.ts';
 import { discoverMarketPair, discoverCustodyPair } from './lineage.ts';
 import {discoverFunding} from './multi-funding.ts';
 import {cccA} from '@ckb-ccc/core/advanced';
+import {PUDGE_GATE2_ANCHOR} from './pudge-public-registry.ts';
+import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from './market-capacity.ts';
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
@@ -46,8 +48,9 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   if(pudge){
     if(!ownerScript||ownerScript.hash().toLowerCase()!==owner.toLowerCase())throw Error('Connected wallet changed');
     const candidates=await discoverFunding(rpc,rpc,{codeHash:ownerScript.codeHash,hashType:ownerScript.hashType,args:ownerScript.args});
-    const minimum=(side==='buy'?amount:0n)+61n*100_000_000n+1_000_000n;
-    const eligible=candidates.filter(c=>!c.type&&c.data==='0x'&&c.capacity>=minimum).sort((a,b)=>a.capacity===b.capacity?(a.outPoint.txHash.localeCompare(b.outPoint.txHash)||Number(BigInt(a.outPoint.index)-BigInt(b.outPoint.index))):a.capacity<b.capacity?-1:1);
+    const minimum=(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
+    const reserved=`${PUDGE_GATE2_ANCHOR.txHash.toLowerCase()}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`;
+    const eligible=candidates.filter(c=>`${c.outPoint.txHash.toLowerCase()}:${BigInt(c.outPoint.index)}`!==reserved&&!c.type&&c.data==='0x'&&c.capacity>=minimum).sort((a,b)=>a.capacity===b.capacity?(a.outPoint.txHash.localeCompare(b.outPoint.txHash)||Number(BigInt(a.outPoint.index)-BigInt(b.outPoint.index))):a.capacity<b.capacity?-1:1);
     if(!eligible.length)throw Error('No single plain wallet cell can fund this trade');fundingPoint=eligible[0].outPoint;
   }
   const funding = await readFundingCell(rpc,fundingPoint,owner);
@@ -66,7 +69,7 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   if (!/^(0|[1-9][0-9]*)$/.test(p.owner?.balance || '')) throw Error('Invalid recovered owner balance');
   const oldBalanceBytes = p.witness.slice(2 + 88, 2 + 104).match(/../g);
   if (!oldBalanceBytes || BigInt('0x' + oldBalanceBytes.reverse().join('')) !== BigInt(p.owner.balance)) throw Error('Proof owner balance mismatch');
-  const fee=pudge?1_000_000n:100000n,inputs=[...cells,funding] as [Cell,Cell,Cell,Cell,Cell];
+  const fee=pudge?PUDGE_TRADE_FEE:100000n,inputs=[...cells,funding] as [Cell,Cell,Cell,Cell,Cell];
   const reviewed = buildReviewedTransaction({curve:live.curve,cells:inputs,custodyAmount:live.custodyAmount,newRoot:p.new_root,witness,fee,side,quantity},deps,config.genesis,owner);
   if(pudge){const placeholder=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(reviewed.transaction)));placeholder.witnesses[4]=ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex();const pool=await rpc('tx_pool_info',[]) as {min_fee_rate:string};const rate=BigInt(pool.min_fee_rate)*2n;if(rate<2000n||rate>200000n||placeholder.estimateFee(rate)>fee)throw Error('Trade fee is insufficient or outside review bounds');}
   return {...reviewed,inputs,live, ownerBalance:BigInt(p.owner.balance), nextOwnerBalance:BigInt(p.owner.balance)+(side === 'buy' ? quantity : -quantity)};

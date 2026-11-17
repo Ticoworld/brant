@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useCcc} from '@ckb-ccc/connector-react';
 import {LanguageSwitcher,useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
 import {copy} from './copy';
@@ -10,7 +9,7 @@ import {copy} from './copy';
 const items=[['/','markets'],['/portfolio','portfolio'],['/activity','activity'],['/launch','launch']] as const;
 
 export default function TraderNavigation(){
-  const pathname=usePathname(),connector=useCcc(),account=useAccount(),{locale}=useLocale();
+  const pathname=usePathname(),account=useAccount(),{locale}=useLocale();
   const addressLabel=account.address?`${account.address.slice(0,10)}…${account.address.slice(-5)}`:copy(locale,'connect');
   return <header className="sticky top-0 z-20 border-b border-[#28302f] bg-[#0b0d0e]/95 backdrop-blur">
     <div className="mx-auto flex min-h-[64px] w-full max-w-[1440px] flex-wrap items-center gap-x-6 px-4 sm:flex-nowrap sm:px-6 xl:px-8">
@@ -26,9 +25,9 @@ export default function TraderNavigation(){
           <summary className="flex min-h-8 cursor-pointer list-none items-center gap-2 rounded-sm px-2 text-[11px] text-[#b4bfbb] hover:bg-[#1a2220]"><i className="size-1.5 rounded-full bg-[#72dfb0]"/>Pudge</summary>
           <div className="absolute right-0 top-10 z-30 w-48 border border-[#39423f] bg-[#141a19] p-3 text-xs shadow-xl"><div className="font-medium text-[#edf1ef]">{copy(locale,'pudge')}</div><div className="mt-1 text-[#929d99]">{copy(locale,'readonly')}</div></div>
         </details>
-        {account.state==='ready'&&<span className="hidden text-[11px] tabular-nums text-[#c8d2ce] lg:block">{formatBalance(account.balance)} CKB</span>}
-        <button type="button" title={account.address||copy(locale,'connect')} onClick={()=>connector.open()} className="max-w-[170px] truncate rounded-sm border border-[#46514d] bg-[#1b2421] px-3 py-2 text-[11px] font-semibold text-[#e7efeb] transition-colors hover:bg-[#26322d] sm:max-w-[220px] sm:text-xs">
-          {account.state==='checking'?copy(locale,'connecting'):addressLabel}
+        {account.state==='ready'&&<span title={`${copy(locale,'yourBalance')}: ${formatBalance(account.totalCapacity)} CKB · ${copy(locale,'availableToTrade')}: ${formatBalance(account.availableToTrade)} CKB`} className="hidden text-[11px] tabular-nums text-[#c8d2ce] lg:block">{copy(locale,'availableToTrade')}: {formatBalance(account.availableToTrade)} CKB</span>}
+        <button type="button" title={account.address||copy(locale,'connect')} onClick={account.connect} aria-busy={account.state==='connecting'||account.state==='checking'} className="max-w-[170px] truncate rounded-sm border border-[#46514d] bg-[#1b2421] px-3 py-2 text-[11px] font-semibold text-[#e7efeb] transition-colors hover:bg-[#26322d] sm:max-w-[220px] sm:text-xs">
+          {account.state==='checking'?copy(locale,'walletChecking'):account.state==='connecting'?copy(locale,'connecting'):addressLabel}
         </button>
         <LanguageSwitcher/>
       </div>
