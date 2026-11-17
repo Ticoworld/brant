@@ -9,7 +9,10 @@ const FEE_LIMIT = 1000000n;
 const UNIT = 100000000n;
 const RECOVERY_KEY_ENV = 'TRADE_RECOVERY_PRIVATE_KEY';
 const RPC_LOG_ENV = 'TRADE_RECOVERY_RPC_LOG';
+const RPC_TIMEOUT_ENV = 'ROVEKO_RECOVERY_RPC_TIMEOUT_MS';
+const RPC_MAX_ENV = 'ROVEKO_RECOVERY_MAX_RPC';
 const SECP_CODE_HASH = '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
+let rpcRequests = 0;
 
 function fail(message) { throw new Error(message); }
 function parseArgs(argv) {
@@ -51,12 +54,16 @@ function qhex(v, field) {
   return BigInt(v);
 }
 async function rpc(url, method, params = []) {
+  const maxRequests = Number(process.env[RPC_MAX_ENV] || 5000);
+  if (!Number.isSafeInteger(maxRequests) || maxRequests < 1 || maxRequests > 10000 || ++rpcRequests > maxRequests) fail('recovery RPC request limit exceeded');
+  const timeoutMs = Number(process.env[RPC_TIMEOUT_ENV] || 15000);
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 15000) fail('recovery RPC timeout is invalid');
   let response;
   try {
     response = await fetch(url, {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (error) {
     if (process.env[RPC_LOG_ENV]) fs.appendFileSync(path.resolve(process.env[RPC_LOG_ENV]), `${JSON.stringify({ method, params, transport_error: String(error) })}\n`);
@@ -75,11 +82,11 @@ async function rpc(url, method, params = []) {
 function scriptKey(script, scriptType, filter, withData = false) {
   return { script, script_type: scriptType, script_search_mode: 'exact', ...(withData ? { with_data: true } : {}), ...(filter ? { filter } : {}) };
 }
-async function indexedHistory(indexer, custodyLock, xudtType) {
+async function indexedHistory(indexer, custodyLock, xudtType, { maxPages = 64, maxTransactions = 2048 } = {}) {
   const result = [];
   const seen = new Map();
   let cursor;
-  for (let pageNo = 0; pageNo < 10000; pageNo++) {
+  for (let pageNo = 0; pageNo < maxPages; pageNo++) {
     const params = [scriptKey(custodyLock, 'lock'), 'asc', '0x64'];
     if (cursor) params.push(cursor);
     const page = await rpc(indexer, 'get_transactions', params);
@@ -90,12 +97,15 @@ async function indexedHistory(indexer, custodyLock, xudtType) {
       const candidate = { tx_hash: row.tx_hash, block_number: row.block_number, tx_index: row.tx_index };
       const old = seen.get(key);
       if (old && (old.block_number !== candidate.block_number || old.tx_index !== candidate.tx_index)) fail(`indexer reports conflicting position for ${row.tx_hash}`);
-      if (!old) seen.set(key, candidate);
+      if (!old) {
+        seen.set(key, candidate);
+        if (seen.size > maxTransactions) fail(`indexer history exceeds ${maxTransactions} transactions`);
+      }
     }
     if (page.objects.length < 100) break;
     if (!page.last_cursor || page.last_cursor === cursor) fail('indexer pagination cursor did not advance');
     cursor = page.last_cursor;
-    if (pageNo === 9999) fail('indexer history exceeds 1,000,000 objects');
+    if (pageNo === maxPages - 1) fail(`indexer history exceeds ${maxPages} pages`);
   }
   result.push(...seen.values());
   result.sort((a, b) => {
@@ -205,7 +215,11 @@ async function collect(args) {
   if (qhex(indexerTip.block_number, 'indexer tip') === qhex(startTip.number, 'node tip') && indexerTip.block_hash?.toLowerCase() !== startTip.hash.toLowerCase()) fail('indexer tip differs from canonical tip');
   const indexerCanonical = await canonicalBlock(args.node, qhex(indexerTip.block_number, 'indexer tip'));
   if (indexerCanonical.header.hash.toLowerCase() !== indexerTip.block_hash?.toLowerCase()) fail('indexer tip is not canonical');
-  const history = await indexedHistory(args.indexer, custodyLock, xudtType);
+  const maxPages = args['max-pages'] ? Number(args['max-pages']) : 64;
+  const maxTransactions = args['max-transactions'] ? Number(args['max-transactions']) : 2048;
+  if (!Number.isSafeInteger(maxPages) || maxPages < 1 || maxPages > 64) fail('--max-pages must be an integer in 1..=64');
+  if (!Number.isSafeInteger(maxTransactions) || maxTransactions < 1 || maxTransactions > 2048) fail('--max-transactions must be an integer in 1..=2048');
+  const history = await indexedHistory(args.indexer, custodyLock, xudtType, { maxPages, maxTransactions });
   const initIndex = history.findIndex((x) => x.tx_hash.toLowerCase() === args.init.toLowerCase());
   if (initIndex < 0) fail('initialization transaction was not found in exact-script indexer history');
   const historyRows = [];
@@ -261,6 +275,88 @@ async function collect(args) {
   process.stderr.write(`Fetched ${historyRows.length} committed custody transitions; live cell ${livePoint.tx_hash}:${livePoint.index}.\n`);
   const manifest = path.resolve(args.out);
   await verifyBundleFile(manifest);
+}
+async function collectIncremental(args) {
+  for (const k of ['node', 'indexer', 'init', 'owner', 'custody-lock', 'xudt-type', 'checkpoint', 'out']) if (!args[k]) fail(`missing --${k}`);
+  h256(args.init, 'init tx hash'); h256(args.owner, 'owner lock hash');
+  const custodyLock = JSON.parse(fs.readFileSync(args['custody-lock'], 'utf8'));
+  const xudtType = JSON.parse(fs.readFileSync(args['xudt-type'], 'utf8'));
+  const previous = JSON.parse(fs.readFileSync(args.checkpoint, 'utf8'));
+  if (previous.format !== 'trade-v2-recovery-bundle-v1' || previous.init_tx_hash?.toLowerCase() !== args.init.toLowerCase() || previous.owner_lock_hash?.toLowerCase() !== args.owner.toLowerCase() || !sameScript(previous.custody_lock, custodyLock) || !sameScript(previous.xudt_type_script, xudtType) || !Array.isArray(previous.history) || !previous.history.length || !previous.collection?.canonical_block_checked) fail('checkpoint identity or verification state is invalid');
+  if (!previous.collection.end_tip?.number || !previous.collection.end_tip?.hash || !/^0x[0-9a-fA-F]{64}$/.test(previous.collection.end_tip.hash)) fail('checkpoint chain anchor is missing');
+  const maxPages = args['max-pages'] ? Number(args['max-pages']) : 64;
+  const maxTransactions = args['max-transactions'] ? Number(args['max-transactions']) : 2048;
+  if (!Number.isSafeInteger(maxPages) || maxPages < 1 || maxPages > 64) fail('--max-pages must be an integer in 1..=64');
+  if (!Number.isSafeInteger(maxTransactions) || maxTransactions < 1 || maxTransactions > 2048) fail('--max-transactions must be an integer in 1..=2048');
+  const startTip = await rpc(args.node, 'get_tip_header');
+  const checkpointAnchor = await rpc(args.node, 'get_block_hash', [previous.collection.end_tip.number]);
+  if (typeof checkpointAnchor !== 'string' || checkpointAnchor.toLowerCase() !== previous.collection.end_tip.hash.toLowerCase()) fail('checkpoint chain anchor is no longer canonical');
+  let indexerTip;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    indexerTip = await rpc(args.indexer, 'get_indexer_tip');
+    if (indexerTip && qhex(indexerTip.block_number, 'indexer tip') >= qhex(startTip.number, 'node tip')) break;
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  if (!indexerTip || qhex(indexerTip.block_number, 'indexer tip') < qhex(startTip.number, 'node tip')) fail('indexer is not caught up to the captured canonical tip');
+  if (qhex(indexerTip.block_number, 'indexer tip') === qhex(startTip.number, 'node tip') && indexerTip.block_hash?.toLowerCase() !== startTip.hash.toLowerCase()) fail('indexer tip differs from canonical tip');
+  const indexerCanonical = await canonicalBlock(args.node, qhex(indexerTip.block_number, 'indexer tip'));
+  if (indexerCanonical.header.hash.toLowerCase() !== indexerTip.block_hash?.toLowerCase()) fail('indexer tip is not canonical');
+  const history = await indexedHistory(args.indexer, custodyLock, xudtType, { maxPages, maxTransactions });
+  const initIndex = history.findIndex((x) => x.tx_hash.toLowerCase() === args.init.toLowerCase());
+  if (initIndex < 0) fail('initialization transaction was not found in exact-script indexer history');
+  const refs = history.slice(initIndex);
+  if (previous.history.length > refs.length) fail('checkpoint history is ahead of the canonical indexer');
+  for (let index = 0; index < previous.history.length; index++) {
+    const old = previous.history[index], current = refs[index];
+    if (old.tx_hash?.toLowerCase() !== current.tx_hash.toLowerCase() || qhex(old.block_number, 'checkpoint block number') !== qhex(current.block_number, 'indexer block number') || qhex(old.tx_index, 'checkpoint transaction index') !== qhex(current.tx_index, 'indexer transaction index')) fail('checkpoint history conflicts with canonical indexer history');
+  }
+  const additions = refs.slice(previous.history.length);
+  if (additions.length > 256) fail('checkpoint successor batch exceeds 256 transactions');
+  const appended = [];
+  for (const entry of additions) {
+    const response = await rpc(args.node, 'get_transaction', [entry.tx_hash]);
+    if (response?.tx_status?.status !== 'committed' || !response.transaction) fail(`full node cannot retrieve committed transaction ${entry.tx_hash}`);
+    if (qhex(response.tx_status.block_number, 'committed block number') !== qhex(entry.block_number, 'indexer block number')) fail(`indexer/full-node block mismatch for ${entry.tx_hash}`);
+    const block = await rpc(args.node, 'get_block_by_number', [entry.block_number]);
+    if (!block?.header?.hash || block.header.hash.toLowerCase() !== response.tx_status.block_hash.toLowerCase()) fail(`transaction ${entry.tx_hash} is not canonical at indexed height`);
+    const txIndex = Number(qhex(entry.tx_index, 'transaction index'));
+    if (!Number.isSafeInteger(txIndex) || fullTransactionHash(block.transactions?.[txIndex]) !== entry.tx_hash.toLowerCase() || !sameRawTransaction(block.transactions[txIndex], response.transaction)) fail(`indexed transaction ${entry.tx_hash} is absent or differs in its canonical block`);
+    appended.push({ ...entry, transaction: response.transaction });
+  }
+  const cellPage = await rpc(args.indexer, 'get_cells', [scriptKey(custodyLock, 'lock', { script: xudtType }, true), 'asc', '0x64']);
+  if (!Array.isArray(cellPage?.objects) || cellPage.objects.length !== 1) fail(`expected one live custody xUDT cell, found ${cellPage?.objects?.length ?? 'no response'}`);
+  const indexedCell = cellPage.objects[0], live = await rpc(args.node, 'get_live_cell', [indexedCell.out_point, true]);
+  if (live?.status !== 'live' || !live.cell?.output || !live.cell?.data?.content) fail('full node does not confirm indexer custody output is live');
+  const endTip = await rpc(args.node, 'get_tip_header');
+  const indexerEnd = await rpc(args.indexer, 'get_indexer_tip');
+  if (!indexerEnd || qhex(indexerEnd.block_number, 'indexer tip') < qhex(startTip.number, 'captured tip')) fail('indexer tip regressed during collection');
+  const startTipAtEnd = await rpc(args.node, 'get_block_by_number', [startTip.number]);
+  if (startTipAtEnd?.header?.hash?.toLowerCase() !== startTip.hash.toLowerCase()) fail('canonical chain changed during incremental collection; retry');
+  const bundle = {
+    ...previous,
+    collection: {
+      ...previous.collection,
+      node_url: args.node,
+      indexer_url: args.indexer,
+      start_tip: { number: startTip.number, hash: startTip.hash },
+      end_tip: { number: endTip.number, hash: endTip.hash },
+      historical_transactions: previous.history.length + appended.length,
+      indexed_transactions: history.length,
+      canonical_block_checked: true,
+      live_outpoint_checked_with_get_live_cell: true,
+    },
+    history: [...previous.history, ...appended],
+    live: {
+      tx_hash: indexedCell.out_point.tx_hash,
+      index: indexedCell.out_point.index,
+      capacity: live.cell.output.capacity,
+      data: live.cell.data.content,
+      output: live.cell.output,
+    },
+  };
+  fs.writeFileSync(args.out, JSON.stringify(bundle, null, 2) + '\n');
+  process.stderr.write(`Reused ${previous.history.length} verified transitions and appended ${appended.length}; live cell ${bundle.live.tx_hash}:${bundle.live.index}.\n`);
+  await verifyBundleFile(path.resolve(args.out));
 }
 async function collectBlocks(args) {
   for (const k of ['node', 'init', 'owner', 'custody-lock', 'xudt-type', 'out']) if (!args[k]) fail(`missing --${k}`);
@@ -787,6 +883,7 @@ async function main() {
   const args = parseArgs(rest);
   if (args.help || command === 'help' || command === '--help' || command === '-h' || !command) { process.stdout.write(usage()); return; }
   if (command === 'collect') await collect(args);
+  else if (command === 'collect-incremental') await collectIncremental(args);
   else if (command === 'collect-blocks') await collectBlocks(args);
   else if (command === 'withdraw') await withdraw(args);
   else if (command === 'verify-withdrawal') await verifyWithdrawal(args);

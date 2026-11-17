@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,onTrade,onQuoteChange,onSideChange,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,onTrade,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -64,6 +64,8 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
       <TokenInput id="swap-estimate" label={copy(locale,'receive')} value={outputValue} unit={outputUnit} readOnly onChange={()=>{}}/>
     </div>
     <SwapInfoBoard locale={locale} side={side} impactBps={quoteState.impactBps} fee={FEE} price={side==='buy'?market.buyOneShannons:market.sellOneShannons} capacity={capacityRequired} quoteAmount={quoteState.amount} totalRequired={totalRequired} availableToTrade={ckbBalance} tokenQuantity={quoteState.quantity} symbol={market.token.symbol}/>
+    {side==='sell'&&tokenBalanceState==='loading'&&<p role="status" aria-live="polite" className="mb-0 mt-3 text-[11px] text-[#a8b7b0]">{copy(locale,'checkingHoldings')}</p>}
+    {side==='sell'&&tokenBalanceState==='unavailable'&&<div role="alert" className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#e3be85]"><span>{copy(locale,'holdingsUnavailable')}</span><button type="button" onClick={onRefreshTokenBalance} className="min-h-8 rounded-[3px] border border-[#75613c] px-3 text-[11px] text-[#f0dfb8] hover:bg-[#2b241a]">{copy(locale,'retry')}</button></div>}
     {quoteState.invalid&&<p role="alert" className="mb-0 mt-3 text-[11px] text-[#f0b8ad]">{copy(locale,side==='sell'?'fractionalToken':'invalidBudget')}</p>}
     {quoteState.tooSmall&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#e8cc94]">{copy(locale,'budgetTooSmall')}</p>}
     {ckbInsufficient&&quoteState.quantity>0n&&<p role="alert" className="mb-0 mt-3 text-[11px] text-[#f0b8ad]">{copy(locale,'insufficientCkb')}</p>}

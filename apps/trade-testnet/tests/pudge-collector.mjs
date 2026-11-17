@@ -10,15 +10,17 @@ test('collector retries transient failures, preserves order, and rejects a broke
  const dir=await mkdtemp(path.join(os.tmpdir(),'pudge-collector-test-'));
  const h=c=>'0x'+c.repeat(64), lock={code_hash:h('1'),hash_type:'data1',args:'0x'+'00'.repeat(128)}, token={code_hash:h('2'),hash_type:'data1',args:'0x'}, marker={code_hash:h('3'),hash_type:'data1',args:'0x'};
  const tx={hash:h('a'),version:'0x0',cell_deps:[],header_deps:[],inputs:[],outputs:[{lock,type:token,capacity:'0x1'},{lock,type:marker,capacity:'0x1'}],outputs_data:['0x01','0x'],witnesses:[]};
- let attempts=0,broken=false,indexMismatch=false;
+ const tx2={...tx,hash:h('b'),inputs:[{previous_output:{tx_hash:h('a'),index:'0x0'}},{previous_output:{tx_hash:h('a'),index:'0x1'}}]};
+ let attempts=0,broken=false,indexMismatch=false,anchorMismatch=false,advanced=false;
  const server=http.createServer(async(req,res)=>{let raw='';for await(const x of req)raw+=x;const {method,params,id}=JSON.parse(raw);let result,error;
   if(method==='get_tip_header')result={number:'0x2',hash:h('d')};
+  else if(method==='get_block_hash')result=params[0]==='0x2'?(anchorMismatch?h('e'):h('d')):h('c');
   else if(method==='get_indexer_tip')result={block_number:'0x2',block_hash:h('d')};
-  else if(method==='get_transactions')result={objects:[{tx_hash:h('a'),block_number:'0x1',tx_index:indexMismatch?'0x1':'0x0'}],last_cursor:'0x'};
-  else if(method==='get_cells')result={objects:[{out_point:{tx_hash:h('a'),index:'0x0'}}]};
-  else if(method==='get_transaction')result={transaction:tx,tx_status:{status:'committed',block_number:'0x1',block_hash:h('c')}};
-  else if(method==='get_live_cell')result={status:'live',cell:{output:tx.outputs[0],data:{content:'0x01'}}};
-  else if(method==='get_block_by_number'){if(params[0]==='0x2'&&++attempts===1)error={code:-1,message:'temporary'};else result=params[0]==='0x1'?{header:{number:'0x1',hash:h('c'),parent_hash:h('b')},transactions:[tx]}:{header:{number:'0x2',hash:h('d'),parent_hash:broken?h('e'):h('c')},transactions:[]};}
+  else if(method==='get_transactions')result={objects:[{tx_hash:h('a'),block_number:'0x1',tx_index:indexMismatch?'0x1':'0x0'},...(advanced?[{tx_hash:h('b'),block_number:'0x2',tx_index:'0x0'}]:[])],last_cursor:'0x'};
+  else if(method==='get_cells')result={objects:[{out_point:{tx_hash:advanced?h('b'):h('a'),index:'0x0'}}]};
+  else if(method==='get_transaction'){const value=params[0]===h('b')?tx2:tx;result={transaction:value,tx_status:{status:'committed',block_number:params[0]===h('b')?'0x2':'0x1',block_hash:params[0]===h('b')?h('d'):h('c')}};}
+  else if(method==='get_live_cell'){const value=advanced&&params[0].tx_hash===h('b')?tx2:tx;result={status:'live',cell:{output:value.outputs[0],data:{content:'0x01'}}};}
+  else if(method==='get_block_by_number'){if(params[0]==='0x2'&&++attempts===1)error={code:-1,message:'temporary'};else result=params[0]==='0x1'?{header:{number:'0x1',hash:h('c'),parent_hash:h('b')},transactions:[tx]}:{header:{number:'0x2',hash:h('d'),parent_hash:broken?h('e'):h('c')},transactions:advanced?[tx2]:[]};}
   res.setHeader('content-type','application/json');res.end(JSON.stringify({jsonrpc:'2.0',id,...(error?{error}:{result})}));});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  try {
@@ -29,6 +31,9 @@ test('collector retries transient failures, preserves order, and rejects a broke
   broken=false;
   const indexed=()=>new Promise(resolve=>{const out=path.join(dir,`indexed-${indexMismatch}.json`),url=`http://127.0.0.1:${server.address().port}`;const child=spawn(process.execPath,['lib/v2-engine/pudge-recover.cjs','collect','--node',url,'--indexer',url,'--init',h('a'),'--owner',h('f'),'--custody-lock',path.join(dir,'lock.json'),'--xudt-type',path.join(dir,'token.json'),'--out',out],{env:{...process.env,ROVEKO_PROOF_BINARY:path.join(dir,'missing-verifier')}});let err='';child.stderr.on('data',x=>err+=x);child.on('close',code=>resolve({code,err,out}));});
   const third=await indexed();assert.match(third.err,/build verifier first/);assert.equal(JSON.parse(await readFile(third.out,'utf8')).history[0].tx_hash,h('a'));
+  const incremental=()=>new Promise(resolve=>{const out=path.join(dir,'incremental.json'),url=`http://127.0.0.1:${server.address().port}`;const child=spawn(process.execPath,['lib/v2-engine/pudge-recover.cjs','collect-incremental','--node',url,'--indexer',url,'--init',h('a'),'--owner',h('f'),'--custody-lock',path.join(dir,'lock.json'),'--xudt-type',path.join(dir,'token.json'),'--checkpoint',third.out,'--out',out],{env:{...process.env,ROVEKO_PROOF_BINARY:path.join(dir,'missing-verifier')}});let err='';child.stderr.on('data',x=>err+=x);child.on('close',code=>resolve({code,err,out}));});
+  advanced=true;const fifth=await incremental();assert.match(fifth.err,/build verifier first/);assert.equal(JSON.parse(await readFile(fifth.out,'utf8')).history.length,2);
+  anchorMismatch=true;const sixth=await new Promise(resolve=>{const out=path.join(dir,'incremental.json'),url=`http://127.0.0.1:${server.address().port}`;const child=spawn(process.execPath,['lib/v2-engine/pudge-recover.cjs','collect-incremental','--node',url,'--indexer',url,'--init',h('a'),'--owner',h('f'),'--custody-lock',path.join(dir,'lock.json'),'--xudt-type',path.join(dir,'token.json'),'--checkpoint',fifth.out,'--out',out],{env:{...process.env,ROVEKO_PROOF_BINARY:path.join(dir,'missing-verifier')}});let err='';child.stderr.on('data',x=>err+=x);child.on('close',code=>resolve({code,err,out}));});assert.notEqual(sixth.code,0);assert.match(sixth.err,/checkpoint chain anchor is no longer canonical/);
   indexMismatch=true;const fourth=await indexed();assert.notEqual(fourth.code,0);assert.match(fourth.err,/valid transaction hash|absent or differs/);
  } finally {await new Promise(resolve=>server.close(resolve));await rm(dir,{recursive:true,force:true});}
 });
