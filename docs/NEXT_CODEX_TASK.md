@@ -1,4 +1,22 @@
-# Next milestone: consumer-product integration
+# Next milestone: Checkpoint 2 — market and proof performance
+
+## Checkpoint 1 status
+
+Checkpoint 1 is implemented and pushed in commit `c3049f74faf9908334c8854fb5ace7176a9f9eb2` on `main`. It separates market capacity from curve liquidity, separates total CKB capacity from eligible spendable funding, improves CCC connection and quote UX, and binds the RVK display metadata to the verified Pudge market. Typecheck, production build, focused accounting/curve/review/dependency checks, and desktop/mobile browser checks passed. No wallet transaction was signed or broadcast for this checkpoint.
+
+## Objective
+
+Build a reusable, verified checkpoint from canonical Gate 2 history and custody state. Bind it to its exact Pudge chain anchor and market identity; process confirmed successors incrementally; reconstruct owner balances and proofs; validate the current singleton and custody root before use; recover after restarts; and invalidate stale, reorganized, or inconsistent state. Preserve existing proof mechanisms and signing-time freshness checks.
+
+Harden authorized remote proof requests with registered-market allowlisting, same-origin/request validation, bounded inputs and RPC work, rate and concurrency limits, timeouts, safe temporary files, and safe native process execution. Keep market discovery, history refresh, and balance checks nonblocking with explicit loading, stale, empty, failed, timeout, and retry states.
+
+Measure cold and warm market reads, owner proof time, and arithmetic quote time separately. The recorded starting figures are cold market 7–13 seconds, warm market about 2.4 seconds, owner proof about 24.4 seconds, and arithmetic Buy/Sell quotes 96–141 ms. Treat these as prior recorded measurements until rerun.
+
+Inspect only the relevant market service, lineage/recovery, proof route, owner-position hook, and native adapters. Do not repeat unrelated private-chain benchmark suites or skip current state validation to meet a timing target. Preserve raw traces and independently rerunnable checks.
+
+---
+
+# Historical snapshot: consumer-product integration before Checkpoint 1
 
 The Pudge deployment, market initialization, one wallet-approved Buy and Sell, and chain-state recovery are completed owner milestones. The migration archive preserves exact transaction records; read-only public RPC checks on 2026-11-17 confirmed all 8 saved transaction references committed and verified the deployment and live market recovery. Do not repeat those transactions or redeploy.
 

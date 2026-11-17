@@ -1,6 +1,20 @@
 # Current state update — 2026-11-17
 
-## Roveko public Pudge baseline
+## Authoritative Roveko status
+
+- **VERIFIED (public Pudge anchors):** the Gate 2 code Cells are outputs `0x0` through `0x4` of `0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e`; initialization is `0xc37029b982276a7c3e126a5658510fda1cd5f2963caf650b04f397a8484c7d2a`; xUDT type hash is `0xa706188a0d74a200306109a88fd7835b75eff42f35e9983fa0d3c2138e181ddb`.
+- **VERIFIED (owner-reported, transaction references checked read-only):** one public wallet-approved Buy and Sell and subsequent recovery were completed. Exact transaction records and raw receipts remain in the protected migration archive. No public transaction was signed or broadcast during Checkpoint 1.
+- **VERIFIED (Checkpoint 1, commit `c3049f74faf9908334c8854fb5ace7176a9f9eb2`, pushed to `origin/main`):** CCC opens from navbar and trade card; wallet states are localized and retryable; total Cell capacity is separated from spendable trade funds; quote, fee, funding capacity, and RVK registry identity are displayed with integer-safe validation.
+- **VERIFIED (read-only chain accounting):** current market capacity is 391 CKB and the confirmed issuance output is 300 CKB. **DERIVED:** spendable curve liquidity is 91 CKB. Current one-token Buy/Sell quotes are 17/16 CKB; supply is 2,000, curve inventory 1,993, and custody 7.
+- **VERIFIED (browser check):** a 100 CKB Buy budget quotes 5 RVK for 95 CKB, with a 0.01 CKB fee, 156.01 CKB minimum input capacity, and 95.01 CKB total required. Fractional Sell input is rejected without rounding. The “Roveko Genesis, RVK” name is off-chain Pudge registry metadata bound to genesis, market script, xUDT type, and initialization transaction; it is not an on-chain name claim.
+- **VERIFIED (checks):** TypeScript typecheck, production build, accounting/metadata, curve, local review, live dependency, and desktop/mobile browser checks passed. Screenshots are in `apps/trade-testnet/evidence/checkpoint-1/`.
+- **NOT ESTABLISHED:** a real external wallet transaction in this checkpoint, broad wallet compatibility, security audit, production readiness, liquidity, or profitable exchange economics.
+
+## Next milestone
+
+Checkpoint 2 covers verified market/history checkpoints, faster owner proofs, safe remote proof requests, nonblocking loading states, and fresh cold/warm performance measurements. The recorded starting figures are cold market 7–13 seconds, warm market about 2.4 seconds, owner proof about 24.4 seconds, and arithmetic quotes 96–141 ms; these have not yet been remeasured in this checkpoint.
+
+## Superseded public Pudge snapshot
 
 - **VERIFIED (read-only public RPC):** Pudge genesis is `0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606`. Code hash `0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f` was deployed at `0x1805b0fda22fd144dced70963cb8396d778b6cba2eb7325c81290f615c070dd8:0`. Market initialization transaction is `0x9fadc8cf7bc2b1af4350da6f24c120a770c5394122ecfe7ea92cf80fa7706ddd`.
 - **VERIFIED (read-only public RPC, 2026-11-17):** the 8 transaction records in the protected local archive were all returned as committed. `M.verifyDeployment` and `M.recover` confirmed the deployed code and current market. Current market Cell is `0x3fa9dd0155936e0dacc9bf5e57a4785c3d6d66191a7560f1ff5ec6a6b04954f3:0`; recovered state is phase 1, 2 slots, minimum 12,500,000 shannons, goal 25,000,000 shannons, P=25,000,000, B=20,000,000, count=2.
@@ -8,7 +22,7 @@
 - **VERIFIED (source/configuration):** `apps/trade-testnet/public/pudge.json` now identifies the confirmed code outpoint and enables its existing reviewed public signing path. This records the deployed contract; it is not a production-readiness claim.
 - **UNIMPLEMENTED / NOT ESTABLISHED:** broad external-wallet compatibility, independent public chain acceptance for additional wallets, security audit, production readiness, liquidity, and business viability. Serving application routes does not establish complete UX or public-chain acceptance.
 
-## Active product milestone
+## Superseded active product milestone
 
 The next task is consumer-product integration: automatic public market loading without manual verification; one clear Buy/Sell action with wallet approval and automatic status tracking; real price history and curve charts; consistent, readable trading UI; real Portfolio and Activity screens; and removal of technical/debug interfaces from normal trader workflows. Do not redeploy contracts or repeat completed public transactions during that work.
 
