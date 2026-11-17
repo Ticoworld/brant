@@ -1,0 +1,29 @@
+{
+  "network": "pudge",
+  "schemaVersion": 1,
+  "markets": [
+    {
+      "id": "0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "kind": "backed-claim",
+      "name": "Pudge backed-claim market",
+      "asset": "CKB",
+      "tokenName": null,
+      "tokenSymbol": null,
+      "tokenIdentity": null,
+      "initializationTransaction": "0x9fadc8cf7bc2b1af4350da6f24c120a770c5394122ecfe7ea92cf80fa7706ddd",
+      "initializationBlockHash": "0xd2af5eb987d2d2fb940dceb6bfd88e16e15f6c86ecd3a4bad0c2bbc709ca497b",
+      "deployment": {
+        "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+        "codeOutPoint": {
+          "txHash": "0x1805b0fda22fd144dced70963cb8396d778b6cba2eb7325c81290f615c070dd8",
+          "index": "0"
+        },
+        "marketScript": {
+          "codeHash": "0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f",
+          "hashType": "data1",
+          "args": "0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6"
+        }
+      }
+    }
+  ]
+}

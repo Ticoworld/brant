@@ -2,26 +2,26 @@
 import { Provider, useCcc, useSigner } from "@ckb-ccc/connector-react";
 import { ccc } from "@ckb-ccc/core";
 import { useEffect, useRef, useState } from "react";
-import * as M from "../lib/market";
+import * as M from "../lib/pudge/market";
 import {
   requirePublicApproval,
   requireUnchanged,
   reviewLiveInputs,
-} from "../lib/approval";
+} from "../lib/pudge/approval";
 import {
   marketIdentity,
   routeFromUrl,
   routeUrl,
   marketView,
-  discoverMarkets,
-  type PageRoute,
-} from "../lib/market-reader";
-import Experience, {
-  type Fields,
-  type Activity,
-  type Review,
-  type MarketView,
-} from "./experience";
+} from "../lib/pudge/market-reader";
+import type {
+  Activity,
+  Fields,
+  MarketView,
+  PageRoute,
+  Review,
+} from "../lib/pudge/types";
+import PudgeExperience from "./pudge-experience";
 const connection = ccc.ClientPublicTestnet.open({
   urls: ["https://testnet.ckb.dev/", "https://testnet.ckbapp.dev/"],
 });
@@ -48,20 +48,28 @@ const fmt = (n: bigint) =>
   (n < 0n ? "−" : "") + M.formatCkb(n < 0n ? -n : n).replace(/\.?0+$/, "");
 export default function WalletApp({
   initialMarketId,
+  initialView = "Markets",
 }: {
   initialMarketId?: string;
+  initialView?: "Markets" | "My Positions" | "Create Market" | "Activity";
 }) {
   return (
     <Provider
-      name="Trade testnet"
+      name="ROVEKO"
       defaultClient={client}
       clientOptions={[{ name: "CKB Pudge (testnet)", client }]}
     >
-      <Journey initialMarketId={initialMarketId} />
+      <Journey initialMarketId={initialMarketId} initialView={initialView} />
     </Provider>
   );
 }
-function Journey({ initialMarketId }: { initialMarketId?: string }) {
+function Journey({
+  initialMarketId,
+  initialView,
+}: {
+  initialMarketId?: string;
+  initialView: "Markets" | "My Positions" | "Create Market" | "Activity";
+}) {
   const conn = useCcc(),
     signer = useSigner();
   const [fields, setFields] = useState<Fields>(initial),
@@ -83,9 +91,10 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
   const [route, setRoute] = useState<PageRoute>(
       initialMarketId
         ? { view: "Market", id: initialMarketId }
-        : { view: "Markets" },
+        : { view: initialView },
     ),
     [known, setKnown] = useState<Record<string, M.Market>>({}),
+    [publicMarkets, setPublicMarkets] = useState<Record<string, MarketView>>({}),
     [reading, setReading] = useState(false),
     [refreshKey, setRefreshKey] = useState(0),
     [discovery, setDiscovery] = useState<{
@@ -100,6 +109,11 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
     });
   const routeRef = useRef(route);
   routeRef.current = route;
+  const registryLoad = useRef<Promise<{
+    found: Record<string, MarketView>;
+    failures: string[];
+    scanned: number;
+  }> | null>(null);
   const execute = useRef<null | (() => Promise<void>)>(null),
     inFlight = useRef(false);
   useEffect(() => {
@@ -126,6 +140,72 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
       active = false;
     };
   }, []);
+  useEffect(() => {
+    if (!manifest) return;
+    let active = true;
+    if (!registryLoad.current) {
+      registryLoad.current = (async () => {
+        const response = await fetch("/pudge-markets.json", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw Error("Public Pudge registry unavailable.");
+        const registry = await response.json();
+        if (registry.network !== "pudge" || !Array.isArray(registry.markets))
+          throw Error("Public Pudge registry is invalid.");
+        const found: Record<string, MarketView> = {};
+        const failures: string[] = [];
+        for (const item of registry.markets) {
+          try {
+            const id = marketIdentity(item.id);
+            if (
+              item.deployment?.codeHash !== manifest.codeHash ||
+              item.deployment?.marketScript?.args !== id
+            )
+              throw Error("Registry identity does not match the deployed market.");
+            const response = await fetch(
+              "/api/pudge/market-state?id=" + encodeURIComponent(id),
+              { cache: "no-store" },
+            );
+            const result = await response.json();
+            if (!response.ok) throw Error(result.error ?? "Market recovery failed.");
+            found[id] = result.market as MarketView;
+          } catch (e) {
+            failures.push(e instanceof Error ? e.message : String(e));
+          }
+        }
+        return { found, failures, scanned: registry.markets.length };
+      })();
+    }
+    registryLoad.current
+      .then(({ found, failures, scanned }) => {
+        if (!active) return;
+        setPublicMarkets((current) => ({ ...current, ...found }));
+        setDiscovery({
+          state: failures.length
+            ? Object.keys(found).length
+              ? "partial"
+              : "unavailable"
+            : "complete",
+          message: failures.length
+            ? Object.keys(found).length
+              ? "Some registered markets could not be reconstructed."
+              : failures[0]
+            : Object.keys(found).length + " registered Pudge market verified.",
+          scanned,
+        });
+      })
+      .catch((e) => {
+        if (!active) return;
+        setDiscovery({
+          state: "unavailable",
+          message: e instanceof Error ? e.message : String(e),
+          scanned: 0,
+        });
+      });
+    return () => {
+      active = false;
+    };
+  }, [manifest]);
   useEffect(() => {
     setAddress("");
     setOwnerHash("");
@@ -184,6 +264,7 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
     setReading(true);
     setError(false);
     setTip(null);
+    setStatus("Loading verified market state from Pudge.");
     const id = route.id;
     (async () => {
       try {
@@ -193,24 +274,29 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
         });
         if (d.network !== "pudge")
           throw Error("Read-only workspace requires Pudge.");
-        await M.verifyDeployment(rpc, d);
-        const m = await M.recover(rpc, d, marketIdentity(id));
-        let height: string | null = null;
-        try {
-          height = BigInt((await rpc("get_tip_header", [])).number).toString();
-        } catch {}
+        const response = await fetch(
+          "/api/pudge/market-state?id=" + encodeURIComponent(marketIdentity(id)),
+          { cache: "no-store" },
+        );
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error ?? "Market recovery failed.");
+        const recovered = result.market as MarketView;
         if (active) {
-          setMarket(m);
+          setPublicMarkets((current) => ({ ...current, [recovered.id]: recovered }));
           const i = routeRef.current.claim,
-            r = i !== undefined ? m.tree.records[i] : undefined;
+            r = i !== undefined ? recovered.positions[i] : undefined;
           if (r)
             setFields((f) => ({
               ...f,
               index: String(i),
-              amount: fmt(m.phase ? r.b : r.p || m.minimum),
+              amount:
+                recovered.phase === "Active"
+                  ? r.backing
+                  : r.contribution === "0"
+                    ? recovered.minimum
+                    : r.contribution,
             }));
-          setKnown((xs) => ({ ...xs, [m.id]: m }));
-          setTip(height);
+          setTip(recovered.tip);
           setStatus(
             "Market reconstructed from committed history and its live Cell.",
           );
@@ -218,7 +304,7 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
       } catch (e) {
         if (active) {
           setMarket(null);
-          setKnown((xs) => {
+          setPublicMarkets((xs) => {
             const next = { ...xs };
             delete next[id];
             return next;
@@ -464,7 +550,25 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
   }
   const check = () =>
     run(async () => {
-      await lock();
+      const owner = (await lock()).hash();
+      const ids = Object.keys(publicMarkets);
+      if (ids.length) {
+        const entries = await Promise.all(
+          ids.map(async (id) => {
+            const response = await fetch(
+              "/api/pudge/market-state?id=" +
+                encodeURIComponent(id) +
+                "&owner=" +
+                encodeURIComponent(owner),
+              { cache: "no-store" },
+            );
+            const result = await response.json();
+            if (!response.ok) throw Error(result.error ?? "Position recovery failed.");
+            return [id, result.market as MarketView] as const;
+          }),
+        );
+        setPublicMarkets((current) => ({ ...current, ...Object.fromEntries(entries) }));
+      }
       setStatus(
         "Wallet lock matches the ordinary CKB secp profile. Complete external-wallet signing is not yet accepted.",
       );
@@ -492,35 +596,34 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
       setStatus(e instanceof Error ? e.message : String(e));
     }
   };
-  const discover = (more = false) =>
+  const discover = () =>
     run(async () => {
+      setDiscovery({ state: "idle", message: "", scanned: 0 });
       try {
-        const d = await fetch("/pudge.json").then((r) => r.json());
-        if (d.network !== "pudge") throw Error("Discovery requires Pudge.");
-        const result = await discoverMarkets(
-          rpc,
-          d,
-          more ? discovery.next : undefined,
+        const response = await fetch("/pudge-markets.json", { cache: "no-store" });
+        if (!response.ok) throw Error("Public Pudge registry unavailable.");
+        const registry = await response.json();
+        if (registry.network !== "pudge" || !Array.isArray(registry.markets))
+          throw Error("Public Pudge registry is invalid.");
+        const entries = await Promise.all(
+          registry.markets.map(async (item: { id: string }) => {
+            const id = marketIdentity(item.id);
+            const resultResponse = await fetch(
+              "/api/pudge/market-state?id=" + encodeURIComponent(id),
+              { cache: "no-store" },
+            );
+            const result = await resultResponse.json();
+            if (!resultResponse.ok)
+              throw Error(result.error ?? "Market recovery failed.");
+            return [id, result.market as MarketView] as const;
+          }),
         );
-        setKnown((xs) => ({
-          ...(more ? xs : {}),
-          ...Object.fromEntries(result.markets.map((m) => [m.id, m])),
-        }));
+        setPublicMarkets((current) => ({ ...current, ...Object.fromEntries(entries) }));
         setDiscovery({
-          state: result.failures.length ? "partial" : "complete",
-          message:
-            result.markets.length +
-            " markets independently reconstructed" +
-            (result.failures.length
-              ? "; " + result.failures.length + " cells could not be verified."
-              : "."),
-          scanned: result.scanned,
-          next: result.next,
+          state: "complete",
+          message: entries.length + " registered Pudge market verified.",
+          scanned: entries.length,
         });
-        setStatus(
-          result.markets.length +
-            " markets verified. Discovery is limited to this deployment and the inspected page.",
-        );
       } catch (e) {
         setDiscovery({
           state: "unavailable",
@@ -778,10 +881,11 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
   const view =
     market && route.id === market.id
       ? marketView(market, ownerHash, tip)
-      : null;
+      : route.id
+        ? publicMarkets[route.id] ?? null
+        : null;
   return (
-    <Experience
-      fixture={process.env.NEXT_PUBLIC_LOCAL_FIXTURE === "1"}
+    <PudgeExperience
       route={route}
       readAvailable={Boolean(manifest?.code && manifest.genesis)}
       onNavigate={(view) => navigate({ view })}
@@ -815,7 +919,9 @@ function Journey({ initialMarketId }: { initialMarketId?: string }) {
         setRoute(next);
         window.history.replaceState({}, "", routeUrl(next));
       }}
-      markets={Object.values(known).map((m) => marketView(m, ownerHash, null))}
+      markets={Object.values(publicMarkets).map((m) =>
+        known[m.id] ? marketView(known[m.id], ownerHash, m.tip) : m,
+      )}
       discovery={discovery}
       onDiscover={discover}
       loadingMarket={reading}

@@ -1,5 +1,5 @@
 import { ccc } from '@ckb-ccc/core';
-import { cat, le, ZERO } from './market.ts';
+import { cat, le, ZERO } from './pudge/market.ts';
 
 export type Position = { owner:ccc.Hex; p:bigint; b:bigint; revision:bigint };
 const branch=(a:ccc.Hex,b:ccc.Hex)=>ccc.hashCkb(cat(new Uint8Array([2]),ccc.bytesFrom(a),ccc.bytesFrom(b)));

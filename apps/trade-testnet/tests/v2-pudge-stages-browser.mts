@@ -8,7 +8,7 @@ import {createRequire} from 'node:module';
 import {chromium} from 'playwright-core';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
-import {POST} from '../app/api/v2/pudge-init-proof/route.ts';
+import {POST} from '../lib/v2-engine/retired-api/v2-pudge-init-proof.ts';
 assert(process.env.ROVEKO_GATE2_BINARIES&&process.env.TRADE_NATIVE_ROOT&&process.env.ROVEKO_SMT_BINARY&&process.env.ROVEKO_PROOF_BINARY&&process.env.ROVEKO_RECOVERY_COLLECTOR,'Set test paths');
 const root=path.resolve(import.meta.dirname,'..'),require=createRequire(import.meta.url),dir=fs.mkdtempSync(path.join(os.tmpdir(),'rov-pudge-stages-'));
 await new Promise<void>((resolve,reject)=>require('next/dist/compiled/webpack/webpack').webpack({mode:'development',target:'web',entry:path.join(root,'tests/v2-deploy-wallet-entry.cjs'),output:{path:dir,filename:'wallet.js'}},(e:Error,s:any)=>e||s.hasErrors()?reject(e||Error(s.toString({all:false,errors:true}))):resolve()));

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { PositionTree, encodePosition, decodePosition } from '../lib/r7-tree.ts';
-import { ZERO } from '../lib/market.ts';
+import { ZERO } from '../lib/pudge/market.ts';
 const require=createRequire(import.meta.url), old=require('../../../labs/wo15-merkle-intent/src/merkle-lib.cjs');
 const id=('0x'+'11'.repeat(32)) as `0x${string}`;
 const a=new PositionTree(3,id), b=new old.Tree(3,id);

@@ -1,5 +1,5 @@
 import { ccc } from '@ckb-ccc/core';
-import { cat, le, read, standard, UNIT } from './market.ts';
+import { cat, le, read, standard, UNIT } from './pudge/market.ts';
 import { PositionTree, encodePosition } from './r7-tree.ts';
 
 // Callers must recover the latest live vault and owner cell immediately before signing.

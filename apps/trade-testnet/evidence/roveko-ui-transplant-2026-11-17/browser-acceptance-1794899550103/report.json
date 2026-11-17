@@ -1,0 +1,188 @@
+{
+  "capturedAt": "2026-11-17T07:12:30.369Z",
+  "base": "http://127.0.0.1:3000",
+  "qualification": "Anonymous UI checks only; no wallet connection or transaction request.",
+  "routes": [
+    {
+      "locale": "en",
+      "route": "/",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 18683,
+      "screenshot": "en-desktop-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 956,
+      "screenshot": "en-desktop-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/portfolio",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 634,
+      "screenshot": "en-desktop-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/activity",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 1532,
+      "screenshot": "en-desktop-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/launch",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 724,
+      "screenshot": "en-desktop-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 662,
+      "screenshot": "en-mobile-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 814,
+      "screenshot": "en-mobile-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/portfolio",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 702,
+      "screenshot": "en-mobile-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/activity",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 618,
+      "screenshot": "en-mobile-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/launch",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 605,
+      "screenshot": "en-mobile-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 1562,
+      "screenshot": "zh-CN-desktop-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 940,
+      "screenshot": "zh-CN-desktop-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/portfolio",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 672,
+      "screenshot": "zh-CN-desktop-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/activity",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 682,
+      "screenshot": "zh-CN-desktop-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/launch",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 671,
+      "screenshot": "zh-CN-desktop-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 714,
+      "screenshot": "zh-CN-mobile-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 748,
+      "screenshot": "zh-CN-mobile-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/portfolio",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 616,
+      "screenshot": "zh-CN-mobile-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/activity",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 621,
+      "screenshot": "zh-CN-mobile-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/launch",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 646,
+      "screenshot": "zh-CN-mobile-launch.png",
+      "horizontalOverflow": false
+    }
+  ],
+  "pageErrors": []
+}

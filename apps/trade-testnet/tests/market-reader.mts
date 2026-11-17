@@ -4,7 +4,7 @@ import {
   marketIdentity,
   routeFromUrl,
   routeUrl,
-} from "../lib/market-reader.ts";
+} from "../lib/pudge/market-reader.ts";
 const id = "0x" + "ab".repeat(32);
 for (const value of [
   id,

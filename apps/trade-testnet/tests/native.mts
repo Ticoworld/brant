@@ -4,16 +4,16 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { spawn } from "node:child_process";
 import assert from "node:assert/strict";
-import { discoverMarkets, marketView } from "../lib/market-reader.ts";
+import { discoverMarkets, marketView } from "../lib/pudge/market-reader.ts";
 import {
   reviewLiveInputs,
   requireUnchanged,
   requirePublicApproval,
-} from "../lib/approval.ts";
+} from "../lib/pudge/approval.ts";
 import { cccA } from "@ckb-ccc/core/advanced";
 import { chromium } from "playwright-core";
 import { ccc } from "@ckb-ccc/core";
-import * as M from "../lib/market.ts";
+import * as M from "../lib/pudge/market.ts";
 const require = createRequire(import.meta.url),
   { Engine } = require("../../../labs/wo09-e2-capacity/src/engine.cjs"),
   C = require("../../../labs/rebuild/native/src/lib.cjs");

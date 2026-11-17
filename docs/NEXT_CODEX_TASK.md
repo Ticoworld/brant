@@ -1,19 +1,29 @@
-# Next milestone: consumer-product integration
+# Handoff: Roveko consumer-product rebuild — 2026-11-17
 
-The Pudge deployment, market initialization, one wallet-approved Buy and Sell, and chain-state recovery are completed owner milestones. The migration archive preserves exact transaction records; read-only public RPC checks on 2026-11-17 confirmed all 8 saved transaction references committed and verified the deployment and live market recovery. Do not repeat those transactions or redeploy.
+The current work order is complete and intentionally partial. The product shell and public backed-claim market display are implemented; the intended fungible-token bonding-curve market is not. Do not repeat the deployment/initialization/owner-acceptance milestone or use its backed-claim transactions as evidence of token swaps.
 
-## Objective
+## Verified delivery
 
-Integrate the confirmed public Pudge market into the trader-facing product:
+- Active UI routes: Discover, Market, Portfolio, Activity, and Launch. The pinned Raydium donor hierarchy and responsive behavior were translated to Tailwind v4 without Chakra or Emotion. Old public `/v2`, `/claims`, `/fixture`, `/experience-fixture`, and R7 demo pages are retired; gated R7 research APIs and independent labs remain.
+- Production build, typecheck, market-route parser, snapshot restore checks, and anonymous browser acceptance passed. Browser evidence is in `apps/trade-testnet/evidence/roveko-ui-transplant-2026-11-17/browser-acceptance-1794901948874` (20 route/viewport/locale captures, zero page errors, zero horizontal overflow).
+- Persisted-cache restart verification passed. Full history replay took 58,288 ms; after stopping and restarting the production server, persisted state reconstruction plus live deployment/Cell/root revalidation took 7,342 ms.
+- No deploy, signing, or broadcast occurred.
 
-- Load public markets automatically without manual verification.
-- Provide one clear Buy/Sell action with wallet approval and automatic status tracking.
-- Show real price history and curve charts.
-- Make the trading UI consistent and readable.
-- Implement real Portfolio and Activity screens.
-- Remove technical and debug interfaces from normal trader workflows.
+## Current market and token support
 
-Keep current trading contract behavior, wallet review/signing safeguards, chain-state recovery, and existing public Pudge data. Do not execute another product work order or redeploy during this integration task. Public market reads should remain read-only until a new owner-approved transaction is necessary.
+- Displayed market: `Pudge backed-claim market`, identity `0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6`, code hash `0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f`, initialization transaction `0x9fadc8cf7bc2b1af4350da6f24c120a770c5394122ecfe7ea92cf80fa7706ddd`.
+- The active deployment is the `TCM0002` backed-claim contract: it stores CKB contributions and backing in claim positions and supports activation, redemption, paid assignment, refund, and closure. It has no fungible-token inventory, minting, or bonding-curve price function, which is why the product displays a backed claim.
+- The committed public history includes deployment `0x1805b0fda22fd144dced70963cb8396d778b6cba2eb7325c81290f615c070dd8`; contributions `0xc043f3ba7521dd9d5c27d3c558647c96cdc962d1e078a157ad282f591eda9226`, `0x20ccf5427ea835baa51a010974ad8010833849c3b97e168ac733817729cf6d48`, and `0x01d506c096e52a90eec5f6dbabe70b4d9ff79a4f3e70a95e99c3ac58165ce6cf`; refund `0x3d096e6c74ddc787d44568d5e60710d30203d9626b3ce2f009590ba48c629c16`; activation `0x14454445224c004844954e4a713c32ef54f7c199120239a2b496574b967a80a1`; and paid assignment/current market Cell `0x3fa9dd0155936e0dacc9bf5e57a4785c3d6d66191a7560f1ff5ec6a6b04954f3`. The owner-reported Buy/Sell labels are not attached to individual hashes; these recovered operations are not token swaps.
+- Existing token-engine source is preserved in `apps/trade-testnet/lib/v2-engine`: `curve.ts` computes curve quotes; `transaction.ts` builds token/capacity transitions; `review.ts` checks reviewed buy/sell proof fields; `pudge-manifest.ts`, `pudge-history.ts`, and related proof/lineage modules support deployment identity and recovery. This separate source path is not the deployed backed-claim contract or active UI trading path.
+
+## Remaining
+
+- Identify and verify the intended fungible-token bonding-curve deployment and exact market/token identity.
+- Integrate its existing token engine and wallet review/recovery path into the product only after that identity is established.
+- Implement real token price history, durable Activity, and wallet-backed Portfolio behavior.
+- Obtain a new, explicitly scoped owner approval before any future public-chain transaction.
+
+Public-chain reads remain read-only. Do not use mainnet, import keys, deploy, sign, broadcast, or claim production readiness, liquidity, broad wallet compatibility, security audit, or profitable economics based on this partial delivery.
 
 ## Verified baseline
 

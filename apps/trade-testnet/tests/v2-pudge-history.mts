@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
-import {POST} from '../app/api/v2/pudge-init-proof/route.ts';
+import {POST} from '../lib/v2-engine/retired-api/v2-pudge-init-proof.ts';
 import {prepareCodeDeployment} from '../lib/v2-engine/deployment.ts';
 import {deriveMarketIdentity,buildInitializationSetup,buildIssuance,buildFirstPurchase} from '../lib/v2-engine/initialization.ts';
 import {recoverPudgeHistory} from '../lib/v2-engine/pudge-history.ts';

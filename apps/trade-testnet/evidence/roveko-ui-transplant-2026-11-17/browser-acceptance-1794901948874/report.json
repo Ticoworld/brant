@@ -1,0 +1,340 @@
+{
+  "capturedAt": "2026-11-17T07:52:29.314Z",
+  "base": "http://127.0.0.1:3000",
+  "qualification": "Anonymous UI checks only; no wallet connection or transaction request.",
+  "routes": [
+    {
+      "locale": "en",
+      "route": "/",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 13182,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 11347
+        }
+      ],
+      "screenshot": "en-desktop-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 967,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 12
+        },
+        {
+          "path": "/api/pudge/history",
+          "durationMs": 17
+        },
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 9
+        }
+      ],
+      "screenshot": "en-desktop-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/portfolio",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 734,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        }
+      ],
+      "screenshot": "en-desktop-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/activity",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 733,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 20
+        }
+      ],
+      "screenshot": "en-desktop-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/launch",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 795,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 39
+        }
+      ],
+      "screenshot": "en-desktop-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 1029,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 11
+        }
+      ],
+      "screenshot": "en-mobile-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 875,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 8
+        },
+        {
+          "path": "/api/pudge/history",
+          "durationMs": 10
+        },
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 7
+        }
+      ],
+      "screenshot": "en-mobile-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/portfolio",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 698,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        }
+      ],
+      "screenshot": "en-mobile-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/activity",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 657,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 8
+        }
+      ],
+      "screenshot": "en-mobile-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "en",
+      "route": "/launch",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 735,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 7
+        }
+      ],
+      "screenshot": "en-mobile-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 1351,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 8
+        }
+      ],
+      "screenshot": "zh-CN-desktop-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 809,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 10
+        },
+        {
+          "path": "/api/pudge/history",
+          "durationMs": 9
+        },
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 10
+        }
+      ],
+      "screenshot": "zh-CN-desktop-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/portfolio",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 557,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 8
+        }
+      ],
+      "screenshot": "zh-CN-desktop-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/activity",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 475,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 7
+        }
+      ],
+      "screenshot": "zh-CN-desktop-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/launch",
+      "width": 1440,
+      "height": 1000,
+      "elapsedMs": 502,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        }
+      ],
+      "screenshot": "zh-CN-desktop-launch.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 499,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 8
+        }
+      ],
+      "screenshot": "zh-CN-mobile-discover.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/market/0x3d313a3ddcc655d2fd30344b0d97d0bdf845da2ca33bc067c783cf8ad63d30a6",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 553,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        },
+        {
+          "path": "/api/pudge/history",
+          "durationMs": 7
+        },
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        }
+      ],
+      "screenshot": "zh-CN-mobile-market.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/portfolio",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 435,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 7
+        }
+      ],
+      "screenshot": "zh-CN-mobile-portfolio.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/activity",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 445,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 6
+        }
+      ],
+      "screenshot": "zh-CN-mobile-activity.png",
+      "horizontalOverflow": false
+    },
+    {
+      "locale": "zh-CN",
+      "route": "/launch",
+      "width": 390,
+      "height": 844,
+      "elapsedMs": 446,
+      "apiCalls": [
+        {
+          "path": "/api/pudge/market-state",
+          "durationMs": 7
+        }
+      ],
+      "screenshot": "zh-CN-mobile-launch.png",
+      "horizontalOverflow": false
+    }
+  ],
+  "pageErrors": []
+}
