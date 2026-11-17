@@ -1,4 +1,39 @@
-# Active milestone: Pudge Testnet owner acceptance
+# Next milestone: consumer-product integration
+
+The Pudge deployment, market initialization, one wallet-approved Buy and Sell, and chain-state recovery are completed owner milestones. The migration archive preserves exact transaction records; read-only public RPC checks on 2026-11-17 confirmed all 8 saved transaction references committed and verified the deployment and live market recovery. Do not repeat those transactions or redeploy.
+
+## Objective
+
+Integrate the confirmed public Pudge market into the trader-facing product:
+
+- Load public markets automatically without manual verification.
+- Provide one clear Buy/Sell action with wallet approval and automatic status tracking.
+- Show real price history and curve charts.
+- Make the trading UI consistent and readable.
+- Implement real Portfolio and Activity screens.
+- Remove technical and debug interfaces from normal trader workflows.
+
+Keep current trading contract behavior, wallet review/signing safeguards, chain-state recovery, and existing public Pudge data. Do not execute another product work order or redeploy during this integration task. Public market reads should remain read-only until a new owner-approved transaction is necessary.
+
+## Verified baseline
+
+- Pudge genesis: `0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606`.
+- Deployed code hash: `0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f`.
+- Deployment: `0x1805b0fda22fd144dced70963cb8396d778b6cba2eb7325c81290f615c070dd8:0`.
+- Market initialization: `0x9fadc8cf7bc2b1af4350da6f24c120a770c5394122ecfe7ea92cf80fa7706ddd`.
+- Current live market Cell: `0x3fa9dd0155936e0dacc9bf5e57a4785c3d6d66191a7560f1ff5ec6a6b04954f3:0`.
+- The protected migration archive contains raw records for all 8 saved Pudge transaction references. All were reported committed by read-only public RPC on 2026-11-17.
+- Existing private-chain browser acceptance remains distinct from public Pudge evidence. A served route or mock-RPC test does not establish UX completion or public-chain acceptance.
+
+## Evidence labels and limits
+
+Label every new result **VERIFIED**, **DERIVED**, **HYPOTHESIS**, or **UNIMPLEMENTED**. Preserve prior evidence. Do not claim broad wallet compatibility, security audit, production readiness, liquidity, or profitable exchange economics based on the completed owner transaction flow.
+
+---
+
+# Historical handoff: Pudge Testnet owner acceptance (completed)
+
+The checklist below is preserved as historical context from 2026-11-15. Do not restart the completed acceptance milestone.
 
 ## Objective
 

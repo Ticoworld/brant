@@ -1,4 +1,24 @@
-# Current state update — 2026-11-15
+# Current state update — 2026-11-17
+
+## Roveko public Pudge baseline
+
+- **VERIFIED (read-only public RPC):** Pudge genesis is `0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606`. Code hash `0x53277b69232d6856a0de486e3950e20adc8a4ed4c3c909f511ec3f9827c5cb1f` was deployed at `0x1805b0fda22fd144dced70963cb8396d778b6cba2eb7325c81290f615c070dd8:0`. Market initialization transaction is `0x9fadc8cf7bc2b1af4350da6f24c120a770c5394122ecfe7ea92cf80fa7706ddd`.
+- **VERIFIED (read-only public RPC, 2026-11-17):** the 8 transaction records in the protected local archive were all returned as committed. `M.verifyDeployment` and `M.recover` confirmed the deployed code and current market. Current market Cell is `0x3fa9dd0155936e0dacc9bf5e57a4785c3d6d66191a7560f1ff5ec6a6b04954f3:0`; recovered state is phase 1, 2 slots, minimum 12,500,000 shannons, goal 25,000,000 shannons, P=25,000,000, B=20,000,000, count=2.
+- **VERIFIED (owner-reported public acceptance; transaction commitment checked read-only):** the owner reports one wallet-approved Buy and Sell followed by chain-state recovery. The raw public transaction history and receipts are preserved in `C:\Users\timot\Desktop\2026\CKB\_RovekoMigrationArchive_20261117\external-records\TradePudgeSecrets\wo14-public-transaction-history.json`. The records do not label each trade action, so this migration does not assign individual hashes to Buy or Sell. No transaction was signed, broadcast, or repeated during consolidation.
+- **VERIFIED (source/configuration):** `apps/trade-testnet/public/pudge.json` now identifies the confirmed code outpoint and enables its existing reviewed public signing path. This records the deployed contract; it is not a production-readiness claim.
+- **UNIMPLEMENTED / NOT ESTABLISHED:** broad external-wallet compatibility, independent public chain acceptance for additional wallets, security audit, production readiness, liquidity, and business viability. Serving application routes does not establish complete UX or public-chain acceptance.
+
+## Active product milestone
+
+The next task is consumer-product integration: automatic public market loading without manual verification; one clear Buy/Sell action with wallet approval and automatic status tracking; real price history and curve charts; consistent, readable trading UI; real Portfolio and Activity screens; and removal of technical/debug interfaces from normal trader workflows. Do not redeploy contracts or repeat completed public transactions during that work.
+
+## Historical protocol research state
+
+The 2026-11-15 product and protocol notes below are retained as historical evidence and must not override the public Pudge checks above. WO04-E1 remains PARTIAL MECHANISM with critical proof remaining; canonical Ethereum consensus/finality on CKB is UNIMPLEMENTED.
+
+---
+
+# Historical current state update — 2026-11-15
 
 ## Roveko baseline
 
@@ -22,7 +42,7 @@ The notes below preserve protocol-research state. Historical experiment conclusi
 
 ---
 
-# Current rebuild pointer — 2026-11-01
+# Historical rebuild pointer — 2026-11-01
 
 WO05–WO08 comprehensive native reconstruction is isolated in labs/rebuild on rebuild/wo05-wo08. Read REBUILD_WO05_WO08_STATUS.md, TRADE_CAPABILITY_REGISTRY.md and WO09_READINESS.md for current evidence and limits. Substantial compact/hybrid, clearing, commitment/revocation, launch/quote/economic and DAO proofs are preserved; arbitrary-history authenticated recovery/LO-01 remains unresolved/blocked. Full recovery/readiness is not claimed and no WO09 implementation has begun.
 
@@ -30,7 +50,7 @@ The original WO01–WO04 foundation state below is preserved as historical conte
 
 ---
 
-# Current project state — October 30, 2026
+# Historical project state — October 30, 2026
 
 ## Goal
 Find whether native CKB can support a safer, faster, more capital-efficient trading business than available alternatives. Candidate customer jobs: one-off native-asset delivery, and repeated funded-session trading. No customer demand, maker commitments, executable competitive quotes, or profitability have been proven.

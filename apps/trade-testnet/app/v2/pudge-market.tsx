@@ -26,6 +26,8 @@ export default function PudgeMarket(){
  useEffect(()=>{if(process.env.NODE_ENV==='production'||process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK!=='1'||!['127.0.0.1','localhost','[::1]'].includes(window.location.hostname))return;const w=window as unknown as {rovPudgeTestConnect?:(s:typeof connectedSigner)=>void};w.rovPudgeTestConnect=setTestSigner;return()=>{delete w.rovPudgeTestConnect;};},[]);
  const [address,setAddress]=useState(''),[message,setMessage]=useState('Connect a wallet and verify the market.'),[side,setSide]=useState<Side>('buy'),[quantity,setQuantity]=useState(''),[review,setReview]=useState<(Awaited<ReturnType<typeof prepareLocalReview>>&{owner:string;side:Side;quantity:bigint})|null>(null),[approved,setApproved]=useState(false),[signedReady,setSignedReady]=useState(false),[pending,setPending]=useState(false),[backup,setBackup]=useState(''),[savedAttempt,setSavedAttempt]=useState('');
  const [market,setMarket]=useState<Awaited<ReturnType<typeof readLiveSingletons>>|null>(null),[marketFresh,setMarketFresh]=useState(false),[verifiedAt,setVerifiedAt]=useState(''),signed=useRef<ccc.Transaction|null>(null),revision=useRef(0);
+ const refreshGeneration=useRef(0),refreshing=useRef<number|null>(null);
+ const [marketStatus,setMarketStatus]=useState<'connecting'|'loading'|'ready'|'stale'|'error'>('connecting');
  const [busy,setBusy]=useState<'prepare'|'sign'|'broadcast'|null>(null);
  async function runAction(action:'prepare'|'sign'|'broadcast',fn:()=>Promise<void>){if(busy)return;setBusy(action);try{await fn();}finally{setBusy(null);}}
  const marginal=(side:Side)=>{if(!market)return '—';try{return ckb(quote(market.curve,side,1n));}catch{return '—';}};
@@ -33,7 +35,7 @@ export default function PudgeMarket(){
  const initialProof=verifyPudgeInitialProof;
  const config=async()=>{const raw=localStorage.getItem(PUDGE_MARKET_KEY);if(!raw)throw Error('No verified Pudge market manifest; complete or restore deployment first');return loadPudgeManifest(rpc,raw,initialProof);};
  async function wallet(){const current=active.current;if(!current||!await current.isConnected())throw Error('Connect a Pudge wallet');const a=await current.getRecommendedAddressObj();if((await current.client.getHeaderByNumber(0))?.hash!==genesis||await rpc('get_block_hash',['0x0'])!==genesis||active.current!==current)throw Error('Wallet account or network changed');return {current,address:a,owner:a.script.hash()};}
- async function refresh(){try{
+ async function refresh(){const generation=refreshGeneration.current;if(refreshing.current===generation)return;refreshing.current=generation;setMarketStatus('loading');try{
   const w=await wallet(),manifest=await config();
   const [m]=await Promise.all([discoverMarketPair(rpc,[manifest.initial[0],manifest.initial[1]])]);
   let c:Awaited<ReturnType<typeof discoverCustodyPair>>,proofRoot:string|undefined;
@@ -48,9 +50,16 @@ export default function PudgeMarket(){
   const script=(s:{code_hash:string;hash_type:string;args:string})=>ccc.Script.from({codeHash:s.code_hash,hashType:s.hash_type as ccc.HashType,args:s.args});
   const locks=[manifest.scripts.market,manifest.scripts.market,manifest.scripts.custody,manifest.scripts.custody],types=[manifest.scripts.token,manifest.scripts.marker,manifest.scripts.token,manifest.scripts.custodyMarker];
   if(live.cells.some((c,i)=>script(c.output.lock).hash()!==locks[i].hash()||!c.output.type||script(c.output.type as {code_hash:string;hash_type:string;args:string}).hash()!==types[i].hash())||(proofRoot&&live.custodyRoot.toLowerCase()!==proofRoot.toLowerCase()))throw Error('Market identity changed');
-  if(active.current!==w.current)throw Error('Wallet changed');setMarket(live);setMarketFresh(true);setVerifiedAt(new Date().toLocaleString());setAddress(w.address.toString());const raw=localStorage.getItem(tradeKey(genesis,w.owner));setSavedAttempt(raw||'');setPending(!!raw);setMessage(raw?t('reconcileBeforeRetry'):t('marketLoadedOwnerProofOnDemand'));
- }catch(e){setMarketFresh(false);setMessage(e instanceof Error?e.message:'Market unavailable');}}
- useEffect(()=>{if(!signer){setMarketFresh(false);setAddress('');setReview(null);setApproved(false);signed.current=null;setSignedReady(false);return;}let cancelled=false;(async()=>{try{const a=await signer.getRecommendedAddressObj();if(cancelled)return;setAddress(a.toString());const raw=localStorage.getItem(tradeKey(genesis,a.script.hash()));setPending(!!raw);setSavedAttempt(raw||'');await refresh();}catch(e){if(!cancelled){setMarketFresh(false);setAddress('');setMessage(e instanceof Error?e.message:'Market verification failed');}}})();return()=>{cancelled=true;};},[signer]);
+  if(active.current!==w.current||generation!==refreshGeneration.current)return;setMarket(live);setMarketFresh(true);setMarketStatus('ready');setVerifiedAt(new Date().toLocaleString());setAddress(w.address.toString());const raw=localStorage.getItem(tradeKey(genesis,w.owner));setSavedAttempt(raw||'');setPending(!!raw);setMessage(raw?t('reconcileBeforeRetry'):t('marketLoadedOwnerProofOnDemand'));
+ }catch(e){if(generation!==refreshGeneration.current)return;setMarketFresh(false);setMarketStatus('error');setMessage(e instanceof Error?`Market refresh failed: ${e.message}`:'Market refresh failed. Retrying automatically.');}finally{if(refreshing.current===generation)refreshing.current=null;}}
+ useEffect(()=>{
+  const generation=++refreshGeneration.current;
+  if(!signer){setMarketFresh(false);setMarketStatus('connecting');setAddress('');setReview(null);setApproved(false);signed.current=null;setSignedReady(false);return;}
+  let cancelled=false,timer:ReturnType<typeof setTimeout>|undefined;
+  const run=async()=>{if(cancelled||generation!==refreshGeneration.current)return;await refresh();if(!cancelled)timer=setTimeout(run,10000);};
+  void run();
+  return()=>{cancelled=true;refreshGeneration.current++;if(timer)clearTimeout(timer);};
+ },[signer]);
  async function prepareInternal(s:Side,q:bigint){const w=await wallet(),manifest=await config();if(localStorage.getItem(tradeKey(genesis,w.owner))!==null)throw Error('A previous trade requires reconciliation');const next=await prepareLocalReview(rpc,manifest,w.owner,s,q,w.address.script);if(active.current!==w.current||!await w.current.isConnected()||(await w.current.getRecommendedAddressObj()).script.hash().toLowerCase()!==w.owner.toLowerCase()||(await w.current.client.getHeaderByNumber(0))?.hash!==genesis||await rpc('get_block_hash',['0x0'])!==genesis||localStorage.getItem(tradeKey(genesis,w.owner))!==null)throw Error('Wallet, network or trade attempt changed');return {...next,owner:w.owner,side:s,quantity:q};}
  async function prepare(){try{signed.current=null;setSignedReady(false);setApproved(false);setReview(null);if(!/^[1-9][0-9]*$/.test(quantity))throw Error('Enter a positive token quantity');setMessage('Reconstructing canonical market proof…');const currentRevision=revision.current,next=await prepareInternal(side,BigInt(quantity));if(revision.current!==currentRevision)throw Error('Trade terms changed; review again');setReview(next);setMarket(next.live);setMessage('Review the transaction before requesting a wallet signature.');}catch(e){setMessage(e instanceof Error&&e.message==='Canonical proof unavailable'?t('ownerHistoryProofUnavailable'):e instanceof Error?e.message:'Trade preparation failed');}}
  async function fresh(){if(!review)throw Error('Prepare a review first');const next=await prepareInternal(review.side,review.quantity);if(next.owner.toLowerCase()!==review.owner.toLowerCase()||next.transaction.hash()!==review.transaction.hash()||next.transaction.witnesses.length!==review.transaction.witnesses.length||next.transaction.witnesses.some((w,i)=>w.toLowerCase()!==review.transaction.witnesses[i].toLowerCase()))throw Error('Market, funding or proof changed; review again');}
@@ -70,7 +79,7 @@ export default function PudgeMarket(){
      </div>
      <div className="flex items-center gap-4 text-xs">
       {market&&<><span><span className="text-[#8fa096]">{t('marginalBuyPrice')}</span> <b className="ml-1 tabular-nums text-[#dce8df]">{marginal('buy')}</b></span><span><span className="text-[#8fa096]">{t('marketCapacity')}</span> <b className="ml-1 tabular-nums text-[#dce8df]">{ckb(BigInt(market.cells[0].output.capacity))}</b></span></>}
-      <span className="inline-flex items-center gap-2 text-[#b6c1ba]"><i className={`size-1.5 rounded-full ${marketFresh?'bg-[#72dfb0]':'bg-[#e2bb71]'}`}/>{marketFresh?t('deploymentConfigured'):market?`Last verified ${verifiedAt}; refresh required`:t('deploymentUnverified')}</span>
+      <span className="inline-flex items-center gap-2 text-[#b6c1ba]"><i className={`size-1.5 rounded-full ${marketFresh?'bg-[#72dfb0]':'bg-[#e2bb71]'}`}/>{marketFresh?t('deploymentConfigured'):market?`Stale · last verified ${verifiedAt}`:marketStatus==='connecting'?'Connecting wallet…':marketStatus==='loading'?'Loading market…':'Market refresh failed'}</span>
      </div>
     </div>
     <div className="grid min-h-[calc(100vh-296px)] grid-cols-1 gap-3 py-3 md:min-h-[calc(100vh-224px)] md:grid-cols-[minmax(0,1fr)_340px] md:gap-4">
@@ -83,11 +92,11 @@ export default function PudgeMarket(){
        <div className="flex max-w-xl flex-col items-center gap-4">
         <span aria-hidden="true" className="grid size-11 place-items-center border border-[#34443c] text-lg text-[#8fa096]">—</span>
         <div className="space-y-2">
-         <p className="m-0 text-base font-semibold text-[#e2eae4]">{market?t('priceHistory'):t('marketUnavailableTitle')}</p>
-         <p className="m-0 text-sm leading-6 text-[#9eaaa2]">{market?t('unavailable'):t('marketUnavailableDetail')}</p>
+         <p className="m-0 text-base font-semibold text-[#e2eae4]">{market?t('priceHistory'):marketStatus==='connecting'?'Connecting wallet':marketStatus==='loading'?'Loading market': 'Market temporarily unavailable'}</p>
+         <p className="m-0 text-sm leading-6 text-[#9eaaa2]">{market?t('unavailable'):marketStatus==='error'?'Could not verify the market. Retrying automatically.':'Checking the saved market and current chain state.'}</p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
-         <button onClick={refresh} disabled={!signer} className="min-h-9 border border-[#506459] px-3 text-xs text-[#dbe6df] disabled:cursor-not-allowed disabled:opacity-50">{t('verifyMarketFirst')}</button>
+         <button onClick={refresh} disabled={!signer} className="min-h-9 border border-[#506459] px-3 text-xs text-[#dbe6df] disabled:cursor-not-allowed disabled:opacity-50">{marketStatus==='loading'?'Refreshing…':'Retry refresh'}</button>
          <a href="/" className="inline-flex min-h-9 items-center border border-[#506459] px-3 text-xs text-[#dbe6df] no-underline hover:bg-[#18251e]">{t('discover')}</a>
          <a href="/v2/deploy" className="inline-flex min-h-9 items-center bg-[#72dfb0] px-3 text-xs font-semibold text-[#102219] no-underline hover:bg-[#8de8c0]">{t('deployTestMarket')}</a>
         </div>
