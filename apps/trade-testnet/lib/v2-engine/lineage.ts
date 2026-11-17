@@ -74,6 +74,23 @@ export async function recoverMarketHistory(rpc:Rpc,initial:[Point,Point],options
  if(!result)throw Error('Indexed market successor is unavailable');
  return result;
 }
+/** Extend a previously verified market checkpoint by walking only confirmed
+ * successors back to its canonical anchor. The returned lineage starts at the
+ * checkpoint transaction and ends at the currently live pair. */
+export async function recoverMarketSuccessors(rpc:Rpc,checkpoint:[Point,Point],options:{maxIndexedDepth?:number}={}) {
+ if(checkpoint[0].tx_hash.toLowerCase()!==checkpoint[1].tx_hash.toLowerCase())throw Error('Invalid market checkpoint pair');
+ const saved=await rpc('get_transaction',[checkpoint[0].tx_hash]) as {tx_status?:{status?:string;block_hash?:string};transaction?:Tx};
+ if(saved.tx_status?.status!=='committed'||!saved.tx_status.block_hash||!saved.transaction)throw Error('Market checkpoint anchor is not committed');
+ const parsed=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(saved.transaction as never));
+ if(parsed.hash().toLowerCase()!==checkpoint[0].tx_hash.toLowerCase()||saved.transaction.hash.toLowerCase()!==checkpoint[1].tx_hash.toLowerCase())throw Error('Market checkpoint transaction hash mismatch');
+ const a=saved.transaction.outputs[Number(BigInt(checkpoint[0].index))],b=saved.transaction.outputs[Number(BigInt(checkpoint[1].index))];
+ if(!a?.type||!b?.type||!same(a.lock,b.lock)||same(a.type,b.type))throw Error('Invalid market checkpoint outputs');
+ const tip=await rpc('get_tip_header',[]) as {number:string;hash:string};
+ if(!tip?.number||!tip.hash)throw Error('Market chain tip unavailable');
+ const result=await indexedPair(rpc,checkpoint,a,b,tip,options.maxIndexedDepth??256);
+ if(!result)throw Error('Indexed market successor is unavailable');
+ return result;
+}
 /** Scan canonical blocks from initialization to locate the separately evolving
  * market pair. The full-node tip is checked again to detect reorganizations. */
 export async function discoverMarketPair(rpc:Rpc, initial:[Point,Point],options:{indexedOnly?:boolean;maxIndexedDepth?:number}={}) {

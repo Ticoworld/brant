@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { discoverMarketPair, discoverCustodyPair } from '../lib/v2-engine/lineage.ts';
+import { discoverMarketPair, discoverCustodyPair, recoverMarketSuccessors } from '../lib/v2-engine/lineage.ts';
 import { ccc } from '@ckb-ccc/core';
 import { cccA } from '@ckb-ccc/core/advanced';
 const hash=(c:string)=>'0x'+c.repeat(64), p=(c:string,i:number)=>({tx_hash:hash(c),index:'0x'+i.toString(16)});
@@ -53,8 +53,10 @@ const indexedRpc=async(method:string,args:unknown[])=>{
  throw Error(method);
 };
 assert.deepEqual(await discoverMarketPair(indexedRpc,[p0,p1]),[{tx_hash:moveHash,index:'0x0'},{tx_hash:moveHash,index:'0x1'}]);assert.ok(blockCalls<=3);
+const extended=await recoverMarketSuccessors(indexedRpc,[p0,p1]);assert.deepEqual(extended.pair,[{tx_hash:moveHash,index:'0x0'},{tx_hash:moveHash,index:'0x1'}]);assert.deepEqual(extended.lineage.map(row=>row.transaction.hash),[initialHash,moveHash]);
 forged=true;await assert.rejects(()=>discoverMarketPair(indexedRpc,[p0,p1]),/not in canonical block/);
 forged=false;
 await assert.rejects(()=>discoverMarketPair(async(m,a)=>{const value=await indexedRpc(m,a);if(m==='get_transaction'&&a[0]===moveHash){const r=value as {transaction:ReturnType<typeof raw>};return {...r,transaction:{...r.transaction,outputs_data:['0x01','0x']}};}return value;},[p0,p1]),/transaction hash mismatch/);
 await assert.rejects(()=>discoverMarketPair(async(m,a)=>{if(m==='get_block_hash'&&a[0]==='0x2')return hash('f');return indexedRpc(m,a);},[p0,p1]),/block changed|reorganized/);
+await assert.rejects(()=>recoverMarketSuccessors(async(m,a)=>m==='get_block_hash'&&a[0]==='0x2'?hash('f'):indexedRpc(m,a),[p0,p1]),/block changed|reorganized/);
 console.log('Indexed market lineage checks passed');

@@ -1,13 +1,16 @@
+import {randomUUID} from 'node:crypto';
+import {mkdir,readFile,rename,rm,stat,writeFile} from 'node:fs/promises';
+import path from 'node:path';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {quote,decodeCurve} from './v2-engine/curve.ts';
-import {discoverCustodyPair,discoverMarketPair,recoverMarketHistory,type Point} from './v2-engine/lineage.ts';
+import {discoverCustodyPair,discoverMarketPair,recoverMarketHistory,recoverMarketSuccessors,type Point} from './v2-engine/lineage.ts';
 import {deriveMarketIdentity} from './v2-engine/initialization.ts';
 import {loadPudgeManifest} from './v2-engine/pudge-manifest.ts';
 import {resolvePudgeTokenMetadata} from './pudge-market-metadata.ts';
 import {deriveMarketLiquidity} from './v2-engine/market-capacity.ts';
 import {verifyPudgeInitialProof} from './v2-engine/pudge-proof-client.ts';
-import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_ATTEMPT,PUDGE_GATE2_BUY,PUDGE_GATE2_CODES,PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_JOURNAL,PUDGE_GATE2_OWNER,PUDGE_GATE2_SELL,PUDGE_GATE2_STAGE_TXS,PUDGE_GATE2_XUDT_DEP} from './v2-engine/pudge-public-registry.ts';
+import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_ATTEMPT,PUDGE_GATE2_BUY,PUDGE_GATE2_CODES,PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_JOURNAL,PUDGE_GATE2_OWNER,PUDGE_GATE2_REGISTRY_ID,PUDGE_GATE2_SELL,PUDGE_GATE2_STAGE_TXS,PUDGE_GATE2_XUDT_DEP} from './v2-engine/pudge-public-registry.ts';
 import type {MarketData,TradeEvent} from '../app/trader/types.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<any>;
@@ -37,8 +40,38 @@ function requestRpc():Rpc{
   };
 }
 
-function checkpoint(data:MarketData,points:Point[],cells:{output:Output;data:string}[],deps:unknown[],hashes:string[],manifestRaw?:string){
-  checkpoints.set(data.id,{data,points,cells,deps,hashes,...(manifestRaw?{manifestRaw}:{})});
+async function checkpoint(data:MarketData,points:Point[],cells:{output:Output;data:string}[],deps:unknown[],hashes:string[],manifestRaw?:string){
+  const saved={data,points,cells,deps,hashes,...(manifestRaw?{manifestRaw}:{})};
+  checkpoints.set(data.id,saved);
+  if(data.id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw)await persistMarketCheckpoint(saved).catch(()=>{});
+}
+
+function marketCheckpointPath(){
+  const directory=process.env.ROVEKO_PUDGE_PROOF_CACHE_DIR;
+  return directory?path.join(path.resolve(directory),'pudge-xudt-market.json'):undefined;
+}
+
+async function persistMarketCheckpoint(saved:Checkpoint){
+  const file=marketCheckpointPath();if(!file)return;
+  const directory=path.dirname(file),temporary=path.join(directory,`.pudge-xudt-market.${randomUUID()}.tmp`);
+  const payload=JSON.stringify(saved);if(Buffer.byteLength(payload)>8*1024*1024)return;
+  await mkdir(directory,{recursive:true,mode:0o700});
+  try{await writeFile(temporary,payload,{flag:'wx',mode:0o600});await rename(temporary,file);}
+  finally{await rm(temporary,{force:true}).catch(()=>{});}
+}
+
+async function readMarketCheckpoint(){
+  const file=marketCheckpointPath();if(!file)return null;
+  try{
+    const info=await stat(file);if(!info.isFile()||info.size>8*1024*1024)return null;
+    const saved=JSON.parse(await readFile(file,'utf8')) as Checkpoint;
+    if(saved?.data?.id!==PUDGE_GATE2_REGISTRY_ID||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
+    return saved;
+  }catch{return null;}
+}
+
+function gate2Identity(){
+  return deriveMarketIdentity({anchor:PUDGE_GATE2_ANCHOR,genesis:PUDGE_GATE2_GENESIS,base:1_000_000_000n,step:100_000_000n,supply:2_000n,codes:{market:PUDGE_GATE2_CODES.market,marker:PUDGE_GATE2_CODES.marker,owner:PUDGE_GATE2_CODES.ownerLock,custody:PUDGE_GATE2_CODES.custody,custodyMarker:PUDGE_GATE2_CODES.custodyMarker,xudt:PUDGE_GATE2_CODES.xudt}});
 }
 
 function dependencyPoint(value:any):Point{
@@ -49,19 +82,100 @@ function dependencyPoint(value:any):Point{
 }
 
 async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|null>{
-  const saved=checkpoints.get(id);if(!saved||saved.manifestRaw!==manifestRaw)return null;
+  let saved=checkpoints.get(id);
+  if(!saved&&id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw){saved=await readMarketCheckpoint()||undefined;if(saved)checkpoints.set(id,saved);}
+  if(!saved||saved.manifestRaw!==manifestRaw)return null;
   try{
     const [genesis,tip]=await Promise.all([rpc('get_block_hash',['0x0']) as Promise<string>,rpc('get_tip_header',[]) as Promise<{number:string;hash:string}>]);
     if(genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||!tip?.number||!tip.hash)return null;
+    if(id===PUDGE_GATE2_REGISTRY_ID){
+      const identity=gate2Identity(),data=saved.data,expectedHashes=[PUDGE_GATE2_CODES.custody,PUDGE_GATE2_CODES.market,PUDGE_GATE2_CODES.custodyMarker,PUDGE_GATE2_CODES.marker,PUDGE_GATE2_CODES.ownerLock,PUDGE_GATE2_CODES.xudt];
+      const expectedDeps=[...Array.from({length:5},(_,index)=>expectedPoint(PUDGE_GATE2_STAGE_TXS.code,index)),{tx_hash:PUDGE_GATE2_XUDT_DEP.outPoint.txHash,index:PUDGE_GATE2_XUDT_DEP.outPoint.index}];
+      if(data.id!==PUDGE_GATE2_REGISTRY_ID||data.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||data.identity.toLowerCase()!==identity.market.hash().toLowerCase()||data.token.typeHash.toLowerCase()!==identity.token.hash().toLowerCase()||saved.hashes.some((hash,index)=>hash.toLowerCase()!==expectedHashes[index])||saved.deps.some((dependency,index)=>!samePoint(dependencyPoint(dependency),expectedDeps[index]))||saved.points.some(point=>point.tx_hash.toLowerCase()!==saved!.points[0].tx_hash.toLowerCase()))return null;
+      const expectedScripts={market:identity.market,marker:identity.marker,owner:identity.owner,token:identity.token,custody:identity.custody,custodyMarker:identity.custodyMarker};
+      if(Object.entries(expectedScripts).some(([name,script])=>ccc.Script.from(data.manifest.scripts[name]).hash().toLowerCase()!==script.hash().toLowerCase())||data.manifest.scripts.markerData!==identity.markerData||data.manifest.scripts.custodyMarkerData!==identity.custodyMarkerData||data.manifest.genesis!==PUDGE_GATE2_GENESIS||data.manifest.initializationTransactionHash!==PUDGE_GATE2_INITIALIZATION||data.manifest.codeDeploymentTransactionHash!==PUDGE_GATE2_STAGE_TXS.code)return null;
+      const expectedToken=resolvePudgeTokenMetadata({genesis:PUDGE_GATE2_GENESIS,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:PUDGE_GATE2_INITIALIZATION});
+      if(data.token.name!==expectedToken.name||data.token.symbol!==expectedToken.symbol||data.token.metadata!==expectedToken.metadata||data.token.description!==expectedToken.description||data.pair!==`${expectedToken.symbol} / CKB`)return null;
+      if(!Array.isArray(data.manifest.initial)||data.manifest.initial.length!==4||data.manifest.initial.some((point:{tx_hash:string;index:string},index:number)=>point.tx_hash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION||BigInt(point.index)!==BigInt(index))||data.manifest.funding.txHash!==PUDGE_GATE2_INITIALIZATION||BigInt(data.manifest.funding.index)!==4n)return null;
+      const manifestDeps=[data.manifest.deps.custody_smt,data.manifest.deps.market_smt,data.manifest.deps.custody_marker,data.manifest.deps.marker_candidate,data.manifest.deps.owner_lineage_candidate,data.manifest.deps.xudt];
+      if(manifestDeps.some((dependency,index)=>!samePoint(dependencyPoint(dependency),expectedDeps[index])))return null;
+      if(BigInt(data.tip.number)>BigInt(tip.number))return null;
+      const journalBlocks=new Map(PUDGE_GATE2_JOURNAL.entries.map(entry=>[entry.txHash.toLowerCase(),entry.blockHash]));
+      const [anchor,issuance,oldTip]=await Promise.all([
+        canonical(saved.points[0].tx_hash,undefined),
+        canonical(PUDGE_GATE2_STAGE_TXS.issuance,journalBlocks.get(PUDGE_GATE2_STAGE_TXS.issuance)),
+        rpc('get_block_hash',[data.tip.number]) as Promise<string>,
+      ]);
+      if(oldTip.toLowerCase()!==data.tip.hash.toLowerCase())return null;
+      verifyOutput(issuance.transaction.outputs[0],issuance.transaction.outputs_data[0],identity.market,identity.token);
+      verifyOutput(issuance.transaction.outputs[1],issuance.transaction.outputs_data[1],identity.market,identity.marker);
+      for(let index=0;index<4;index++){
+        const point=saved.points[index],output=anchor.transaction.outputs[Number(BigInt(point.index))],content=anchor.transaction.outputs_data[Number(BigInt(point.index))];
+        if(!output||!content||!sameScript(output.lock,saved.cells[index].output.lock)||!sameScript(output.type,saved.cells[index].output.type)||BigInt(output.capacity)!==BigInt(saved.cells[index].output.capacity)||content.toLowerCase()!==saved.cells[index].data.toLowerCase())return null;
+      }
+      verifyOutput(anchor.transaction.outputs[Number(BigInt(saved.points[0].index))],anchor.transaction.outputs_data[Number(BigInt(saved.points[0].index))],identity.market,identity.token);
+      verifyOutput(anchor.transaction.outputs[Number(BigInt(saved.points[1].index))],anchor.transaction.outputs_data[Number(BigInt(saved.points[1].index))],identity.market,identity.marker);
+      verifyOutput(anchor.transaction.outputs[Number(BigInt(saved.points[2].index))],anchor.transaction.outputs_data[Number(BigInt(saved.points[2].index))],identity.custody,identity.token);
+      verifyOutput(anchor.transaction.outputs[Number(BigInt(saved.points[3].index))],anchor.transaction.outputs_data[Number(BigInt(saved.points[3].index))],identity.custody,identity.custodyMarker);
+      const marketIndex=Number(BigInt(saved.points[0].index)),custodyIndex=Number(BigInt(saved.points[2].index)),marketData=anchor.transaction.outputs_data[marketIndex],custodyData=anchor.transaction.outputs_data[custodyIndex];
+      if(anchor.transaction.outputs_data[Number(BigInt(saved.points[1].index))].toLowerCase()!==identity.markerData.toLowerCase()||anchor.transaction.outputs_data[Number(BigInt(saved.points[3].index))].toLowerCase()!==identity.custodyMarkerData.toLowerCase()||marketData.slice(34).toLowerCase()!==identity.custodyMarker.hash().slice(2).toLowerCase())return null;
+      const curve=decodeCurve(anchor.transaction.outputs[marketIndex].lock.args,marketData),supply=curve.supply,inventory=curve.inventory,custody=readLE(`0x${custodyData.slice(2,34)}`),root=`0x${custodyData.slice(34)}`;
+      if(curve.base!==1_000_000_000n||curve.step!==100_000_000n||supply!==2_000n||inventory+custody!==supply||root!==data.custodyRoot||inventory.toString()!==data.inventory||custody.toString()!==data.custody||supply.toString()!==data.supply||(supply-inventory).toString()!==data.circulating)return null;
+      const liquidity=marketLiquidity(anchor.transaction.outputs[marketIndex].capacity,issuance.transaction.outputs[0].capacity);
+      if(liquidity.reserveShannons!==data.reserveShannons||liquidity.marketCellCapacity!==data.marketCellCapacity||liquidity.marketCapacityFloorShannons!==data.marketCapacityFloorShannons||quote(curve,'buy',1n).toString()!==data.buyOneShannons||quote(curve,'sell',1n).toString()!==data.sellOneShannons)return null;
+    }
     const [liveCells,codeCells]=await Promise.all([
       Promise.all(saved.points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>)),
       Promise.all(saved.deps.map(async(dependency,index)=>({result:await rpc('get_live_cell',[dependencyPoint(dependency),true]) as {status?:string;cell?:{data?:{content?:string}}},index}))),
     ]);
-    if(liveCells.some((cell,index)=>cell.status!=='live'||!cell.cell||!sameScript(cell.cell.output.lock,saved.cells[index].output.lock)||!sameScript(cell.cell.output.type,saved.cells[index].output.type)||BigInt(cell.cell.output.capacity)!==BigInt(saved.cells[index].output.capacity)||cell.cell.data.content.toLowerCase()!==saved.cells[index].data.toLowerCase()))return null;
+    if(liveCells.some((cell,index)=>cell.status!=='live'||!cell.cell||!sameScript(cell.cell.output.lock,saved.cells[index].output.lock)||!sameScript(cell.cell.output.type,saved.cells[index].output.type)||BigInt(cell.cell.output.capacity)!==BigInt(saved.cells[index].output.capacity)||cell.cell.data.content.toLowerCase()!==saved.cells[index].data.toLowerCase())){
+      if(id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw)return await recoverCachedMarketSuccessors(saved,gate2Identity());
+      return null;
+    }
     if(codeCells.some(({result,index})=>result.status!=='live'||!result.cell?.data?.content||ccc.hashCkb(result.cell.data.content as ccc.Hex).toLowerCase()!==saved.hashes[index].toLowerCase()))return null;
     const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase())return null;
     const data={...saved.data,tip,refreshedAt:Date.now()};checkpoints.set(id,{...saved,data});return data;
   }catch{return null;}
+}
+
+async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnType<typeof deriveMarketIdentity>):Promise<MarketData|null>{
+  const previous=saved.data;
+  if(previous.historyState!=='verified'||!previous.history.length||previous.history.at(-1)?.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())return null;
+  const recovered=await recoverMarketSuccessors(rpc,[saved.points[0],saved.points[1]],{maxIndexedDepth:256});
+  const lineage=recovered.lineage;
+  if(!lineage.length||lineage[0].transaction.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())throw Error('Successor history does not start at the cached market anchor');
+  const history=[...previous.history];
+  for(let index=1;index<lineage.length;index++){
+    const prior=lineage[index-1].transaction as Transaction,next=lineage[index].transaction as Transaction,proof=parseTransition(next.witnesses[5]||''),side=proof.operation===1?'buy':proof.operation===4?'sell':null;
+    if(!side)throw Error('Unrecognized Gate 2 market successor operation');
+    const transition=transitionAmount(prior,next,identity,side,proof.operation),row=lineage[index];
+    history.push(event(next.hash,side,transition.owner,transition.quantity,transition.amount,BigInt(row.blockNumber),BigInt(row.timestampMs)));
+  }
+  const marketPair=recovered.pair,custodyPair=await discoverCustodyPair(rpc,{tx_hash:marketPair[0].tx_hash,index:'0x2'});
+  if(marketPair[0].tx_hash.toLowerCase()!==marketPair[1].tx_hash.toLowerCase()||marketPair[0].tx_hash.toLowerCase()!==custodyPair[1].tx_hash.toLowerCase())throw Error('Gate 2 market and custody successors are not paired');
+  const points=[...marketPair,...custodyPair],live=await Promise.all(points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>));
+  if(live.some(cell=>cell.status!=='live'||!cell.cell))throw Error('Gate 2 successor cells are not live');
+  const current=lineage.at(-1)!.transaction as Transaction,marketIndex=Number(BigInt(marketPair[0].index)),custodyIndex=Number(BigInt(custodyPair[0].index));
+  const cells=live.map(cell=>cell.cell!);
+  for(let index=0;index<4;index++){
+    const txIndex=Number(BigInt(points[index].index));
+    const output=current.outputs[txIndex];
+    if(points[index].tx_hash.toLowerCase()!==current.hash.toLowerCase()||!output||!sameScript(cells[index].output.lock,output.lock)||!sameScript(cells[index].output.type,output.type)||BigInt(cells[index].output.capacity)!==BigInt(output.capacity)||cells[index].data.content.toLowerCase()!==current.outputs_data[txIndex].toLowerCase())throw Error('Gate 2 successor output differs from its canonical transaction');
+  }
+  verifyOutput(cells[0].output,cells[0].data.content,identity.market,identity.token);
+  verifyOutput(cells[1].output,cells[1].data.content,identity.market,identity.marker);
+  verifyOutput(cells[2].output,cells[2].data.content,identity.custody,identity.token);
+  verifyOutput(cells[3].output,cells[3].data.content,identity.custody,identity.custodyMarker);
+  const marketData=current.outputs_data[marketIndex],custodyData=current.outputs_data[custodyIndex];
+  if(cells[1].data.content.toLowerCase()!==identity.markerData.toLowerCase()||cells[3].data.content.toLowerCase()!==identity.custodyMarkerData.toLowerCase()||marketData.slice(34).toLowerCase()!==identity.custodyMarker.hash().slice(2).toLowerCase())throw Error('Gate 2 successor marker identity mismatch');
+  const curve=decodeCurve(current.outputs[marketIndex].lock.args,marketData),supply=curve.supply,inventory=curve.inventory,custody=readLE(`0x${custodyData.slice(2,34)}`),root=`0x${custodyData.slice(34)}`;
+  if(curve.base!==1_000_000_000n||curve.step!==100_000_000n||supply!==2_000n||custodyData.length!==98||inventory+custody!==supply||!/^0x[0-9a-f]{64}$/i.test(root))throw Error('Gate 2 successor supply and custody totals do not reconcile');
+  const tip=await rpc('get_tip_header',[]) as {number:string;hash:string};
+  if(!tip?.number||!tip.hash)throw Error('Pudge chain tip unavailable during successor recovery');
+  const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase())throw Error('Pudge chain changed during successor recovery');
+  const data:MarketData={...previous,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,...marketLiquidity(current.outputs[marketIndex].capacity,previous.marketCapacityFloorShannons),buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip,refreshedAt:Date.now(),history,historyState:'verified'};
+  await checkpoint(data,points,cells.map(cell=>({output:cell.output,data:cell.data.content})),saved.deps,saved.hashes,saved.manifestRaw);
+  return data;
 }
 
 async function rpc(method:string,params:unknown[]=[]){
@@ -231,7 +345,7 @@ async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>
     ...liquidity,
     buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now(),history,historyState,manifest,
   };
-  checkpoint(data,[...recovered.pair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeCells,codeHashes,rawManifest);
+  await checkpoint(data,[...recovered.pair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeCells,codeHashes,rawManifest);
   return data;
 }
 
@@ -242,7 +356,7 @@ export async function getPudgeMarketDataForManifest(rawManifest:string){
 export async function getPudgeMarketData():Promise<MarketData>{
   const cached=await cachedMarket('pudge-xudt');if(cached)return cached;
   const client=requestRpc();
-  const identity=deriveMarketIdentity({anchor:PUDGE_GATE2_ANCHOR,genesis:PUDGE_GATE2_GENESIS,base:1_000_000_000n,step:100_000_000n,supply:2_000n,codes:{market:PUDGE_GATE2_CODES.market,marker:PUDGE_GATE2_CODES.marker,owner:PUDGE_GATE2_CODES.ownerLock,custody:PUDGE_GATE2_CODES.custody,custodyMarker:PUDGE_GATE2_CODES.custodyMarker,xudt:PUDGE_GATE2_CODES.xudt}});
+  const identity=gate2Identity();
   const journalBlocks=new Map(PUDGE_GATE2_JOURNAL.entries.map(entry=>[entry.txHash.toLowerCase(),entry.blockHash]));
   const hashes=[PUDGE_GATE2_STAGE_TXS.code,PUDGE_GATE2_STAGE_TXS.setup,PUDGE_GATE2_STAGE_TXS.issuance,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_BUY,PUDGE_GATE2_SELL];
   const [genesis,tip,code,setup,issuance,initialization,buy,sell]=await Promise.all([
@@ -309,6 +423,6 @@ export async function getPudgeMarketData():Promise<MarketData>{
     manifest:{format:'roveko-pudge-market-v1',genesis:PUDGE_GATE2_GENESIS,attempt:PUDGE_GATE2_ATTEMPT,journal:PUDGE_GATE2_JOURNAL,initializationTransactionHash:PUDGE_GATE2_INITIALIZATION,codeDeploymentTransactionHash:PUDGE_GATE2_STAGE_TXS.code,initial:[0,1,2,3].map(index=>expectedPoint(PUDGE_GATE2_INITIALIZATION,index)),funding:{txHash:PUDGE_GATE2_INITIALIZATION,index:'0x4'},scripts:identity,deps:{custody_smt:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x0'},depType:'code'},market_smt:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x1'},depType:'code'},custody_marker:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x2'},depType:'code'},marker_candidate:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x3'},depType:'code'},owner_lineage_candidate:{outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:'0x4'},depType:'code'},xudt:PUDGE_GATE2_XUDT_DEP}},
   };
   const codeDeps=[...Array.from({length:5},(_,index)=>({outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:`0x${index.toString(16)}`},depType:'code'})),PUDGE_GATE2_XUDT_DEP];
-  checkpoint(data,[...marketPair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeDeps,Object.values(PUDGE_GATE2_CODES));
+  await checkpoint(data,[...marketPair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeDeps,[PUDGE_GATE2_CODES.custody,PUDGE_GATE2_CODES.market,PUDGE_GATE2_CODES.custodyMarker,PUDGE_GATE2_CODES.marker,PUDGE_GATE2_CODES.ownerLock,PUDGE_GATE2_CODES.xudt]);
   return data;
 }
