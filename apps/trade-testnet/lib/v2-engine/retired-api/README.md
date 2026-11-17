@@ -1,1 +1,0 @@
-These handler implementations were moved out of `app/api` so the retired V2 endpoints are not registered by Next.js. They remain available only for their historical protocol tests and are not part of the public Roveko application.

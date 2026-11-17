@@ -1,6 +1,6 @@
 import { ccc } from '@ckb-ccc/core';
 import { cccA } from '@ckb-ccc/core/advanced';
-import { cat, read, type Rpc } from './pudge/market.ts';
+import { cat, read, type Rpc } from './market.ts';
 import { PositionTree, decodePosition, encodePosition } from './r7-tree.ts';
 import { verifyAuthorization } from './r7-authorization.ts';
 

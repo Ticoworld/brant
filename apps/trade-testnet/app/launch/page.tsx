@@ -1,5 +1,5 @@
-import WalletEntry from "../wallet-entry";
+import WorkspacePage from "../v2/workspace-page";
 
 export default function Page() {
-  return <WalletEntry initialView="Create Market" />;
+  return <WorkspacePage kind="launch" />;
 }

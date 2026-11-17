@@ -1,7 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import { createHash } from 'node:crypto';
 import { ccc } from '@ckb-ccc/core';
-import { httpRpc } from './pudge/market';
+import { httpRpc } from './market';
 import { recoverR7 } from './r7-recovery';
 import { saleMessage, verifyAuthorization, type SaleTerms } from './r7-authorization';
 

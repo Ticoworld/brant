@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {ccc} from '@ckb-ccc/core';
 import {recoverR7} from '../lib/r7-recovery.ts';
 import {buildR7Purchase} from '../lib/r7-buy.ts';
-import {read} from '../lib/pudge/market.ts';
+import {read} from '../lib/market.ts';
 const dir='../../labs/wo15-merkle-intent/r7/evidence/r7-1793925991792/';
 const events=JSON.parse(readFileSync(dir+'events.json','utf8'));
 const result=JSON.parse(readFileSync(dir+'result.json','utf8'));

@@ -1,5 +1,4 @@
 import WalletEntry from "../../wallet-entry";
-
 export default async function MarketPage({
   params,
 }: {

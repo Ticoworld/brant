@@ -7,7 +7,7 @@ import {spawn} from 'node:child_process';
 import {createRequire} from 'node:module';
 import {chromium} from 'playwright-core';
 import {ccc} from '@ckb-ccc/core';
-import {POST as initialProof} from '../lib/v2-engine/retired-api/v2-pudge-init-proof.ts';
+import {POST as initialProof} from '../app/api/v2/pudge-init-proof/route.ts';
 const root=path.resolve(import.meta.dirname,'..'), require=createRequire(import.meta.url), webpack=require('next/dist/compiled/webpack/webpack').webpack;
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'rov-deploy-test-'));
 await new Promise<void>((resolve,reject)=>webpack({mode:'development',target:'web',entry:path.join(root,'tests/v2-deploy-wallet-entry.cjs'),output:{path:dir,filename:'wallet.js'}},(e:Error,s:any)=>e||s.hasErrors()?reject(e||Error(s.toString({all:false,errors:true}))):resolve()));
