@@ -781,6 +781,49 @@ fn write_json(v: &Value, path: Option<&str>) -> Result<()> {
     }
     Ok(())
 }
+
+fn proof_from_snapshot(snapshot: &Value, owner_hex: &str) -> Result<Value> {
+    fn field(value: &Value) -> Result<&str> {
+        value.as_str().ok_or_else(|| anyhow!("missing snapshot field"))
+    }
+    let domain = hex_bytes(field(&snapshot["custody_args"])?, "custody args")?;
+    let domain: [u8; 128] = domain.try_into().map_err(|_| anyhow!("custody args length"))?;
+    let owner = bytes32(owner_hex, "owner lock hash")?;
+    let root = bytes32(field(&snapshot["ownership_root"])?, "custody root")?.into();
+    let owners = snapshot["owners"].as_array().ok_or_else(|| anyhow!("missing custody leaves"))?;
+    let mut tree = Tree::default();
+    let mut position = parse_leaf(H256::zero())?;
+    let mut total = 0u128;
+    for row in owners {
+        let leaf_owner = bytes32(field(&row["owner_lock_hash"])?, "leaf owner")?;
+        let balance: u64 = field(&row["balance"])?.parse()?;
+        let revision: u64 = field(&row["revision"])?.parse()?;
+        let mut leaf = [0u8; 32];
+        leaf[..8].copy_from_slice(&balance.to_le_bytes());
+        leaf[8..16].copy_from_slice(&revision.to_le_bytes());
+        leaf[16] = if balance == 0 { 2 } else { 1 };
+        let leaf = parse_leaf(leaf.into())?;
+        let key = derive_key(&domain, &leaf_owner);
+        ensure!(tree.get(&key)? == H256::zero(), "duplicate custody leaf");
+        tree.update(key, leaf.value)?;
+        total += u128::from(leaf.balance);
+        if leaf_owner == owner {
+            position = leaf;
+        }
+    }
+    ensure!(*tree.root() == root, "snapshot custody root mismatch");
+    ensure!(total == field(&snapshot["custody_amount"])?.parse::<u128>()?, "snapshot custody amount mismatch");
+    let key = derive_key(&domain, &owner);
+    let compiled = tree.merkle_proof(vec![key])?.compile(vec![key])?;
+    let proof: Vec<u8> = compiled.into();
+    Ok(json!({
+        "owner_lock_hash":owner_hex,
+        "owner":{"balance":position.balance.to_string(),"revision":position.revision.to_string(),"active":position.active},
+        "owner_membership_proof":{"key":fmt(key.as_slice()),"leaf_value":fmt(position.value.as_slice()),"compiled_proof":fmt(&proof)},
+        "tip_outpoint":snapshot["tip_outpoint"],
+        "ownership_root":snapshot["ownership_root"]
+    }))
+}
 fn run() -> Result<()> {
     let a = std::env::args().skip(1).collect::<Vec<_>>();
     match a.first().map(String::as_str) {
@@ -804,12 +847,16 @@ fn run() -> Result<()> {
             csmt_verify(root, &[(key,H256::from(leaf))], proof)?;
             write_json(&json!({"verified":true,"new_root":fmt(root.as_slice())}),None)
         }
-        Some("transition") if a.len() == 4 => {
-            let b: Bundle = serde_json::from_str(&read_json(Some(&a[1]))?)?;
-            let result = replay(&b)?;
-            let side = &a[2];
+        Some("transition" | "snapshot-transition") if a.len() == 4 || a.len() == 5 => {
+            let source = read_json(Some(&a[1]))?;
+            let (result, side, quantity) = if a[0] == "snapshot-transition" && a.len() == 5 {
+                (proof_from_snapshot(&serde_json::from_str(&source)?, &a[2])?, &a[3], &a[4])
+            } else {
+                ensure!(a[0] == "transition" && a.len() == 4, "invalid transition arguments");
+                (replay(&serde_json::from_str(&source)?)?, &a[2], &a[3])
+            };
             ensure!(side == "buy" || side == "sell" || side == "withdraw", "invalid side");
-            let quantity: u64 = a[3].parse()?;
+            let quantity: u64 = quantity.parse()?;
             ensure!(quantity > 0, "quantity must be positive");
             let balance: u64 = result["owner"]["balance"].as_str().unwrap().parse()?;
             let revision: u64 = result["owner"]["revision"].as_str().unwrap().parse()?;
@@ -1041,6 +1088,21 @@ mod tests {
         assert_eq!(result["owner_membership_proof"]["root_verified"], true);
         assert_eq!(result["transitions"].as_array().unwrap().len(), 2);
         assert_eq!(result["withdrawal_template"]["quantity"], "2");
+    }
+    #[test]
+    fn snapshot_reproduces_owner_proof_and_rejects_corrupted_leaves() {
+        let bundle = reference_bundle();
+        let replayed = replay(&bundle).unwrap();
+        let mut snapshot = replayed.clone();
+        snapshot["custody_args"] = bundle.custody_lock["args"].clone();
+        let proof = proof_from_snapshot(&snapshot, &bundle.owner_lock_hash).unwrap();
+        assert_eq!(proof["owner"], replayed["owner"]);
+        assert_eq!(proof["owner_membership_proof"]["compiled_proof"],
+            replayed["owner_membership_proof"]["compiled_proof"]);
+        let absent = proof_from_snapshot(&snapshot, &fmt(&[0xff; 32])).unwrap();
+        assert_eq!(absent["owner"]["balance"], "0");
+        snapshot["owners"][0]["balance"] = json!("42");
+        assert!(proof_from_snapshot(&snapshot, &bundle.owner_lock_hash).is_err());
     }
     #[test]
     fn replay_rejects_stale_old_leaf_even_when_chain_bundle_is_otherwise_valid() {

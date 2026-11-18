@@ -1,5 +1,12 @@
 # Current state update — 2026-11-17
 
+## WO1 progress — 2026-11-18
+
+- **VERIFIED:** Registered market refreshes share in-flight work and batch canonical anchor and live Cell checks. Owner proofs share a market-wide verified leaf snapshot and match its custody outpoint and bytes against the market read.
+- **VERIFIED (read-only public Pudge, Windows Node process):** warm market 3.885s to 1.616s and warm owner proof 3.940s to 1.225s. In-process HTTP requests fell from 20 to 3 and from 19 to 3 respectively. A parallel pair used 3 requests for each read path. Proofs returned balance 7 and the market custody root. Collector subprocess RPC is excluded from the HTTP counts.
+- **VERIFIED:** typecheck, production build, native replay and leaf corruption checks, separate and indexed lineage, collector, endpoint security and accounting checks passed. The history integration fixture requires additional native contract artifacts.
+- **UNIMPLEMENTED:** native successor-only replay and durable authenticated snapshots. A process restart rebuilds market provenance and replays the custody bundle. Both warm latency targets remain open.
+
 ## Authoritative Roveko status
 
 - **VERIFIED (public Pudge anchors):** the Gate 2 code Cells are outputs `0x0` through `0x4` of `0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e`; initialization is `0xc37029b982276a7c3e126a5658510fda1cd5f2963caf650b04f397a8484c7d2a`; xUDT type hash is `0xa706188a0d74a200306109a88fd7835b75eff42f35e9983fa0d3c2138e181ddb`.

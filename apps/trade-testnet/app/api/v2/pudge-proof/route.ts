@@ -6,6 +6,7 @@ import path from 'node:path';
 import {promisify} from 'node:util';
 import {ccc} from '@ckb-ccc/core';
 import {loadPudgeManifest} from '../../../../lib/v2-engine/pudge-manifest.ts';
+import {getPudgeCustodyAnchor} from '../../../../lib/pudge-market-service.ts';
 import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
 import {resolvePudgeTokenMetadata} from '../../../../lib/pudge-market-metadata.ts';
 import {PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_STAGE_TXS} from '../../../../lib/v2-engine/pudge-public-registry.ts';
@@ -40,6 +41,9 @@ type RecoveryBundle={
 };
 type VerifiedManifest=Awaited<ReturnType<typeof loadPudgeManifest>>;
 const verifiedManifests=new Map<string,{manifest:VerifiedManifest;verifiedAt:number}>();
+type CustodyState={bundle:RecoveryBundle;snapshot:Record<string,unknown>};
+const custodyStates=new Map<string,CustodyState>();
+const custodyRefreshes=new Map<string,Promise<CustodyState>>();
 
 function rpcEndpoint(){
   if(process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK==='1'&&process.env.ROVEKO_PUDGE_TEST_RPC){
@@ -54,8 +58,8 @@ function toScript(script:ccc.Script):Script{return {code_hash:script.codeHash,ha
 function sameScript(a:Script|undefined|null,b:Script|undefined|null){
   return !!a&&!!b&&a.code_hash.toLowerCase()===b.code_hash.toLowerCase()&&a.hash_type.toLowerCase()===b.hash_type.toLowerCase()&&a.args.toLowerCase()===b.args.toLowerCase();
 }
-function requestKey(manifest:{genesis:string;initializationTransactionHash:string;scripts:{market:ccc.Script}},owner:string){
-  const identity=`${manifest.genesis.toLowerCase()}:${manifest.initializationTransactionHash.toLowerCase()}:${manifest.scripts.market.hash().toLowerCase()}:${owner.toLowerCase()}`;
+function requestKey(manifest:{genesis:string;initializationTransactionHash:string;scripts:{market:ccc.Script}},endpoint:string){
+  const identity=`${manifest.genesis.toLowerCase()}:${manifest.initializationTransactionHash.toLowerCase()}:${manifest.scripts.market.hash().toLowerCase()}:${endpoint}`;
   return createHash('sha256').update(identity).digest('hex');
 }
 function cacheFile(key:string){
@@ -224,9 +228,9 @@ export async function POST(request:Request){
     const deadline=Date.now()+60_000;
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
     if(!binary||!tools.smt)return new Response('Proof tool unavailable',{status:503});
-    const endpoint=rpcEndpoint(),requestStarted=Date.now();let rpcCalls=0;
+    const endpoint=rpcEndpoint();let rpcCalls=0;
     const rpc=async(method:string,params:unknown[]=[] )=>{
-      if(++rpcCalls>MAX_RPC_CALLS||Date.now()-requestStarted>45_000)throw Error('Pudge RPC work limit exceeded');
+      if(++rpcCalls>MAX_RPC_CALLS||Date.now()>=deadline)throw Error('Pudge RPC work limit exceeded');
       const timeout=Math.max(1000,Math.min(15000,deadline-Date.now()));
       const response=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),cache:'no-store',signal:AbortSignal.timeout(timeout)});
       const raw=await response.text();if(raw.length>4*1024*1024)throw Error('Pudge RPC response exceeds limit');
@@ -236,44 +240,89 @@ export async function POST(request:Request){
       const result=await initialProof(new Request('http://127.0.0.1/api/v2/pudge-init-proof',{method:'POST',headers:{host:'127.0.0.1',origin:'http://127.0.0.1','content-type':'application/json'},body:JSON.stringify({anchor,owner})}));
       if(!result.ok)throw Error('Initial proof unavailable');return result.json();
     };
-    const rawManifest=JSON.stringify(body.manifest),manifestKey=cachedManifestKey(rawManifest),cachedManifest=verifiedManifests.get(manifestKey);
+    const rawManifest=JSON.stringify(body.manifest),manifestKey=cachedManifestKey(endpoint+rawManifest),cachedManifest=verifiedManifests.get(manifestKey);
     const manifest=cachedManifest&&Date.now()-cachedManifest.verifiedAt<300_000?cachedManifest.manifest:await loadPudgeManifest(rpc,rawManifest,proof);
-    await validateRegisteredManifest(manifest,rpc);
-    rememberManifest(manifestKey,manifest);
+    if(manifest!==cachedManifest?.manifest){
+      await validateRegisteredManifest(manifest,rpc);
+      rememberManifest(manifestKey,manifest);
+    }
     const marketHash=manifest.scripts.market.hash().toLowerCase(),tokenHash=manifest.scripts.token.hash().toLowerCase();
     const metadata=resolvePudgeTokenMetadata({genesis:manifest.genesis,marketScriptHash:marketHash,tokenTypeHash:tokenHash,initializationTransactionHash:manifest.initializationTransactionHash});
     if(metadata.metadata!=='off-chain-testnet-registry')return new Response('Market is not registered for proof requests',{status:403});
     dir=await mkdtemp(path.join(tmpdir(),'roveko-pudge-proof-'));
     const custody=path.join(dir,'custody.json'),token=path.join(dir,'token.json'),bundlePath=path.join(dir,'bundle.json'),checkpointPath=path.join(dir,'checkpoint.json');
-    const custodyScript=toScript(manifest.scripts.custody),tokenScript=toScript(manifest.scripts.token),key=requestKey(manifest,body.owner!),file=cacheFile(key);
+    const custodyScript=toScript(manifest.scripts.custody),tokenScript=toScript(manifest.scripts.token),key=requestKey(manifest,endpoint),file=cacheFile(key);
+    const replayOwner=manifest.attempt.owner;
+    const refresh=async():Promise<CustodyState>=>{
+    const current=custodyStates.get(key);
+    const market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
+    const matchesMarket=(bundle:RecoveryBundle)=>!market||
+      (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
+    const isLive=async(bundle:RecoveryBundle)=>{
+      if(!matchesMarket(bundle))return false;
+      return validateLiveCheckpoint(bundle,manifest,rpc);
+    };
+    if(current&&matchesMarket(current.bundle)){
+      // The current canonical outpoint and its root authenticate every leaf
+      // used by snapshot-transition, even if the collection tip changed.
+      if(market||await isLive(current.bundle))return current;
+    }
+    custodyStates.delete(key);
     await Promise.all([writeFile(custody,JSON.stringify(custodyScript),{mode:0o600}),writeFile(token,JSON.stringify(tokenScript),{mode:0o600})]);
     const canonicalCollector=path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs'),collector=process.env.ROVEKO_RECOVERY_COLLECTOR||canonicalCollector;
     const [canonicalBytes,configuredBytes]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(binary)]).then(([a,b])=>[a,b] as const);
     if(createHash('sha256').update(canonicalBytes).digest('hex')!==createHash('sha256').update(configuredBytes).digest('hex'))throw Error('Recovery collector differs from repository');
-    const common=['--node',endpoint,'--indexer',endpoint,'--init',manifest.initializationTransactionHash,'--owner',body.owner!,'--custody-lock',custody,'--xudt-type',token,'--max-pages','32','--max-transactions','512'];
+    const common=['--node',endpoint,'--indexer',endpoint,'--init',manifest.initializationTransactionHash,'--owner',replayOwner,'--custody-lock',custody,'--xudt-type',token,'--max-pages','32','--max-transactions','512'];
     const childEnv={...process.env,ROVEKO_PROOF_BINARY:binary,ROVEKO_RECOVERY_RPC_TIMEOUT_MS:'15000',ROVEKO_RECOVERY_MAX_RPC:'1100'};
-    let checkpoint=await loadCheckpoint(key,file,manifest,body.owner!);
-    let reusable=checkpoint?await validateLiveCheckpoint(checkpoint,manifest,rpc):false;
+    let checkpoint=current?.bundle||await loadCheckpoint(key,file,manifest,replayOwner);
+    let reusable=checkpoint?await isLive(checkpoint):false;
     if(checkpoint&&!reusable){
       await writeFile(checkpointPath,JSON.stringify(checkpoint),{mode:0o600});
       try{
         await boundedRun(canonicalCollector,['collect-incremental',...common,'--checkpoint',checkpointPath,'--out',bundlePath],deadline,childEnv);
         checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
-        if(!validBundle(checkpoint,manifest,body.owner!))throw Error('Incremental checkpoint identity mismatch');
+        if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Incremental checkpoint identity mismatch');
       }catch{
         await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
         checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
-        if(!validBundle(checkpoint,manifest,body.owner!))throw Error('Collected checkpoint identity mismatch');
+        if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Collected checkpoint identity mismatch');
       }
       reusable=false;
     }else if(!checkpoint){
       await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
       checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
-      if(!validBundle(checkpoint,manifest,body.owner!))throw Error('Collected checkpoint identity mismatch');
+      if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Collected checkpoint identity mismatch');
       reusable=false;
     }
-    const selectedBundle=checkpoint as RecoveryBundle;
-    const transition=await run(binary,['transition',reusable?await cacheBundleForTransition(dir,selectedBundle):bundlePath,body.side!,body.quantity!],{timeout:Math.max(1000,Math.min(MAX_RECOVERY_MS,deadline-Date.now())),maxBuffer:2*1024*1024});
+    const bundle=checkpoint as RecoveryBundle;
+    const replay=async(selected:RecoveryBundle)=>{
+      const result=await run(binary,['replay',await cacheBundleForTransition(dir!,selected)],{timeout:MAX_RECOVERY_MS,maxBuffer:2*1024*1024});
+      return JSON.parse(result.stdout);
+    };
+    let selectedBundle=bundle,snapshot;
+    try{snapshot=await replay(bundle);}catch(error){
+      if(!reusable&&!current)throw error;
+      await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
+      selectedBundle=JSON.parse(await readFile(bundlePath,'utf8'));
+      if(!validBundle(selectedBundle,manifest,replayOwner))throw Error('Rebuilt checkpoint identity mismatch');
+      snapshot=await replay(selectedBundle);
+    }
+    if(!await isLive(selectedBundle))throw Error('Custody changed during recovery');
+    const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
+    if(!reusable||selectedBundle!==bundle)await saveCheckpoint(key,file,selectedBundle,manifest,replayOwner);
+    custodyStates.clear();
+    custodyStates.set(key,state);
+    return state;
+    };
+    let pending=custodyRefreshes.get(key);
+    if(!pending){
+      pending=refresh().finally(()=>custodyRefreshes.delete(key));
+      custodyRefreshes.set(key,pending);
+    }
+    const {bundle:selectedBundle,snapshot}=await pending;
+    const snapshotPath=path.join(dir,'snapshot.json');
+    await writeFile(snapshotPath,JSON.stringify(snapshot),{flag:'wx',mode:0o600});
+    const transition=await run(binary,['snapshot-transition',snapshotPath,body.owner!,body.side!,body.quantity!],{timeout:Math.max(1000,Math.min(MAX_RECOVERY_MS,deadline-Date.now())),maxBuffer:2*1024*1024});
     const result=JSON.parse(transition.stdout),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
     const mismatches:string[]=[];
     if(result.old_root?.toLowerCase()!==expectedRoot.toLowerCase())mismatches.push('old-root');
@@ -283,7 +332,6 @@ export async function POST(request:Request){
     if(result.tip_outpoint?.tx_hash?.toLowerCase()!==selectedBundle.live.tx_hash.toLowerCase())mismatches.push('tip-transaction');
     if(typeof result.tip_outpoint?.index!=='string'||BigInt(result.tip_outpoint.index)!==BigInt(selectedBundle.live.index))mismatches.push('tip-index');
     if(mismatches.length)throw Error(`Generated proof checkpoint mismatch: ${mismatches.join(',')}`);
-    if(!reusable)await saveCheckpoint(key,file,selectedBundle,manifest,body.owner!);
     return Response.json({proof:result,genesis:manifest.genesis,market:marketHash},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
@@ -297,7 +345,7 @@ export async function POST(request:Request){
 }
 
 async function cacheBundleForTransition(directory:string,bundle:RecoveryBundle){
-  const destination=path.join(directory,'cached-bundle.json');
+  const destination=path.join(directory,`bundle-${randomUUID()}.json`);
   await writeFile(destination,JSON.stringify(bundle),{flag:'wx',mode:0o600});
   return destination;
 }
