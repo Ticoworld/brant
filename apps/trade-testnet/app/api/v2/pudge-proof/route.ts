@@ -427,7 +427,6 @@ async function handleProof(request:Request,synchronize=false){
     return {state,live:market};
     };
     let pending=custodyRefreshes.get(key);
-    if(pending&&readyOnly)return new Response('Trading state is updating. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     if(!pending){
       pending=refresh().finally(()=>custodyRefreshes.delete(key));
       custodyRefreshes.set(key,pending);
