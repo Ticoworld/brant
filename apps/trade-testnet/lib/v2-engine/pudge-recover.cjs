@@ -223,17 +223,23 @@ async function collect(args) {
   const initIndex = history.findIndex((x) => x.tx_hash.toLowerCase() === args.init.toLowerCase());
   if (initIndex < 0) fail('initialization transaction was not found in exact-script indexer history');
   const historyRows = [];
-  for (const entry of history.slice(initIndex)) {
-    const response = await rpc(args.node, 'get_transaction', [entry.tx_hash]);
+  const entries = history.slice(initIndex);
+  for (let offset = 0; offset < entries.length; offset += 4) {
+    const rows = await Promise.all(entries.slice(offset, offset + 4).map(async entry => {
+    const [response, block] = await Promise.all([
+      rpc(args.node, 'get_transaction', [entry.tx_hash]),
+      rpc(args.node, 'get_block_by_number', [entry.block_number]),
+    ]);
     if (response?.tx_status?.status !== 'committed' || !response.transaction) fail(`full node cannot retrieve committed transaction ${entry.tx_hash}`);
     const statusBlock = qhex(response.tx_status.block_number, 'transaction block number');
     if (statusBlock !== qhex(entry.block_number, 'indexer block number')) fail(`indexer/full-node block mismatch for ${entry.tx_hash}`);
-    const block = await rpc(args.node, 'get_block_by_number', [entry.block_number]);
     const blockHash = block?.header?.hash;
     if (!blockHash || blockHash.toLowerCase() !== response.tx_status.block_hash.toLowerCase()) fail(`transaction ${entry.tx_hash} is not canonical at indexed height`);
     const txIndex = Number(qhex(entry.tx_index, 'transaction index'));
     if (!Number.isSafeInteger(txIndex) || fullTransactionHash(block.transactions?.[txIndex]) !== entry.tx_hash.toLowerCase() || !sameRawTransaction(block.transactions[txIndex], response.transaction)) fail(`indexed transaction ${entry.tx_hash} is absent or differs in its canonical block`);
-    historyRows.push({ ...entry, transaction: response.transaction });
+    return { ...entry, transaction: response.transaction };
+    }));
+    historyRows.push(...rows);
   }
   const cellPage = await rpc(args.indexer, 'get_cells', [scriptKey(custodyLock, 'lock', { script: xudtType }, true), 'asc', '0x64']);
   if (!Array.isArray(cellPage?.objects) || cellPage.objects.length !== 1) fail(`expected one live custody xUDT cell, found ${cellPage?.objects?.length ?? 'no response'}`);

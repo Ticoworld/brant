@@ -33,7 +33,23 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const [status,setStatus]=useState('');
   const [receipt,setReceipt]=useState('');
   const broadcasting=useRef(false);
-  const prepared=useRef<{key:string;signer:typeof signer;started:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
+  const [readiness,setReadiness]=useState('syncing');
+  useEffect(()=>{
+    if(!market?.identity)return;
+    const controller=new AbortController();
+    let timer:ReturnType<typeof setTimeout>;
+    const poll=async()=>{
+      try{
+        const response=await fetch('/api/v2/pudge-proof',{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(4000)])});
+        const value=await response.json();
+        if(!controller.signal.aborted)setReadiness(response.ok?value.status:'unavailable');
+      }catch{if(!controller.signal.aborted)setReadiness('unavailable');}
+      finally{if(!controller.signal.aborted)timer=setTimeout(poll,3000);}
+    };
+    void poll();
+    return()=>{controller.abort();clearTimeout(timer);};
+  },[market?.identity]);
+  const prepared=useRef<{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
   useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,market?.custodyRoot]);
   const quoteKey=(side:Side,quantity:bigint,amount:bigint)=>JSON.stringify([
     market?.genesis,market?.identity,market?.custodyRoot,market?.manifest.initializationTransactionHash,
@@ -41,7 +57,8 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   ]);
   const preparation=useCallback((side:Side,quantity:bigint,amount:bigint,key:string)=>{
     const previous=prepared.current;
-    if(previous?.key===key&&previous.signer===signer&&!previous.controller.signal.aborted&&Date.now()-previous.started<30_000)return previous.review;
+    if(previous?.key===key&&previous.signer===signer&&!previous.controller.signal.aborted&&
+      (previous.readyAt===undefined||Date.now()-previous.readyAt<30_000))return previous.review;
     if(!market||!signer)throw Error('Wallet or market is unavailable');
     previous?.controller.abort();
     const controller=new AbortController(),id=crypto.randomUUID();
@@ -51,9 +68,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       return prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
         (stage,ms)=>console.info('Roveko quote stage',id,stage,Math.round(ms)),account.fundingHint,amount,controller.signal);
     })();
-    const entry={key,signer,started:Date.now(),controller,review};
+    const entry:{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:typeof review}={key,signer,controller,review};
     prepared.current=entry;
-    void review.catch(()=>{if(prepared.current===entry)prepared.current=null;});
+    void review.then(()=>{entry.readyAt=Date.now();},()=>{if(prepared.current===entry)prepared.current=null;});
     return review;
   },[account.owner,account.fundingHint,market,signer]);
   const prepareQuote=(side:Side,quantity:bigint,amount:bigint)=>{
@@ -167,7 +184,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision]);
 
-  return {trade,prepareQuote,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {trade,prepareQuote,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint,checkFee:boolean){

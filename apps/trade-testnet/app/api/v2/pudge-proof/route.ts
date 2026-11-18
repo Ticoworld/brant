@@ -6,7 +6,8 @@ import path from 'node:path';
 import {promisify} from 'node:util';
 import {ccc} from '@ckb-ccc/core';
 import {loadPudgeManifest} from '../../../../lib/v2-engine/pudge-manifest.ts';
-import {getPudgeCustodyAnchor} from '../../../../lib/pudge-market-service.ts';
+import {getPudgeCustodyAnchor,getPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
+import {after} from 'next/server.js';
 import {openPudgeSnapshot,sealPudgeSnapshot} from '../../../../lib/pudge-snapshot.ts';
 import {startPudgeProofWorker} from '../../../../lib/pudge-proof-worker.ts';
 import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
@@ -45,7 +46,7 @@ type VerifiedManifest=Awaited<ReturnType<typeof loadPudgeManifest>>;
 const verifiedManifests=new Map<string,{manifest:VerifiedManifest;verifiedAt:number}>();
 type CustodyState={bundle:RecoveryBundle;snapshot:Record<string,unknown>};
 const custodyStates=new Map<string,CustodyState>();
-const custodyRefreshes=new Map<string,Promise<CustodyState>>();
+const custodyRefreshes=new Map<string,Promise<{state:CustodyState;live:Awaited<ReturnType<typeof getPudgeCustodyAnchor>>|null}>>();
 let proofWorker:{state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;idle?:ReturnType<typeof setTimeout>}|undefined;
 
 function rpcEndpoint(){
@@ -235,8 +236,49 @@ async function boundedRun(file:string,args:string[],deadline:number,env:NodeJS.P
   return run(process.execPath,[file,...args],{timeout:remaining,maxBuffer:2*1024*1024,env});
 }
 
-/** Read-only, bounded Pudge custody history reconstruction. */
+let synchronization:Promise<void>|undefined;
+let readiness:'syncing'|'ready'|'updating'|'unavailable'='syncing';
+let verifiedIdentity:string|undefined;
+let checkedAt=0;
+
+export async function GET(){
+  if(!synchronization&&Date.now()-checkedAt>=20_000){
+    if(!verifiedIdentity)readiness='syncing';
+    synchronization=(async()=>{
+      const market=await getPudgeMarketData();
+      const result=await handleProof(new Request('http://127.0.0.1/api/v2/pudge-proof',{
+        method:'POST',headers:{origin:'http://127.0.0.1','content-type':'application/json'},
+        body:JSON.stringify({owner:market.manifest.attempt.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
+      }),true);
+      if(!result.ok)throw Error('Custody synchronization failed');
+      const state=await result.json();
+      verifiedIdentity=state.identity;
+      readiness='ready';
+    })().catch(()=>{readiness='unavailable';}).finally(()=>{checkedAt=Date.now();synchronization=undefined;});
+    const running=synchronization;
+    after(()=>running);
+  }
+  return Response.json({status:readiness,identity:verifiedIdentity,
+    persistence:!!process.env.ROVEKO_PUDGE_PROOF_CACHE_DIR&&/^[0-9a-f]{64}$/i.test(process.env.ROVEKO_PUDGE_SNAPSHOT_KEY||''),
+  },{headers:{'Cache-Control':'no-store'}});
+}
+
 export async function POST(request:Request){
+  if(rpcEndpoint()!=='https://testnet.ckb.dev/')return handleProof(request);
+  const controller=new AbortController();
+  let timer:ReturnType<typeof setTimeout>;
+  const deadline=new Promise<Response>(resolve=>{
+    timer=setTimeout(()=>{
+      controller.abort();
+      resolve(new Response('Trading state could not be verified in time. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}}));
+    },5000);
+  });
+  try{
+    return await Promise.race([deadline,handleProof(new Request(request,{signal:AbortSignal.any([request.signal,controller.signal])}))]);
+  }finally{clearTimeout(timer!);}
+}
+
+async function handleProof(request:Request,synchronize=false){
   const proofStarted=performance.now(),proofTrace:string[]=[];
   let dir:string|undefined,entered=false;
   try{
@@ -248,7 +290,7 @@ export async function POST(request:Request){
         source.protocol===url.protocol&&source.port===url.port&&source.host===request.headers.get('host');
       if((source.origin!==url.origin&&!localAlias)||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
     }catch{return new Response('Same-origin request required',{status:403});}
-    if(!consumeRateLimit(request))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
+    if(!synchronize&&!consumeRateLimit(request))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
     if(activeRequests>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
     activeRequests++;entered=true;
     const text=await readBoundedBody(request);
@@ -260,6 +302,8 @@ export async function POST(request:Request){
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
     if(!binary||!tools.smt)return new Response('Proof tool unavailable',{status:503});
     const endpoint=rpcEndpoint();let rpcCalls=0;
+    const readyOnly=!synchronize&&endpoint==='https://testnet.ckb.dev/';
+    if(readyOnly&&readiness!=='ready')return new Response('Trading state is synchronizing. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     const rpc=async(method:string,params:unknown[]=[] )=>{
       if(++rpcCalls>MAX_RPC_CALLS||Date.now()>=deadline)throw Error('Pudge RPC work limit exceeded');
       const timeout=Math.max(1000,Math.min(15000,deadline-Date.now()));
@@ -295,7 +339,7 @@ export async function POST(request:Request){
     const custody=path.join(dir,'custody.json'),token=path.join(dir,'token.json'),bundlePath=path.join(dir,'bundle.json'),checkpointPath=path.join(dir,'checkpoint.json');
     const custodyScript=toScript(manifest.scripts.custody),tokenScript=toScript(manifest.scripts.token),key=requestKey(manifest,endpoint),file=cacheFile(key);
     const replayOwner=manifest.attempt.owner;
-    const refresh=async():Promise<CustodyState>=>{
+    const refresh=async()=>{
     const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
     const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
     let market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
@@ -321,10 +365,15 @@ export async function POST(request:Request){
         reconcile(current.snapshot);
         custodyStates.clear();
         custodyStates.set(key,current);
-        return current;
+        return {state:current,live:market};
       }
     }
     custodyStates.delete(key);
+    if(readyOnly){
+      readiness='updating';
+      checkedAt=0;
+      throw Error('Executable custody state changed');
+    }
     await Promise.all([writeFile(custody,JSON.stringify(custodyScript),{mode:0o600}),writeFile(token,JSON.stringify(tokenScript),{mode:0o600})]);
     const canonicalCollector=path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs'),collector=process.env.ROVEKO_RECOVERY_COLLECTOR||canonicalCollector;
     const [canonicalBytes,configuredBytes]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(binary)]).then(([a,b])=>[a,b] as const);
@@ -375,14 +424,16 @@ export async function POST(request:Request){
     await writeAuthenticated(snapshotFile,snapshotScope,state).catch(()=>{});
     custodyStates.clear();
     custodyStates.set(key,state);
-    return state;
+    return {state,live:market};
     };
     let pending=custodyRefreshes.get(key);
+    if(pending&&readyOnly)return new Response('Trading state is updating. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     if(!pending){
       pending=refresh().finally(()=>custodyRefreshes.delete(key));
       custodyRefreshes.set(key,pending);
     }
-    const state=await pending,selectedBundle=state.bundle;
+    const {state,live}=await pending,selectedBundle=state.bundle;
+    request.signal.throwIfAborted();
     if(proofWorker?.state!==state){
       const snapshotPath=path.join(dir,'snapshot.json');
       await writeFile(snapshotPath,JSON.stringify(state.snapshot),{flag:'wx',mode:0o600});
@@ -399,6 +450,7 @@ export async function POST(request:Request){
     worker.idle=setTimeout(worker.native.stop,30_000);
     worker.idle.unref();
     await worker.native.ready;
+    if(synchronize)return Response.json({identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
     const result=await worker.native.proof(body.owner!,body.side!,body.quantity!),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
     const mismatches:string[]=[];
     if(result.old_root?.toLowerCase()!==expectedRoot.toLowerCase())mismatches.push('old-root');
@@ -408,7 +460,6 @@ export async function POST(request:Request){
     if(result.tip_outpoint?.tx_hash?.toLowerCase()!==selectedBundle.live.tx_hash.toLowerCase())mismatches.push('tip-transaction');
     if(typeof result.tip_outpoint?.index!=='string'||BigInt(result.tip_outpoint.index)!==BigInt(selectedBundle.live.index))mismatches.push('tip-index');
     if(mismatches.length)throw Error(`Generated proof checkpoint mismatch: ${mismatches.join(',')}`);
-    const live=endpoint==='https://testnet.ckb.dev/'?await getPudgeCustodyAnchor():null;
     if(live&&(live.point.tx_hash.toLowerCase()!==selectedBundle.live.tx_hash.toLowerCase()||
       BigInt(live.point.index)!==BigInt(selectedBundle.live.index)||live.data.toLowerCase()!==selectedBundle.live.data.toLowerCase())){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
