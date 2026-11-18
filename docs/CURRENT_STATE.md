@@ -1,5 +1,12 @@
 # Current state update — 2026-11-17
 
+## WO2A progress — 2026-11-18
+
+- **VERIFIED:** Error 22 came from the custody lock at input 2. The three-owner fixture supplied one update to operation 2, which requires between two and sixteen. A four-owner run produced a valid two-update batch. The normal consumer Buy and Sell use single-owner operations.
+- **VERIFIED (isolated CKB):** initialization, Buy, Sell, external withdrawal, and external redemption committed. The withdrawal-only run reconciled 1,988 inventory plus 11 custody plus 1 external xUDT. A separate sell-down run returned all 2,000 units to inventory. The original and new evidence remain local.
+- **VERIFIED:** the trade hook rechecks the exact approved market and custody inputs after signing, including when a custody-only transaction moved the custody pair independently. Typecheck, production build, lineage, review and withdrawal layout checks passed.
+- **OPEN:** restart recovery, complete single-owner journey in the trader UI, and real UTXO Global approval remain unverified. Local dev server returned HTTP 200.
+
 ## WO1B progress — 2026-11-18
 
 - **VERIFIED:** Windows restart reused authenticated market, manifest and custody snapshots. Configure `ROVEKO_PUDGE_PROOF_CACHE_DIR` and a stable, privately held 32-byte hex `ROVEKO_PUDGE_SNAPSHOT_KEY` outside that directory. Rebuild the browser-proof binary for the snapshot worker. It reuses one verified tree per custody state. Display reads can serve snapshots up to 30 seconds old while reconciling in the background.

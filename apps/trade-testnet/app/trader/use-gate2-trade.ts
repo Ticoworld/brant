@@ -8,7 +8,6 @@ import {toast} from 'sonner';
 import {loadPudgeManifest} from '../../lib/v2-engine/pudge-manifest.ts';
 import {verifyPudgeInitialProof} from '../../lib/v2-engine/pudge-proof-client.ts';
 import {prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
-import {discoverCustodyPair,discoverMarketPair} from '../../lib/v2-engine/lineage.ts';
 import {readLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
 import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey} from '../../lib/v2-engine/pudge-trade-journal.ts';
@@ -74,13 +73,16 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
         const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
-        const marketPair=await discoverMarketPair(rpc,[manifest.initial[0],manifest.initial[1]],{indexedOnly:true,maxIndexedDepth:256});
-        const custodyPair=await discoverCustodyPair(rpc,{tx_hash:marketPair[0].tx_hash,index:'0x2'});
-        const fresh=await readLiveSingletons(rpc,[...marketPair,...custodyPair],PUDGE_GENESIS);
-        if(fresh.custodyRoot.toLowerCase()!==review.live.custodyRoot.toLowerCase()||fresh.points.some((point,index)=>pointKey(point)!==pointKey(review.live.points[index])))throw Error('Market or custody proof changed after approval');
-        for(const input of review.inputs){
-          const live=await pudgeRpc<any>('get_live_cell',[{tx_hash:input.outPoint.txHash,index:input.outPoint.index},true]);
-          if(live?.status!=='live'||BigInt(live.cell.output.capacity)!==input.capacity||live.cell.data.content.toLowerCase()!==input.data.toLowerCase()||scriptHash(live.cell.output.lock)!==ccc.Script.from(input.lock as ccc.ScriptLike).hash().toLowerCase()||scriptHash(live.cell.output.type)!==(input.type?ccc.Script.from(input.type as ccc.ScriptLike).hash().toLowerCase():''))throw Error('A reviewed trade input changed after approval');
+        const funding=review.inputs[4];
+        const [fresh,fundingLive]=await Promise.all([
+          readLiveSingletons(rpc,review.live.points,PUDGE_GENESIS),
+          pudgeRpc<any>('get_live_cell',[{tx_hash:funding.outPoint.txHash,index:funding.outPoint.index},true]),
+        ]);
+        if(fresh.custodyRoot.toLowerCase()!==review.live.custodyRoot.toLowerCase())throw Error('Custody proof changed after approval');
+        if(fundingLive?.status!=='live'||!fundingLive.cell)throw Error('Reviewed funding is no longer live');
+        for(const [index,input] of review.inputs.entries()){
+          const cell=index===4?fundingLive.cell:fresh.cells[index];
+          if(BigInt(cell.output.capacity)!==input.capacity||cell.data.content.toLowerCase()!==input.data.toLowerCase()||scriptHash(cell.output.lock)!==ccc.Script.from(input.lock as ccc.ScriptLike).hash().toLowerCase()||scriptHash(cell.output.type)!==(input.type?ccc.Script.from(input.type as ccc.ScriptLike).hash().toLowerCase():''))throw Error('A reviewed trade input changed after approval');
         }
         const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed),raw=JSON.stringify(record);
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
@@ -98,5 +100,4 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   return {trade,busy,pending,uncertain,attemptRaw,reconcile,revision};
 }
 
-function pointKey(point:{tx_hash:string;index:string}){return `${point.tx_hash.toLowerCase()}:${BigInt(point.index)}`;}
 function scriptHash(script:unknown){if(!script)return '';const value=script as {code_hash:string;hash_type:string;args:string};return ccc.Script.from({codeHash:value.code_hash,hashType:value.hash_type as ccc.HashType,args:value.args}).hash().toLowerCase();}
