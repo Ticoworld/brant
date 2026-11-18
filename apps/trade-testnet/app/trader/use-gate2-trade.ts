@@ -19,12 +19,12 @@ import type {MarketData,Side} from './types';
 
 const clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(tx)));
 const rpc=(method:string,params:unknown[])=>pudgeRpc(method,params);
-type Review=Awaited<ReturnType<typeof prepareLocalReview>>&{side:Side;quantity:bigint;owner:string;manifest:Awaited<ReturnType<typeof loadPudgeManifest>>};
 
 export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>,refreshAccount:()=>Promise<void>){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale(),active=useRef(signer);active.current=signer;
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
   const reconcileLock=useRef(false);
+  const [failure,setFailure]=useState<{owner:string;message:string}|null>(null);
   const key=account.owner?tradeKey(PUDGE_GENESIS,account.owner):'';
 
   const reconcile=useCallback(async(silent=false)=>{
@@ -52,7 +52,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   useEffect(()=>{if(!pending||!market)return;const timer=setInterval(()=>void reconcile(true),8_000);return()=>clearInterval(timer);},[pending,market,reconcile]);
 
   const trade=useCallback(async(side:Side,quantity:bigint,quotedAmount:bigint)=>{
-    if(busy)return;setBusy(true);const toastId=toast.loading(copy(locale,'reviewing'));
+    if(busy)return;setBusy(true);setFailure(null);const toastId=toast.loading(copy(locale,'reviewing'));
     try{
       if(!market||!signer||!await signer.isConnected())throw Error('Connect a supported Pudge wallet');
       if(account.state!=='ready'||account.owner===''||!key)throw Error('Wallet account or CKB balance is not verified');
@@ -64,11 +64,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const address=await current.getRecommendedAddressObj(),owner=address.script.hash();
         const [walletGenesis,rpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
         if(owner.toLowerCase()!==account.owner.toLowerCase()||walletGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||rpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet account or network changed');
-        const manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
-        const review=await prepareLocalReview(rpc,manifest,owner,side,quantity,address.script) as Review;
+        const timing:Record<string,number>={};
+        const started=performance.now();
+        const review=await prepareLocalReview(rpc,market.manifest,owner,side,quantity,address.script,(stage,ms)=>{timing[stage]=Math.round(ms);});
         if(review.amount!==quotedAmount){await refreshMarket();throw Error('The curve quote changed. Review the updated quote and try again.');}
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
         const confirmToast=toast.loading(copy(locale,'walletApproval'),{id:toastId});
+        console.info('Roveko trade preparation', {...timing,totalMs:Math.round(performance.now()-started)});
         const signed=await current.signTransaction(clone(review.transaction));
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
         const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
@@ -93,11 +95,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         toast.success(locale==='zh-CN'?'交易已提交':'Trade submitted',{id:confirmToast,description:record.txHash});
       });
     }catch(error){
-      toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{id:toastId,description:error instanceof Error?error.message:'Trade preparation or approval failed'});
+      const message=error instanceof Error?error.message:'Trade preparation or approval failed';
+      setFailure({owner:account.owner,message});
+      toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{id:toastId,description:message});
     }finally{setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,refreshMarket,signer]);
 
-  return {trade,busy,pending,uncertain,attemptRaw,reconcile,revision};
+  return {trade,busy,pending,uncertain,attemptRaw,reconcile,revision,error:failure?.owner===account.owner?failure.message:''};
 }
 
 function scriptHash(script:unknown){if(!script)return '';const value=script as {code_hash:string;hash_type:string;args:string};return ccc.Script.from({codeHash:value.code_hash,hashType:value.hash_type as ccc.HashType,args:value.args}).hash().toLowerCase();}

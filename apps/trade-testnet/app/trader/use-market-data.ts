@@ -22,15 +22,15 @@ export function useMarketData(requestedId?:string){
     if(requestedId){setMarketId(requestedId);return;}
     try{const active=localStorage.getItem(ACTIVE_MARKET_KEY);setMarketId(active||DEFAULT_MARKET);}catch{setMarketId(DEFAULT_MARKET);}
   },[requestedId]);
-  const refresh=useCallback(async()=>{
+  const refresh=useCallback(async(force=true)=>{
     const current=readSnapshot(marketId);
-    if(current.lastSuccess&&Date.now()-current.lastSuccess<15_000)return;
+    if(!force&&(document.hidden||(current.lastSuccess&&Date.now()-current.lastSuccess<30_000)))return;
     const existing=requests.get(marketId);if(existing)return existing;
     publish(marketId,{...current,loading:!current.data});
     const request=(async()=>{
       try{
         let response:Response;
-        if(marketId===DEFAULT_MARKET)response=await fetch('/api/markets?display=1',{cache:'no-store'});
+        if(marketId===DEFAULT_MARKET)response=await fetch(force?'/api/markets':'/api/markets?display=1',{cache:'no-store'});
         else{
           const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
           if(!manifest)throw Error('This market is not saved in this browser');
@@ -46,9 +46,12 @@ export function useMarketData(requestedId?:string){
     requests.set(marketId,request);return request;
   },[marketId]);
   useEffect(()=>{
-    const set=new Set(listeners.get(marketId)||[]);set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));void refresh();
-    const timer=setInterval(()=>void refresh(),20_000);
-    return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);};
+    const set=listeners.get(marketId)||new Set();set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));
+    const update=()=>{void refresh(false);};
+    update();
+    const timer=setInterval(update,30_000);
+    document.addEventListener('visibilitychange',update);
+    return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);document.removeEventListener('visibilitychange',update);};
   },[marketId,refresh]);
   return {...state,refresh};
 }

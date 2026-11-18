@@ -36,7 +36,7 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
       const current=Number(base+step*BigInt(sold))/100_000_000;
       series.createPriceLine({price:current,color:'#72dfb0',lineWidth:1,lineStyle:2,axisLabelVisible:true,title:locale==='zh-CN'?'当前买入':'Current buy'});
     }
-    if(projectedPrice!==null&&Number.isFinite(projectedPrice))series.createPriceLine({price:projectedPrice,color:side==='buy'?'#f0c36a':'#f08e89',lineWidth:1,lineStyle:1,axisLabelVisible:true,title:locale==='zh-CN'?'预计成交':'Projected'});
+    if(projectedPrice!==null&&Number.isFinite(projectedPrice))series.createPriceLine({price:projectedPrice,color:side==='buy'?'#f0c36a':'#f08e89',lineWidth:1,lineStyle:1,axisLabelVisible:true,title:locale==='zh-CN'?'报价均价':'Quote average'});
     chart.timeScale().fitContent();
     const observer=new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width)chart.applyOptions({width});});observer.observe(element);
     return()=>{observer.disconnect();chart.remove();};

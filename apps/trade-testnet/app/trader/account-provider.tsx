@@ -14,6 +14,7 @@ const AccountContext=createContext<AccountValue>({state:'disconnected',balanceSt
 const RESERVED_OUTPOINT=`${PUDGE_GATE2_ANCHOR.txHash.toLowerCase()}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`;
 const REFRESH_MS=30_000;
 const MAX_INDEXER_LAG=6n;
+class IndexerAdvanced extends Error {}
 
 async function readBalance(script:{codeHash:string;hashType:string;args:string}){
   const [nodeTip,indexerTip]=await Promise.all([pudgeRpc<{number:string;hash:string}>('get_tip_header'),pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip')]);
@@ -42,7 +43,9 @@ async function readBalance(script:{codeHash:string;hashType:string;args:string})
   const live=proposal?await pudgeRpc<{status:string;cell?:{output:RpcCell['output'];data:{content:string}}}>('get_live_cell',[proposal.out_point,true]):null;
   const [nodeAfter,indexerAfter,anchor]=await Promise.all([pudgeRpc<{number:string}>('get_tip_header'),pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip'),pudgeRpc<string|null>('get_block_hash',[indexerTip.block_number])]);
   const nodeHeightAfter=BigInt(nodeAfter.number);
-  if(anchor?.toLowerCase()!==indexedHash||BigInt(indexerAfter.block_number)!==indexedHeight||indexerAfter.block_hash.toLowerCase()!==indexedHash||nodeHeightAfter<indexedHeight||nodeHeightAfter-indexedHeight>MAX_INDEXER_LAG)throw Error('Wallet balance index changed or is catching up');
+  if(anchor?.toLowerCase()!==indexedHash||nodeHeightAfter<indexedHeight||nodeHeightAfter-indexedHeight>MAX_INDEXER_LAG)throw Error('Wallet balance index is catching up');
+  if(BigInt(indexerAfter.block_number)>indexedHeight)throw new IndexerAdvanced('Wallet balance index advanced during refresh');
+  if(BigInt(indexerAfter.block_number)!==indexedHeight||indexerAfter.block_hash.toLowerCase()!==indexedHash)throw Error('Wallet balance index changed during refresh');
   if(proposal&&(live?.status!=='live'||!live.cell||!matchesLock(live.cell.output.lock)||live.cell.output.type||live.cell.data.content!=='0x'||BigInt(live.cell.output.capacity)!==BigInt(proposal.output.capacity)))throw Error('Wallet funding Cell changed during balance refresh');
   const funding=deriveTradeFunding(proposal?BigInt(proposal.output.capacity):0n,PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE);
   return {totalCapacity:total.toString(),availableToTrade:funding.availableToTrade.toString(),hasFundingCell:funding.hasFundingCell};
@@ -90,6 +93,7 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
 
   useLayoutEffect(()=>{
     let current=true,lastFinished=0,queued:Promise<void>|undefined;
+    let timer:ReturnType<typeof setTimeout>|undefined;
     let verifiedOwner='';
     setBalance({...emptyBalance,state:'idle',error:''});
     if(!signer){
@@ -101,7 +105,7 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
     setIdentity({state:'checking',address:'',owner:'',error:''});
     const update=async()=>{
       if(!current||document.hidden)return;
-      setBalance({...emptyBalance,state:'refreshing',error:''});
+      setBalance(previous=>({...previous,state:'refreshing',error:''}));
       try{
         if(!await signer.isConnected()){
           if(current)setIdentity({state:'disconnected',address:'',owner:'',error:''});
@@ -116,13 +120,17 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
         const script=account.script,owner=script.hash(),address=account.toString();
         const state=genesis?.hash?.toLowerCase()!==PUDGE_GENESIS||rpcGenesis?.toLowerCase()!==PUDGE_GENESIS
           ?'wrong-network':supportedLock(script)?'ready':'unsupported';
+        if(verifiedOwner!==owner)setBalance({...emptyBalance,state:'refreshing',error:''});
         verifiedOwner=state==='ready'?owner:'';
         setIdentity({state,address,owner:verifiedOwner,error:''});
         if(state!=='ready'){
           setBalance({...emptyBalance,state:'idle',error:''});
           return;
         }
-        const result=await readBalance(script);
+        const result=await readBalance(script).catch(error=>{
+          if(error instanceof IndexerAdvanced&&current&&!document.hidden)return readBalance(script);
+          throw error;
+        });
         if(!current)return;
         const [connected,latest]=await Promise.all([signer.isConnected(),signer.getRecommendedAddressObj()]);
         if(!current)return;
@@ -137,30 +145,37 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
         if(!current)return;
         const error=cause instanceof Error?cause.message:'Wallet verification failed';
         if(!verifiedOwner)setIdentity({state:'error',address:'',owner:'',error});
-        setBalance({...emptyBalance,state:/index/i.test(error)?'indexer-lag':'error',error});
+        setBalance(previous=>({...previous,state:/index/i.test(error)?'indexer-lag':'error',error}));
       }
     };
     const run=()=>{
       if(document.hidden)return Promise.resolve();
       if(queued)return queued;
+      clearTimeout(timer);
       const previous=inFlight.current;
       const pending=Promise.resolve(previous).then(update).finally(()=>{
         lastFinished=Date.now();
         if(inFlight.current===pending)inFlight.current=undefined;
         queued=undefined;
+        if(current&&!document.hidden)timer=setTimeout(run,REFRESH_MS);
       });
       queued=pending;
       inFlight.current=pending;
       return pending;
     };
     requestRefresh.current=run;
-    const refreshIfStale=()=>{if(!document.hidden&&Date.now()-lastFinished>=REFRESH_MS)void run();};
+    const refreshIfStale=()=>{
+      clearTimeout(timer);
+      if(document.hidden||queued)return;
+      const remaining=REFRESH_MS-(Date.now()-lastFinished);
+      if(remaining<=0)void run();
+      else timer=setTimeout(run,remaining);
+    };
     void run();
-    const timer=setInterval(refreshIfStale,1000);
     document.addEventListener('visibilitychange',refreshIfStale);
     return ()=>{
       current=false;
-      clearInterval(timer);
+      clearTimeout(timer);
       document.removeEventListener('visibilitychange',refreshIfStale);
     };
   },[signer,client,finishConnection]);

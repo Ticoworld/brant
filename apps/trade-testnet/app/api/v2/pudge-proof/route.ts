@@ -240,7 +240,13 @@ export async function POST(request:Request){
   let dir:string|undefined,entered=false;
   try{
     const origin=request.headers.get('origin'),site=request.headers.get('sec-fetch-site');
-    try{if(!origin||new URL(origin).origin!==new URL(request.url).origin||site&&site!=='same-origin')return new Response('Same-origin request required',{status:403});}catch{return new Response('Same-origin request required',{status:403});}
+    try{
+      const url=new URL(request.url),source=new URL(origin||'');
+      const loopback=(host:string)=>['localhost','127.0.0.1','[::1]'].includes(host);
+      const localAlias=site==='same-origin'&&loopback(url.hostname)&&loopback(source.hostname)&&
+        source.protocol===url.protocol&&source.port===url.port&&source.host===request.headers.get('host');
+      if((source.origin!==url.origin&&!localAlias)||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
+    }catch{return new Response('Same-origin request required',{status:403});}
     if(!consumeRateLimit(request))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
     if(activeRequests>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
     activeRequests++;entered=true;
@@ -291,7 +297,7 @@ export async function POST(request:Request){
     const refresh=async():Promise<CustodyState>=>{
     const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
     const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
-    const market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
+    let market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
     const matchesMarket=(bundle:RecoveryBundle)=>!market||
       (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
     const reconcile=(snapshot:Record<string,unknown>)=>{
@@ -356,6 +362,7 @@ export async function POST(request:Request){
       if(!validBundle(selectedBundle,manifest,replayOwner))throw Error('Rebuilt checkpoint identity mismatch');
       snapshot=await replay(selectedBundle);
     }
+    if(market)market=await getPudgeCustodyAnchor();
     if(!await isLive(selectedBundle))throw Error('Custody changed during recovery');
     const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,net_external:snapshot.net_external,external_accounting_complete:snapshot.external_accounting_complete,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
     reconcile(state.snapshot);
@@ -395,7 +402,12 @@ export async function POST(request:Request){
     if(result.tip_outpoint?.tx_hash?.toLowerCase()!==selectedBundle.live.tx_hash.toLowerCase())mismatches.push('tip-transaction');
     if(typeof result.tip_outpoint?.index!=='string'||BigInt(result.tip_outpoint.index)!==BigInt(selectedBundle.live.index))mismatches.push('tip-index');
     if(mismatches.length)throw Error(`Generated proof checkpoint mismatch: ${mismatches.join(',')}`);
-    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash},{headers:{'Cache-Control':'no-store'}});
+    const live=endpoint==='https://testnet.ckb.dev/'?await getPudgeCustodyAnchor():null;
+    if(live&&(live.point.tx_hash.toLowerCase()!==selectedBundle.live.tx_hash.toLowerCase()||
+      BigInt(live.point.index)!==BigInt(selectedBundle.live.index)||live.data.toLowerCase()!==selectedBundle.live.data.toLowerCase())){
+      return new Response('Custody changed during preparation. Retry the quote.',{status:409});
+    }
+    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
     if(error instanceof Error&&error.message==='Expected JSON')return new Response('Expected JSON',{status:415});

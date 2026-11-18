@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,onTrade,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,tradeError,onTrade,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;tradeError?:string;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -43,7 +43,8 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const budgetActions=['20','50','100','250'].map(value=>({label:`${value} CKB`,value}));
   const sellBalanceMissing=side==='sell'&&(tokenBalanceState!=='ready'||tokenBalance===null);
   const sellBalanceInsufficient=side==='sell'&&tokenBalance!==null&&quoteState.quantity>tokenBalance;
-  const ckbInsufficient=walletReady&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?ckbBalance===null||quoteState.amount>ckbBalance:!hasFundingCell);
+  const ckbUnavailable=walletReady&&ckbBalance===null;
+  const ckbInsufficient=walletReady&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
   const disabled=busy||walletState==='checking'||(walletReady&&(pending||quoteState.quantity===0n||quoteState.invalid||sellBalanceMissing||sellBalanceInsufficient||ckbInsufficient));
   const action=!walletReady?(walletState==='checking'?copy(locale,'walletChecking'):walletState==='connecting'?copy(locale,'connecting'):copy(locale,'connect')):side==='buy'?copy(locale,'buyAction'):sellBalanceMissing?(['idle','loading'].includes(tokenBalanceState)?copy(locale,'checkingHoldings'):copy(locale,'holdingsUnavailable')):sellBalanceInsufficient?copy(locale,'insufficientTokens'):copy(locale,'sellAction');
   const inputValue=side==='buy'?budget:quantityText;
@@ -69,6 +70,8 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
     {quoteState.invalid&&<p role="alert" className="mb-0 mt-3 text-[11px] text-[#f0b8ad]">{copy(locale,side==='sell'?'fractionalToken':'invalidBudget')}</p>}
     {quoteState.tooSmall&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#e8cc94]">{copy(locale,'budgetTooSmall')}</p>}
     {ckbInsufficient&&quoteState.quantity>0n&&<p role="alert" className="mb-0 mt-3 text-[11px] text-[#f0b8ad]">{copy(locale,'insufficientCkb')}</p>}
+    {ckbUnavailable&&quoteState.quantity>0n&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{copy(locale,'balanceUnavailable')}</p>}
+    {tradeError&&<p role="alert" className="mb-0 mt-3 break-words text-[11px] text-[#f0b8ad]">{tradeError}</p>}
     <button type="button" disabled={disabled} aria-busy={busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
       {busy?copy(locale,'reviewing'):pending&&walletReady?copy(locale,'pending'):action}
     </button>
