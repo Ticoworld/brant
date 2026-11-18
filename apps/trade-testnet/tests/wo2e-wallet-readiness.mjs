@@ -28,7 +28,11 @@ try{
     window.utxoGlobal={ckbSigner:{
       connect:async()=>{connected=true;},isConnected:async()=>connected,getNetwork:async()=>'nervos_testnet',
       getAccount:async()=>[address],getPublicKey:async()=>[],on(){},removeListener(){},
-      signTransaction:async()=>{window.readiness=performance.now()-window.clicked;throw Error('Fixture rejected approval');},
+      signTransaction:async()=>{
+        window.readiness=performance.now()-window.clicked;
+        window.promptCount=(window.promptCount||0)+1;
+        return new Promise((_,reject)=>{window.rejectApproval=()=>reject(Error('Fixture rejected approval'));});
+      },
     }};
   },address);
   await page.goto(base+'/market/pudge-xudt',{timeout:60000});
@@ -37,10 +41,10 @@ try{
   await page.getByRole('button',{name:'CKB CKB',exact:true}).click();
   const budget=page.getByRole('button',{name:'50 CKB',exact:true});
   await budget.click({timeout:60000});
-  const buy=page.getByRole('button',{name:'Buy Token',exact:true});
+  const buy=page.getByRole('button',{name:'Buy Token',exact:true}).and(page.locator(':enabled'));
   for(let sample=0;sample<5;sample++){
     const startingProofs=proofs;
-    await page.waitForTimeout(Number(process.env.ROVEKO_QUOTE_SETTLE_MS||5000));
+    await buy.waitFor();
     const beforeClick=[proofs,rpcs];
     await buy.evaluate(button=>{
       if(button.disabled)throw Error('Buy is disabled');
@@ -52,7 +56,12 @@ try{
       console.log(await page.getByRole('alert').allTextContents());
       throw error;
     });
+    await page.getByRole('button',{name:'Approve in UTXO Global',exact:true}).waitFor();
+    await page.evaluate(()=>window.rejectApproval());
     await page.getByText(/Fixture rejected approval/).first().waitFor();
+    await buy.waitFor();
+    assert.equal(await page.evaluate(()=>window.promptCount),sample+1);
+    assert.equal(await page.evaluate(()=>Object.keys(localStorage).some(key=>key.startsWith('roveko-pudge-trade-v1:')&&key.split(':').length===3)),false);
     console.log({sample,clickToWalletMs:Math.round(await page.evaluate(()=>window.readiness)),backgroundProofs:beforeClick[0]-startingProofs,clickProofs:proofs-beforeClick[0],clickRpcs:rpcs-beforeClick[1]});
   }
 }finally{await browser.close();}

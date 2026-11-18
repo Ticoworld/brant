@@ -50,10 +50,12 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return()=>{controller.abort();clearTimeout(timer);};
   },[market?.identity]);
   const prepared=useRef<{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
+  const [,renderPreparation]=useState(0);
+  const [failedQuote,setFailedQuote]=useState('');
   useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,market?.custodyRoot]);
   const quoteKey=(side:Side,quantity:bigint,amount:bigint)=>JSON.stringify([
     market?.genesis,market?.identity,market?.custodyRoot,market?.manifest.initializationTransactionHash,
-    account.owner,account.fundingHint?.txHash,account.fundingHint?.index,revision,side,quantity.toString(),amount.toString(),
+    account.owner,revision,side,quantity.toString(),amount.toString(),
   ]);
   const preparation=useCallback((side:Side,quantity:bigint,amount:bigint,key:string)=>{
     const previous=prepared.current;
@@ -70,12 +72,26 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     })();
     const entry:{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:typeof review}={key,signer,controller,review};
     prepared.current=entry;
-    void review.then(()=>{entry.readyAt=Date.now();},()=>{if(prepared.current===entry)prepared.current=null;});
+    setFailedQuote('');
+    void review.then(()=>{
+      entry.readyAt=Date.now();
+      if(prepared.current===entry&&!controller.signal.aborted)renderPreparation(value=>value+1);
+    },()=>{
+      if(prepared.current===entry&&!controller.signal.aborted){
+        prepared.current=null;
+        setFailedQuote(key);
+      }
+    });
     return review;
   },[account.owner,account.fundingHint,market,signer]);
   const prepareQuote=(side:Side,quantity:bigint,amount:bigint)=>{
     if(!market||!signer||account.state!=='ready'||pending||busy||document.hidden||localStorage.getItem(key))return;
     void preparation(side,quantity,amount,quoteKey(side,quantity,amount)).catch(()=>{});
+  };
+  const quoteStatus=(side:Side,quantity:bigint,amount:bigint)=>{
+    const key=quoteKey(side,quantity,amount),entry=prepared.current;
+    if(entry?.key===key&&entry.signer===signer&&entry.readyAt!==undefined&&!entry.controller.signal.aborted)return 'ready';
+    return failedQuote===key?'unavailable':'updating';
   };
 
   const reconcile=useCallback(async(silent=false)=>{
@@ -150,12 +166,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
         setStatus('awaiting-wallet');
         const confirmToast=toast.loading(copy(locale,'walletApproval'),{id:toastId});
-        prepared.current=null;
         console.info('Roveko trade preparation',JSON.stringify({validationMs:Math.round(performance.now()-validationStarted),totalMs:Math.round(performance.now()-started)}));
         const reviewedHash=review.transaction.hash();
         tradeTiming(reviewedHash,'click',clickedAt);
         tradeTiming(reviewedHash,'wallet-handoff');
         const signed=await current.signTransaction(clone(review.transaction));
+        prepared.current=null;
+        setStatus('broadcasting');
         tradeTiming(reviewedHash,'signature-received');
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
         const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
@@ -184,7 +201,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision]);
 
-  return {trade,prepareQuote,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {trade,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint,checkFee:boolean){

@@ -82,12 +82,12 @@ export function MarketScreen({id}:{id:string}){
     </div>
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(330px,1fr)] lg:items-start">
       <div className="order-2 min-w-0 space-y-4 lg:order-1"><MarketSummary market={market} locale={locale}/><SwapKlinePanel market={market} locale={locale} projectedPrice={projectedQuote.price} side={projectedQuote.side}/><MarketRecentTrades market={market} locale={locale}/></div>
-      <SwapPanel className="order-1 lg:order-2" market={market} tokenBalance={tokenBalance} tokenBalanceState={position.state} ckbBalance={ckbBalance} hasFundingCell={account.hasFundingCell} walletReady={account.state==='ready'} walletState={account.state} pending={trade.pending} busy={trade.busy} tradeError={trade.error} onTrade={trade.trade} onPrepare={trade.prepareQuote} readiness={trade.readiness} onQuoteChange={onQuoteChange} onSideChange={setSide} onRefreshTokenBalance={position.retry}/>
+      <SwapPanel className="order-1 lg:order-2" market={market} tokenBalance={tokenBalance} tokenBalanceState={position.state} ckbBalance={ckbBalance} hasFundingCell={account.hasFundingCell} walletReady={account.state==='ready'} walletState={account.state} pending={trade.pending} busy={trade.busy} tradeError={trade.error} onTrade={trade.trade} onPrepare={trade.prepareQuote} quoteStatus={trade.quoteStatus} tradeStatus={trade.status} readiness={trade.readiness} onQuoteChange={onQuoteChange} onSideChange={setSide} onRefreshTokenBalance={position.retry}/>
     </div>
     {(trade.pending||trade.busy||trade.receipt)&&<section role="status" className="flex flex-wrap items-center gap-3 border-y border-[#303a37] py-3 text-xs text-[#c8d2ce]">
       <span>{trade.uncertain?copy(locale,'unknown'):({preparing:copy(locale,'reviewing'),'awaiting-wallet':copy(locale,'walletApproval'),broadcasting:copy(locale,'broadcasting'),submitted:'Submitted',pending:copy(locale,'pending'),proposed:'Proposed',confirmed:copy(locale,'confirmed')}[trade.status]||(trade.pending?copy(locale,'pending'):copy(locale,'confirmed')))}</span>
       {(trade.pending||trade.receipt)&&<a href={explorer(trade.pending?attemptHash(trade.attemptRaw):trade.receipt)} target="_blank" rel="noreferrer" className="underline">{copy(locale,'explorer')}</a>}
-      {trade.pending&&<button onClick={()=>void trade.reconcile()} className="min-h-8 rounded-sm border border-[#46514d] px-3">{copy(locale,'reconcile')}</button>}
+      {trade.uncertain&&<button onClick={()=>void trade.reconcile()} className="min-h-8 rounded-sm border border-[#46514d] px-3">{copy(locale,'reconcile')}</button>}
     </section>}
     {account.state==='unsupported'&&<p className="m-0 text-xs text-[#dfa89c]">{copy(locale,'wrongWallet')}</p>}
     {account.state==='error'&&account.error&&<p className="m-0 text-xs text-[#dfa89c]">{account.error}</p>}
