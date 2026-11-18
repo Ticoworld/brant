@@ -80,12 +80,12 @@ try{
   assert.equal(reads,hiddenReads);
   lag='0x40';
   await page.evaluate(()=>window.fixture.visibility(false));
-  await page.getByText(/balance index is catching up/).waitFor();
+  await page.getByTitle(/balance index is catching up/).waitFor();
   assert.equal(await wallet.count(),1);
   lag='0x62';
   fail=true;
   await page.getByRole('button',{name:'Retry',exact:true}).first().dispatchEvent('click');
-  await page.getByText('Wallet or network data could not be loaded.').waitFor();
+  await page.getByTitle('Fixture balance failure').waitFor();
   assert.equal(await wallet.count(),1);
   for(const path of ['/portfolio','/activity','/']){
     await page.locator(`nav a[href="${path}"]`).dispatchEvent('click');

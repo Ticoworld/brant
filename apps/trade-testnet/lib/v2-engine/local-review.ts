@@ -5,9 +5,8 @@ import { buildReviewedTransaction } from './review.ts';
 import { quote } from './curve.ts';
 import type { Cell } from './transaction.ts';
 import { discoverMarketPair, discoverCustodyPair } from './lineage.ts';
-import {discoverFunding} from './multi-funding.ts';
+import {selectTradeFunding,type FundingHint} from './multi-funding.ts';
 import {cccA} from '@ckb-ccc/core/advanced';
-import {PUDGE_GATE2_ANCHOR} from './pudge-public-registry.ts';
 import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from './market-capacity.ts';
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
@@ -21,10 +20,14 @@ const pinned:Record<string,string> = {
   custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',
   xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95',
 };
-export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint, ownerScript?:ccc.Script, timing?:(stage:string,ms:number)=>void) {
+export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint, ownerScript?:ccc.Script, timing?:(stage:string,ms:number)=>void, hint?:FundingHint, quotedAmount?:bigint) {
   let started=performance.now();
   const mark=(stage:string)=>{const now=performance.now();timing?.(stage,now-started);started=now;};
   const pudge=config.format==='roveko-pudge-market-v1';
+  if(pudge&&(!ownerScript||ownerScript.hash()!==owner))throw Error('Connected wallet changed');
+  const minimum=(amount:bigint)=>(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
+  const earlyFunding=pudge&&quotedAmount!==undefined?selectTradeFunding(rpc,ownerScript!,minimum(quotedAmount),hint):undefined;
+  void earlyFunding?.catch(()=>{});
   const response = await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{signal:AbortSignal.timeout(65_000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(pudge?{manifest:config}:config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
   if (!response.ok) {
     const detail=response.headers.get('content-type')?.startsWith('text/plain')?await response.text():'';
@@ -60,18 +63,10 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
     return {outPoint:{txHash:points[i].tx_hash,index:points[i].index},capacity:BigInt(cell.output.capacity),lock:transform(cell.output.lock),type:cell.output.type ? transform(cell.output.type as {code_hash:string;hash_type:string;args:string}) : undefined,data:cell.data.content};
   });
   const amount = quote(live.curve,side,quantity);
-  let fundingPoint=config.funding;
-  if(pudge){
-    if(!ownerScript||ownerScript.hash().toLowerCase()!==owner.toLowerCase())throw Error('Connected wallet changed');
-    const candidates=await discoverFunding(rpc,rpc,{codeHash:ownerScript.codeHash,hashType:ownerScript.hashType,args:ownerScript.args});
-    const minimum=(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
-    const reserved=`${PUDGE_GATE2_ANCHOR.txHash.toLowerCase()}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`;
-    const eligible=candidates.filter(c=>`${c.outPoint.txHash.toLowerCase()}:${BigInt(c.outPoint.index)}`!==reserved&&!c.type&&c.data==='0x'&&c.capacity>=minimum).sort((a,b)=>a.capacity===b.capacity?(a.outPoint.txHash.localeCompare(b.outPoint.txHash)||Number(BigInt(a.outPoint.index)-BigInt(b.outPoint.index))):a.capacity<b.capacity?-1:1);
-    if(!eligible.length)throw Error('No single plain wallet cell can fund this trade');fundingPoint=eligible[0].outPoint;
-  }
-  const funding = await readFundingCell(rpc,fundingPoint,owner);
+  if(quotedAmount!==undefined&&amount!==quotedAmount)throw Error('The curve quote changed. Review the updated quote and try again.');
+  const funding=pudge?await (earlyFunding||selectTradeFunding(rpc,ownerScript!,minimum(amount),hint)):await readFundingCell(rpc,config.funding,owner);
   mark('fundingMs');
-  const witness = p.witness + (side === 'sell' ? le64(quantity)+le64(amount) : '');
+  const witness=p.witness+(side==='sell'?le64(quantity)+le64(amount):'');
   const genesisBlock = await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
   if (genesisBlock?.header?.hash?.toLowerCase() !== config.genesis.toLowerCase() || !genesisBlock?.transactions?.[1]?.hash) throw Error('Wrong genesis or missing secp dependency');
   if(pudge&&genesisBlock.transactions[1].hash.toLowerCase()!=='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37')throw Error('Pudge secp dependency mismatch');

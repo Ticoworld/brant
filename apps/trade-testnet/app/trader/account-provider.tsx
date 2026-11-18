@@ -2,14 +2,16 @@
 
 import {createContext,useCallback,useContext,useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {useCcc,useSigner} from '@ckb-ccc/connector-react';
+import {ccc} from '@ckb-ccc/core';
 import {supportedLock,PUDGE_GENESIS,pudgeRpc,type RpcCell} from './rpc';
 import {deriveTradeFunding,PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from '../../lib/v2-engine/market-capacity.ts';
 import {PUDGE_GATE2_ANCHOR} from '../../lib/v2-engine/pudge-public-registry.ts';
+import type {FundingHint} from '../../lib/v2-engine/multi-funding.ts';
 
 type State='disconnected'|'connecting'|'connection-timeout'|'connection-rejected'|'checking'|'ready'|'wrong-network'|'unsupported'|'error';
 type BalanceState='idle'|'refreshing'|'ready'|'indexer-lag'|'error';
-type AccountValue={state:State;balanceState:BalanceState;address:string;owner:string;totalCapacity:string;availableToTrade:string;hasFundingCell:boolean;error:string;connect:()=>void;refresh:()=>Promise<void>};
-const emptyBalance={totalCapacity:'',availableToTrade:'',hasFundingCell:false};
+type AccountValue={state:State;balanceState:BalanceState;address:string;owner:string;totalCapacity:string;availableToTrade:string;fundingHint?:FundingHint;hasFundingCell:boolean;error:string;connect:()=>void;refresh:()=>Promise<void>};
+const emptyBalance={totalCapacity:'',availableToTrade:'',hasFundingCell:false,fundingHint:undefined as FundingHint|undefined};
 const AccountContext=createContext<AccountValue>({state:'disconnected',balanceState:'idle',address:'',owner:'',...emptyBalance,error:'',connect:()=>{},refresh:async()=>{}});
 const RESERVED_OUTPOINT=`${PUDGE_GATE2_ANCHOR.txHash.toLowerCase()}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`;
 const REFRESH_MS=30_000;
@@ -48,7 +50,7 @@ async function readBalance(script:{codeHash:string;hashType:string;args:string})
   if(BigInt(indexerAfter.block_number)!==indexedHeight||indexerAfter.block_hash.toLowerCase()!==indexedHash)throw Error('Wallet balance index changed during refresh');
   if(proposal&&(live?.status!=='live'||!live.cell||!matchesLock(live.cell.output.lock)||live.cell.output.type||live.cell.data.content!=='0x'||BigInt(live.cell.output.capacity)!==BigInt(proposal.output.capacity)))throw Error('Wallet funding Cell changed during balance refresh');
   const funding=deriveTradeFunding(proposal?BigInt(proposal.output.capacity):0n,PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE);
-  return {totalCapacity:total.toString(),availableToTrade:funding.availableToTrade.toString(),hasFundingCell:funding.hasFundingCell};
+  return {totalCapacity:total.toString(),availableToTrade:funding.availableToTrade.toString(),hasFundingCell:funding.hasFundingCell,fundingHint:proposal?{txHash:proposal.out_point.tx_hash,index:proposal.out_point.index,owner:ccc.Script.from(script as ccc.ScriptLike).hash(),genesis:PUDGE_GENESIS}:undefined};
 }
 
 export default function AccountProvider({children}:{children:React.ReactNode}){
@@ -181,6 +183,7 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
   },[signer,client,finishConnection]);
   const value=useMemo(()=>({
     ...identity,availableToTrade:balance.availableToTrade,totalCapacity:balance.totalCapacity,
+    fundingHint:balance.state==='error'||balance.state==='indexer-lag'?undefined:balance.fundingHint,
     hasFundingCell:balance.hasFundingCell,balanceState:balance.state,error:identity.error||balance.error,connect,refresh,
   }),[identity,balance,connect,refresh]);
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;

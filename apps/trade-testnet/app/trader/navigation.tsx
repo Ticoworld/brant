@@ -26,6 +26,7 @@ export default function TraderNavigation(){
           <div className="absolute right-0 top-10 z-30 w-48 border border-[#39423f] bg-[#141a19] p-3 text-xs shadow-xl"><div className="font-medium text-[#edf1ef]">{copy(locale,'pudge')}</div><div className="mt-1 text-[#929d99]">{copy(locale,'readonly')}</div></div>
         </details>
         {account.state==='ready'&&account.availableToTrade!==''&&<span title={`${copy(locale,'yourBalance')}: ${formatBalance(account.totalCapacity)} CKB · ${copy(locale,'availableToTrade')}: ${formatBalance(account.availableToTrade)} CKB`} className="hidden text-[11px] tabular-nums text-[#c8d2ce] lg:block">{account.balanceState==='ready'?copy(locale,'availableToTrade'):(locale==='zh-CN'?'上次验证余额':'Last verified')}: {formatBalance(account.availableToTrade)} CKB</span>}
+        {account.state==='ready'&&['error','indexer-lag'].includes(account.balanceState)&&<button type="button" title={account.error} onClick={()=>void account.refresh()} className="text-[11px] text-[#a4afab]">{copy(locale,'retry')}</button>}
         <button type="button" title={account.address||copy(locale,'connect')} onClick={account.connect} aria-busy={account.state==='connecting'||account.state==='checking'} className="max-w-[170px] truncate rounded-sm border border-[#46514d] bg-[#1b2421] px-3 py-2 text-[11px] font-semibold text-[#e7efeb] transition-colors hover:bg-[#26322d] sm:max-w-[220px] sm:text-xs">
           {account.state==='checking'?copy(locale,'walletChecking'):account.state==='connecting'?copy(locale,'connecting'):addressLabel}
         </button>

@@ -1,4 +1,45 @@
 import { ccc } from '@ckb-ccc/core';
+import {readFundingCell} from './funding.ts';
+import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_GENESIS} from './pudge-public-registry.ts';
+
+export type FundingHint={txHash:string;index:string;owner:string;genesis:string};
+
+export async function selectTradeFunding(rpc:Rpc,script:ccc.Script,minimum:bigint,hint?:FundingHint){
+  const owner=script.hash();
+  const reserved=(point:{txHash:string;index:string})=>point.txHash.toLowerCase()===PUDGE_GATE2_ANCHOR.txHash.toLowerCase()&&BigInt(point.index)===BigInt(PUDGE_GATE2_ANCHOR.index);
+  const check=async(point:{txHash:string;index:string})=>{
+    try{
+      if(reserved(point))return null;
+      const cell=await readFundingCell(rpc,point,owner);
+      return cell.capacity>=minimum?cell:null;
+    }catch{return null;}
+  };
+  if(hint?.genesis===PUDGE_GATE2_GENESIS&&hint.owner===owner){
+    const live=await check(hint);
+    if(live)return live;
+  }
+  const [tip,indexed]=await Promise.all([
+    rpc('get_tip_header',[]) as Promise<{number:string}>,
+    rpc('get_indexer_tip',[]) as Promise<{block_number:string;block_hash:string}>,
+  ]);
+  const lag=BigInt(tip.number)-BigInt(indexed.block_number);
+  if(lag<0n||lag>6n)throw Error('Funding index is catching up. Retry shortly.');
+  const page=await rpc('get_cells',[{
+    script:{code_hash:script.codeHash,hash_type:script.hashType,args:script.args},script_type:'lock',script_search_mode:'exact',with_data:true,
+    filter:{output_data:'0x',output_data_filter_mode:'exact',script_len_range:['0x0','0x1'],output_capacity_range:[ccc.numToHex(minimum),'0xffffffffffffffff']},
+  },'desc','0x64']) as {objects:{out_point:{tx_hash:string;index:string};output:{capacity:string;type?:unknown};output_data:string}[]};
+  const candidates=page.objects.filter(row=>!row.output.type&&row.output_data==='0x'&&BigInt(row.output.capacity)>=minimum)
+    .sort((a,b)=>BigInt(a.output.capacity)<BigInt(b.output.capacity)?1:BigInt(a.output.capacity)>BigInt(b.output.capacity)?-1:0).slice(0,8);
+  const [live,canonical,after]=await Promise.all([
+    Promise.all(candidates.map(row=>check({txHash:row.out_point.tx_hash,index:row.out_point.index}))),
+    rpc('get_block_hash',[indexed.block_number]),
+    rpc('get_indexer_tip',[]) as Promise<typeof indexed>,
+  ]);
+  if(canonical!==indexed.block_hash||after.block_hash!==indexed.block_hash||after.block_number!==indexed.block_number)throw Error('Funding index changed during selection. Retry shortly.');
+  const funding=live.find(cell=>cell!==null);
+  if(!funding)throw Error('No eligible live funding Cell found in the funding search');
+  return funding;
+}
 
 export type FundingCandidate = { outPoint: { txHash: string; index: string }; capacity: bigint; lock: {codeHash:string;hashType:string;args:string}; type?: unknown; data:string };
 const SECP = '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';

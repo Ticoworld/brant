@@ -26,33 +26,55 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const reconcileLock=useRef(false);
   const [failure,setFailure]=useState<{owner:string;message:string}|null>(null);
   const key=account.owner?tradeKey(PUDGE_GENESIS,account.owner):'';
+  const [status,setStatus]=useState('');
+  const [receipt,setReceipt]=useState('');
+  const broadcasting=useRef(false);
 
   const reconcile=useCallback(async(silent=false)=>{
-    if(!key||reconcileLock.current)return;const raw=localStorage.getItem(key);if(!raw){setPending(false);setUncertain(false);setAttemptRaw('');return;}
+    if(!key||reconcileLock.current||broadcasting.current)return;const raw=localStorage.getItem(key);if(!raw){setPending(false);setUncertain(false);setAttemptRaw('');return;}
     reconcileLock.current=true;setPending(true);setAttemptRaw(raw);
     try{
+      const attempt=parseTradeAttempt(raw);
+      const row=await pudgeRpc<{tx_status?:{status?:string;reason?:string}}|null>('get_transaction',[attempt.txHash]);
+      const state=row?.tx_status?.status;
+      if(state==='pending'||state==='proposed'){setStatus(state);setUncertain(false);return;}
+      if(state==='rejected'){
+        if(localStorage.getItem(key)===raw){
+          localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
+          setPending(false);setUncertain(false);setStatus('rejected');
+          setFailure({owner:account.owner,message:row?.tx_status?.reason||'Node rejected the transaction'});
+        }
+        return;
+      }
+      if(state!=='committed')throw Error('Node has not reported a transaction status');
+      setStatus('reconciling');setUncertain(false);
       if(!market)throw Error('Registered market unavailable');
-      const attempt=parseTradeAttempt(raw),manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
+      const manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
       const result=await reconcilePudgeTrade(rpc,attempt,manifest);
       if(localStorage.getItem(key)!==raw)throw Error('Trade journal changed during reconciliation');
-      localStorage.removeItem(key);setPending(false);setUncertain(false);setAttemptRaw('');setRevision(value=>value+1);
+      localStorage.setItem(key+':confirmed',result.hash);
+      localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
+      setReceipt(result.hash);setStatus('confirmed');setPending(false);setUncertain(false);setAttemptRaw('');setRevision(value=>value+1);
       if(!silent)toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{description:result.hash});
       await Promise.all([refreshMarket(),refreshAccount()]);
     }catch(error){
-      setPending(true);setUncertain(true);
+      const acknowledged=!!localStorage.getItem(key+':submitted');
+      setPending(true);setUncertain(!acknowledged);setStatus(acknowledged?'submitted':'unknown');
       if(!silent)toast.warning(locale==='zh-CN'?'交易仍待核对':'Trade still awaiting confirmation',{description:error instanceof Error?error.message:'Check again before retrying'});
     }finally{reconcileLock.current=false;}
   },[account.owner,key,locale,market,refreshAccount,refreshMarket]);
 
   useEffect(()=>{
-    if(!key){setPending(false);setUncertain(false);setAttemptRaw('');return;}
-    const raw=localStorage.getItem(key);setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw);
+    if(!key){setPending(false);setUncertain(false);setAttemptRaw('');setReceipt('');return;}
+    const raw=localStorage.getItem(key),submitted=!!localStorage.getItem(key+':submitted');
+    setReceipt(localStorage.getItem(key+':confirmed')||'');
+    setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!submitted);
     if(raw)void reconcile(true);
   },[key,reconcile]);
   useEffect(()=>{if(!pending||!market)return;const timer=setInterval(()=>void reconcile(true),8_000);return()=>clearInterval(timer);},[pending,market,reconcile]);
 
   const trade=useCallback(async(side:Side,quantity:bigint,quotedAmount:bigint)=>{
-    if(busy)return;setBusy(true);setFailure(null);const toastId=toast.loading(copy(locale,'reviewing'));
+    if(busy)return;setBusy(true);setStatus('preparing');setFailure(null);const toastId=toast.loading(copy(locale,'reviewing'));
     try{
       if(!market||!signer||!await signer.isConnected())throw Error('Connect a supported Pudge wallet');
       if(account.state!=='ready'||account.owner===''||!key)throw Error('Wallet account or CKB balance is not verified');
@@ -66,9 +88,10 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         if(owner.toLowerCase()!==account.owner.toLowerCase()||walletGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||rpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet account or network changed');
         const timing:Record<string,number>={};
         const started=performance.now();
-        const review=await prepareLocalReview(rpc,market.manifest,owner,side,quantity,address.script,(stage,ms)=>{timing[stage]=Math.round(ms);});
+        const review=await prepareLocalReview(rpc,market.manifest,owner,side,quantity,address.script,(stage,ms)=>{timing[stage]=Math.round(ms);},account.fundingHint,quotedAmount);
         if(review.amount!==quotedAmount){await refreshMarket();throw Error('The curve quote changed. Review the updated quote and try again.');}
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
+        setStatus('awaiting-wallet');
         const confirmToast=toast.loading(copy(locale,'walletApproval'),{id:toastId});
         console.info('Roveko trade preparation', {...timing,totalMs:Math.round(performance.now()-started)});
         const signed=await current.signTransaction(clone(review.transaction));
@@ -88,20 +111,24 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         }
         const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed),raw=JSON.stringify(record);
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
-        localStorage.setItem(key,raw);setAttemptRaw(raw);setPending(true);setUncertain(true);
+        broadcasting.current=true;
+        localStorage.setItem(key,raw);setAttemptRaw(raw);setPending(true);setUncertain(false);setStatus('broadcasting');
         toast.loading(copy(locale,'broadcasting'),{id:confirmToast});
         const submitted=await current.client.sendTransaction(signed);
         if(submitted.toLowerCase()!==record.txHash.toLowerCase())throw Error('Wallet returned an unexpected transaction hash; reconcile before retrying');
+        localStorage.setItem(key+':submitted',record.txHash);setStatus('submitted');setUncertain(false);
         toast.success(locale==='zh-CN'?'交易已提交':'Trade submitted',{id:confirmToast,description:record.txHash});
       });
     }catch(error){
       const message=error instanceof Error?error.message:'Trade preparation or approval failed';
+      if(key&&localStorage.getItem(key)){setStatus('unknown');setUncertain(true);}
+      else setStatus(/reject|denied|cancel/i.test(message)?'rejected':'failed');
       setFailure({owner:account.owner,message});
       toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{id:toastId,description:message});
-    }finally{setBusy(false);}
-  },[account.owner,account.state,busy,key,locale,market,refreshMarket,signer]);
+    }finally{broadcasting.current=false;setBusy(false);}
+  },[account.owner,account.state,account.fundingHint,busy,key,locale,market,refreshMarket,signer]);
 
-  return {trade,busy,pending,uncertain,attemptRaw,reconcile,revision,error:failure?.owner===account.owner?failure.message:''};
+  return {trade,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 function scriptHash(script:unknown){if(!script)return '';const value=script as {code_hash:string;hash_type:string;args:string};return ccc.Script.from({codeHash:value.code_hash,hashType:value.hash_type as ccc.HashType,args:value.args}).hash().toLowerCase();}
