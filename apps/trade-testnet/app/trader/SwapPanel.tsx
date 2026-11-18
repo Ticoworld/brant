@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
 import {quote} from '../../lib/v2-engine/curve.ts';
@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,tradeError,onTrade,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;tradeError?:string;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,tradeError,onTrade,onPrepare,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;tradeError?:string;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -46,6 +46,13 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const ckbUnavailable=walletReady&&ckbBalance===null;
   const ckbInsufficient=walletReady&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
   const disabled=busy||walletState==='checking'||(walletReady&&(pending||quoteState.quantity===0n||quoteState.invalid||sellBalanceMissing||sellBalanceInsufficient||ckbInsufficient));
+  const prepare=useRef(onPrepare);
+  prepare.current=onPrepare;
+  useEffect(()=>{
+    if(disabled||!walletReady)return;
+    const timer=setTimeout(()=>prepare.current?.(side,quoteState.quantity,quoteState.amount),300);
+    return()=>clearTimeout(timer);
+  },[disabled,walletReady,side,quoteState.quantity,quoteState.amount,market.identity,market.custodyRoot,account.owner,account.fundingHint?.txHash,account.fundingHint?.index]);
   const action=!walletReady?(walletState==='checking'?copy(locale,'walletChecking'):walletState==='connecting'?copy(locale,'connecting'):copy(locale,'connect')):side==='buy'?copy(locale,'buyAction'):sellBalanceMissing?(['idle','loading'].includes(tokenBalanceState)?copy(locale,'checkingHoldings'):copy(locale,'holdingsUnavailable')):sellBalanceInsufficient?copy(locale,'insufficientTokens'):copy(locale,'sellAction');
   const inputValue=side==='buy'?budget:quantityText;
   const outputValue=side==='buy'?quoteState.quantity.toString():formatCkb(quoteState.amount);
