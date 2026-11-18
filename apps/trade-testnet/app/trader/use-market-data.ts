@@ -30,7 +30,7 @@ export function useMarketData(requestedId?:string){
     const request=(async()=>{
       try{
         let response:Response;
-        if(marketId===DEFAULT_MARKET)response=await fetch('/api/markets',{cache:'no-store'});
+        if(marketId===DEFAULT_MARKET)response=await fetch('/api/markets?display=1',{cache:'no-store'});
         else{
           const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
           if(!manifest)throw Error('This market is not saved in this browser');

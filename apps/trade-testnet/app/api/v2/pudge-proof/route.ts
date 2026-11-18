@@ -7,6 +7,8 @@ import {promisify} from 'node:util';
 import {ccc} from '@ckb-ccc/core';
 import {loadPudgeManifest} from '../../../../lib/v2-engine/pudge-manifest.ts';
 import {getPudgeCustodyAnchor} from '../../../../lib/pudge-market-service.ts';
+import {openPudgeSnapshot,sealPudgeSnapshot} from '../../../../lib/pudge-snapshot.ts';
+import {startPudgeProofWorker} from '../../../../lib/pudge-proof-worker.ts';
 import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
 import {resolvePudgeTokenMetadata} from '../../../../lib/pudge-market-metadata.ts';
 import {PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_STAGE_TXS} from '../../../../lib/v2-engine/pudge-public-registry.ts';
@@ -44,6 +46,7 @@ const verifiedManifests=new Map<string,{manifest:VerifiedManifest;verifiedAt:num
 type CustodyState={bundle:RecoveryBundle;snapshot:Record<string,unknown>};
 const custodyStates=new Map<string,CustodyState>();
 const custodyRefreshes=new Map<string,Promise<CustodyState>>();
+let proofWorker:{state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;idle?:ReturnType<typeof setTimeout>}|undefined;
 
 function rpcEndpoint(){
   if(process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK==='1'&&process.env.ROVEKO_PUDGE_TEST_RPC){
@@ -65,6 +68,27 @@ function requestKey(manifest:{genesis:string;initializationTransactionHash:strin
 function cacheFile(key:string){
   const configured=process.env.ROVEKO_PUDGE_PROOF_CACHE_DIR;
   return configured?path.join(path.resolve(configured),`${key}.json`):undefined;
+}
+
+async function readAuthenticated<T>(file:string|undefined,scope:string){
+  try{
+    if(!file)return null;
+    const info=await stat(file);
+    if(!info.isFile()||info.size>MAX_CACHE_BYTES)return null;
+    return openPudgeSnapshot<T>(scope,await readFile(file,'utf8'));
+  }catch{return null;}
+}
+
+async function writeAuthenticated(file:string|undefined,scope:string,value:unknown){
+  if(!file)return;
+  const content=sealPudgeSnapshot(scope,value);
+  if(!content||Buffer.byteLength(content)>MAX_CACHE_BYTES)return;
+  const temporary=`${file}.${randomUUID()}.tmp`;
+  try{
+    await mkdir(path.dirname(file),{recursive:true,mode:0o700});
+    await writeFile(temporary,content,{flag:'wx',mode:0o600});
+    await rename(temporary,file);
+  }finally{await rm(temporary,{force:true}).catch(()=>{});}
 }
 
 function consumeRateLimit(request:Request){
@@ -241,9 +265,20 @@ export async function POST(request:Request){
       if(!result.ok)throw Error('Initial proof unavailable');return result.json();
     };
     const rawManifest=JSON.stringify(body.manifest),manifestKey=cachedManifestKey(endpoint+rawManifest),cachedManifest=verifiedManifests.get(manifestKey);
-    const manifest=cachedManifest&&Date.now()-cachedManifest.verifiedAt<300_000?cachedManifest.manifest:await loadPudgeManifest(rpc,rawManifest,proof);
-    if(manifest!==cachedManifest?.manifest){
+    const manifestScope='pudge-proof-manifest-v1:'+manifestKey,manifestFile=cacheFile(manifestScope.slice(-64));
+    const savedManifest=await readAuthenticated<VerifiedManifest>(manifestFile,manifestScope);
+    if(savedManifest){
+      for(const name of ['market','marker','owner','token','custody','custodyMarker'] as const){
+        savedManifest.scripts[name]=ccc.Script.from(savedManifest.scripts[name]);
+      }
+    }
+    const manifest=cachedManifest&&Date.now()-cachedManifest.verifiedAt<300_000?cachedManifest.manifest:
+      savedManifest||await loadPudgeManifest(rpc,rawManifest,proof);
+    if(manifest!==cachedManifest?.manifest&&!savedManifest){
       await validateRegisteredManifest(manifest,rpc);
+      await writeAuthenticated(manifestFile,manifestScope,manifest).catch(()=>{});
+    }
+    if(manifest!==cachedManifest?.manifest){
       rememberManifest(manifestKey,manifest);
     }
     const marketHash=manifest.scripts.market.hash().toLowerCase(),tokenHash=manifest.scripts.token.hash().toLowerCase();
@@ -254,10 +289,19 @@ export async function POST(request:Request){
     const custodyScript=toScript(manifest.scripts.custody),tokenScript=toScript(manifest.scripts.token),key=requestKey(manifest,endpoint),file=cacheFile(key);
     const replayOwner=manifest.attempt.owner;
     const refresh=async():Promise<CustodyState>=>{
-    const current=custodyStates.get(key);
+    const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
+    const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
     const market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
     const matchesMarket=(bundle:RecoveryBundle)=>!market||
       (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
+    const reconcile=(snapshot:Record<string,unknown>)=>{
+      if(!market)return;
+      const external=snapshot.net_external;
+      if(snapshot.external_accounting_complete!==true||typeof external!=='string'||!/^\d+$/.test(external)||
+        snapshot.custody_amount!==market.custody||BigInt(market.inventory)+BigInt(market.custody)+BigInt(external)!==BigInt(market.supply)){
+        throw Error('Pudge inventory, custody and net external movement do not reconcile');
+      }
+    };
     const isLive=async(bundle:RecoveryBundle)=>{
       if(!matchesMarket(bundle))return false;
       return validateLiveCheckpoint(bundle,manifest,rpc);
@@ -265,7 +309,12 @@ export async function POST(request:Request){
     if(current&&matchesMarket(current.bundle)){
       // The current canonical outpoint and its root authenticate every leaf
       // used by snapshot-transition, even if the collection tip changed.
-      if(market||await isLive(current.bundle))return current;
+      if(market||await isLive(current.bundle)){
+        reconcile(current.snapshot);
+        custodyStates.clear();
+        custodyStates.set(key,current);
+        return current;
+      }
     }
     custodyStates.delete(key);
     await Promise.all([writeFile(custody,JSON.stringify(custodyScript),{mode:0o600}),writeFile(token,JSON.stringify(tokenScript),{mode:0o600})]);
@@ -308,8 +357,10 @@ export async function POST(request:Request){
       snapshot=await replay(selectedBundle);
     }
     if(!await isLive(selectedBundle))throw Error('Custody changed during recovery');
-    const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
+    const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,net_external:snapshot.net_external,external_accounting_complete:snapshot.external_accounting_complete,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
+    reconcile(state.snapshot);
     if(!reusable||selectedBundle!==bundle)await saveCheckpoint(key,file,selectedBundle,manifest,replayOwner);
+    await writeAuthenticated(snapshotFile,snapshotScope,state).catch(()=>{});
     custodyStates.clear();
     custodyStates.set(key,state);
     return state;
@@ -319,11 +370,23 @@ export async function POST(request:Request){
       pending=refresh().finally(()=>custodyRefreshes.delete(key));
       custodyRefreshes.set(key,pending);
     }
-    const {bundle:selectedBundle,snapshot}=await pending;
-    const snapshotPath=path.join(dir,'snapshot.json');
-    await writeFile(snapshotPath,JSON.stringify(snapshot),{flag:'wx',mode:0o600});
-    const transition=await run(binary,['snapshot-transition',snapshotPath,body.owner!,body.side!,body.quantity!],{timeout:Math.max(1000,Math.min(MAX_RECOVERY_MS,deadline-Date.now())),maxBuffer:2*1024*1024});
-    const result=JSON.parse(transition.stdout),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
+    const state=await pending,selectedBundle=state.bundle;
+    if(proofWorker?.state!==state){
+      const snapshotPath=path.join(dir,'snapshot.json');
+      await writeFile(snapshotPath,JSON.stringify(state.snapshot),{flag:'wx',mode:0o600});
+      if(proofWorker?.state!==state){
+        proofWorker?.native.stop();
+        const worker={state,native:startPudgeProofWorker(binary,snapshotPath)};
+        proofWorker=worker;
+        void worker.native.exited.then(()=>{if(proofWorker===worker)proofWorker=undefined;});
+      }
+    }
+    const worker=proofWorker;
+    clearTimeout(worker.idle);
+    worker.idle=setTimeout(worker.native.stop,30_000);
+    worker.idle.unref();
+    await worker.native.ready;
+    const result=await worker.native.proof(body.owner!,body.side!,body.quantity!),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
     const mismatches:string[]=[];
     if(result.old_root?.toLowerCase()!==expectedRoot.toLowerCase())mismatches.push('old-root');
     if(typeof result.witness!=='string'||!/^0x544d5331[0-9a-f]+$/i.test(result.witness)||`0x${result.witness.slice(26,90)}`.toLowerCase()!==body.owner!.toLowerCase())mismatches.push('owner-witness');

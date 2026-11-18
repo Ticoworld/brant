@@ -1,5 +1,12 @@
 # Current state update — 2026-11-17
 
+## WO1B progress — 2026-11-18
+
+- **VERIFIED:** Windows restart reused authenticated market, manifest and custody snapshots. Configure `ROVEKO_PUDGE_PROOF_CACHE_DIR` and a stable, privately held 32-byte hex `ROVEKO_PUDGE_SNAPSHOT_KEY` outside that directory. Rebuild the browser-proof binary for the snapshot worker. It reuses one verified tree per custody state. Display reads can serve snapshots up to 30 seconds old while reconciling in the background.
+- **VERIFIED (read-only Pudge):** first reads after restart took 2.706s for market and 1.525s for proof, each with three HTTP requests. Warm verified reads took 1.992–2.017s for market and 1.326–1.998s for proof. Parallel distinct owners returned balances 7 and 0 against the same root.
+- **VERIFIED:** typecheck, build, native proof tests, and pinned-artifact history fixture passed. The fixture uses simulated canonical RPC. A separate isolated CKB run committed initialization and Buy transactions, then failed batch enrollment with input lock validation error 22 before the Sell and withdrawal steps.
+- **OPEN:** warm executable-state latency targets, confirmed-transition recovery timing, custody-only and withdrawal recovery on native CKB, live reorg recovery, and successor-only native replay. WO1 remains open.
+
 ## WO1 progress — 2026-11-18
 
 - **VERIFIED:** Registered market refreshes share in-flight work and batch canonical anchor and live Cell checks. Owner proofs share a market-wide verified leaf snapshot and match its custody outpoint and bytes against the market read.

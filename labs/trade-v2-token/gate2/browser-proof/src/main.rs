@@ -9,7 +9,7 @@ use sparse_merkle_tree::{
 use std::{
     collections::BTreeMap,
     fs,
-    io::{self, Read, Write},
+    io::{self, BufRead, Read, Write},
     path::Path,
 };
 
@@ -372,6 +372,8 @@ fn replay(bundle: &Bundle) -> Result<Value> {
     let mut current_data: Option<Vec<u8>> = None;
     let mut prior_tx_order: Option<(u64, u64)> = None;
     let mut transitions = Vec::new();
+    let mut net_external = 0i128;
+    let mut external_accounting_complete = true;
     for (tx_no, row) in history.iter().enumerate() {
         let bno = rpc_u64(&Value::String(row.block_number.clone()), "history block")?;
         let tino = rpc_u64(
@@ -635,6 +637,11 @@ fn replay(bundle: &Bundle) -> Result<Value> {
             out_amount == next,
             "actual custody amount does not equal old amount plus authenticated leaf deltas"
         );
+        match op {
+            5 | 6 => net_external -= delta,
+            8 if delta != 0 => external_accounting_complete = false,
+            _ => {}
+        }
         csmt_verify(out_root, &new_pairs, &proof)
             .with_context(|| format!("new root proof in {}", row.tx_hash))?;
         for u in &updates {
@@ -751,6 +758,8 @@ fn replay(bundle: &Bundle) -> Result<Value> {
         "tip_tx_hash":bundle.live.tx_hash,
         "tip_outpoint":current_custody_outpoint,
         "custody_amount":live_amount.to_string(),
+        "net_external":net_external.to_string(),
+        "external_accounting_complete":external_accounting_complete,
         "ownership_root":fmt(live_root.as_slice()),
         "entitlement_total":map.values().filter(|p|p.active).map(|p|p.balance as u128).sum::<u128>().to_string(),
         "owner_lock_hash":bundle.owner_lock_hash,
@@ -782,17 +791,15 @@ fn write_json(v: &Value, path: Option<&str>) -> Result<()> {
     Ok(())
 }
 
-fn proof_from_snapshot(snapshot: &Value, owner_hex: &str) -> Result<Value> {
+fn snapshot_tree(snapshot: &Value) -> Result<([u8; 128], Tree)> {
     fn field(value: &Value) -> Result<&str> {
         value.as_str().ok_or_else(|| anyhow!("missing snapshot field"))
     }
     let domain = hex_bytes(field(&snapshot["custody_args"])?, "custody args")?;
     let domain: [u8; 128] = domain.try_into().map_err(|_| anyhow!("custody args length"))?;
-    let owner = bytes32(owner_hex, "owner lock hash")?;
     let root = bytes32(field(&snapshot["ownership_root"])?, "custody root")?.into();
     let owners = snapshot["owners"].as_array().ok_or_else(|| anyhow!("missing custody leaves"))?;
     let mut tree = Tree::default();
-    let mut position = parse_leaf(H256::zero())?;
     let mut total = 0u128;
     for row in owners {
         let leaf_owner = bytes32(field(&row["owner_lock_hash"])?, "leaf owner")?;
@@ -807,13 +814,16 @@ fn proof_from_snapshot(snapshot: &Value, owner_hex: &str) -> Result<Value> {
         ensure!(tree.get(&key)? == H256::zero(), "duplicate custody leaf");
         tree.update(key, leaf.value)?;
         total += u128::from(leaf.balance);
-        if leaf_owner == owner {
-            position = leaf;
-        }
     }
     ensure!(*tree.root() == root, "snapshot custody root mismatch");
     ensure!(total == field(&snapshot["custody_amount"])?.parse::<u128>()?, "snapshot custody amount mismatch");
-    let key = derive_key(&domain, &owner);
+    Ok((domain, tree))
+}
+
+fn snapshot_proof(snapshot: &Value, domain: &[u8; 128], tree: &Tree, owner_hex: &str) -> Result<Value> {
+    let owner = bytes32(owner_hex, "owner lock hash")?;
+    let key = derive_key(domain, &owner);
+    let position = parse_leaf(tree.get(&key)?)?;
     let compiled = tree.merkle_proof(vec![key])?.compile(vec![key])?;
     let proof: Vec<u8> = compiled.into();
     Ok(json!({
@@ -823,6 +833,59 @@ fn proof_from_snapshot(snapshot: &Value, owner_hex: &str) -> Result<Value> {
         "tip_outpoint":snapshot["tip_outpoint"],
         "ownership_root":snapshot["ownership_root"]
     }))
+}
+
+fn proof_from_snapshot(snapshot: &Value, owner_hex: &str) -> Result<Value> {
+    let (domain, tree) = snapshot_tree(snapshot)?;
+    snapshot_proof(snapshot, &domain, &tree, owner_hex)
+}
+
+fn transition(result: &Value, side: &str, quantity: &str) -> Result<Value> {
+    ensure!(side == "buy" || side == "sell" || side == "withdraw", "invalid side");
+    let quantity: u64 = quantity.parse()?;
+    ensure!(quantity > 0, "quantity must be positive");
+    let balance: u64 = result["owner"]["balance"].as_str().unwrap().parse()?;
+    let revision: u64 = result["owner"]["revision"].as_str().unwrap().parse()?;
+    let old = hex_bytes(result["owner_membership_proof"]["leaf_value"].as_str().unwrap(), "leaf")?;
+    let key = hex_bytes(result["owner_membership_proof"]["key"].as_str().unwrap(), "key")?;
+    let owner = hex_bytes(result["owner_lock_hash"].as_str().unwrap(), "owner")?;
+    let proof = hex_bytes(result["owner_membership_proof"]["compiled_proof"].as_str().unwrap(), "proof")?;
+    let new_balance = if side == "buy" { balance.checked_add(quantity) } else { balance.checked_sub(quantity) }.ok_or_else(|| anyhow!("balance overflow or insufficient balance"))?;
+    let next_revision = revision.checked_add(1).ok_or_else(|| anyhow!("revision overflow"))?;
+    let mut leaf = [0u8; 32];
+    leaf[..8].copy_from_slice(&new_balance.to_le_bytes());
+    leaf[8..16].copy_from_slice(&next_revision.to_le_bytes());
+    leaf[16] = if new_balance == 0 { 2 } else { 1 };
+    let key = H256::from(<[u8; 32]>::try_from(key).map_err(|_| anyhow!("key length"))?);
+    let root = CompiledMerkleProof(proof.clone()).compute_root::<CkbHasher>(vec![(key, H256::from(leaf))])?;
+    let mut witness = b"TMS1".to_vec();
+    witness.extend_from_slice(&[1, if side == "buy" { 1 } else if side == "sell" { 4 } else { 5 }, 1, 0]);
+    witness.extend_from_slice(&(proof.len() as u32).to_le_bytes());
+    witness.extend_from_slice(&owner); witness.extend_from_slice(&old); witness.extend_from_slice(&leaf); witness.extend_from_slice(&proof);
+    Ok(json!({"old_root":result["ownership_root"],"new_root":fmt(root.as_slice()),"witness":fmt(&witness),"quantity":quantity.to_string(),"side":side,"owner":result["owner"],"tip_outpoint":result["tip_outpoint"]}))
+}
+
+fn snapshot_worker(path: &str) -> Result<()> {
+    let snapshot: Value = serde_json::from_str(&read_json(Some(path))?)?;
+    let (domain, tree) = snapshot_tree(&snapshot)?;
+    // Signal that the file is no longer needed before accepting requests.
+    println!("ready");
+    let mut stdout = io::stdout().lock();
+    stdout.flush()?;
+    for line in io::stdin().lock().lines() {
+        let line = line?;
+        let result = (|| {
+            let (owner, side, quantity): (String, String, String) = serde_json::from_str(&line)?;
+            transition(&snapshot_proof(&snapshot, &domain, &tree, &owner)?, &side, &quantity)
+        })();
+        let reply = match result {
+            Ok(proof) => json!({"proof":proof}),
+            Err(error) => json!({"error":error.to_string()}),
+        };
+        writeln!(stdout, "{reply}")?;
+        stdout.flush()?;
+    }
+    Ok(())
 }
 fn run() -> Result<()> {
     let a = std::env::args().skip(1).collect::<Vec<_>>();
@@ -847,6 +910,7 @@ fn run() -> Result<()> {
             csmt_verify(root, &[(key,H256::from(leaf))], proof)?;
             write_json(&json!({"verified":true,"new_root":fmt(root.as_slice())}),None)
         }
+        Some("snapshot-worker") if a.len() == 2 => snapshot_worker(&a[1]),
         Some("transition" | "snapshot-transition") if a.len() == 4 || a.len() == 5 => {
             let source = read_json(Some(&a[1]))?;
             let (result, side, quantity) = if a[0] == "snapshot-transition" && a.len() == 5 {
@@ -855,28 +919,7 @@ fn run() -> Result<()> {
                 ensure!(a[0] == "transition" && a.len() == 4, "invalid transition arguments");
                 (replay(&serde_json::from_str(&source)?)?, &a[2], &a[3])
             };
-            ensure!(side == "buy" || side == "sell" || side == "withdraw", "invalid side");
-            let quantity: u64 = quantity.parse()?;
-            ensure!(quantity > 0, "quantity must be positive");
-            let balance: u64 = result["owner"]["balance"].as_str().unwrap().parse()?;
-            let revision: u64 = result["owner"]["revision"].as_str().unwrap().parse()?;
-            let old = hex_bytes(result["owner_membership_proof"]["leaf_value"].as_str().unwrap(), "leaf")?;
-            let key = hex_bytes(result["owner_membership_proof"]["key"].as_str().unwrap(), "key")?;
-            let owner = hex_bytes(result["owner_lock_hash"].as_str().unwrap(), "owner")?;
-            let proof = hex_bytes(result["owner_membership_proof"]["compiled_proof"].as_str().unwrap(), "proof")?;
-            let new_balance = if side == "buy" { balance.checked_add(quantity) } else { balance.checked_sub(quantity) }.ok_or_else(|| anyhow!("balance overflow or insufficient balance"))?;
-            let next_revision = revision.checked_add(1).ok_or_else(|| anyhow!("revision overflow"))?;
-            let mut leaf = [0u8; 32];
-            leaf[..8].copy_from_slice(&new_balance.to_le_bytes());
-            leaf[8..16].copy_from_slice(&next_revision.to_le_bytes());
-            leaf[16] = if new_balance == 0 { 2 } else { 1 };
-            let key = H256::from(<[u8; 32]>::try_from(key).map_err(|_| anyhow!("key length"))?);
-            let root = CompiledMerkleProof(proof.clone()).compute_root::<CkbHasher>(vec![(key, H256::from(leaf))])?;
-            let mut witness = b"TMS1".to_vec();
-            witness.extend_from_slice(&[1, if side == "buy" { 1 } else if side == "sell" { 4 } else { 5 }, 1, 0]);
-            witness.extend_from_slice(&(proof.len() as u32).to_le_bytes());
-            witness.extend_from_slice(&owner); witness.extend_from_slice(&old); witness.extend_from_slice(&leaf); witness.extend_from_slice(&proof);
-            write_json(&json!({"old_root":result["ownership_root"],"new_root":fmt(root.as_slice()),"witness":fmt(&witness),"quantity":quantity.to_string(),"side":side,"owner":result["owner"],"tip_outpoint":result["tip_outpoint"]}), None)
+            write_json(&transition(&result, side, quantity)?, None)
         }
         Some("replay") if a.len() == 2 || a.len() == 3 => {
             let raw = read_json(Some(&a[1]))?;

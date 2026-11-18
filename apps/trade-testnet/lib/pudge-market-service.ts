@@ -12,6 +12,7 @@ import {deriveMarketLiquidity} from './v2-engine/market-capacity.ts';
 import {verifyPudgeInitialProof} from './v2-engine/pudge-proof-client.ts';
 import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_ATTEMPT,PUDGE_GATE2_BUY,PUDGE_GATE2_CODES,PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_JOURNAL,PUDGE_GATE2_OWNER,PUDGE_GATE2_REGISTRY_ID,PUDGE_GATE2_SELL,PUDGE_GATE2_STAGE_TXS,PUDGE_GATE2_XUDT_DEP} from './v2-engine/pudge-public-registry.ts';
 import type {MarketData,TradeEvent} from '../app/trader/types.ts';
+import {openPudgeSnapshot,sealPudgeSnapshot} from './pudge-snapshot.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<any>;
 type Script={code_hash:string;hash_type:string;args:string};
@@ -30,6 +31,7 @@ const samePoint=(left:Point,right:Point)=>pointKey(left)===pointKey(right);
 const sum=(values:bigint[])=>values.reduce((total,value)=>total+value,0n);
 const checkpoints=new Map<string,Checkpoint>();
 const verifiedCheckpoints=new WeakSet<Checkpoint>();
+const marketSnapshotScope='pudge-market-v2:'+PUDGE_GATE2_GENESIS+':'+PUDGE_GATE2_INITIALIZATION;
 let registeredRefresh:Promise<MarketData>|undefined;
 
 function requestRpc():Rpc{
@@ -57,7 +59,8 @@ function marketCheckpointPath(){
 async function persistMarketCheckpoint(saved:Checkpoint){
   const file=marketCheckpointPath();if(!file)return;
   const directory=path.dirname(file),temporary=path.join(directory,`.pudge-xudt-market.${randomUUID()}.tmp`);
-  const payload=JSON.stringify(saved);if(Buffer.byteLength(payload)>8*1024*1024)return;
+  const payload=sealPudgeSnapshot(marketSnapshotScope,saved);
+  if(!payload||Buffer.byteLength(payload)>8*1024*1024)return;
   await mkdir(directory,{recursive:true,mode:0o700});
   try{await writeFile(temporary,payload,{flag:'wx',mode:0o600});await rename(temporary,file);}
   finally{await rm(temporary,{force:true}).catch(()=>{});}
@@ -67,8 +70,9 @@ async function readMarketCheckpoint(){
   const file=marketCheckpointPath();if(!file)return null;
   try{
     const info=await stat(file);if(!info.isFile()||info.size>8*1024*1024)return null;
-    const saved=JSON.parse(await readFile(file,'utf8')) as Checkpoint;
+    const saved=openPudgeSnapshot<Checkpoint>(marketSnapshotScope,await readFile(file,'utf8'));
     if(saved?.data?.id!==PUDGE_GATE2_REGISTRY_ID||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
+    verifiedCheckpoints.add(saved);
     return saved;
   }catch{return null;}
 }
@@ -103,7 +107,9 @@ async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|nu
         return await recoverCachedMarketSuccessors(saved,gate2Identity());
       }
       if(await rpc('get_block_hash',[tip.number])!==tip.hash)return null;
-      return {...saved.data,tip,refreshedAt:Date.now()};
+      const data={...saved.data,tip,refreshedAt:Date.now()};
+      saved.data=data;
+      return data;
     }
     if(id===PUDGE_GATE2_REGISTRY_ID)return null;
     const [genesis,tip]=await Promise.all([rpc('get_block_hash',['0x0']) as Promise<string>,rpc('get_tip_header',[]) as Promise<{number:string;hash:string}>]);
@@ -369,11 +375,18 @@ export function getPudgeMarketData():Promise<MarketData>{
   return registeredRefresh;
 }
 
+export async function getPudgeDisplaySnapshot(){
+  const saved=checkpoints.get(PUDGE_GATE2_REGISTRY_ID)||await readMarketCheckpoint();
+  if(!saved||!verifiedCheckpoints.has(saved))return null;
+  const age=Date.now()-saved.data.refreshedAt;
+  return age>=0&&age<=30_000?saved.data:null;
+}
+
 export async function getPudgeCustodyAnchor(){
   const market=await getPudgeMarketData();
   const saved=checkpoints.get(PUDGE_GATE2_REGISTRY_ID);
   if(!saved||saved.data.custodyRoot!==market.custodyRoot)throw Error('Pudge market recovery changed');
-  return {point:saved.points[2],data:saved.cells[2].data};
+  return {point:saved.points[2],data:saved.cells[2].data,inventory:market.inventory,custody:market.custody,supply:market.supply};
 }
 
 async function refreshRegisteredMarket():Promise<MarketData>{

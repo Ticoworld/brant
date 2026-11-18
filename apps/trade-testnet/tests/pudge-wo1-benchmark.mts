@@ -14,14 +14,15 @@ async function time(label:string,operation:()=>Promise<unknown>){
 }
 let market!:Awaited<ReturnType<typeof getPudgeMarketData>>;
 const read=async()=>{market=await getPudgeMarketData();};
-const proof=async()=>{
+const proof=async(owner=PUDGE_GATE2_OWNER,balance='7')=>{
   const response=await POST(new Request('http://localhost/api/v2/pudge-proof',{
     method:'POST',headers:{origin:'http://localhost','content-type':'application/json'},
-    body:JSON.stringify({manifest:market.manifest,owner:PUDGE_GATE2_OWNER,side:'buy',quantity:'1'}),
+    body:JSON.stringify({manifest:market.manifest,owner,side:'buy',quantity:'1'}),
   }));
   if(!response.ok)throw Error(await response.text());
   const result=await response.json();
   if(result.proof.old_root!==market.custodyRoot)throw Error('Custody root differs from the market read');
+  if(result.proof.owner.balance!==balance)throw Error('Unexpected owner balance');
   console.log('owner balance',result.proof.owner.balance);
 };
 await time('market first',read);
@@ -29,4 +30,4 @@ await time('market warm',read);
 await time('market parallel',()=>Promise.all([read(),read()]));
 await time('proof first',proof);
 await time('proof warm',proof);
-await time('proof parallel',()=>Promise.all([proof(),proof()]));
+await time('proof distinct owners',()=>Promise.all([proof(),proof('0x'+'99'.repeat(32),'0')]));
