@@ -237,6 +237,7 @@ async function boundedRun(file:string,args:string[],deadline:number,env:NodeJS.P
 
 /** Read-only, bounded Pudge custody history reconstruction. */
 export async function POST(request:Request){
+  const proofStarted=performance.now(),proofTrace:string[]=[];
   let dir:string|undefined,entered=false;
   try{
     const origin=request.headers.get('origin'),site=request.headers.get('sec-fetch-site');
@@ -316,6 +317,7 @@ export async function POST(request:Request){
       // The current canonical outpoint and its root authenticate every leaf
       // used by snapshot-transition, even if the collection tip changed.
       if(market||await isLive(current.bundle)){
+        proofTrace.push('verified-custody-reuse');
         reconcile(current.snapshot);
         custodyStates.clear();
         custodyStates.set(key,current);
@@ -332,18 +334,21 @@ export async function POST(request:Request){
     let checkpoint=current?.bundle||await loadCheckpoint(key,file,manifest,replayOwner);
     let reusable=checkpoint?await isLive(checkpoint):false;
     if(checkpoint&&!reusable){
+      proofTrace.push('incremental-collection');
       await writeFile(checkpointPath,JSON.stringify(checkpoint),{mode:0o600});
       try{
         await boundedRun(canonicalCollector,['collect-incremental',...common,'--checkpoint',checkpointPath,'--out',bundlePath],deadline,childEnv);
         checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
         if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Incremental checkpoint identity mismatch');
       }catch{
+        proofTrace.push('full-collection-fallback');
         await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
         checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
         if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Collected checkpoint identity mismatch');
       }
       reusable=false;
     }else if(!checkpoint){
+      proofTrace.push('full-collection');
       await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
       checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
       if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Collected checkpoint identity mismatch');
@@ -382,6 +387,7 @@ export async function POST(request:Request){
       const snapshotPath=path.join(dir,'snapshot.json');
       await writeFile(snapshotPath,JSON.stringify(state.snapshot),{flag:'wx',mode:0o600});
       if(proofWorker?.state!==state){
+        proofTrace.push('native-worker-start');
         proofWorker?.native.stop();
         const worker={state,native:startPudgeProofWorker(binary,snapshotPath)};
         proofWorker=worker;
@@ -407,6 +413,7 @@ export async function POST(request:Request){
       BigInt(live.point.index)!==BigInt(selectedBundle.live.index)||live.data.toLowerCase()!==selectedBundle.live.data.toLowerCase())){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
     }
+    console.info('Pudge proof timing',JSON.stringify({path:proofTrace,ms:Math.round(performance.now()-proofStarted)}));
     return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});

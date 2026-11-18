@@ -20,7 +20,7 @@ const pinned:Record<string,string> = {
   custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',
   xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95',
 };
-export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint, ownerScript?:ccc.Script, timing?:(stage:string,ms:number)=>void, hint?:FundingHint, quotedAmount?:bigint) {
+export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint, ownerScript?:ccc.Script, timing?:(stage:string,ms:number)=>void, hint?:FundingHint, quotedAmount?:bigint, signal?:AbortSignal) {
   let started=performance.now();
   const mark=(stage:string)=>{const now=performance.now();timing?.(stage,now-started);started=now;};
   const pudge=config.format==='roveko-pudge-market-v1';
@@ -28,13 +28,14 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const minimum=(amount:bigint)=>(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
   const earlyFunding=pudge&&quotedAmount!==undefined?selectTradeFunding(rpc,ownerScript!,minimum(quotedAmount),hint):undefined;
   void earlyFunding?.catch(()=>{});
-  const response = await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{signal:AbortSignal.timeout(65_000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(pudge?{manifest:config}:config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
+  const response = await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(65_000)]):AbortSignal.timeout(65_000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(pudge?{manifest:config}:config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
   if (!response.ok) {
     const detail=response.headers.get('content-type')?.startsWith('text/plain')?await response.text():'';
     throw Error(detail&&detail.length<=200?detail:`Canonical proof unavailable (HTTP ${response.status})`);
   }
   const body = await response.json();
   mark('proofMs');
+  signal?.throwIfAborted();
   const p = body.proof;
   if (body.genesis !== config.genesis || p.side !== side || p.quantity !== quantity.toString() || !p.tip_outpoint) throw Error('Proof identity mismatch');
   const verified=pudge&&body.manifest&&Array.isArray(body.points)&&body.points.length===4;

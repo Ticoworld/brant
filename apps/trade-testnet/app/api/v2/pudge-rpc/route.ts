@@ -1,6 +1,7 @@
 import {NextResponse} from 'next/server';
 export const runtime='nodejs';
 const allowed=new Set(['get_block_hash','get_block_by_number','get_tip_header','get_header','get_transaction','get_live_cell','get_cells','get_indexer_tip','tx_pool_info']);
+const batchAllowed=new Set(['get_block_hash','get_live_cell','tx_pool_info']);
 function canonicalCellParams(method:string,params:unknown[]){
   if(method!=='get_live_cell'||!params[0]||typeof params[0]!=='object'||Array.isArray(params[0]))return params;
   const point=params[0] as Record<string,unknown>;
@@ -10,8 +11,30 @@ function canonicalCellParams(method:string,params:unknown[]){
   return [{...point,index:`0x${index.toString(16)}`},...params.slice(1)];
 }
 export async function POST(request:Request){
-  let input:{method?:string;params?:unknown[]};
+  type Call={method?:string;params?:unknown[]};
+  let input:Call;
   try {input=await request.json();} catch {return NextResponse.json({error:'Invalid JSON'}, {status:400});}
+  if(Array.isArray(input)){
+    const calls=input as Call[];
+    if(!calls.length||calls.length>16||JSON.stringify(calls).length>8192||
+      calls.some(call=>!call||!batchAllowed.has(call.method||'')||!Array.isArray(call.params))){
+      return NextResponse.json({error:'Unsupported RPC batch'},{status:400});
+    }
+    try{
+      const response=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify(calls.map(({method,params},id)=>({jsonrpc:'2.0',id,method,params:canonicalCellParams(method!,params!)}))),
+        cache:'no-store',signal:AbortSignal.any([request.signal,AbortSignal.timeout(15000)])});
+      const rows=await response.json();
+      if(!response.ok||!Array.isArray(rows)||rows.length!==calls.length)throw Error('Invalid RPC batch response');
+      const byId=new Map<number,unknown>();
+      for(const row of rows){
+        if(!row||row.jsonrpc!=='2.0'||!Number.isInteger(row.id)||row.id<0||row.id>=calls.length||byId.has(row.id))throw Error('Invalid RPC batch ID');
+        if(row.error||!Object.hasOwn(row,'result'))throw Error(`Pudge ${calls[row.id].method} RPC failed`);
+        byId.set(row.id,row.result);
+      }
+      return NextResponse.json({result:calls.map((_,id)=>byId.get(id))},{headers:{'Cache-Control':'no-store'}});
+    }catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Pudge RPC batch unavailable'},{status:502});}
+  }
   if(!input || !allowed.has(input.method||'') || !Array.isArray(input.params) || JSON.stringify(input.params).length>8192) return NextResponse.json({error:'Unsupported RPC request'}, {status:400});
   try {
     const params=canonicalCellParams(input.method!,input.params);

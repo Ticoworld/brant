@@ -3,6 +3,14 @@ const SECP_CODE='0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3c
 
 export type RpcScript={code_hash:string;hash_type:string;args:string};
 export type RpcCell={out_point:{tx_hash:string;index:string};output:{capacity:string;lock:RpcScript;type?:RpcScript|null};output_data?:string};
+export type PudgeRead={method:string;params:unknown[]};
+
+export async function pudgeReadBatch(calls:PudgeRead[]){
+  const response=await fetch('/api/v2/pudge-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(calls),cache:'no-store',signal:AbortSignal.timeout(17000)});
+  const body=await response.json();
+  if(!response.ok||!Array.isArray(body.result)||body.result.length!==calls.length)throw Error(body.error||'Pudge RPC batch unavailable');
+  return body.result as unknown[];
+}
 
 export async function pudgeRpc<T=any>(method:string,params:unknown[]=[]):Promise<T>{
   const response=await fetch('/api/v2/pudge-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({method,params}),cache:'no-store'});

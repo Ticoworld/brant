@@ -9,11 +9,15 @@ const quantity = /^0x[0-9a-f]+$/i;
 /** Read a specified Gate 2 singleton set; identities still require independent
  * lineage and binary verification before this state can authorize a trade. */
 export async function readLiveSingletons(rpc: Rpc, points: [Point, Point, Point, Point], expectedGenesis: string) {
+  const [genesis,...rows]=await Promise.all([rpc('get_block_hash',['0x0']),...points.map(point=>rpc('get_live_cell',[point,true]))]);
+  return validateLiveSingletons(points,expectedGenesis,genesis,rows);
+}
+
+export function validateLiveSingletons(points:[Point,Point,Point,Point],expectedGenesis:string,genesis:unknown,rows:unknown[]){
   if (!hex32.test(expectedGenesis) || points.some(p => !hex32.test(p.tx_hash) || !quantity.test(p.index))) throw Error('Invalid network or outpoint');
   if (new Set(points.map(p => `${p.tx_hash.toLowerCase()}:${BigInt(p.index)}`)).size !== 4) throw Error('Duplicate singleton outpoints');
-  const genesis = await rpc('get_block_hash', ['0x0']);
   if (typeof genesis !== 'string' || genesis.toLowerCase() !== expectedGenesis.toLowerCase()) throw Error('Wrong CKB genesis');
-  const rows = await Promise.all(points.map(p => rpc('get_live_cell', [p, true])));
+  if(rows.length!==points.length)throw Error('Incomplete singleton snapshot');
   const cells = rows.map((row) => {
     const result = row as {status?: string; cell?: RpcCell};
     if (result?.status !== 'live' || !result.cell?.output || !result.cell.data || !quantity.test(result.cell.output.capacity)) throw Error('Singleton is dead or unavailable; refresh the quote');

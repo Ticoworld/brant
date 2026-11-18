@@ -38,7 +38,7 @@ try{
   const budget=page.getByRole('button',{name:'50 CKB',exact:true});
   await budget.click({timeout:60000});
   const buy=page.getByRole('button',{name:'Buy Token',exact:true});
-  for(let sample=0;sample<3;sample++){
+  for(let sample=0;sample<5;sample++){
     const startingProofs=proofs;
     await page.waitForTimeout(Number(process.env.ROVEKO_QUOTE_SETTLE_MS||5000));
     const beforeClick=[proofs,rpcs];
