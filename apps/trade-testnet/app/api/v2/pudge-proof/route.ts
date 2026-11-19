@@ -241,7 +241,26 @@ let readiness:'syncing'|'ready'|'updating'|'unavailable'='syncing';
 let verifiedIdentity:string|undefined;
 let checkedAt=0;
 
-export async function GET(){
+export async function GET(request:Request){
+  const params=new URL(request.url).searchParams;
+  if(params.has('trade')){
+    const trade=params.get('trade')||'',owner=params.get('owner')||'';
+    const result=(incorporated:boolean)=>Response.json({incorporated,trade,owner},{headers:{'Cache-Control':'no-store'}});
+    if(!hash.test(trade)||!hash.test(owner)||rpcEndpoint()!=='https://testnet.ckb.dev/'||!custodyStates.size)return result(false);
+    try{
+      const {market,point,data}=await getPudgeCustodyAnchor();
+      const marketScript=ccc.Script.from(market.manifest.scripts.market);
+      const state=custodyStates.get(requestKey({...market.manifest,scripts:{market:marketScript}},'https://testnet.ckb.dev/'));
+      const external=state?.snapshot.net_external;
+      return result(!!state&&market.historyState==='verified'&&
+        market.history.some(row=>row.hash===trade&&row.owner===owner)&&
+        state.bundle.live.tx_hash===point.tx_hash&&BigInt(state.bundle.live.index)===BigInt(point.index)&&
+        state.bundle.live.data===data&&state.snapshot.external_accounting_complete===true&&
+        state.snapshot.custody_amount===market.custody&&typeof external==='string'&&
+        BigInt(market.inventory)+BigInt(market.custody)+BigInt(external)===BigInt(market.supply)&&
+        state.bundle.history.some(row=>row.tx_hash===trade));
+    }catch{return result(false);}
+  }
   if(!synchronization&&Date.now()-checkedAt>=20_000){
     if(!verifiedIdentity)readiness='syncing';
     synchronization=(async()=>{

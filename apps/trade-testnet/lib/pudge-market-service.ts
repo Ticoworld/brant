@@ -386,7 +386,7 @@ export async function getPudgeCustodyAnchor(){
   const market=await getPudgeMarketData();
   const saved=checkpoints.get(PUDGE_GATE2_REGISTRY_ID);
   if(!saved||saved.data.custodyRoot!==market.custodyRoot)throw Error('Pudge market recovery changed');
-  return {points:saved.points,point:saved.points[2],data:saved.cells[2].data,inventory:market.inventory,custody:market.custody,supply:market.supply};
+  return {market,points:saved.points,point:saved.points[2],data:saved.cells[2].data,inventory:market.inventory,custody:market.custody,supply:market.supply};
 }
 
 async function refreshRegisteredMarket():Promise<MarketData>{

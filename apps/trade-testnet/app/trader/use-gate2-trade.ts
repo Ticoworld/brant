@@ -145,13 +145,24 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       accounting.current.add(raw);
       void (async()=>{
         try{
-          const manifest=loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
-          void manifest.catch(()=>{});
-          const result=await reconcilePudgeTrade(rpc,attempt,manifest);
+          const history=(async()=>{
+            const manifest=loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
+            void manifest.catch(()=>{});
+            await reconcilePudgeTrade(rpc,attempt,manifest);
+            tradeTiming(attempt.txHash,'reconciliation-complete');
+          })();
+          const incorporated=(async()=>{
+            const params=new URLSearchParams({trade:attempt.txHash,owner:attempt.owner});
+            const response=await fetch('/api/v2/pudge-proof?'+params,{cache:'no-store',signal:AbortSignal.timeout(8000)});
+            if(!response.ok)throw Error('Verified trading state unavailable');
+            const result=await response.json();
+            if(result.incorporated!==true||result.trade!==attempt.txHash||result.owner!==attempt.owner)throw Error('Trade is not in verified trading state yet');
+            tradeTiming(attempt.txHash,'verified-successor-state');
+          })();
+          await Promise.any([history,incorporated]);
           await verifyTradeInclusion(rpc,attempt,await rpc('get_transaction',[attempt.txHash]) as typeof row);
           if(!current())return;
-          tradeTiming(result.hash,'reconciliation-complete');
-          localStorage.setItem(key+':confirmed',result.hash);
+          localStorage.setItem(key+':confirmed',attempt.txHash);
           localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
           setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
           await Promise.all([refreshMarket(),refreshAccount()]);

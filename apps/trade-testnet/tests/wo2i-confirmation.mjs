@@ -30,6 +30,8 @@ try{
       }
     });
     let state='pending';
+    let incorporated=false;
+    await page.route('**/api/v2/pudge-proof?trade=*',route=>route.fulfill({json:{incorporated,trade:trade.hash,owner:trade.owner}}));
     await page.route('**/api/markets**',route=>route.fulfill({json:market}));
     await page.route('**/api/v2/pudge-rpc',route=>{
       const {method,params}=route.request().postDataJSON();
@@ -47,9 +49,9 @@ try{
         localStorage.setItem(key+':submitted',record.txHash);
         sessionStorage.seeded='1';
       }
-      let connected=false;
+      let connected=sessionStorage.fixtureWalletConnected==='1';
       window.utxoGlobal={ckbSigner:{
-        connect:async()=>{connected=true;},isConnected:async()=>connected,getNetwork:async()=>'nervos_testnet',
+        connect:async()=>{connected=true;sessionStorage.fixtureWalletConnected='1';},isConnected:async()=>connected,getNetwork:async()=>'nervos_testnet',
         getAccount:async()=>[address],getPublicKey:async()=>[],on(){},removeListener(){},
       }};
     },{address,key,record});
@@ -74,12 +76,15 @@ try{
     const ms=timings.get('receipt-displayed')-timings.get('canonical-confirmation');
     assert.ok(ms>=0&&ms<3000,String(ms));
     await page.reload();
-    if(await page.getByRole('button',{name:'Connect Wallet',exact:true}).first().isVisible())await connect();
     await page.getByRole('status').getByText('Confirmed',{exact:true}).waitFor({timeout:30000});
     assert.equal(await page.getByText('Trade confirmed',{exact:true}).count(),0);
     state='proposed';
     await page.getByRole('status').filter({hasText:'Proposed'}).waitFor({timeout:30000});
     assert.ok(await page.evaluate(key=>localStorage.getItem(key),key));
+    incorporated=true;
+    state='committed';
+    await page.waitForFunction(key=>!localStorage.getItem(key),key,{timeout:30000});
+    assert.equal(await page.evaluate(key=>localStorage.getItem(key+':confirmed'),key),trade.hash);
     console.log({width,verifiedInclusionToReceiptMs:ms});
     await page.close();
   }
