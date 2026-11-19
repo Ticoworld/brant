@@ -16,6 +16,7 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
 
     let timer:ReturnType<typeof setTimeout>;
     setState('loading');
+    setError('');
     const load=async()=>{
       try{
         if(Date.now()<balanceRetryAt)throw Error('Balance refresh is temporarily busy');
@@ -30,8 +31,8 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
                 balanceRetryAt=Date.now()+1000*(Number.isFinite(seconds)?Math.max(1,seconds):60);
                 throw Error("Balance refresh is temporarily busy");
               }
-              if(response.status===503)void fetch('/api/v2/pudge-proof',{signal:AbortSignal.timeout(5000)}).catch(()=>{});
-              throw Error((await response.text()).slice(0,180)||'Balance verification failed');
+              if(response.status===503)throw Error('RVK balance verification is catching up');
+              throw Error('Could not verify your RVK balance');
             }
             const body=await response.json();
             if(body.genesis!==market.genesis||body.market!==market.identity||body.owner!==owner.toLowerCase()||body.root!==root||typeof body.balance!=='string'||!/^(0|[1-9][0-9]*)$/.test(body.balance))throw Error('Waiting for the current custody root');

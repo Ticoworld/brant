@@ -23,13 +23,13 @@ for(const width of [1280,390]){
  await page.getByText(/UTXO\s*Global/i).first().click();
  const start=Date.now();
  await page.getByRole('button',{name:'CKB CKB',exact:true}).click();
- await page.getByText('Temporary RPC failure',{exact:true}).waitFor();
+ await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor();
  await page.locator('#withdraw-quantity').waitFor({timeout:60000});
- assert.equal(await page.getByText('Temporary RPC failure',{exact:true}).count(),0);
+ await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor({state:'hidden',timeout:60000});
  const ready=Date.now()-start;
  await page.getByRole('link',{name:'Markets',exact:true}).click();
  await page.getByRole('link',{name:'Portfolio',exact:true}).click();
- await page.getByText('8',{exact:true}).first().waitFor({timeout:30000});
+ await page.getByText('Total RVK',{exact:true}).locator('../..').getByText('8',{exact:true}).waitFor({timeout:30000}).catch(async error=>{console.log(await page.locator('main').innerText());throw error;});
  console.log({width,readyMs:ready,balanceRequests:failures});
  await page.close();
 }

@@ -323,7 +323,7 @@ async function handleProof(request:Request,synchronize=false){
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
     if(!binary||!tools.smt)return new Response('Proof tool unavailable',{status:503});
     const endpoint=rpcEndpoint();let rpcCalls=0;
-    const readyOnly=!synchronize&&endpoint==='https://testnet.ckb.dev/';
+    const readyOnly=!synchronize&&!balanceOnly&&endpoint==='https://testnet.ckb.dev/';
     if(readyOnly&&readiness!=='ready')return new Response('Trading state is synchronizing. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     const rpc=async(method:string,params:unknown[]=[] )=>{
       if(++rpcCalls>MAX_RPC_CALLS||Date.now()>=deadline)throw Error('Pudge RPC work limit exceeded');
