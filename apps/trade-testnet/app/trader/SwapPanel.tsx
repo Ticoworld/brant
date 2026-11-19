@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onTrade,onPrepare,quoteStatus,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -37,7 +37,7 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   useEffect(()=>onQuoteChange?.(quoteState.projectedPrice,side),[onQuoteChange,quoteState.projectedPrice,side]);
   const ckbAvailable=ckbBalance===null?`— CKB`: `${formatCkb(ckbBalance,4)} CKB`;
   const tokenAvailable=tokenBalance===null?'—':tokenBalance.toString();
-  const sideChange=(next:Side)=>{setSide(next);setBudget('');setQuantityText('');onSideChange?.(next);};
+  const sideChange=(next:Side)=>{onDismissTradeError?.();setSide(next);setBudget('');setQuantityText('');onSideChange?.(next);};
   const reset=()=>{setBudget('');setQuantityText('');};
   const sellPresets=[25,50,75,100].map(percent=>{const value=tokenBalance?((tokenBalance*BigInt(percent))/100n).toString():'0';return {label:`${percent}% · ${value} ${market.token.symbol}`,value,disabled:value==='0'};});
   const budgetActions=['20','50','100','250'].map(value=>({label:`${value} CKB`,value}));
@@ -47,8 +47,6 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const ckbInsufficient=walletReady&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
   const disabled=busy||walletState==='checking'||(walletReady&&(pending||(!!readiness&&readiness!=='ready')||quoteState.quantity===0n||quoteState.invalid||sellBalanceMissing||sellBalanceInsufficient||ckbInsufficient));
   const prepare=useRef(onPrepare);
-  const reviewStatus=quoteStatus?.(side,quoteState.quantity,quoteState.amount);
-  const updating=!disabled&&walletReady&&reviewStatus==='updating';
   prepare.current=onPrepare;
   useEffect(()=>{
     if(disabled||!walletReady)return;
@@ -69,7 +67,7 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
     </div>
     <div className="mb-2 flex items-center justify-between gap-3"><h2 className="m-0 text-[13px] font-semibold text-[#e6ece9]">{copy(locale,'trade')}</h2><span className="text-[10px] text-[#86918c]">{market.pair}</span></div>
     <div className="mb-4 flex flex-col gap-2">
-      <TokenInput id={side==='buy'?'swap-budget':'swap-quantity'} label={copy(locale,'pay')} value={inputValue} unit={inputUnit} balance={inputBalance} inputMode="decimal" onChange={value=>side==='buy'?(setBudget(value),setQuantityText('')):(setQuantityText(value),setBudget(''))} actions={inputActions}/>
+      <TokenInput id={side==='buy'?'swap-budget':'swap-quantity'} label={copy(locale,'pay')} value={inputValue} unit={inputUnit} balance={inputBalance} inputMode="decimal" onChange={value=>{onDismissTradeError?.();if(side==='buy')setBudget(value);else setQuantityText(value);}} actions={inputActions}/>
       <div aria-hidden="true" className="relative z-10 -my-5 mx-auto grid size-9 place-items-center rounded-full border border-[#394742] bg-[#18201d] text-[17px] text-[#a8b7b0]">{side==='buy'?'↓':'↑'}</div>
       <TokenInput id="swap-estimate" label={copy(locale,'receive')} value={outputValue} unit={outputUnit} readOnly onChange={()=>{}}/>
     </div>
@@ -80,11 +78,13 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
     {quoteState.tooSmall&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#e8cc94]">{copy(locale,'budgetTooSmall')}</p>}
     {ckbInsufficient&&quoteState.quantity>0n&&<p role="alert" className="mb-0 mt-3 text-[11px] text-[#f0b8ad]">{copy(locale,'insufficientCkb')}</p>}
     {ckbUnavailable&&quoteState.quantity>0n&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{copy(locale,'balanceUnavailable')}</p>}
-    {tradeError&&<p role="alert" className="mb-0 mt-3 break-words text-[11px] text-[#f0b8ad]">{tradeError}</p>}
+    {tradeError&&<div role="alert" className="mt-3 flex items-center justify-between gap-2 break-words text-[11px] text-[#f0b8ad]"><span>{tradeError}</span>{onDismissTradeError&&<button type="button" onClick={onDismissTradeError}>{locale==='zh-CN'?'关闭':'Dismiss'}</button>}</div>}
     {walletReady&&readiness&&readiness!=='ready'&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{readiness==='unavailable'?'Trading state unavailable. Roveko will retry.':'Synchronizing trading state'}</p>}
-    <button type="button" disabled={disabled||updating} aria-busy={updating||busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
-      {busy?copy(locale,tradeStatus==='awaiting-wallet'?'walletApproval':tradeStatus==='broadcasting'?'broadcasting':'reviewing'):pending&&walletReady?(tradeStatus==='confirmed'?'Reconciling balances':tradeStatus==='submitted'?'Submitted · Awaiting confirmation':copy(locale,'pending')):updating?'Updating quote':action}
+    <button type="button" disabled={disabled} aria-busy={busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
+      {action}
     </button>
+    {busy&&<p role="status" className="mt-2 text-xs text-[#a4afab]">{tradeStatus==='awaiting-wallet'?copy(locale,'walletApproval'):tradeStatus==='broadcasting'?'Submitting trade…':'Preparing trade…'}</p>}
+    {executionStatus}
     <p className="mb-0 mt-3 text-[10px] leading-5 text-[#79847f]">{market.token.metadata==='off-chain-testnet-registry'?copy(locale,'registryDescription'):market.token.description||copy(locale,'metadataUnavailable')}</p>
   </aside>;
 }

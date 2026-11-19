@@ -56,7 +56,7 @@ try{
       console.log(await page.getByRole('alert').allTextContents());
       throw error;
     });
-    await page.getByRole('button',{name:'Approve in UTXO Global',exact:true}).waitFor();
+    await page.getByRole('status').getByText('Approve in UTXO Global',{exact:true}).waitFor();
     await page.evaluate(()=>window.rejectApproval());
     await buy.waitFor();
     assert.equal(await page.evaluate(()=>window.promptCount),sample+1);

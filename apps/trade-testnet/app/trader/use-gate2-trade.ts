@@ -95,6 +95,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return failedQuote===key?'unavailable':'updating';
   };
 
+  const dismissError=()=>{if(!pending)setFailure(null);};
   const reconcile=useCallback(async(silent=true)=>{
     if(!key||reconcileLock.current||broadcasting.current)return;
     const raw=localStorage.getItem(key);
@@ -138,22 +139,23 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         localStorage.setItem(notifiedKey,attempt.txHash);
         toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{id:attempt.txHash});
       }
-      setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);setFailure(null);
+      setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
       if(!market||accounting.current.has(raw))return;
       accounting.current.add(raw);
       void (async()=>{
         try{
-          const manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
+          const manifest=loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
+          void manifest.catch(()=>{});
           const result=await reconcilePudgeTrade(rpc,attempt,manifest);
           await verifyTradeInclusion(rpc,attempt,await rpc('get_transaction',[attempt.txHash]) as typeof row);
           if(!current())return;
           tradeTiming(result.hash,'reconciliation-complete');
           localStorage.setItem(key+':confirmed',result.hash);
           localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
-          setPending(false);setAttemptRaw('');setRevision(value=>value+1);
+          setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
           await Promise.all([refreshMarket(),refreshAccount()]);
         }catch(error){
-          if(current())setFailure({owner:account.owner,message:error instanceof Error?error.message:'Trade reconciliation failed. Check status to retry.'});
+          if(current())setFailure({owner:account.owner,message:'Trade confirmed. Waiting for updated trading data.'});
         }finally{accounting.current.delete(raw);}
       })();
     }catch(error){
@@ -203,7 +205,16 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const reviewedHash=review.transaction.hash();
         tradeTiming(reviewedHash,'click',clickedAt);
         tradeTiming(reviewedHash,'wallet-handoff');
-        const signed=await current.signTransaction(clone(review.transaction));
+        let signed:ccc.Transaction;
+        try{signed=await current.signTransaction(clone(review.transaction));}
+        catch(error){
+          const walletError=error as {code?:unknown;message?:unknown}|null;
+          const message=typeof error==='string'?error:typeof walletError?.message==='string'?walletError.message:'';
+          if(String(walletError?.code)==='4001'||/reject|denied|declined|cancel/i.test(message)){
+            setStatus('rejected');return;
+          }
+          throw Error(message||'Wallet approval failed. Open UTXO Global and try again.');
+        }
         prepared.current=null;
         setStatus('broadcasting');
         tradeTiming(reviewedHash,'signature-received');
@@ -227,14 +238,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       const message=error instanceof Error?error.message:'Trade preparation or approval failed';
       if(broadcastHash)tradeTiming(broadcastHash,'broadcast-failure',Date.now(),message);
       if(key&&localStorage.getItem(key)){setStatus('unknown');setUncertain(true);}
-      else if(/reject|denied|cancel/i.test(message)){setStatus('rejected');return;}
       else setStatus('failed');
       setFailure({owner:account.owner,message});
       toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{description:message});
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision]);
 
-  return {trade,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {trade,dismissError,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint,checkFee:boolean){

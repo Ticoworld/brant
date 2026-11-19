@@ -68,10 +68,15 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const funding=pudge?await (earlyFunding||selectTradeFunding(rpc,ownerScript!,minimum(amount),hint)):await readFundingCell(rpc,config.funding,owner);
   mark('fundingMs');
   const witness=p.witness+(side==='sell'?le64(quantity)+le64(amount):'');
-  const genesisBlock = await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
-  if (genesisBlock?.header?.hash?.toLowerCase() !== config.genesis.toLowerCase() || !genesisBlock?.transactions?.[1]?.hash) throw Error('Wrong genesis or missing secp dependency');
-  if(pudge&&genesisBlock.transactions[1].hash.toLowerCase()!=='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37')throw Error('Pudge secp dependency mismatch');
-  const deps:ccc.CellDepLike[] = [{outPoint:{txHash:genesisBlock.transactions[1].hash,index:'0x0'},depType:'depGroup'},...['market_smt','marker_candidate','custody_smt','custody_marker','xudt'].map(n=>config.deps[n])];
+  // Pudge's genesis was checked by readLiveSingletons. Its secp dep group
+  // is pinned and the trade hook checks dependency liveness before signing.
+  let secpDepHash='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
+  if(!pudge){
+    const genesisBlock=await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
+    if(genesisBlock?.header?.hash?.toLowerCase()!==config.genesis.toLowerCase()||!genesisBlock?.transactions?.[1]?.hash)throw Error('Wrong genesis or missing secp dependency');
+    secpDepHash=genesisBlock.transactions[1].hash;
+  }
+  const deps:ccc.CellDepLike[] = [{outPoint:{txHash:secpDepHash,index:'0x0'},depType:'depGroup'},...['market_smt','marker_candidate','custody_smt','custody_marker','xudt'].map(n=>config.deps[n])];
   if (deps.some(x=>!x)) throw Error('Missing contract dependency');
   await Promise.all((verified?[]:Object.keys(pinned)).map(async name=>{
     const dep=ccc.CellDep.from(config.deps[name]);

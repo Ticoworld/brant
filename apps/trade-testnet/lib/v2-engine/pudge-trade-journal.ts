@@ -25,28 +25,35 @@ export async function verifyCanonicalTransaction(rpc:Rpc,txHash:string,row:Commi
  return tx;
 }
 export async function verifyTradeInclusion(rpc:Rpc,attempt:Attempt,row:CommittedRow|null){
- if(await rpc('get_block_hash',['0x0'])!==attempt.genesis)throw Error('Trade network mismatch');
- const tx=await verifyCanonicalTransaction(rpc,attempt.txHash,row);
+ const [genesis,tx]=await Promise.all([rpc('get_block_hash',['0x0']),verifyCanonicalTransaction(rpc,attempt.txHash,row)]);
+ if(genesis!==attempt.genesis)throw Error('Trade network mismatch');
  const expected=from(attempt.transaction);
  if(tx.witnesses.length!==expected.witnesses.length||tx.witnesses.some((w,i)=>w.toLowerCase()!==expected.witnesses[i].toLowerCase()))throw Error('Committed trade witness differs from record');
  return tx;
 }
 /** Resolve a submitted trade only after canonical confirmation and wallet,
  * lineage, witness and fee checks. A missing RPC result never permits retry. */
-export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market){
- const attempt=parseTradeAttempt(JSON.stringify(record));if(attempt.genesis.toLowerCase()!==market.genesis.toLowerCase()||await rpc('get_block_hash',['0x0'])!==market.genesis)throw Error('Trade network mismatch');
- const cache=new Map<string,ccc.Transaction>();
- async function canonical(txHash:string){
-  const cached=cache.get(txHash.toLowerCase());if(cached)return cached;
-  const row=await rpc('get_transaction',[txHash]) as {transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
-  if(row?.tx_status?.status!=='committed'||!row.transaction||!row.tx_status.block_hash)throw Error('Trade or predecessor is not confirmed; retain the attempt');
-  const tx=await verifyCanonicalTransaction(rpc,txHash,row);
-  cache.set(txHash.toLowerCase(),tx);return tx;
+export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market|Promise<Market>){
+ const attempt=parseTradeAttempt(JSON.stringify(record));
+ const genesis=rpc('get_block_hash',['0x0']);
+ void genesis.catch(()=>{});
+ const cache=new Map<string,Promise<ccc.Transaction>>();
+ function canonical(txHash:string){
+  const key=txHash.toLowerCase(),cached=cache.get(key);
+  if(cached)return cached;
+  const pending=(async()=>{
+   const row=await rpc('get_transaction',[txHash]) as CommittedRow|null;
+   return verifyCanonicalTransaction(rpc,txHash,row);
+  })();
+  cache.set(key,pending);
+  return pending;
  }
  const expected=from(attempt.transaction),tx=await canonical(attempt.txHash);
  if(tx.witnesses.length!==expected.witnesses.length||tx.witnesses.some((w,i)=>w.toLowerCase()!==expected.witnesses[i].toLowerCase()))throw Error('Committed trade witness differs from record');
  const inputs=await Promise.all(tx.inputs.map(async(i,index)=>{const previous=await canonical(i.previousOutput.txHash),n=Number(i.previousOutput.index),output=previous.outputs[n];if(!output)throw Error('Trade predecessor output missing');if(index===4&&previous.outputsData[n]!=='0x')throw Error('Trade wallet funding is not plain');return output;}));
- const scripts=market.scripts,locks=[scripts.market,scripts.market,scripts.custody,scripts.custody],types=[scripts.token,scripts.marker,scripts.token,scripts.custodyMarker];
+ const [verifiedMarket,chainGenesis]=await Promise.all([market,genesis]);
+ if(attempt.genesis.toLowerCase()!==verifiedMarket.genesis.toLowerCase()||chainGenesis!==verifiedMarket.genesis)throw Error('Trade network mismatch');
+ const scripts=verifiedMarket.scripts,locks=[scripts.market,scripts.market,scripts.custody,scripts.custody],types=[scripts.token,scripts.marker,scripts.token,scripts.custodyMarker];
  for(let i=0;i<4;i++)if(inputs[i].lock.hash()!==locks[i].hash()||inputs[i].type?.hash()!==types[i].hash()||tx.outputs[i].lock.hash()!==locks[i].hash()||tx.outputs[i].type?.hash()!==types[i].hash())throw Error('Trade market identity mismatch');
  if(inputs[4].lock.hash().toLowerCase()!==attempt.owner.toLowerCase()||inputs[4].type||tx.outputs[4].lock.hash().toLowerCase()!==attempt.owner.toLowerCase()||tx.outputs[4].type||tx.outputsData[4]!=='0x')throw Error('Trade wallet identity mismatch');
  verifyInitializationSignature(tx,tx,inputs.map(i=>({lock:i.lock})),4,attempt.owner);
