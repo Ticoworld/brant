@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,quoteStatus,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -47,6 +47,7 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const ckbInsufficient=walletReady&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
   const disabled=busy||walletState==='checking'||(walletReady&&(pending||(!!readiness&&readiness!=='ready')||quoteState.quantity===0n||quoteState.invalid||sellBalanceMissing||sellBalanceInsufficient||ckbInsufficient));
   const prepare=useRef(onPrepare);
+  const reviewStatus=quoteStatus?.(side,quoteState.quantity,quoteState.amount);
   prepare.current=onPrepare;
   useEffect(()=>{
     if(disabled||!walletReady)return;
@@ -80,7 +81,9 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
     {ckbUnavailable&&quoteState.quantity>0n&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{copy(locale,'balanceUnavailable')}</p>}
     {tradeError&&<div role="alert" className="mt-3 flex items-center justify-between gap-2 break-words text-[11px] text-[#f0b8ad]"><span>{tradeError}</span>{onDismissTradeError&&<button type="button" onClick={onDismissTradeError}>{locale==='zh-CN'?'关闭':'Dismiss'}</button>}</div>}
     {walletReady&&readiness&&readiness!=='ready'&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{readiness==='unavailable'?'Trading state unavailable. Roveko will retry.':'Synchronizing trading state'}</p>}
-    <button type="button" disabled={disabled} aria-busy={busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
+    {!disabled&&walletReady&&reviewStatus==='updating'&&<p role="status" className="mt-2 text-xs text-[#a4afab]">Preparing quote…</p>}
+    {!disabled&&walletReady&&reviewStatus==='unavailable'&&<p role="status" className="mt-2 text-xs text-[#a4afab]">Quote unavailable. Select {action} to retry.</p>}
+    <button type="button" disabled={disabled||walletReady&&reviewStatus==='updating'} aria-busy={busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
       {action}
     </button>
     {busy&&<p role="status" className="mt-2 text-xs text-[#a4afab]">{tradeStatus==='awaiting-wallet'?copy(locale,'walletApproval'):tradeStatus==='broadcasting'?'Submitting trade…':'Preparing trade…'}</p>}

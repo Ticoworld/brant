@@ -36,7 +36,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const broadcasting=useRef(false);
   const [readiness,setReadiness]=useState('syncing');
   useEffect(()=>{
-    if(!market?.identity)return;
+    if(!market?.identity||!account.owner)return;
     const controller=new AbortController();
     let timer:ReturnType<typeof setTimeout>;
     const poll=async()=>{
@@ -49,7 +49,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     };
     void poll();
     return()=>{controller.abort();clearTimeout(timer);};
-  },[market?.identity]);
+  },[market?.identity,account.owner]);
   const prepared=useRef<{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
   const [,renderPreparation]=useState(0);
   const [failedQuote,setFailedQuote]=useState('');
@@ -60,8 +60,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   ]);
   const preparation=useCallback((side:Side,quantity:bigint,amount:bigint,key:string)=>{
     const previous=prepared.current;
-    if(previous?.key===key&&previous.signer===signer&&!previous.controller.signal.aborted&&
-      (previous.readyAt===undefined||Date.now()-previous.readyAt<30_000))return previous.review;
+    if(previous?.key===key&&previous.signer===signer&&!previous.controller.signal.aborted)return previous.review;
     if(!market||!signer)throw Error('Wallet or market is unavailable');
     previous?.controller.abort();
     const controller=new AbortController(),id=crypto.randomUUID();
@@ -76,7 +75,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     setFailedQuote('');
     void review.then(()=>{
       entry.readyAt=Date.now();
-      if(prepared.current===entry&&!controller.signal.aborted)renderPreparation(value=>value+1);
+      if(prepared.current===entry&&!controller.signal.aborted){
+        setFailure(null);renderPreparation(value=>value+1);
+      }
     },()=>{
       if(prepared.current===entry&&!controller.signal.aborted){
         prepared.current=null;
@@ -189,17 +190,21 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
         const current=active.current;if(!current||current!==signer||!await current.isConnected())throw Error('Wallet changed before preparation');
         const address=await current.getRecommendedAddressObj(),owner=address.script.hash();
-        const [walletGenesis,rpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
-        if(owner.toLowerCase()!==account.owner.toLowerCase()||walletGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||rpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet account or network changed');
+        const walletGenesis=current.client.getHeaderByNumber(0);
+        void walletGenesis.catch(()=>{});
+        if(owner.toLowerCase()!==account.owner.toLowerCase())throw Error('Wallet account or network changed');
         const cacheKey=quoteKey(side,quantity,quotedAmount);
-        let review=await preparation(side,quantity,quotedAmount,cacheKey);
+        const review=await preparation(side,quantity,quotedAmount,cacheKey);
         const validationStarted=performance.now();
-        try{await validateReviewedInputs(review,side,quantity,quotedAmount,true);}
-        catch{
+        try{
+          const [genesis]=await Promise.all([walletGenesis,validateReviewedInputs(review,side,quantity,quotedAmount)]);
+          if(genesis?.hash?.toLowerCase()!==PUDGE_GENESIS)throw Error('Switch UTXO Global to Pudge and try again.');
+        }catch(error){
           prepared.current=null;
-          review=await preparation(side,quantity,quotedAmount,cacheKey);
-          await validateReviewedInputs(review,side,quantity,quotedAmount,true);
+          void refreshMarket();
+          throw error;
         }
+        console.info('Roveko trade validation',Math.round(performance.now()-validationStarted));
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
         setStatus('awaiting-wallet');
         const reviewedHash=review.transaction.hash();
@@ -221,7 +226,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
         const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
-        await validateReviewedInputs(review,side,quantity,quotedAmount,false);
+        await validateReviewedInputs(review,side,quantity,quotedAmount);
         const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed),raw=JSON.stringify(record);
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
         broadcasting.current=true;
@@ -242,12 +247,12 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       setFailure({owner:account.owner,message});
       toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{description:message});
     }finally{broadcasting.current=false;setBusy(false);}
-  },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision]);
+  },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision,refreshMarket]);
 
   return {trade,dismissError,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
-async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint,checkFee:boolean){
+async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint){
   const funding=review.inputs[4];
   const calls=[
     {method:'get_block_hash',params:['0x0']},
@@ -257,12 +262,12 @@ async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLo
       {tx_hash:dep.outPoint.txHash,index:ccc.numToHex(dep.outPoint.index)},false,
     ]})),
   ];
-  if(checkFee)calls.push({method:'tx_pool_info',params:[]});
+  calls.push({method:'tx_pool_info',params:[]});
   const rows=await pudgeReadBatch(calls).catch(()=>Promise.all(calls.map(call=>rpc(call.method,call.params))));
   const fresh=validateLiveSingletons(review.live.points,PUDGE_GENESIS,rows[0],rows.slice(1,5));
   const fundingLive=rows[5] as typeof fresh.cells[number] extends infer Cell?{status:string;cell?:Cell}:never;
   const deps=rows.slice(6,6+review.transaction.cellDeps.length) as {status:string}[];
-  const pool=checkFee?rows.at(-1) as {min_fee_rate:string}:null;
+  const pool=rows.at(-1) as {min_fee_rate:string};
   if(deps.some(dep=>dep.status!=='live'))throw Error('A reviewed transaction dependency is unavailable');
   if(fresh.custodyRoot!==review.live.custodyRoot||quote(fresh.curve,side,quantity)!==amount)throw Error('Market or custody quote changed');
   if(fundingLive?.status!=='live'||!fundingLive.cell)throw Error('Reviewed funding is no longer live');
