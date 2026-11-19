@@ -2,12 +2,13 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import {ccc} from '@ckb-ccc/core';
 import {useCallback,useEffect,useMemo,useState} from 'react';
 import {useLocale} from '../i18n-provider';
 import type {Locale} from '../i18n';
 import {useAccount} from './account-provider';
 import {copy} from './copy';
-import {formatCkb} from './rpc';
+import {formatCkb,pudgeRpc} from './rpc';
 import type {MarketData,Side,TradeEvent} from './types';
 import {useMarketData} from './use-market-data';
 import {useOwnerPosition} from './use-owner-position';
@@ -140,8 +141,49 @@ function MarketRecentTrades({market,locale}:{market:MarketData;locale:Locale}){
 export function PortfolioScreen(){
   const {locale}=useLocale(),account=useAccount(),query=useMarketData(),market=query.data,owner=account.state==='ready'?account.owner:'';
   const position=useOwnerPosition(owner,market);
+  const tokenHash=market?.token.typeHash;
+  const [external,setExternal]=useState<{owner:string;root:string;balance:bigint}|null>(null);
+  const [externalCurrent,setExternalCurrent]=useState(false);
+  const root=market?.custodyRoot;
+  useEffect(()=>{
+    if(!owner||!tokenHash||!root||!account.address)return;
+    let active=true;
+    let timer:ReturnType<typeof setTimeout>;
+    const script=(value:ccc.Script)=>({code_hash:value.codeHash,hash_type:value.hashType,args:value.args});
+    const refresh=async()=>{
+      if(!active)return;
+      setExternalCurrent(false);
+      try{
+        const lock=(await ccc.Address.fromString(account.address,new ccc.ClientPublicTestnet())).script;
+        if(lock.hash()!==owner)throw Error('Wallet changed');
+        const token=ccc.Script.from(market!.manifest.scripts.token);
+        if(token.hash()!==tokenHash)throw Error('RVK identity mismatch');
+        const query={script:script(lock),script_type:'lock',script_search_mode:'exact',filter:{script:script(token)},with_data:true};
+        const indexed=await pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip');
+        const tip=await pudgeRpc<{number:string}>('get_tip_header');
+        if(BigInt(tip.number)-BigInt(indexed.block_number)>6n)throw Error('Wallet indexer is catching up');
+        const page=await pudgeRpc<{objects:{out_point:unknown}[]}>('get_cells',[query,'asc','0x64']);
+        if(page.objects.length>=100)throw Error('Wallet cell page is incomplete');
+        const cells=await Promise.all(page.objects.map(row=>pudgeRpc('get_live_cell',[row.out_point,true])));
+        let balance=0n;
+        for(const row of cells){
+          const matches=(actual:any,expected:ccc.Script)=>actual?.code_hash===expected.codeHash&&actual.hash_type===expected.hashType&&actual.args===expected.args;
+          const data=row.cell?.data.content;
+          if(row.status!=='live'||!matches(row.cell?.output.lock,lock)||!matches(row.cell?.output.type,token)||!/^0x[0-9a-f]{32}$/i.test(data))throw Error('Wallet token Cell changed');
+          balance+=BigInt('0x'+data.slice(2).match(/../g).reverse().join(''));
+        }
+        const [canonical,after]=await Promise.all([pudgeRpc('get_block_hash',[indexed.block_number]),pudgeRpc('get_indexer_tip')]);
+        if(canonical!==indexed.block_hash||after.block_hash!==indexed.block_hash)throw Error('Wallet indexer changed');
+        if(active){setExternal({owner,root,balance});setExternalCurrent(true);}
+      }catch{}finally{if(active)timer=setTimeout(refresh,10000);}
+    };
+    void refresh();
+    return()=>{active=false;clearTimeout(timer);};
+  },[owner,tokenHash,root,account.address]);
+  const walletBalance=external?.owner===owner?external.balance:null;
+  const currentWallet=externalCurrent&&external?.root===root;
   return <TraderShell><div className="space-y-5"><header className="border-b border-[#28302f] pb-4"><h1 className="m-0 text-[21px] font-semibold">{copy(locale,'portfolio')}</h1><p className="mb-0 mt-1 break-all text-[11px] text-[#85918c]">{account.state==='ready'?walletIdentity(account.address):copy(locale,'connectPortfolio')}</p></header>
-    {account.state==='ready'&&<section><div className="hidden grid-cols-[minmax(180px,1.5fr)_1fr_1fr_120px] gap-4 border-b border-[#303a37] px-3 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'asset')}</span><span>{copy(locale,'yourBalance')}</span><span>{copy(locale,'marketInfo')}</span><span/></div><HoldingRow name="CKB" amount={account.totalCapacity!==''?formatCkb(account.totalCapacity,4):copy(locale,'notAvailable')} detail={account.balanceState==='ready'?`${copy(locale,'availableToTrade')}: ${formatCkb(account.availableToTrade,4)} CKB · ${copy(locale,'totalCapacity')}`:account.totalCapacity!==''?'Last verified · Updating':copy(locale,'balanceUnavailable')} unit="CKB" action={<span className="text-[10px] text-[#77837e]">CKB</span>}/><HoldingRow name={market?.token.name||'Pudge xUDT'} amount={position.balance||(position.state==='loading'?copy(locale,'loadAccount'):copy(locale,'notAvailable'))} detail={position.balance&&position.state!=='ready'?'Last verified · Updating':market?.pair||'xUDT'} unit={market?.token.symbol||'xUDT'} action={market?<Link href={`/market/${market.id}`} className="text-xs text-[#9adbb7] no-underline">{copy(locale,'trade')}</Link>:null}/></section>}
+    {account.state==='ready'&&<section><div className="hidden grid-cols-[minmax(180px,1.5fr)_1fr_1fr_120px] gap-4 border-b border-[#303a37] px-3 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'asset')}</span><span>{copy(locale,'yourBalance')}</span><span>{copy(locale,'marketInfo')}</span><span/></div><HoldingRow name="CKB" amount={account.totalCapacity!==''?formatCkb(account.totalCapacity,4):copy(locale,'notAvailable')} detail={account.balanceState==='ready'?`${copy(locale,'availableToTrade')}: ${formatCkb(account.availableToTrade,4)} CKB · ${copy(locale,'totalCapacity')}`:account.totalCapacity!==''?'Last verified · Updating':copy(locale,'balanceUnavailable')} unit="CKB" action={<span className="text-[10px] text-[#77837e]">CKB</span>}/><HoldingRow name={market?(locale==="zh-CN"?"Roveko 内":"In Roveko"):'Pudge xUDT'} amount={position.balance||(position.state==='loading'?copy(locale,'loadAccount'):copy(locale,'notAvailable'))} detail={position.balance&&position.state!=='ready'?'Last verified · Updating':market?.pair||'xUDT'} unit={market?.token.symbol||'xUDT'} action={market?<Link href={`/market/${market.id}`} className="text-xs text-[#9adbb7] no-underline">{copy(locale,'trade')}</Link>:null}/>{market&&<><HoldingRow name="In Wallet" amount={walletBalance?.toString()??"—"} detail={currentWallet?"Verified":walletBalance===null?"Checking wallet Cells":"Last verified"} unit={market.token.symbol} action={null}/><HoldingRow name="Total RVK" amount={currentWallet&&walletBalance!==null&&position.state==="ready"?(BigInt(position.balance)+walletBalance).toString():"—"} detail="" unit={market.token.symbol} action={null}/></>}</section>}
     {account.state!=='ready'&&<section className="border-y border-[#28302f] py-6"><p className="m-0 text-sm text-[#a4afab]">{account.error||copy(locale,'connectPortfolio')}</p></section>}
     {market&&owner&&<WithdrawalPanel key={owner+market.genesis} market={market} owner={owner} balance={BigInt(position.balance||'0')} balanceReady={position.state==='ready'} onConfirmed={async()=>{await Promise.all([query.refresh(),account.refresh()]);position.retry();}}/>}
     {market&&position.state==='unavailable'&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5b4a31] py-3 text-xs text-[#d9b783]"><span>{position.error||copy(locale,'holdingsUnavailable')}</span><button type="button" onClick={position.retry} className="min-h-8 rounded-[3px] border border-[#75613c] px-3 text-[11px] text-[#f0dfb8] hover:bg-[#2b241a]">{copy(locale,'retry')}</button></div>}

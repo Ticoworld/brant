@@ -588,14 +588,16 @@ async function verifyCommittedReport(node, report, reportPath, utils) {
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
   return { block_number: report.block_number, block_hash: report.block_hash };
 }
-async function withdraw(args) {
+async function withdraw(args, unsigned = false) {
   for (const key of ['node', 'bundle', 'out']) if (!args[key]) fail(`missing --${key}`);
   if (path.resolve(args.out) === path.resolve(args.bundle)) fail('--out must not overwrite the recovery bundle');
   if (fs.existsSync(path.resolve(args.out))) fail(`refusing to overwrite existing withdrawal evidence: ${path.resolve(args.out)}`);
-  const node = localRpcUrl(args.node);
+  const node = unsigned ? 'https://testnet.ckb.dev/' : localRpcUrl(args.node);
   const sdk = loadSdk(args);
-  const privateKey = process.env[RECOVERY_KEY_ENV];
-  const ownerLock = privateOwnerLock(sdk.utils, privateKey);
+  const privateKey = unsigned ? undefined : process.env[RECOVERY_KEY_ENV];
+  if (unsigned && (args.node !== node || !args['owner-lock'] || !args['funding-outpoint'] || !args['dependency-transaction'])) fail('public preparation requires the Pudge endpoint, owner lock, funding outpoint and dependency transaction');
+  const ownerLock = unsigned ? camelScript(JSON.parse(fs.readFileSync(args['owner-lock'], 'utf8'))) : privateOwnerLock(sdk.utils, privateKey);
+  if (unsigned && (ownerLock.codeHash !== '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8' || ownerLock.hashType !== 'type' || !/^0x[0-9a-f]{40}$/i.test(ownerLock.args))) fail('unsupported owner lock');
   const bundlePath = path.resolve(args.bundle);
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   const recovery = replayBundleFile(bundlePath);
@@ -606,8 +608,8 @@ async function withdraw(args) {
   if (!template || template.op !== 5 || BigInt(template.quantity) <= 0n) fail('recovery bundle has no positive owner withdrawal');
   if (recovery.entitlement_total !== recovery.custody_amount) fail('replayed entitlement total differs from the custody xUDT amount');
 
-  const nodeInfo = await rpc(node, 'local_node_info');
-  if (!versionIsPinned(nodeInfo?.version)) fail(`withdraw requires CKB 0.210.0; node reports ${nodeInfo?.version || 'no version'}`);
+  const nodeInfo = unsigned ? null : await rpc(node, 'local_node_info');
+  if (!unsigned && !versionIsPinned(nodeInfo?.version)) fail(`withdraw requires CKB 0.210.0; node reports ${nodeInfo?.version || 'no version'}`);
   const startTip = await rpc(node, 'get_tip_header');
   const genesis = await rpc(node, 'get_block_by_number', ['0x0']);
   if (genesis?.header?.hash?.toLowerCase() !== recovery.domain.genesis_hash.toLowerCase()) fail('bundle genesis does not match this CKB node');
@@ -648,11 +650,23 @@ async function withdraw(args) {
   const genesisTransactions = genesis.transactions || [];
   if (!genesisTransactions[1]?.hash || !genesisTransactions[1]?.outputs?.[0]) fail('genesis block lacks the pinned standard-lock dep group at transaction 1 output 0');
   const secpDep = scriptOutPointDep(genesisTransactions[1].hash, 0, 'depGroup');
-  const scriptDeps = codeCellDeps(sdk.utils, genesis, [
+  const dependencySource = unsigned ? await rpc(node, 'get_transaction', [args['dependency-transaction']]) : null;
+  if (unsigned && dependencySource?.tx_status?.status !== 'committed') fail('dependency transaction is unavailable');
+  const scriptDeps = unsigned ? await Promise.all(dependencySource.transaction.cell_deps.filter(dep => dep.dep_type === 'code').map(async dep => {
+    await requireLiveCell(node, dep.out_point, 'withdrawal code dependency');
+    return scriptOutPointDep(dep.out_point.tx_hash, qhex(dep.out_point.index, 'dependency index'));
+  })) : codeCellDeps(sdk.utils, genesis, [
     custodyLock,
     xudtType,
     camelScript(markerCell.output.type),
   ]);
+  if (unsigned) {
+    const cells = await Promise.all(scriptDeps.map(dep => requireLiveCell(node, {tx_hash:dep.outPoint.txHash,index:dep.outPoint.index}, 'withdrawal code dependency')));
+    const hashes = cells.map(cell => ckbHashHex(sdk.utils, Buffer.from(cell.data.slice(2), 'hex')));
+    const scripts = [custodyLock, xudtType, camelScript(markerCell.output.type)];
+    if (hashes.length !== scripts.length || scripts.some(script => script.hashType !== 'data1' || !hashes.includes(script.codeHash))) fail('withdrawal dependency code hashes do not match');
+    await requireLiveCell(node, {tx_hash:genesisTransactions[1].hash,index:'0x0'}, 'standard owner dep group');
+  }
   const minExternalCapacity = occupiedCapacity(ownerLock, xudtType, 16);
   const minChangeCapacity = occupiedCapacity(ownerLock, null, 0);
   const externalCapacity = minExternalCapacity;
@@ -675,7 +689,7 @@ async function withdraw(args) {
   const tx = {
     version: '0x0',
     cellDeps: [secpDep, ...scriptDeps],
-    headerDeps: [],
+    headerDeps: unsigned ? [genesis.header.hash] : [],
     inputs,
     outputs: [
       { capacity: hexQuantity(custodyCell.output.capacity), lock: custodyLock, type: xudtType },
@@ -692,6 +706,13 @@ async function withdraw(args) {
     witnesses: ['0x', '0x', '0x', `0x${tmsWitness.toString('hex')}`],
   };
   const txHash = txHashOf(sdk.utils, tx);
+  if (unsigned) {
+    const tip = await rpc(node, 'get_block_hash', [startTip.number]);
+    if (tip !== startTip.hash) fail('chain changed during unsigned preparation');
+    await Promise.all([custodyPoint, markerPoint, fundingPoint].map(point => requireLiveCell(node, point, 'reviewed input')));
+    fs.writeFileSync(args.out, JSON.stringify({status:'unsigned', transaction_hash:txHash, owner_lock_hash:bundle.owner_lock_hash, quantity:quantity.toString(), occupied_capacity:externalCapacity.toString(), fee:fee.toString(), custody_before:custodyAmount.toString(), custody_after:(custodyAmount-quantity).toString(), transaction:rpcSnake(tx)}, null, 2), {flag:'wx'});
+    return;
+  }
   const signerGroup = [{ lock: '', inputType: '', outputType: '' }, ...tx.witnesses.slice(inputs.length)];
   tx.witnesses[2] = sdk.signGroup(privateKey, txHash, signerGroup)[0];
   const rpcTx = rpcSnake(tx);
@@ -759,6 +780,7 @@ async function main() {
   if (args.help || command === 'help' || command === '--help' || command === '-h' || !command) { process.stdout.write(usage()); return; }
   if (command === 'collect') await collect(args);
   else if (command === 'collect-blocks') await collectBlocks(args);
+  else if (command === 'prepare-public-withdrawal') await withdraw(args, true);
   else if (command === 'withdraw') await withdraw(args);
   else if (command === 'verify-withdrawal') await verifyWithdrawal(args);
   else fail(`unknown command ${command}`);
