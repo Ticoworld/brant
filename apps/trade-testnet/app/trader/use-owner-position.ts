@@ -5,6 +5,7 @@ import type {MarketData} from './types';
 
 const verified=new Map<string,string>();
 const requests=new Map<string,Promise<string>>();
+let balanceRetryAt=0;
 
 export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,enabled=true){
   const [snapshot,setSnapshot]=useState<{key:string;root:string;balance:string}|null>(null),[state,setState]=useState<'idle'|'loading'|'ready'|'unavailable'>('idle'),[retryRevision,setRetryRevision]=useState(0),[error,setError]=useState('');
@@ -17,12 +18,18 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
     setState('loading');
     const load=async()=>{
       try{
+        if(Date.now()<balanceRetryAt)throw Error('Balance refresh is temporarily busy');
         const root=market.custodyRoot,requestKey=JSON.stringify([key,root]);
         let request=requests.get(requestKey);
         if(!request){
           request=(async()=>{
             const response=await fetch('/api/v2/pudge-proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest:market.manifest,owner,side:'balance'}),signal:AbortSignal.timeout(12_000)});
             if(!response.ok){
+              if(response.status===429){
+                const seconds=Number(response.headers.get("Retry-After")||60);
+                balanceRetryAt=Date.now()+1000*(Number.isFinite(seconds)?Math.max(1,seconds):60);
+                throw Error("Balance refresh is temporarily busy");
+              }
               if(response.status===503)void fetch('/api/v2/pudge-proof',{signal:AbortSignal.timeout(5000)}).catch(()=>{});
               throw Error((await response.text()).slice(0,180)||'Balance verification failed');
             }
@@ -37,7 +44,7 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
           if(verified.size>=16)verified.delete(verified.keys().next().value!);
           verified.set(key,balance);setSnapshot({key,root,balance});setState('ready');setError('');
         }
-      }catch(cause){if(active){setError(cause instanceof Error?cause.message:'Balance verification failed');setState('unavailable');timer=setTimeout(load,delay);delay=Math.min(delay*2,30_000);}}
+      }catch(cause){if(active){setError(cause instanceof Error?cause.message:'Balance verification failed');setState('unavailable');timer=setTimeout(load,Math.max(delay,balanceRetryAt-Date.now()));delay=Math.min(delay*2,30_000);}}
     };
     void load();return()=>{active=false;clearTimeout(timer);};
   },[enabled,owner,market?.id,market?.custodyRoot,revision,retryRevision,key]);

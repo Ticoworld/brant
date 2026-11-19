@@ -92,12 +92,12 @@ async function writeAuthenticated(file:string|undefined,scope:string,value:unkno
   }finally{await rm(temporary,{force:true}).catch(()=>{});}
 }
 
-function consumeRateLimit(request:Request){
+function consumeRateLimit(request:Request,balanceOnly:boolean){
   const forwarded=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
   const address=(forwarded||request.headers.get('x-real-ip')||'unknown').slice(0,96);
-  const now=Date.now(),current=rates.get(address);
-  if(!current||now-current.startedAt>=RATE_WINDOW_MS){rates.set(address,{startedAt:now,count:1});}
-  else if(current.count>=RATE_LIMIT)return false;
+  const now=Date.now(),key=(balanceOnly?"balance:":"proof:")+address,current=rates.get(key);
+  if(!current||now-current.startedAt>=RATE_WINDOW_MS){rates.set(key,{startedAt:now,count:1});}
+  else if(current.count>=(balanceOnly?24:RATE_LIMIT))return false;
   else current.count++;
   if(rates.size>2048)for(const [key,value] of rates)if(now-value.startedAt>=RATE_WINDOW_MS)rates.delete(key);
   return true;
@@ -309,13 +309,14 @@ async function handleProof(request:Request,synchronize=false){
         source.protocol===url.protocol&&source.port===url.port&&source.host===request.headers.get('host');
       if((source.origin!==url.origin&&!localAlias)||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
     }catch{return new Response('Same-origin request required',{status:403});}
-    if(!synchronize&&!consumeRateLimit(request))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
+
     if(activeRequests>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
     activeRequests++;entered=true;
     const text=await readBoundedBody(request);
     let body:{owner?:string;side?:string;quantity?:string;manifest?:any};
     try{body=JSON.parse(text);}catch{return new Response('Invalid JSON',{status:400});}
     const balanceOnly=body.side==='balance';
+    if(!synchronize&&!consumeRateLimit(request,balanceOnly))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
     if(!hash.test(body.owner||'')||!body.manifest||(!balanceOnly&&(!['buy','sell','withdraw'].includes(body.side||'')||!/^[1-9][0-9]{0,19}$/.test(body.quantity||'')||BigInt(body.quantity!)>(1n<<64n)-1n)))return new Response('Invalid proof request',{status:400});
     if(typeof body.manifest.genesis!=='string'||typeof body.manifest.codeDeploymentTransactionHash!=='string'||typeof body.manifest.initializationTransactionHash!=='string'||body.manifest.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||body.manifest.codeDeploymentTransactionHash.toLowerCase()!==PUDGE_GATE2_STAGE_TXS.code||body.manifest.initializationTransactionHash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION)return new Response('Market is not registered for proof requests',{status:403});
     const deadline=Date.now()+60_000;

@@ -1,14 +1,14 @@
 import { ccc } from '@ckb-ccc/core';
 import { readFundingCell } from './funding.ts';
 import { buildWithdrawal } from './withdrawal.ts';
-import { discoverFunding } from './multi-funding.ts';
+import { selectTradeFunding, type FundingHint } from './multi-funding.ts';
 import { discoverCustodyPair } from './lineage.ts';
 import type { Cell } from './transaction.ts';
 type Rpc = (method:string,params:unknown[])=>Promise<unknown>;
 type Config = {genesis:string;funding?:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;scripts?:Record<string,ccc.ScriptLike>};
 const codes:Record<string,string>={custody_smt:'0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000',custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95'};
 // Construct only from canonical replay and a wallet-owned plain funding cell.
-export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, quantity:bigint, walletLock?:ccc.Script) {
+export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, quantity:bigint, walletLock?:ccc.Script, fundingHint?:FundingHint) {
   const pudge=config.format==='roveko-pudge-market-v1';
   const response=await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side:'withdraw',quantity:quantity.toString(),...(pudge?{manifest:config}:{})})});
   if(!response.ok)throw Error(response.headers.get('content-type')?.startsWith('text/plain')?(await response.text()).slice(0,200):'Recovery proof unavailable');
@@ -17,8 +17,8 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
   if(body.genesis!==config.genesis || p.side!=='withdraw' || p.quantity!==quantity.toString()) throw Error('Recovery identity mismatch');
   if(pudge){
     if(!p.tip_outpoint?.tx_hash||!p.tip_outpoint?.index||!p.old_root||!p.new_root||typeof p.witness!=='string'||!config.scripts)throw Error('Pudge withdrawal proof is incomplete');
-    const genesis=await rpc('get_block_hash',['0x0']);if(typeof genesis!=='string'||genesis.toLowerCase()!==config.genesis.toLowerCase())throw Error('Wrong Pudge network');
-    const points=await discoverCustodyPair(rpc,p.tip_outpoint);
+    const [genesis,points]=await Promise.all([rpc('get_block_hash',['0x0']),discoverCustodyPair(rpc,p.tip_outpoint)]);if(typeof genesis!=='string'||genesis.toLowerCase()!==config.genesis.toLowerCase())throw Error('Wrong Pudge network');
+
     const rows=await Promise.all(points.map(point=>rpc('get_live_cell',[point,true]))) as {status:string;cell:{output:{capacity:string;lock:{code_hash:string;hash_type:string;args:string};type:{code_hash:string;hash_type:string;args:string}|null};data:{content:string}}}[];
     if(rows.some(row=>row.status!=='live'||!row.cell))throw Error('Custody state changed; prepare again');
     const custodyHash=ccc.Script.from(config.scripts.custody).hash().toLowerCase();
@@ -29,11 +29,11 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
     if(rows[0].cell.data.content.slice(34).toLowerCase()!==p.old_root.slice(2).toLowerCase())throw Error('Custody root changed; prepare again');
     const transform=(script:{code_hash:string;hash_type:string;args:string})=>({codeHash:script.code_hash,hashType:script.hash_type,args:script.args});
     const cells=rows.map((row,index)=>({outPoint:{txHash:points[index].tx_hash,index:points[index].index},capacity:BigInt(row.cell.output.capacity),lock:transform(row.cell.output.lock),type:row.cell.output.type?transform(row.cell.output.type):undefined,data:row.cell.data.content})) as [Cell,Cell];
-    for(const [name,expected] of [['custody_smt',codes.custody_smt],['custody_marker',codes.custody_marker],['xudt',codes.xudt]] as const){
+    await Promise.all(( [['custody_smt',codes.custody_smt],['custody_marker',codes.custody_marker],['xudt',codes.xudt]] as const).map(async ([name,expected])=>{
       const dep=ccc.CellDep.from(config.deps[name]);
       const row=await rpc('get_live_cell',[{tx_hash:dep.outPoint.txHash,index:ccc.numToHex(dep.outPoint.index)},true]) as {status:string;cell?:{data:{content:string}}};
       if(dep.depType!=='code'||row.status!=='live'||!row.cell||ccc.hashCkb(row.cell.data.content).toLowerCase()!==expected)throw Error(`Unverified ${name} dependency`);
-    }
+    }));
     const ownerScript=walletLock;
     if(!ownerScript||ownerScript.codeHash!=='0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8'||ownerScript.hashType!=='type'||ownerScript.args.length!==42)throw Error('Withdrawal requires a supported standard CKB wallet');
     if(ownerScript.hash().toLowerCase()!==owner.toLowerCase())throw Error('Withdrawal requires a supported standard CKB wallet');
@@ -53,18 +53,9 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
     const tokenOutput=ccc.CellOutput.from({capacity:0,lock:ownerScript,type:tokenType});
     const minimum=BigInt(tokenOutput.occupiedSize+16)*100_000_000n+1_000_000n;
     const secp={outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup'} as const;
-    const candidates=await discoverFunding(rpc,rpc,{codeHash:ownerScript.codeHash,hashType:ownerScript.hashType,args:ownerScript.args});
-    const eligible=candidates.filter(cell=>cell.capacity>=minimum).sort((a,b)=>a.capacity===b.capacity?a.outPoint.txHash.localeCompare(b.outPoint.txHash):a.capacity<b.capacity?-1:1);
-    let failure:unknown;
-    for(const candidate of eligible){
-      try{
-        const funding=await readFundingCell(rpc,candidate.outPoint,owner);
-        const review=buildWithdrawal([...cells,funding],quantity,p.new_root,p.witness,1_000_000n,[secp,config.deps.custody_smt,config.deps.custody_marker,config.deps.xudt],config.genesis,owner);
-        return {...review,externalAfter:externalBalance+quantity,internalAfter:BigInt(p.owner.balance)-quantity,inputs:[...cells,funding] as [Cell,Cell,Cell]};
-      }catch(error){failure=error;}
-    }
-    if(failure)throw failure;
-    throw Error('No live plain CKB cell can fund the external xUDT output');
+    const funding=await selectTradeFunding(rpc,ownerScript,minimum+61n*100_000_000n,fundingHint);
+    const review=buildWithdrawal([...cells,funding],quantity,p.new_root,p.witness,1_000_000n,[secp,config.deps.custody_smt,config.deps.custody_marker,config.deps.xudt],config.genesis,owner);
+    return {...review,externalAfter:externalBalance+quantity,internalAfter:BigInt(p.owner.balance)-quantity,inputs:[...cells,funding] as [Cell,Cell,Cell]};
   }
   if(!config.funding)throw Error('Withdrawal funding cell is unavailable');
   if(!['0x0','0x2'].includes(p.tip_outpoint.index)) throw Error('Recovery identity mismatch');
