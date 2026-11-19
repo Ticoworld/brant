@@ -83,9 +83,8 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
     {tradeError&&<p role="alert" className="mb-0 mt-3 break-words text-[11px] text-[#f0b8ad]">{tradeError}</p>}
     {walletReady&&readiness&&readiness!=='ready'&&<p role="status" className="mb-0 mt-3 text-[11px] text-[#a4afab]">{readiness==='unavailable'?'Trading state unavailable. Roveko will retry.':'Synchronizing trading state'}</p>}
     <button type="button" disabled={disabled||updating} aria-busy={updating||busy||walletState==='connecting'||walletState==='checking'} onClick={()=>walletReady?void onTrade(side,quoteState.quantity,quoteState.amount):account.connect()} className={`mt-4 min-h-12 w-full rounded-[4px] text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${side==='buy'?'bg-[#72dfb0] text-[#0a1710] hover:bg-[#8ce9bd]':'bg-[#f08e89] text-[#24100f] hover:bg-[#f5a39e]'}`}>
-      {busy?copy(locale,tradeStatus==='awaiting-wallet'?'walletApproval':tradeStatus==='broadcasting'?'broadcasting':'reviewing'):pending&&walletReady?(tradeStatus==='submitted'?'Submitted · Awaiting confirmation':copy(locale,'pending')):updating?'Updating quote':action}
+      {busy?copy(locale,tradeStatus==='awaiting-wallet'?'walletApproval':tradeStatus==='broadcasting'?'broadcasting':'reviewing'):pending&&walletReady?(tradeStatus==='confirmed'?'Reconciling balances':tradeStatus==='submitted'?'Submitted · Awaiting confirmation':copy(locale,'pending')):updating?'Updating quote':action}
     </button>
-    {pending&&<p className="mb-0 mt-3 text-[11px] leading-5 text-[#edc474]">{copy(locale,'unknown')}</p>}
     <p className="mb-0 mt-3 text-[10px] leading-5 text-[#79847f]">{market.token.metadata==='off-chain-testnet-registry'?copy(locale,'registryDescription'):market.token.description||copy(locale,'metadataUnavailable')}</p>
   </aside>;
 }

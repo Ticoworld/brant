@@ -11,7 +11,7 @@ import {prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
 import {validateLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {quote} from '../../lib/v2-engine/curve.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
-import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey} from '../../lib/v2-engine/pudge-trade-journal.ts';
+import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
 import {PUDGE_GENESIS,pudgeRpc,pudgeReadBatch} from './rpc';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
@@ -27,9 +27,10 @@ function tradeTiming(hash:string,stage:string,at=Date.now(),detail?:string){
 export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>,refreshAccount:()=>Promise<void>){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale(),active=useRef(signer);active.current=signer;
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
-  const reconcileLock=useRef(false);
+  const reconcileLock=useRef(false), accounting=useRef(new Set<string>());
   const [failure,setFailure]=useState<{owner:string;message:string}|null>(null);
   const key=account.owner?tradeKey(PUDGE_GENESIS,account.owner):'';
+  const currentKey=useRef(key);currentKey.current=key;
   const [status,setStatus]=useState('');
   const [receipt,setReceipt]=useState('');
   const broadcasting=useRef(false);
@@ -94,54 +95,89 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return failedQuote===key?'unavailable':'updating';
   };
 
-  const reconcile=useCallback(async(silent=false)=>{
-    if(!key||reconcileLock.current||broadcasting.current)return;const raw=localStorage.getItem(key);if(!raw){setPending(false);setUncertain(false);setAttemptRaw('');return;}
-    reconcileLock.current=true;setPending(true);setAttemptRaw(raw);
+  const reconcile=useCallback(async(silent=true)=>{
+    if(!key||reconcileLock.current||broadcasting.current)return;
+    const raw=localStorage.getItem(key);
+    if(!raw)return;
+    const current=()=>currentKey.current===key&&localStorage.getItem(key)===raw;
+    reconcileLock.current=true;
     try{
       const attempt=parseTradeAttempt(raw);
-      const row=await pudgeRpc<{tx_status?:{status?:string;reason?:string}}|null>('get_transaction',[attempt.txHash]);
+      if(tradeKey(attempt.genesis,attempt.owner)!==key)throw Error('Trade journal owner or network mismatch');
+      const row=await pudgeRpc<{transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string}}|null>('get_transaction',[attempt.txHash]);
+      if(!current())return;
       const state=row?.tx_status?.status;
-      if(state==='pending'||state==='proposed'){tradeTiming(attempt.txHash,state);setStatus(state);setUncertain(false);return;}
+      if(state==='pending'||state==='proposed'){
+        localStorage.setItem(key+':submitted',attempt.txHash);
+        setReceipt('');setStatus(state);setUncertain(false);return;
+      }
       if(state==='rejected'){
-        if(localStorage.getItem(key)===raw){
-          localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
-          setPending(false);setUncertain(false);setStatus('rejected');
-          setFailure({owner:account.owner,message:row?.tx_status?.reason||'Node rejected the transaction'});
-        }
+        if(await rpc('get_block_hash',['0x0'])!==attempt.genesis||!current())return;
+        localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
+        setReceipt('');setAttemptRaw('');setPending(false);setUncertain(false);setStatus('rejected');
+        const message=row?.tx_status?.reason||'Node rejected the transaction';
+        setFailure({owner:account.owner,message});
+        toast.error('Trade rejected',{description:message,id:attempt.txHash});
         return;
       }
-      if(state!=='committed')throw Error('Node has not reported a transaction status');
-      setStatus('reconciling');setUncertain(false);
-      if(!market)throw Error('Registered market unavailable');
-      const manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
-      const result=await reconcilePudgeTrade(rpc,attempt,manifest);
-      tradeTiming(result.hash,'canonical-confirmation');
-      if(localStorage.getItem(key)!==raw)throw Error('Trade journal changed during reconciliation');
-      localStorage.setItem(key+':confirmed',result.hash);
-      localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
-      setReceipt(result.hash);setStatus('confirmed');setPending(false);setUncertain(false);setAttemptRaw('');setRevision(value=>value+1);
-      if(!silent)toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{description:result.hash});
-      await Promise.all([refreshMarket(),refreshAccount()]);
+      if(state!=='committed'){
+        setReceipt('');
+        const acknowledged=localStorage.getItem(key+':submitted')===attempt.txHash;
+        setStatus(acknowledged?'submitted':'unknown');setUncertain(!acknowledged);return;
+      }
+      try{await verifyTradeInclusion(rpc,attempt,row);}
+      catch(error){
+        if(current()){setReceipt('');setStatus('rechecking');setUncertain(false);}
+        throw error;
+      }
+      if(!current())return;
+      localStorage.setItem(key+':submitted',attempt.txHash);
+      const notifiedKey=key+':notified';
+      if(localStorage.getItem(notifiedKey)!==attempt.txHash){
+        tradeTiming(attempt.txHash,'canonical-confirmation');
+        localStorage.setItem(notifiedKey,attempt.txHash);
+        toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{id:attempt.txHash});
+      }
+      setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);setFailure(null);
+      if(!market||accounting.current.has(raw))return;
+      accounting.current.add(raw);
+      void (async()=>{
+        try{
+          const manifest=await loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
+          const result=await reconcilePudgeTrade(rpc,attempt,manifest);
+          await verifyTradeInclusion(rpc,attempt,await rpc('get_transaction',[attempt.txHash]) as typeof row);
+          if(!current())return;
+          tradeTiming(result.hash,'reconciliation-complete');
+          localStorage.setItem(key+':confirmed',result.hash);
+          localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
+          setPending(false);setAttemptRaw('');setRevision(value=>value+1);
+          await Promise.all([refreshMarket(),refreshAccount()]);
+        }catch(error){
+          if(current())setFailure({owner:account.owner,message:error instanceof Error?error.message:'Trade reconciliation failed. Check status to retry.'});
+        }finally{accounting.current.delete(raw);}
+      })();
     }catch(error){
-      const acknowledged=!!localStorage.getItem(key+':submitted');
-      setPending(true);setUncertain(!acknowledged);setStatus(acknowledged?'submitted':'unknown');
-      if(!silent)toast.warning(locale==='zh-CN'?'交易仍待核对':'Trade still awaiting confirmation',{description:error instanceof Error?error.message:'Check again before retrying'});
+      if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}
   },[account.owner,key,locale,market,refreshAccount,refreshMarket]);
 
   useEffect(()=>{
-    if(!key){setPending(false);setUncertain(false);setAttemptRaw('');setReceipt('');return;}
-    const raw=localStorage.getItem(key),submitted=!!localStorage.getItem(key+':submitted');
-    setReceipt(localStorage.getItem(key+':confirmed')||'');
-    setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!submitted);
-    if(raw)void reconcile(true);
-  },[key,reconcile]);
-  useEffect(()=>{if(!pending||!market)return;const timer=setInterval(()=>void reconcile(true),8_000);return()=>clearInterval(timer);},[pending,market,reconcile]);
+    const raw=key?localStorage.getItem(key):null;
+    setReceipt(!raw&&key?localStorage.getItem(key+':confirmed')||'':'');
+    setStatus(raw&&localStorage.getItem(key+':submitted')?'submitted':'');
+    setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!localStorage.getItem(key+':submitted'));
+  },[key]);
+  useEffect(()=>{
+    if(!pending||busy)return;
+    void reconcile();
+    const timer=setInterval(()=>void reconcile(),2000);
+    return()=>clearInterval(timer);
+  },[pending,busy,reconcile]);
   useEffect(()=>{if(key&&receipt)tradeTiming(receipt,'receipt-displayed');},[key,receipt]);
 
   const trade=useCallback(async(side:Side,quantity:bigint,quotedAmount:bigint)=>{
     if(busy)return;const started=performance.now(),clickedAt=Date.now();let broadcastHash:string|undefined;
-    setBusy(true);setStatus('preparing');setFailure(null);const toastId=toast.loading(copy(locale,'reviewing'));
+    setBusy(true);setStatus('preparing');setFailure(null);
     try{
       if(!market||!signer||!await signer.isConnected())throw Error('Connect a supported Pudge wallet');
       if(account.state!=='ready'||account.owner===''||!key)throw Error('Wallet account or CKB balance is not verified');
@@ -159,14 +195,11 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         try{await validateReviewedInputs(review,side,quantity,quotedAmount,true);}
         catch{
           prepared.current=null;
-          toast.loading(locale==='zh-CN'?'正在更新报价':'Refreshing executable quote',{id:toastId});
           review=await preparation(side,quantity,quotedAmount,cacheKey);
           await validateReviewedInputs(review,side,quantity,quotedAmount,true);
         }
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
         setStatus('awaiting-wallet');
-        const confirmToast=toast.loading(copy(locale,'walletApproval'),{id:toastId});
-        console.info('Roveko trade preparation',JSON.stringify({validationMs:Math.round(performance.now()-validationStarted),totalMs:Math.round(performance.now()-started)}));
         const reviewedHash=review.transaction.hash();
         tradeTiming(reviewedHash,'click',clickedAt);
         tradeTiming(reviewedHash,'wallet-handoff');
@@ -182,22 +215,22 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
         broadcasting.current=true;
         localStorage.setItem(key,raw);setAttemptRaw(raw);setPending(true);setUncertain(false);setStatus('broadcasting');
-        toast.loading(copy(locale,'broadcasting'),{id:confirmToast});
         broadcastHash=record.txHash;
         tradeTiming(broadcastHash,'broadcast-started');
         const submitted=await current.client.sendTransaction(signed);
         if(submitted.toLowerCase()!==record.txHash.toLowerCase())throw Error('Wallet returned an unexpected transaction hash; reconcile before retrying');
         localStorage.setItem(key+':submitted',record.txHash);setStatus('submitted');setUncertain(false);
         tradeTiming(record.txHash,'node-acknowledged');
-        toast.success(locale==='zh-CN'?'交易已提交':'Trade submitted',{id:confirmToast,description:record.txHash});
+        toast(locale==='zh-CN'?'交易已提交':'Trade submitted',{id:record.txHash,action:{label:copy(locale,'explorer'),onClick:()=>window.open('https://pudge.explorer.nervos.org/transaction/'+record.txHash,'_blank','noopener,noreferrer')}});
       });
     }catch(error){
       const message=error instanceof Error?error.message:'Trade preparation or approval failed';
       if(broadcastHash)tradeTiming(broadcastHash,'broadcast-failure',Date.now(),message);
       if(key&&localStorage.getItem(key)){setStatus('unknown');setUncertain(true);}
-      else setStatus(/reject|denied|cancel/i.test(message)?'rejected':'failed');
+      else if(/reject|denied|cancel/i.test(message)){setStatus('rejected');return;}
+      else setStatus('failed');
       setFailure({owner:account.owner,message});
-      toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{id:toastId,description:message});
+      toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{description:message});
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision]);
 

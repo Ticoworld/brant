@@ -11,6 +11,11 @@ const items=[['/','markets'],['/portfolio','portfolio'],['/activity','activity']
 export default function TraderNavigation(){
   const pathname=usePathname(),account=useAccount(),{locale}=useLocale();
   const addressLabel=account.address?`${account.address.slice(0,10)}…${account.address.slice(-5)}`:copy(locale,'connect');
+  const walletStatus={
+    'wrong-network':'walletWrongNetwork',unsupported:'walletUnsupported',
+    'connection-timeout':'connectionTimeout','connection-rejected':'walletRejected',error:'walletRequestFailed',
+  } as const;
+  const issue=walletStatus[account.state as keyof typeof walletStatus];
   return <header className="sticky top-0 z-20 border-b border-[#28302f] bg-[#0b0d0e]/95 backdrop-blur">
     <div className="mx-auto flex min-h-[64px] w-full max-w-[1440px] flex-wrap items-center gap-x-6 px-4 sm:flex-nowrap sm:px-6 xl:px-8">
       <Link href="/" className="order-1 inline-flex shrink-0 items-center gap-2.5 py-3 text-[17px] font-bold text-[#edf1ef] no-underline">
@@ -27,9 +32,12 @@ export default function TraderNavigation(){
         </details>
         {account.state==='ready'&&account.availableToTrade!==''&&<span title={`${copy(locale,'yourBalance')}: ${formatBalance(account.totalCapacity)} CKB · ${copy(locale,'availableToTrade')}: ${formatBalance(account.availableToTrade)} CKB`} className="hidden text-[11px] tabular-nums text-[#c8d2ce] lg:block">{account.balanceState==='ready'?copy(locale,'availableToTrade'):(locale==='zh-CN'?'上次验证余额':'Last verified')}: {formatBalance(account.availableToTrade)} CKB</span>}
         {account.state==='ready'&&['error','indexer-lag'].includes(account.balanceState)&&<button type="button" title={account.error} onClick={()=>void account.refresh()} className="text-[11px] text-[#a4afab]">{copy(locale,'retry')}</button>}
+        <div className="max-w-[165px]">
+        {issue&&<div role="status" className="py-1 text-[11px] text-[#e8cc94]">{copy(locale,issue)}</div>}
         <button type="button" title={account.address||copy(locale,'connect')} onClick={account.connect} aria-busy={account.state==='connecting'||account.state==='checking'} className="max-w-[170px] truncate rounded-sm border border-[#46514d] bg-[#1b2421] px-3 py-2 text-[11px] font-semibold text-[#e7efeb] transition-colors hover:bg-[#26322d] sm:max-w-[220px] sm:text-xs">
-          {account.state==='checking'?copy(locale,'walletChecking'):account.state==='connecting'?copy(locale,'connecting'):addressLabel}
+          {account.state==='checking'?copy(locale,'walletChecking'):account.state==='connecting'?copy(locale,'connecting'):issue||account.state==='disconnected'?copy(locale,'connect'):addressLabel}
         </button>
+        </div>
         <LanguageSwitcher/>
       </div>
     </div>

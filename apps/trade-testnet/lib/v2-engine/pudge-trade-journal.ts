@@ -17,6 +17,20 @@ export function parseTradeAttempt(raw:string):Attempt{
  const tx=from(v.transaction);if(tx.hash().toLowerCase()!==v.txHash.toLowerCase()||tx.inputs.length!==5||tx.outputs.length!==5||tx.witnesses.length!==6)throw Error('Trade record transaction mismatch');
  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
 }
+type CommittedRow={transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
+export async function verifyCanonicalTransaction(rpc:Rpc,txHash:string,row:CommittedRow|null){
+ if(row?.tx_status?.status!=='committed'||!row.transaction||!row.tx_status.block_hash)throw Error('Transaction is not committed');
+  const tx=from(row.transaction),header=await rpc('get_header',[row.tx_status.block_hash]) as {hash?:string;number?:string};
+  if(tx.hash().toLowerCase()!==txHash.toLowerCase()||!header?.number||header.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||String(await rpc('get_block_hash',[header.number])).toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Trade or predecessor is not canonical');
+ return tx;
+}
+export async function verifyTradeInclusion(rpc:Rpc,attempt:Attempt,row:CommittedRow|null){
+ if(await rpc('get_block_hash',['0x0'])!==attempt.genesis)throw Error('Trade network mismatch');
+ const tx=await verifyCanonicalTransaction(rpc,attempt.txHash,row);
+ const expected=from(attempt.transaction);
+ if(tx.witnesses.length!==expected.witnesses.length||tx.witnesses.some((w,i)=>w.toLowerCase()!==expected.witnesses[i].toLowerCase()))throw Error('Committed trade witness differs from record');
+ return tx;
+}
 /** Resolve a submitted trade only after canonical confirmation and wallet,
  * lineage, witness and fee checks. A missing RPC result never permits retry. */
 export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market){
@@ -26,8 +40,7 @@ export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market){
   const cached=cache.get(txHash.toLowerCase());if(cached)return cached;
   const row=await rpc('get_transaction',[txHash]) as {transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
   if(row?.tx_status?.status!=='committed'||!row.transaction||!row.tx_status.block_hash)throw Error('Trade or predecessor is not confirmed; retain the attempt');
-  const tx=from(row.transaction),header=await rpc('get_header',[row.tx_status.block_hash]) as {hash?:string;number?:string};
-  if(tx.hash().toLowerCase()!==txHash.toLowerCase()||!header?.number||header.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||String(await rpc('get_block_hash',[header.number])).toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Trade or predecessor is not canonical');
+  const tx=await verifyCanonicalTransaction(rpc,txHash,row);
   cache.set(txHash.toLowerCase(),tx);return tx;
  }
  const expected=from(attempt.transaction),tx=await canonical(attempt.txHash);

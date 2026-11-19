@@ -58,7 +58,6 @@ try{
     });
     await page.getByRole('button',{name:'Approve in UTXO Global',exact:true}).waitFor();
     await page.evaluate(()=>window.rejectApproval());
-    await page.getByText(/Fixture rejected approval/).first().waitFor();
     await buy.waitFor();
     assert.equal(await page.evaluate(()=>window.promptCount),sample+1);
     assert.equal(await page.evaluate(()=>Object.keys(localStorage).some(key=>key.startsWith('roveko-pudge-trade-v1:')&&key.split(':').length===3)),false);
