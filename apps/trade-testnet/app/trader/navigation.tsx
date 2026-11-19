@@ -19,8 +19,8 @@ export default function TraderNavigation(){
   return <header className="sticky top-0 z-20 border-b border-[#28302f] bg-[#0b0d0e]/95 backdrop-blur">
     <div className="mx-auto flex min-h-[64px] w-full max-w-[1440px] flex-wrap items-center gap-x-6 px-4 sm:flex-nowrap sm:px-6 xl:px-8">
       <Link href="/" className="order-1 inline-flex shrink-0 items-center gap-2.5 py-3 text-[17px] font-bold text-[#edf1ef] no-underline">
-        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="size-[22px] text-[#72dfb0]"><path d="M4 5.5 12 2l8 3.5v9L12 22l-8-7.5v-9Z" fill="currentColor"/><path d="M8 12h8M12 8v8" stroke="#0b0d0e" strokeWidth="1.7" strokeLinecap="round"/></svg>
-        <span>ROVEKO</span>
+        <img src="/icon.svg" alt="" width={24} height={24} />
+        <span>Brant</span>
       </Link>
       <nav aria-label={locale==='zh-CN'?'主导航':'Primary navigation'} className="order-3 -mx-4 flex w-[calc(100%+2rem)] min-w-0 items-center overflow-x-auto border-t border-[#202625] px-2 sm:order-2 sm:mx-0 sm:w-auto sm:flex-1 sm:border-0 sm:px-0">
         {items.map(([href,key])=>{const active=pathname===href||(href==='/'&&pathname.startsWith('/market/'));return <Link key={href} href={href} aria-current={active?'page':undefined} className={`shrink-0 border-b-2 px-3 py-[21px] text-[13px] font-medium no-underline transition-colors ${active?'border-[#72dfb0] text-[#e7f8ee]':'border-transparent text-[#98a29f] hover:text-[#edf1ef]'}`}>{copy(locale,key)}<NavigationProgress/></Link>;})}

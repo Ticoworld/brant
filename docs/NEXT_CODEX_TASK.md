@@ -1,12 +1,15 @@
-# Active task — WO2 independent public Pudge exit acceptance
+# Next work order — controlled public Brant alpha on CKB Pudge Testnet
 
-Follow the milestone order in ROVEKO_DIRECTION_LOCK.md and the safeguards in AGENTS.md.
+Define a bounded public trial of the existing RVK market. Verify the remote operational and recovery safeguards before inviting testers. Follow [the direction lock](BRANT_DIRECTION_LOCK.md) and AGENTS.md.
+
+WO2 independent exit remains open as a separate work order. Reusable multi-token launch and production security acceptance remain open.
+
+## WO2 acceptance record
 
 **VERIFIED:** Two owner-approved browser withdrawals committed on Pudge. With Roveko stopped, standalone collection and replay recovered 6 internal RVK for the recorded owner and 13 RVK in shared custody. The standalone CLI produced an unsigned exit review and checked the live inputs and dependencies.
 
 **UNIMPLEMENTED:** Independent UTXO Global signing handoff. The current standalone public command produces an unsigned artifact. Public read-only cycle estimation returned a standard-lock validation failure at funding input 2. Independent wallet approval, signed VM validation, public submission, and canonical post-exit recovery remain acceptance gates.
 
-Keep WO2 active. Each public signing or broadcast action requires explicit owner approval.
 
 ---
 

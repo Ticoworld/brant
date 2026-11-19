@@ -7,7 +7,7 @@ SignersController.prototype.refresh=async function(...args:Parameters<typeof ref
   await refreshSigners.apply(this,args);
 };
 
-class RovekoSignersController extends SignersController{
+class BrantSignersController extends SignersController{
   override async refresh(...args:Parameters<SignersController['refresh']>){
     const [client,onUpdate]=args;
     if(!client||typeof client.addressPrefix!=='string'){onUpdate([]);return;}
@@ -15,4 +15,4 @@ class RovekoSignersController extends SignersController{
   }
 }
 
-export const rovekoSignersController=new RovekoSignersController();
+export const rovekoSignersController=new BrantSignersController();

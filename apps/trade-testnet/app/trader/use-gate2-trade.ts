@@ -21,7 +21,7 @@ import type {MarketData,Side} from './types';
 const clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(tx)));
 const rpc=(method:string,params:unknown[])=>pudgeRpc(method,params);
 function tradeTiming(hash:string,stage:string,at=Date.now(),detail?:string){
-  console.info('Roveko transaction timeline',JSON.stringify({hash,stage,at,detail}));
+  console.info('Brant transaction timeline',JSON.stringify({hash,stage,at,detail}));
 }
 
 export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>){
@@ -69,7 +69,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       const address=await signer.getRecommendedAddressObj();
       if(active.current!==signer||address.script.hash()!==account.owner)throw Error('Wallet changed during preparation');
       return prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
-        (stage,ms)=>console.info('Roveko quote stage',id,stage,Math.round(ms)),account.fundingHint,amount,controller.signal);
+        (stage,ms)=>console.info('Brant quote stage',id,stage,Math.round(ms)),account.fundingHint,amount,controller.signal);
     })();
     const entry:{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:typeof review}={key,signer,controller,review};
     prepared.current=entry;
@@ -220,7 +220,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
           void refreshMarket();
           throw error;
         }
-        console.info('Roveko trade validation',Math.round(performance.now()-validationStarted));
+        console.info('Brant trade validation',Math.round(performance.now()-validationStarted));
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
         setStatus('awaiting-wallet');
         const reviewedHash=review.transaction.hash();

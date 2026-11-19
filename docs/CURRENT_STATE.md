@@ -21,7 +21,10 @@
 - **VERIFIED:** typecheck, production build, native replay and leaf corruption checks, separate and indexed lineage, collector, endpoint security and accounting checks passed. The history integration fixture requires additional native contract artifacts.
 - **UNIMPLEMENTED:** native successor-only replay and durable authenticated snapshots. A process restart rebuilds market provenance and replays the custody bundle. Both warm latency targets remain open.
 
-## Authoritative Roveko status
+## Authoritative Brant status
+
+- **VERIFIED:** Public Pudge Buy/Sell, two external xUDT withdrawals, and independent chain reconstruction with unsigned withdrawal preparation.
+- **OPEN:** Independently signed public server-down exit (WO2), reusable multi-token launch acceptance, remote public alpha, and production security acceptance. The controlled public Pudge alpha is the next product work order.
 
 - **VERIFIED (public Pudge anchors):** the Gate 2 code Cells are outputs `0x0` through `0x4` of `0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e`; initialization is `0xc37029b982276a7c3e126a5658510fda1cd5f2963caf650b04f397a8484c7d2a`; xUDT type hash is `0xa706188a0d74a200306109a88fd7835b75eff42f35e9983fa0d3c2138e181ddb`.
 - **VERIFIED (owner-reported, transaction references checked read-only):** one public wallet-approved Buy and Sell and subsequent recovery were completed. Exact transaction records and raw receipts remain in the protected migration archive. No public transaction was signed or broadcast during Checkpoint 1.
@@ -43,7 +46,11 @@
 
 The recorded starting timings were cold market 7–13 seconds, warm market about 2.4 seconds, owner proof about 24.4 seconds, and arithmetic quotes 96–141 ms. The new market checkpoint has not established a repeatable speedup, and arithmetic quote latency was not remeasured here.
 
-## Next milestone
+## Next product work order
+
+Run a controlled public Pudge testnet alpha of Brant. Track independent public server-down exit separately under open WO2.
+
+## Historical Checkpoint 2 recommendation
 
 Complete Checkpoint 2 by validating durable host storage and trusted proxy configuration, remeasuring cold and warm behavior on one controlled environment, testing incremental market recovery after a confirmed successor and reorg/conflict invalidation, and exercising the endpoint from an authorized remote origin under its configured bounds. Then proceed to Checkpoint 3. The current code permits only the existing registered market; reusable multi-market registration belongs to Checkpoint 4.
 
