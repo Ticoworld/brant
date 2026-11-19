@@ -315,7 +315,8 @@ async function handleProof(request:Request,synchronize=false){
     const text=await readBoundedBody(request);
     let body:{owner?:string;side?:string;quantity?:string;manifest?:any};
     try{body=JSON.parse(text);}catch{return new Response('Invalid JSON',{status:400});}
-    if(!hash.test(body.owner||'')||!['buy','sell','withdraw'].includes(body.side||'')||!/^[1-9][0-9]{0,19}$/.test(body.quantity||'')||BigInt(body.quantity!)>(1n<<64n)-1n||!body.manifest)return new Response('Invalid proof request',{status:400});
+    const balanceOnly=body.side==='balance';
+    if(!hash.test(body.owner||'')||!body.manifest||(!balanceOnly&&(!['buy','sell','withdraw'].includes(body.side||'')||!/^[1-9][0-9]{0,19}$/.test(body.quantity||'')||BigInt(body.quantity!)>(1n<<64n)-1n)))return new Response('Invalid proof request',{status:400});
     if(typeof body.manifest.genesis!=='string'||typeof body.manifest.codeDeploymentTransactionHash!=='string'||typeof body.manifest.initializationTransactionHash!=='string'||body.manifest.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||body.manifest.codeDeploymentTransactionHash.toLowerCase()!==PUDGE_GATE2_STAGE_TXS.code||body.manifest.initializationTransactionHash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION)return new Response('Market is not registered for proof requests',{status:403});
     const deadline=Date.now()+60_000;
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
@@ -452,6 +453,16 @@ async function handleProof(request:Request,synchronize=false){
     }
     const {state,live}=await pending,selectedBundle=state.bundle;
     request.signal.throwIfAborted();
+    if(balanceOnly){
+      const root='0x'+selectedBundle.live.data.slice(34);
+      const owners=state.snapshot.owners as {owner_lock_hash:string;balance:string;active:boolean}[];
+      if(!Array.isArray(owners)||state.snapshot.ownership_root!==root)throw Error('Verified balance snapshot root mismatch');
+      const owner=body.owner!.toLowerCase();
+      const leaf=owners.find(row=>row.owner_lock_hash===owner);
+      const balance=leaf?.balance??'0';
+      if(!/^\d+$/.test(balance))throw Error('Verified owner balance is invalid');
+      return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash},{headers:{'Cache-Control':'no-store'}});
+    }
     if(proofWorker?.state!==state){
       const snapshotPath=path.join(dir,'snapshot.json');
       await writeFile(snapshotPath,JSON.stringify(state.snapshot),{flag:'wx',mode:0o600});
