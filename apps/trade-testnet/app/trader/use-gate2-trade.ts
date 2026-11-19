@@ -153,7 +153,8 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
           })();
           const incorporated=(async()=>{
             const params=new URLSearchParams({trade:attempt.txHash,owner:attempt.owner});
-            const response=await fetch('/api/v2/pudge-proof?'+params,{cache:'no-store',signal:AbortSignal.timeout(8000)});
+            // Canonical-state reads can outlast a single Pudge RPC timeout.
+            const response=await fetch('/api/v2/pudge-proof?'+params,{cache:'no-store',signal:AbortSignal.timeout(30_000)});
             if(!response.ok)throw Error('Verified trading state unavailable');
             const result=await response.json();
             if(result.incorporated!==true||result.trade!==attempt.txHash||result.owner!==attempt.owner)throw Error('Trade is not in verified trading state yet');
