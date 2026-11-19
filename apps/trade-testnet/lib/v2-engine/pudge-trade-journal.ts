@@ -18,18 +18,18 @@ export function parseTradeAttempt(raw:string):Attempt{
  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
 }
 type CommittedRow={transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
-export async function verifyCanonicalTransaction(rpc:Rpc,txHash:string,row:CommittedRow|null){
+async function canonicalTransaction(rpc:Rpc,txHash:string,row:CommittedRow|null){
  if(row?.tx_status?.status!=='committed'||!row.transaction||!row.tx_status.block_hash)throw Error('Transaction is not committed');
   const tx=from(row.transaction),header=await rpc('get_header',[row.tx_status.block_hash]) as {hash?:string;number?:string};
   if(tx.hash().toLowerCase()!==txHash.toLowerCase()||!header?.number||header.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||String(await rpc('get_block_hash',[header.number])).toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Trade or predecessor is not canonical');
- return tx;
+ return {tx,height:header.number};
 }
 export async function verifyTradeInclusion(rpc:Rpc,attempt:Attempt,row:CommittedRow|null){
- const [genesis,tx]=await Promise.all([rpc('get_block_hash',['0x0']),verifyCanonicalTransaction(rpc,attempt.txHash,row)]);
+ const [genesis,{tx,height}]=await Promise.all([rpc('get_block_hash',['0x0']),canonicalTransaction(rpc,attempt.txHash,row)]);
  if(genesis!==attempt.genesis)throw Error('Trade network mismatch');
  const expected=from(attempt.transaction);
  if(tx.witnesses.length!==expected.witnesses.length||tx.witnesses.some((w,i)=>w.toLowerCase()!==expected.witnesses[i].toLowerCase()))throw Error('Committed trade witness differs from record');
- return tx;
+ return height;
 }
 /** Resolve a submitted trade only after canonical confirmation and wallet,
  * lineage, witness and fee checks. A missing RPC result never permits retry. */
@@ -43,7 +43,7 @@ export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market|P
   if(cached)return cached;
   const pending=(async()=>{
    const row=await rpc('get_transaction',[txHash]) as CommittedRow|null;
-   return verifyCanonicalTransaction(rpc,txHash,row);
+   return (await canonicalTransaction(rpc,txHash,row)).tx;
   })();
   cache.set(key,pending);
   return pending;

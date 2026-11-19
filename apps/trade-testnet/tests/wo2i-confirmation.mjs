@@ -10,9 +10,11 @@ const rpc=async(method,params)=>{
   return (await response.json()).result;
 };
 const market=await get('/api/markets?display=1');
-const trade=market.history.find(item=>item.hash==='0x0df97d1f6b9cb9d0e7008bf603da4766f705f70afcd8fc6b57ee638a9881ae1a');
+const trade=market.history.find(item=>item.hash===(process.env.ROVEKO_TEST_TRADE||'0x0df97d1f6b9cb9d0e7008bf603da4766f705f70afcd8fc6b57ee638a9881ae1a'));
 assert.ok(trade);
 const row=await rpc('get_transaction',[trade.hash]);
+const header=await rpc('get_header',[row.tx_status.block_hash]);
+assert.equal(await rpc('get_block_hash',[header.number]),header.hash);
 const {code_hash:codeHash,hash_type:hashType,args}=row.transaction.outputs[4].lock;
 const address=ccc.Address.from({script:{codeHash,hashType,args},prefix:'ckt'}).toString();
 const record={version:1,genesis:market.genesis,owner:trade.owner,txHash:trade.hash,transaction:row.transaction};
@@ -35,6 +37,8 @@ try{
     await page.route('**/api/markets**',route=>route.fulfill({json:market}));
     await page.route('**/api/v2/pudge-rpc',route=>{
       const {method,params}=route.request().postDataJSON();
+      if(method==='get_header'&&params[0]===header.hash)return route.fulfill({json:{result:header}});
+      if(method==='get_block_hash'&&params[0]===header.number)return route.fulfill({json:{result:header.hash}});
       if(method==='get_transaction'&&params[0]===trade.hash){
         if(state==='offline')return route.fulfill({status:503,json:{error:'Fixture unavailable'}});
         return route.fulfill({json:{result:state==='committed'?row:{...row,tx_status:{status:state}}}});
@@ -73,6 +77,9 @@ try{
     await page.waitForFunction(()=>!!document.querySelector('[data-sonner-toast]'));
     assert.equal(await page.getByText('Trade confirmed',{exact:true}).count(),1);
     assert.ok(await page.evaluate(key=>localStorage.getItem(key),key));
+    await page.waitForFunction(()=>document.querySelector('[role=status]')!==null);
+    const refreshMs=timings.get('refresh-request')-timings.get('canonical-confirmation');
+    assert.ok(refreshMs>=0&&refreshMs<3000,String(refreshMs));
     const ms=timings.get('receipt-displayed')-timings.get('canonical-confirmation');
     assert.ok(ms>=0&&ms<3000,String(ms));
     await page.reload();
@@ -85,7 +92,7 @@ try{
     state='committed';
     await page.waitForFunction(key=>!localStorage.getItem(key),key,{timeout:30000});
     assert.equal(await page.evaluate(key=>localStorage.getItem(key+':confirmed'),key),trade.hash);
-    console.log({width,verifiedInclusionToReceiptMs:ms});
+    console.log({width,verifiedInclusionToReceiptMs:ms,confirmationToRefreshMs:refreshMs});
     await page.close();
   }
 }finally{await browser.close();}

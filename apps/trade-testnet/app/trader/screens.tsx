@@ -67,22 +67,42 @@ export function MarketScreen({id}:{id:string}){
   const {locale}=useLocale(),account=useAccount(),marketQuery=useMarketData(id),market=marketQuery.data?.id===id?marketQuery.data:null;
   const accountOwner=account.state==='ready'?account.owner:'';
   const [side,setSide]=useState<Side>('buy');
-  const position=useOwnerPosition(accountOwner,market,0,side==='sell');
-  const trade=useGate2Trade(market,marketQuery.refresh,account.refresh);
+  const trade=useGate2Trade(market,marketQuery.refresh);
+  const inclusion=trade.inclusion;
+  const marketCaughtUp=!!inclusion&&market?.historyState==='verified'&&market.history.some(event=>event.hash===inclusion.hash);
+  const position=useOwnerPosition(accountOwner,market,0,side==='sell'||!!inclusion);
+  useEffect(()=>{
+    if(!inclusion)return;
+    console.info('Roveko transaction timeline',JSON.stringify({hash:inclusion.hash,stage:'refresh-request',at:Date.now()}));
+    void account.refresh(inclusion.height?BigInt(inclusion.height):undefined);
+  },[inclusion,account.refresh]);
+  useEffect(()=>{
+    if(!inclusion||marketCaughtUp)return;
+    let active=true,delay=2000;
+    let timer:ReturnType<typeof setTimeout>;
+    const refresh=async()=>{
+      await marketQuery.refresh();
+      if(!active)return;
+      timer=setTimeout(refresh,delay);
+      delay=Math.min(delay*2,30_000);
+    };
+    void refresh();
+    return()=>{active=false;clearTimeout(timer);};
+  },[inclusion,marketCaughtUp,marketQuery.refresh]);
   const [projectedQuote,setProjectedQuote]=useState<{price:number|null;side:Side}>({price:null,side:'buy'});
   const onQuoteChange=useCallback((price:number|null,side:Side)=>setProjectedQuote({price,side}),[]);
   const tokenBalance=position.state==='ready'?BigInt(position.balance):null;
-  const ckbBalance=account.balanceState==='ready'?BigInt(account.availableToTrade):null;
+  const ckbBalance=account.availableToTrade!==''?BigInt(account.availableToTrade):null;
   if(!market)return <TraderShell><LoadState loading={marketQuery.loading} error={marketQuery.error} retry={marketQuery.refresh} locale={locale}/></TraderShell>;
   return <TraderShell><div className="space-y-5">
-    {marketQuery.error&&<div role="status" className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5b4a31] py-2.5 text-[11px] text-[#e7ce9c]"><span>{locale==='zh-CN'?'更新失败，显示上次验证的数据':'Refresh failed; showing last verified market data'} · {market.tip.number}</span><button type="button" onClick={()=>void marketQuery.refresh()} className="min-h-7 rounded-[3px] border border-[#75613c] px-2.5 hover:bg-[#2b241a]">{copy(locale,'retry')}</button></div>}
+    {(marketQuery.error||inclusion&&!marketCaughtUp)&&<div role="status" className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5b4a31] py-2.5 text-[11px] text-[#e7ce9c]"><span>{locale==='zh-CN'?'更新失败，显示上次验证的数据':'Showing last verified market data while syncing'} · {market.tip.number}</span><button type="button" onClick={()=>void marketQuery.refresh()} className="min-h-7 rounded-[3px] border border-[#75613c] px-2.5 hover:bg-[#2b241a]">{copy(locale,'retry')}</button></div>}
     <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[#28302f] pb-4">
       <div className="min-w-0"><Link href="/" className="text-[11px] text-[#8d9994] no-underline hover:text-[#d8e2dd]">{copy(locale,'markets')}</Link><div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1"><h1 className="m-0 text-[20px] font-semibold">{market.token.name}</h1><span className="text-xs text-[#9ba6a2]">{market.pair}</span></div><p className="mb-0 mt-1 text-[11px] text-[#7f8b86]">{market.token.metadata==='off-chain-testnet-registry'?copy(locale,'registryDescription'):market.token.description||copy(locale,'metadataUnavailable')}</p><TokenIdentityDetails market={market} locale={locale}/></div>
       <Link href="/activity" className="text-[10px] text-[#8d9994] underline decoration-[#48534e] underline-offset-2 hover:text-[#d5e0da]">{copy(locale,'transactionHistory')}</Link>
     </div>
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(330px,1fr)] lg:items-start">
       <div className="order-2 min-w-0 space-y-4 lg:order-1"><MarketSummary market={market} locale={locale}/><SwapKlinePanel market={market} locale={locale} projectedPrice={projectedQuote.price} side={projectedQuote.side}/><MarketRecentTrades market={market} locale={locale}/></div>
-      <SwapPanel className="order-1 lg:order-2" market={market} tokenBalance={tokenBalance} tokenBalanceState={position.state} ckbBalance={ckbBalance} hasFundingCell={account.hasFundingCell} walletReady={account.state==='ready'} walletState={account.state} pending={trade.pending} busy={trade.busy} tradeError={trade.error} onDismissTradeError={trade.pending?undefined:trade.dismissError} executionStatus={(trade.pending||trade.receipt)&&<section role="status" className="flex flex-wrap items-center gap-3 border-y border-[#303a37] py-3 text-xs text-[#c8d2ce]">
+      <SwapPanel className="order-1 lg:order-2" market={market} tokenBalance={tokenBalance} tokenBalanceState={position.state} ckbBalance={ckbBalance} ckbCurrent={account.balanceState==='ready'} hasFundingCell={account.hasFundingCell} walletReady={account.state==='ready'} walletState={account.state} pending={trade.pending} busy={trade.busy} tradeError={trade.error} onDismissTradeError={trade.pending?undefined:trade.dismissError} executionStatus={(trade.pending||trade.receipt)&&<section role="status" className="flex flex-wrap items-center gap-3 border-y border-[#303a37] py-3 text-xs text-[#c8d2ce]">
       <span>{trade.uncertain?copy(locale,'unknown'):({preparing:copy(locale,'reviewing'),'awaiting-wallet':copy(locale,'walletApproval'),broadcasting:copy(locale,'broadcasting'),submitted:'Submitted',pending:copy(locale,'pending'),proposed:'Proposed',confirmed:copy(locale,'confirmed'),rechecking:'Rechecking confirmation'}[trade.status]||(trade.pending?copy(locale,'pending'):copy(locale,'confirmed')))}</span>
       {(trade.pending||trade.receipt)&&<a href={explorer(trade.receipt||attemptHash(trade.attemptRaw))} target="_blank" rel="noreferrer" className="underline">{copy(locale,'explorer')}</a>}
       {trade.receipt&&trade.pending&&!trade.error&&<span>Updating trading data</span>}

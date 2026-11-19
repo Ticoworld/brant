@@ -24,7 +24,7 @@ function tradeTiming(hash:string,stage:string,at=Date.now(),detail?:string){
   console.info('Roveko transaction timeline',JSON.stringify({hash,stage,at,detail}));
 }
 
-export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>,refreshAccount:()=>Promise<void>){
+export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale(),active=useRef(signer);active.current=signer;
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
   const reconcileLock=useRef(false), accounting=useRef(new Set<string>());
@@ -33,6 +33,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const currentKey=useRef(key);currentKey.current=key;
   const [status,setStatus]=useState('');
   const [receipt,setReceipt]=useState('');
+  const [inclusion,setInclusion]=useState<{key:string;hash:string;height:string}|null>(null);
   const broadcasting=useRef(false);
   const [readiness,setReadiness]=useState('syncing');
   useEffect(()=>{
@@ -106,12 +107,12 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     try{
       const attempt=parseTradeAttempt(raw);
       if(tradeKey(attempt.genesis,attempt.owner)!==key)throw Error('Trade journal owner or network mismatch');
-      const row=await pudgeRpc<{transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string}}|null>('get_transaction',[attempt.txHash]);
+      const row=await pudgeRpc<{transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string;block_number?:string}}|null>('get_transaction',[attempt.txHash]);
       if(!current())return;
       const state=row?.tx_status?.status;
       if(state==='pending'||state==='proposed'){
         localStorage.setItem(key+':submitted',attempt.txHash);
-        setReceipt('');setStatus(state);setUncertain(false);return;
+        setInclusion(null);setReceipt('');setStatus(state);setUncertain(false);return;
       }
       if(state==='rejected'){
         if(await rpc('get_block_hash',['0x0'])!==attempt.genesis||!current())return;
@@ -123,13 +124,14 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         return;
       }
       if(state!=='committed'){
-        setReceipt('');
+        setInclusion(null);setReceipt('');
         const acknowledged=localStorage.getItem(key+':submitted')===attempt.txHash;
         setStatus(acknowledged?'submitted':'unknown');setUncertain(!acknowledged);return;
       }
-      try{await verifyTradeInclusion(rpc,attempt,row);}
+      let height:string;
+      try{height=await verifyTradeInclusion(rpc,attempt,row);}
       catch(error){
-        if(current()){setReceipt('');setStatus('rechecking');setUncertain(false);}
+        if(current()){setInclusion(null);setReceipt('');setStatus('rechecking');setUncertain(false);}
         throw error;
       }
       if(!current())return;
@@ -140,6 +142,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         localStorage.setItem(notifiedKey,attempt.txHash);
         toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{id:attempt.txHash});
       }
+      setInclusion(previous=>previous?.key===key&&previous.hash===attempt.txHash&&previous.height===height?previous:{key,hash:attempt.txHash,height});
       setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
       if(!market||accounting.current.has(raw))return;
       accounting.current.add(raw);
@@ -166,7 +169,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
           localStorage.setItem(key+':confirmed',attempt.txHash);
           localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
           setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
-          await Promise.all([refreshMarket(),refreshAccount()]);
+
         }catch(error){
           if(current())setFailure({owner:account.owner,message:'Trade confirmed. Waiting for updated trading data.'});
         }finally{accounting.current.delete(raw);}
@@ -174,10 +177,11 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     }catch(error){
       if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}
-  },[account.owner,key,locale,market,refreshAccount,refreshMarket]);
+  },[account.owner,key,locale,market]);
 
   useEffect(()=>{
     const raw=key?localStorage.getItem(key):null;
+    setFailure(null);
     setReceipt(!raw&&key?localStorage.getItem(key+':confirmed')||'':'');
     setStatus(raw&&localStorage.getItem(key+':submitted')?'submitted':'');
     setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!localStorage.getItem(key+':submitted'));
@@ -256,12 +260,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       if(broadcastHash)tradeTiming(broadcastHash,'broadcast-failure',Date.now(),message);
       if(key&&localStorage.getItem(key)){setStatus('unknown');setUncertain(true);}
       else setStatus('failed');
+      if(currentKey.current!==key||active.current!==signer)return;
       setFailure({owner:account.owner,message});
       toast.error(locale==='zh-CN'?'交易未完成':'Trade not completed',{description:message});
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision,refreshMarket]);
 
-  return {trade,dismissError,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {inclusion:inclusion?.key===key?inclusion:null,trade,dismissError,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint){

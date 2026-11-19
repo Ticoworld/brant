@@ -30,14 +30,16 @@ export function useMarketData(requestedId?:string){
     const request=(async()=>{
       try{
         let response:Response;
-        if(marketId===DEFAULT_MARKET)response=await fetch(force?'/api/markets':'/api/markets?display=1',{cache:'no-store'});
+        if(marketId===DEFAULT_MARKET)response=await fetch(force?'/api/markets':'/api/markets?display=1',{cache:'no-store',signal:AbortSignal.timeout(30_000)});
         else{
           const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
           if(!manifest)throw Error('This market is not saved in this browser');
-          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest}),cache:'no-store'});
+          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest}),cache:'no-store',signal:AbortSignal.timeout(30_000)});
         }
         const body=await response.json();if(!response.ok)throw Error(body.error||'Pudge market is unavailable');
         if(body.id!==marketId)throw Error('Market identity does not match the requested market');
+        const latest=readSnapshot(marketId).data;
+        if(latest&&body.refreshedAt<latest.refreshedAt)return;
         publish(marketId,{data:body as MarketData,loading:false,error:'',lastSuccess:Date.now()});
       }catch(cause){
         publish(marketId,{...readSnapshot(marketId),loading:false,error:cause instanceof Error?cause.message:'Market refresh failed'});

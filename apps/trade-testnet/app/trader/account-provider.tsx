@@ -10,7 +10,7 @@ import type {FundingHint} from '../../lib/v2-engine/multi-funding.ts';
 
 type State='disconnected'|'connecting'|'connection-timeout'|'connection-rejected'|'checking'|'ready'|'wrong-network'|'unsupported'|'error';
 type BalanceState='idle'|'refreshing'|'ready'|'indexer-lag'|'error';
-type AccountValue={state:State;balanceState:BalanceState;address:string;owner:string;totalCapacity:string;availableToTrade:string;fundingHint?:FundingHint;hasFundingCell:boolean;error:string;connect:()=>void;refresh:()=>Promise<void>};
+type AccountValue={state:State;balanceState:BalanceState;address:string;owner:string;totalCapacity:string;availableToTrade:string;fundingHint?:FundingHint;hasFundingCell:boolean;error:string;connect:()=>void;refresh:(minimumHeight?:bigint)=>Promise<void>};
 const emptyBalance={totalCapacity:'',availableToTrade:'',hasFundingCell:false,fundingHint:undefined as FundingHint|undefined};
 const AccountContext=createContext<AccountValue>({state:'disconnected',balanceState:'idle',address:'',owner:'',...emptyBalance,error:'',connect:()=>{},refresh:async()=>{}});
 const RESERVED_OUTPOINT=`${PUDGE_GATE2_ANCHOR.txHash.toLowerCase()}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`;
@@ -18,10 +18,10 @@ const REFRESH_MS=30_000;
 const MAX_INDEXER_LAG=6n;
 class IndexerAdvanced extends Error {}
 
-async function readBalance(script:{codeHash:string;hashType:string;args:string}){
+async function readBalance(script:{codeHash:string;hashType:string;args:string},minimumHeight:bigint){
   const [nodeTip,indexerTip]=await Promise.all([pudgeRpc<{number:string;hash:string}>('get_tip_header'),pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip')]);
   const indexedHeight=BigInt(indexerTip.block_number),nodeHeight=BigInt(nodeTip.number);
-  if(indexedHeight>nodeHeight||nodeHeight-indexedHeight>MAX_INDEXER_LAG)throw Error('Wallet balance index is catching up');
+  if(indexedHeight<minimumHeight||indexedHeight>nodeHeight||nodeHeight-indexedHeight>MAX_INDEXER_LAG)throw Error('Wallet balance index is catching up');
   const indexedHash=indexerTip.block_hash.toLowerCase();
   const lock={code_hash:script.codeHash,hash_type:script.hashType,args:script.args};
   const matchesLock=(value:RpcCell['output']['lock'])=>value?.code_hash.toLowerCase()===lock.code_hash.toLowerCase()&&value.hash_type===lock.hash_type&&value.args.toLowerCase()===lock.args.toLowerCase();
@@ -57,7 +57,7 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
   const signer=useSigner(),{client,isOpen,open}=useCcc();
   const [identity,setIdentity]=useState<{state:State;address:string;owner:string;error:string}>({state:'disconnected',address:'',owner:'',error:''});
   const [balance,setBalance]=useState({...emptyBalance,state:'idle' as BalanceState,error:''});
-  const requestRefresh=useRef<()=>Promise<void>>(async()=>{});
+  const requestRefresh=useRef<(minimumHeight?:bigint)=>Promise<void>>(async()=>{});
   const inFlight=useRef<Promise<void>|undefined>(undefined);
   const connectionTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
   const requested=useRef(false),opened=useRef(false);
@@ -66,7 +66,7 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
     opened.current=false;
     clearTimeout(connectionTimer.current);
   },[]);
-  const refresh=useCallback(()=>requestRefresh.current(),[]);
+  const refresh=useCallback((minimumHeight?:bigint)=>requestRefresh.current(minimumHeight),[]);
   const connect=useCallback(()=>{
     if(signer){open();return;}
     if(requested.current||isOpen)return;
@@ -96,7 +96,8 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
   useLayoutEffect(()=>{
     let current=true,lastFinished=0,queued:Promise<void>|undefined;
     let timer:ReturnType<typeof setTimeout>|undefined;
-    let verifiedOwner='';
+    let verifiedOwner='',minimumHeight=0n,retryDelay=2000;
+    let retryNeeded=false;
     setBalance({...emptyBalance,state:'idle',error:''});
     if(!signer){
       if(!requested.current)setIdentity({state:'disconnected',address:'',owner:'',error:''});
@@ -129,8 +130,8 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
           setBalance({...emptyBalance,state:'idle',error:''});
           return;
         }
-        const result=await readBalance(script).catch(error=>{
-          if(error instanceof IndexerAdvanced&&current&&!document.hidden)return readBalance(script);
+        const result=await readBalance(script,minimumHeight).catch(error=>{
+          if(error instanceof IndexerAdvanced&&current&&!document.hidden)return readBalance(script,minimumHeight);
           throw error;
         });
         if(!current)return;
@@ -142,15 +143,21 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
           setBalance({...emptyBalance,state:'idle',error:''});
           return;
         }
+        retryNeeded=false;retryDelay=2000;
         setBalance({...result,state:'ready',error:''});
       }catch(cause){
         if(!current)return;
         const error=cause instanceof Error?cause.message:'Wallet verification failed';
         if(!verifiedOwner)setIdentity({state:'error',address:'',owner:'',error});
+        retryNeeded=true;
         setBalance(previous=>({...previous,state:/index/i.test(error)?'indexer-lag':'error',error}));
       }
     };
-    const run=()=>{
+    const run=(height=0n):Promise<void>=>{
+      if(height>minimumHeight){
+        minimumHeight=height;
+        if(queued)return queued.then(()=>current?run():undefined);
+      }
       if(document.hidden)return Promise.resolve();
       if(queued)return queued;
       clearTimeout(timer);
@@ -159,7 +166,8 @@ export default function AccountProvider({children}:{children:React.ReactNode}){
         lastFinished=Date.now();
         if(inFlight.current===pending)inFlight.current=undefined;
         queued=undefined;
-        if(current&&!document.hidden)timer=setTimeout(run,REFRESH_MS);
+        if(current&&!document.hidden)timer=setTimeout(run,retryNeeded?retryDelay:REFRESH_MS);
+        if(retryNeeded)retryDelay=Math.min(retryDelay*2,REFRESH_MS);
       });
       queued=pending;
       inFlight.current=pending;

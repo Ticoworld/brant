@@ -19,7 +19,7 @@ function maximumWholeTokens(market:MarketData,budget:bigint){
   return low;
 }
 
-export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,quoteStatus,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
+export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,ckbCurrent=true,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,quoteStatus,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;ckbCurrent?:boolean;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();
   const {locale}=useLocale();const [side,setSide]=useState<Side>('buy'),[budget,setBudget]=useState(''),[quantityText,setQuantityText]=useState('');
   const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
@@ -44,7 +44,7 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const sellBalanceMissing=side==='sell'&&(tokenBalanceState!=='ready'||tokenBalance===null);
   const sellBalanceInsufficient=side==='sell'&&tokenBalance!==null&&quoteState.quantity>tokenBalance;
   const ckbUnavailable=walletReady&&ckbBalance===null;
-  const ckbInsufficient=walletReady&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
+  const ckbInsufficient=walletReady&&ckbCurrent&&ckbBalance!==null&&quoteState.quantity>0n&&!quoteState.invalid&&(side==='buy'?quoteState.amount>ckbBalance:!hasFundingCell);
   const disabled=busy||walletState==='checking'||(walletReady&&(pending||(!!readiness&&readiness!=='ready')||quoteState.quantity===0n||quoteState.invalid||sellBalanceMissing||sellBalanceInsufficient||ckbInsufficient));
   const prepare=useRef(onPrepare);
   const reviewStatus=quoteStatus?.(side,quoteState.quantity,quoteState.amount);
@@ -58,7 +58,7 @@ export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBala
   const inputValue=side==='buy'?budget:quantityText;
   const outputValue=side==='buy'?quoteState.quantity.toString():formatCkb(quoteState.amount);
   const inputUnit=side==='buy'?'CKB':market.token.symbol,outputUnit=side==='buy'?market.token.symbol:'CKB';
-  const inputBalance=side==='buy'?ckbAvailable:`${tokenAvailable} ${market.token.symbol}`;
+  const inputBalance=side==='buy'?(!ckbCurrent&&ckbBalance!==null?`${ckbAvailable} · ${locale==='zh-CN'?'上次验证':'Last verified'}`:ckbAvailable):`${tokenAvailable} ${market.token.symbol}`;
   const inputActions=side==='buy'?budgetActions:sellPresets;
   const capacityRequired=(side==='buy'?quoteState.amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+FEE;
   const totalRequired=side==='buy'?quoteState.amount+FEE:(quoteState.amount>FEE?quoteState.amount-FEE:0n);
