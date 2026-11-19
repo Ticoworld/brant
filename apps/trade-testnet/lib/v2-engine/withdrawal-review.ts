@@ -8,10 +8,11 @@ type Rpc = (method:string,params:unknown[])=>Promise<unknown>;
 type Config = {genesis:string;funding?:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;scripts?:Record<string,ccc.ScriptLike>};
 const codes:Record<string,string>={custody_smt:'0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000',custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95'};
 // Construct only from canonical replay and a wallet-owned plain funding cell.
-export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, quantity:bigint) {
+export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, quantity:bigint, walletLock?:ccc.Script) {
   const pudge=config.format==='roveko-pudge-market-v1';
   const response=await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side:'withdraw',quantity:quantity.toString(),...(pudge?{manifest:config}:{})})});
-  const body=await response.json(); if(!response.ok) throw Error(body.error || 'Recovery proof unavailable');
+  if(!response.ok)throw Error(response.headers.get('content-type')?.startsWith('text/plain')?(await response.text()).slice(0,200):'Recovery proof unavailable');
+  const body=await response.json();
   const p=body.proof;
   if(body.genesis!==config.genesis || p.side!=='withdraw' || p.quantity!==quantity.toString()) throw Error('Recovery identity mismatch');
   if(pudge){
@@ -33,19 +34,33 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
       const row=await rpc('get_live_cell',[{tx_hash:dep.outPoint.txHash,index:ccc.numToHex(dep.outPoint.index)},true]) as {status:string;cell?:{data:{content:string}}};
       if(dep.depType!=='code'||row.status!=='live'||!row.cell||ccc.hashCkb(row.cell.data.content).toLowerCase()!==expected)throw Error(`Unverified ${name} dependency`);
     }
-    const ownerScript=ccc.Script.from({codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:owner.slice(-40)});
+    const ownerScript=walletLock;
+    if(!ownerScript||ownerScript.codeHash!=='0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8'||ownerScript.hashType!=='type'||ownerScript.args.length!==42)throw Error('Withdrawal requires a supported standard CKB wallet');
     if(ownerScript.hash().toLowerCase()!==owner.toLowerCase())throw Error('Withdrawal requires a supported standard CKB wallet');
     const tokenType=ccc.Script.from(config.scripts.token);
+    const rpcScript=(script:ccc.Script)=>({code_hash:script.codeHash,hash_type:script.hashType,args:script.args});
+    let externalBalance=0n,cursor:string|undefined;
+    for(let page=0;;page++){
+      const result=await rpc('get_cells',[{script:rpcScript(ownerScript),script_type:'lock',script_search_mode:'exact',filter:{script:rpcScript(tokenType)},with_data:true},'asc','0x64',...(cursor?[cursor]:[])]) as {objects:{output:{lock:Parameters<typeof transform>[0];type:Parameters<typeof transform>[0]|null};output_data:string}[];last_cursor:string};
+      for(const item of result.objects){
+        if(scriptHash(item.output.lock)!==owner||scriptHash(item.output.type)!==tokenHash||!/^0x[0-9a-f]{32}$/i.test(item.output_data))throw Error('External token balance could not be verified');
+        externalBalance+=BigInt('0x'+item.output_data.slice(2).match(/../g)!.reverse().join(''));
+      }
+      if(result.objects.length<100)break;
+      if(page>=31||!result.last_cursor||result.last_cursor===cursor)throw Error('External token balance could not be verified');
+      cursor=result.last_cursor;
+    }
     const tokenOutput=ccc.CellOutput.from({capacity:0,lock:ownerScript,type:tokenType});
     const minimum=BigInt(tokenOutput.occupiedSize+16)*100_000_000n+1_000_000n;
+    const secp={outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup'} as const;
     const candidates=await discoverFunding(rpc,rpc,{codeHash:ownerScript.codeHash,hashType:ownerScript.hashType,args:ownerScript.args});
     const eligible=candidates.filter(cell=>cell.capacity>=minimum).sort((a,b)=>a.capacity===b.capacity?a.outPoint.txHash.localeCompare(b.outPoint.txHash):a.capacity<b.capacity?-1:1);
     let failure:unknown;
     for(const candidate of eligible){
       try{
         const funding=await readFundingCell(rpc,candidate.outPoint,owner);
-        const review=buildWithdrawal([...cells,funding],quantity,p.new_root,p.witness,1_000_000n,[config.deps.custody_smt,config.deps.custody_marker,config.deps.xudt],config.genesis,owner);
-        return {...review,inputs:[...cells,funding] as [Cell,Cell,Cell]};
+        const review=buildWithdrawal([...cells,funding],quantity,p.new_root,p.witness,1_000_000n,[secp,config.deps.custody_smt,config.deps.custody_marker,config.deps.xudt],config.genesis,owner);
+        return {...review,externalAfter:externalBalance+quantity,internalAfter:BigInt(p.owner.balance)-quantity,inputs:[...cells,funding] as [Cell,Cell,Cell]};
       }catch(error){failure=error;}
     }
     if(failure)throw failure;

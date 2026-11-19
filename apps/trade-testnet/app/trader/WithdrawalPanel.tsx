@@ -8,13 +8,13 @@ import {toast} from 'sonner';
 import {prepareWithdrawal} from '../../lib/v2-engine/withdrawal-review.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
 import type {MarketData} from './types';
-import {pudgeRpc} from './rpc';
+import {formatCkb,pudgeRpc} from './rpc';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
 import {copy} from './copy';
 
 const JOURNAL='roveko-pudge-withdrawal-v1';
-type Review=Awaited<ReturnType<typeof prepareWithdrawal>>&{inputs:[any,any,any]};
+type Review=Awaited<ReturnType<typeof prepareWithdrawal>>&{inputs:[any,any,any];internalAfter:bigint;externalAfter:bigint;destination:string};
 type Attempt={version:1;genesis:string;owner:string;txHash:string;quantity:string;transaction:unknown};
 const clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(tx)));
 const key=(genesis:string,owner:string)=>`${JOURNAL}:${genesis.toLowerCase()}:${owner.toLowerCase()}`;
@@ -40,8 +40,8 @@ export default function WithdrawalPanel({market,owner,balance,onConfirmed}:{mark
       if(row?.tx_status?.status!=='committed'||!row.tx_status.block_hash||!row.transaction)throw Error('Withdrawal is not confirmed yet');
       const tx=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(row.transaction));
       if(tx.hash().toLowerCase()!==record.txHash.toLowerCase()||tx.inputs.length!==3||tx.outputs.length!==4||tx.witnesses.length!==4)throw Error('Confirmed withdrawal differs from its review');
-      const expected=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(record.transaction as never)));
-      if(tx.outputs.some((output,index)=>output.capacity!==expected.outputs[index].capacity||output.lock.hash()!==expected.outputs[index].lock.hash()||output.type?.hash()!==expected.outputs[index].type?.hash())||tx.outputsData.some((data,index)=>data.toLowerCase()!==expected.outputsData[index].toLowerCase())||tx.witnesses[3].toLowerCase()!==expected.witnesses[3].toLowerCase())throw Error('Confirmed withdrawal terms differ from the reviewed transaction');
+      const expected=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(record.transaction as never));
+      if(expected.hash().toLowerCase()!==record.txHash.toLowerCase()||tx.witnesses.some((w,index)=>w!==expected.witnesses[index])||tx.outputs.some((output,index)=>output.capacity!==expected.outputs[index].capacity||output.lock.hash()!==expected.outputs[index].lock.hash()||output.type?.hash()!==expected.outputs[index].type?.hash())||tx.outputsData.some((data,index)=>data.toLowerCase()!==expected.outputsData[index].toLowerCase())||tx.witnesses[3].toLowerCase()!==expected.witnesses[3].toLowerCase())throw Error('Confirmed withdrawal terms differ from the reviewed transaction');
       const token=ccc.Script.from(market.manifest.scripts.token).hash().toLowerCase(),destination=tx.outputs[2];
       if(destination.lock.hash().toLowerCase()!==owner.toLowerCase()||destination.type?.hash().toLowerCase()!==token||tx.outputsData[2].toLowerCase()!==`0x${BigInt(record.quantity).toString(16).padStart(32,'0').match(/../g)!.reverse().join('')}`.toLowerCase())throw Error('Confirmed xUDT withdrawal output mismatch');
       const header=await pudgeRpc<any>('get_header',[row.tx_status.block_hash]);
@@ -67,9 +67,10 @@ export default function WithdrawalPanel({market,owner,balance,onConfirmed}:{mark
     const current=active.current;if(!current||!await current.isConnected()||account.state!=='ready'||account.owner.toLowerCase()!==owner.toLowerCase())throw Error('Connect and verify the Pudge wallet');
     const [walletGenesis,rpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
     if(walletGenesis?.hash?.toLowerCase()!==market.genesis.toLowerCase()||rpcGenesis.toLowerCase()!==market.genesis.toLowerCase())throw Error('Wallet network changed');
-    const result=await prepareWithdrawal((method,params)=>pudgeRpc(method,params),market.manifest,owner,BigInt(quantity)) as Review;
+    const destination=await current.getRecommendedAddressObj();
+    const result=await prepareWithdrawal((method,params)=>pudgeRpc(method,params),market.manifest,owner,BigInt(quantity),destination.script) as Omit<Review,'destination'>;
     if(result.quantity!==BigInt(quantity))throw Error('Withdrawal amount changed during preparation');
-    setReview(result);setMessage('');
+    setReview({...result,destination:destination.toString()});setMessage('');
     return result;
   };
 
@@ -81,13 +82,22 @@ export default function WithdrawalPanel({market,owner,balance,onConfirmed}:{mark
       await navigator.locks.request(`roveko-withdrawal-${owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{
         if(!lock)throw Error('Another withdrawal is in progress');
         if(localStorage.getItem(journalKey))throw Error('A previous withdrawal requires reconciliation');
-        let prepared=review;if(!prepared){prepared=await prepare();toast.success(label('Review ready','审查已准备'),{id:toastId,description:label('Check the amount, fee and capacity before approving.','批准前请检查数量、手续费和容量。')});return;}
+        const prepared=review;if(!prepared){await prepare();toast.success(label('Review ready','审查已准备'),{id:toastId,description:label('Check the amount, fee and capacity before approving.','批准前请检查数量、手续费和容量。')});return;}
         const current=active.current;if(!current||current!==signer||!await current.isConnected())throw Error('Wallet changed before approval');
         await validateFresh(prepared,current);
         toast.loading(label('Approve in UTXO Global','在 UTXO Global 中批准'),{id:toastId});
-        const signed=await current.signTransaction(clone(prepared.transaction));
+        let signed:ccc.Transaction;
+        try{signed=await current.signTransaction(clone(prepared.transaction));}
+        catch(error){
+          const walletError=error as {code?:unknown;message?:unknown}|null;
+          if(String(walletError?.code)==='4001'||/reject|denied|declined|cancel/i.test(String(walletError?.message??error))){
+            toast.dismiss(toastId);return;
+          }
+          throw error;
+        }
         verifyInitializationSignature(prepared.transaction,signed,prepared.inputs.map(cell=>({lock:cell.lock})),2,owner);
         await validateFresh(prepared,current);
+        if(localStorage.getItem(journalKey))throw Error('A previous withdrawal requires reconciliation');
         const record:Attempt={version:1,genesis:market.genesis,owner,txHash:signed.hash(),quantity:prepared.quantity.toString(),transaction:cccA.JsonRpcTransformers.transactionFrom(signed)};
         const raw=JSON.stringify(record);localStorage.setItem(journalKey,raw);setAttemptRaw(raw);setReview(null);
         toast.loading(label('Broadcasting approved withdrawal','正在广播已批准的提取交易'),{id:toastId});
@@ -106,7 +116,7 @@ export default function WithdrawalPanel({market,owner,balance,onConfirmed}:{mark
   return <section className="space-y-3 border-t border-[#28302f] pt-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="m-0 text-sm font-semibold">{copy(locale,'withdraw')}</h2><p className="mb-0 mt-1 text-[11px] text-[#87938e]">{balance.toString()} {market.token.symbol}</p></div><span className="text-[10px] text-[#83908a]">{label('External wallet output','外部钱包输出')}</span></div>
     <div className="grid gap-3 sm:grid-cols-[minmax(180px,260px)_1fr] sm:items-end"><label htmlFor="withdraw-quantity" className="text-[11px] text-[#9ba6a2]">{copy(locale,'quantity')}<input id="withdraw-quantity" inputMode="numeric" value={quantity} onChange={event=>{setQuantity(event.target.value.replace(/[^0-9]/g,''));setReview(null);}} className="mt-1 min-h-10 w-full rounded-[3px] border border-[#303a37] bg-[#111615] px-3 text-sm tabular-nums text-[#e6ece9] outline-none focus:border-[#6d9583]" /></label>
       <div className="flex flex-wrap gap-2">{[25,50,75,100].map(percent=><button key={percent} type="button" disabled={!canPrepare} onClick={()=>{setQuantity(((balance*BigInt(percent))/100n).toString());setReview(null);}} className="min-h-8 rounded-[3px] border border-[#38433f] px-2 text-[10px] text-[#b9c4c0] disabled:opacity-40">{percent}%</button>)}</div></div>
-    {review&&<dl className="grid gap-2 border-y border-[#28302f] py-3 text-[11px] sm:grid-cols-3"><div><dt className="text-[#87938e]">{copy(locale,'amount')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{review.quantity.toString()} {market.token.symbol}</dd></div><div><dt className="text-[#87938e]">{copy(locale,'fee')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{review.fee.toString()} shannons</dd></div><div><dt className="text-[#87938e]">{label('Token Cell capacity','代币 Cell 容量')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{review.tokenCapacity.toString()} shannons</dd></div></dl>}
+    {review&&<dl className="grid gap-2 border-y border-[#28302f] py-3 text-[11px] sm:grid-cols-3"><div><dt className="text-[#87938e]">{copy(locale,'amount')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{review.quantity.toString()} {market.token.symbol}</dd></div><div><dt className="text-[#87938e]">{copy(locale,'fee')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{formatCkb(review.fee)} CKB</dd></div><div><dt className="text-[#87938e]">{label('Token Cell capacity','代币 Cell 容量')}</dt><dd className="m-0 mt-1 text-[#dce5e1]">{formatCkb(review.tokenCapacity)} CKB</dd></div><div className="sm:col-span-3"><dt>{label('Destination wallet','目标钱包')}</dt><dd className="m-0 break-all">{review.destination}</dd></div><div>{label('Internal balance after withdrawal','提取后内部余额')} · {review.internalAfter.toString()} {market.token.symbol}</div><div>{label('Expected external wallet balance','预计外部钱包余额')} · {review.externalAfter.toString()} {market.token.symbol}</div></dl>}
     <div className="flex flex-wrap items-center gap-3"><button type="button" disabled={!canPrepare||!quantity||BigInt(quantity)>balance} onClick={()=>void submit()} className="min-h-10 rounded-[3px] bg-[#72dfb0] px-4 text-xs font-semibold text-[#0a1710] disabled:cursor-not-allowed disabled:opacity-40">{busy?copy(locale,'reviewing'):attemptRaw?copy(locale,'pending'):review?label('Approve and withdraw','批准并提取'):copy(locale,'withdraw')}</button>{attemptRaw&&<button type="button" onClick={()=>void reconcile()} className="min-h-8 rounded-[3px] border border-[#76613b] px-3 text-[11px] text-[#e8d8b6]">{copy(locale,'reconcile')}</button>}</div>
     {message&&<p role="status" className="m-0 break-words text-[11px] text-[#aeb9b4]">{message}</p>}
   </section>;
