@@ -163,12 +163,14 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       setStatus(raw&&localStorage.getItem(key+':submitted')?'submitted':'');
       setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!localStorage.getItem(key+':submitted'));
       if(raw||!key)return;
-      if(localStorage.getItem(key+':settled'))setStatus('rechecking');
+      const saved=localStorage.getItem(key+':settled');
+      if(saved)setStatus('rechecking');
+      const current=()=>version===generation&&currentKey.current===key&&localStorage.getItem(key)===null&&localStorage.getItem(key+':settled')===saved;
       void recheckTradeSettlement(rpc,localStorage,key).then(settlement=>{
-        if(settlement&&version===generation&&currentKey.current===key){
+        if(settlement&&current()){
           setInclusion({key,...settlement});setStatus('confirmed');
         }
-      },()=>{if(version===generation)setStatus('rechecking');});
+      },()=>{if(current())setStatus('rechecking');});
     };
     const onStorage=(event:StorageEvent)=>{if(event.key===key||event.key===key+':settled'||event.key===key+':confirmed'||event.key===key+':submitted')sync();};
     sync();
