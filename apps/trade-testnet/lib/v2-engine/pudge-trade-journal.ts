@@ -18,6 +18,21 @@ export function parseTradeAttempt(raw:string):Attempt{
  return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
 }
 type CommittedRow={transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
+
+/** Call under the owner's exclusive trade lock after validating the signature and inputs. */
+export async function submitJournaledTrade(
+ storage:Pick<Storage,'getItem'|'setItem'>,attempt:Attempt,
+ send:()=>Promise<string>,onPersist:(raw:string)=>void,
+){
+ const key=tradeKey(attempt.genesis,attempt.owner);
+ if(storage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
+ const raw=JSON.stringify(attempt);
+ storage.setItem(key,raw);
+ onPersist(raw);
+ const acknowledged=await send();
+ if(acknowledged.toLowerCase()!==attempt.txHash.toLowerCase())throw Error('Wallet returned an unexpected transaction hash; reconcile before retrying');
+ storage.setItem(key+':submitted',attempt.txHash);
+}
 async function canonicalTransaction(rpc:Rpc,txHash:string,row:CommittedRow|null){
  if(row?.tx_status?.status!=='committed'||!row.transaction||!row.tx_status.block_hash)throw Error('Transaction is not committed');
   const tx=from(row.transaction),header=await rpc('get_header',[row.tx_status.block_hash]) as {hash?:string;number?:string};

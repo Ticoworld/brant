@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {saveTradeSettlement,recheckTradeSettlement,tradeKey,verifyTradeInclusion} from '../lib/v2-engine/pudge-trade-journal.ts';
+import {saveTradeSettlement,recheckTradeSettlement,submitJournaledTrade,parseTradeAttempt,tradeKey,verifyTradeInclusion} from '../lib/v2-engine/pudge-trade-journal.ts';
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/pudge-interleaved-sell.json',import.meta.url)));
 const row=fixture.transactions[fixture.sell];
 const genesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
 const owner='0x'+row.transaction.witnesses[5].slice(26,90);
 const attempt={version:1,genesis,owner,txHash:fixture.sell,transaction:row.transaction};
 const raw=JSON.stringify(attempt),key=tradeKey(genesis,owner);
-const store=new Map([[key,raw]]);
+const store=new Map();
 const storage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
 const status=row.tx_status;
 const rpc=async(method,[arg])=>{
@@ -16,10 +16,23 @@ const rpc=async(method,[arg])=>{
  if(method==='get_block_hash')return arg==='0x0'?genesis:status.block_hash;
  throw Error('Unexpected request '+method);
 };
-const height=await verifyTradeInclusion(rpc,attempt,row);
+let sends=0;
+const send=async()=>{
+ assert.equal(storage.getItem(key),raw);
+ sends++;
+ throw Error('Mock node accepted the Sell but its acknowledgement was lost');
+};
+await assert.rejects(()=>submitJournaledTrade(storage,attempt,send,()=>{}),/acknowledgement was lost/);
+assert.equal(storage.getItem(key),raw);
+assert.equal(storage.getItem(key+':submitted'),null);
+await assert.rejects(()=>submitJournaledTrade(storage,attempt,send,()=>{}),/requires reconciliation/);
+const recovered=parseTradeAttempt(storage.getItem(key));
+const height=await verifyTradeInclusion(rpc,recovered,await rpc('get_transaction',[recovered.txHash]));
 assert(saveTradeSettlement(storage,key,raw,height));
 assert.equal(storage.getItem(key),null);
 assert.equal(storage.getItem(key+':confirmed'),fixture.sell);
+assert.equal(sends,1);
+console.log('Lost acknowledgement: one mock send, signed journal persisted and canonical settlement recovered.');
 assert.deepEqual(await recheckTradeSettlement(rpc,storage,key),{hash:fixture.sell,height});
 assert.equal(saveTradeSettlement(storage,key,raw,height),false);
 await assert.rejects(()=>recheckTradeSettlement(async()=>{throw Error('offline');},storage,key),/offline/);
