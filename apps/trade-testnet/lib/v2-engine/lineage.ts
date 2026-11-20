@@ -42,7 +42,7 @@ async function indexedPair(rpc:Rpc,initial:[Point,Point],a:Output,b:Output,tip:{
   const canonicalHash=await rpc('get_block_hash',[row.tx_status.block_number]);if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Indexed lineage block changed');
   const block=await canonicalBlock(height),blockTx=block.transactions?.[index];if(block.header?.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||block.header.number?.toLowerCase()!==row.tx_status.block_number.toLowerCase()||blockTx?.hash?.toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction is not in canonical block at reported index');
   if(ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(blockTx as never)).hash().toLowerCase()!==hash.toLowerCase())throw Error('Indexed block transaction hash mismatch');
-  const value={tx:row.transaction,height,index,timestamp:BigInt(header.timestamp)};cache.set(hash.toLowerCase(),value);return value;
+  const value={tx:blockTx,height,index,timestamp:BigInt(header.timestamp)};cache.set(hash.toLowerCase(),value);return value;
  }
  let later:{height:bigint;index:number}|undefined;
  for(let depth=0;depth<maxDepth;depth++){

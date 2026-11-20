@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+const fixture = JSON.parse(readFileSync(new URL('./fixtures/pudge-interleaved-sell.json', import.meta.url), 'utf8'));
+const sell = fixture.transactions[fixture.sell].transaction;
+const [inventory, marker, custody, custodyMarker, funding] = sell.inputs.map(input => input.previous_output);
+assert.equal(inventory.tx_hash, marker.tx_hash);
+assert.equal(custody.tx_hash, custodyMarker.tx_hash);
+assert.notEqual(inventory.tx_hash, custody.tx_hash);
+assert.deepEqual([inventory.index, marker.index, custody.index, custodyMarker.index], ['0x0', '0x1', '0x0', '0x1']);
+const withdrawal = fixture.transactions[custody.tx_hash].transaction;
+assert.equal(withdrawal.inputs.some(input => input.previous_output.tx_hash === inventory.tx_hash && input.previous_output.index === '0x0'), false);
+const capacity = point => BigInt(fixture.transactions[point.tx_hash].transaction.outputs[Number(point.index)].capacity);
+const inputCapacity = [inventory, marker, custody, custodyMarker, funding].reduce((total, point) => total + capacity(point), 0n);
+const outputCapacity = sell.outputs.reduce((total, output) => total + BigInt(output.capacity), 0n);
+assert.equal(inputCapacity - outputCapacity, 1_000_000n);
+const tokens = data => Buffer.from(data.slice(2, 34), 'hex').reduceRight((total, byte) => (total << 8n) + BigInt(byte), 0n);
+assert.equal(tokens(sell.outputs_data[0]), 1986n);
+assert.equal(tokens(sell.outputs_data[2]), 12n);
+assert.equal(2000n - tokens(sell.outputs_data[0]) - tokens(sell.outputs_data[2]), 2n);
+console.log('Recorded Pudge Sell outpoints, fee and token totals verified.');

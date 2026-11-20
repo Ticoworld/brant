@@ -135,7 +135,7 @@ function IdentityRow({label,value}:{label:string;value:string}){
 
 function MarketRecentTrades({market,locale}:{market:MarketData;locale:Locale}){
   const events=market.history.filter(event=>event.status==='confirmed').slice(-5).reverse();
-  return <section aria-label={copy(locale,'confirmedTrades')}><div className="flex items-center justify-between border-b border-[#28302f] pb-2"><h2 className="m-0 text-xs font-semibold text-[#d9e2de]">{copy(locale,'confirmedTrades')}</h2><Link href="/activity" className="text-[10px] text-[#8f9b96] no-underline hover:text-[#d9e2de]">{copy(locale,'activity')}</Link></div>{!events.length?<p className="mb-0 py-4 text-xs text-[#8c9893]">{copy(locale,'noHistory')}</p>:<div>{events.map(event=><TradeRow key={event.hash} event={event} locale={locale} symbol={market.token.symbol}/>)}</div>}</section>;
+  return <section aria-label={copy(locale,'confirmedTrades')}><div className="flex items-center justify-between border-b border-[#28302f] pb-2"><h2 className="m-0 text-xs font-semibold text-[#d9e2de]">{copy(locale,'confirmedTrades')}</h2><Link href="/activity" className="text-[10px] text-[#8f9b96] no-underline hover:text-[#d9e2de]">{copy(locale,'activity')}</Link></div>{!events.length?<p className="mb-0 py-4 text-xs text-[#8c9893]">{copy(locale,'noHistory')}</p>:<div>{events.map(event=><TradeRow key={event.hash+':'+(event.executionIndex??0)} event={event} locale={locale} symbol={market.token.symbol}/>)}</div>}</section>;
 }
 
 export function PortfolioScreen(){
@@ -211,7 +211,7 @@ export function ActivityScreen(){
     {query.data?.historyState==='unavailable'&&<p className="m-0 border-y border-[#5a4a2e] py-3 text-xs text-[#ddc18d]">{copy(locale,'noHistory')}</p>}
     <section aria-label={copy(locale,'transactionHistory')}><div className="hidden grid-cols-[minmax(92px,.6fr)_minmax(100px,.6fr)_minmax(130px,1fr)_minmax(120px,.8fr)_minmax(100px,.6fr)] gap-3 border-b border-[#303a37] px-2 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'type')}</span><span>{copy(locale,'activityAmount')}</span><span>{copy(locale,'transaction')}</span><span>{copy(locale,'time')}</span><span>{copy(locale,'status')}</span></div>
       {!rows.length&&<p className="m-0 py-8 text-sm text-[#929d99]">{account.state==='ready'?copy(locale,'noActivity'):copy(locale,'noHistory')}</p>}
-      {rows.map(event=><TradeRow key={event.hash} event={event} locale={locale} detailed symbol={query.data?.token.symbol||'xUDT'}/>)}
+      {rows.map(event=><TradeRow key={event.hash+':'+(event.executionIndex??0)} event={event} locale={locale} detailed symbol={query.data?.token.symbol||'xUDT'}/>)}
     </section>
     <div className="pt-2"><button onClick={()=>void query.refresh()} className="min-h-8 rounded-[3px] border border-[#303a37] px-3 text-[11px] text-[#aeb8b4] hover:bg-[#19211e]">{copy(locale,'reload')}</button></div>
   </div></TraderShell>;

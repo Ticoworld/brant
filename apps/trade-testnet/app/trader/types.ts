@@ -1,5 +1,5 @@
 export type Side='buy'|'sell';
-export type TradeEvent={hash:string;side:Side;owner:string;quantity:string;amountShannons:string;blockNumber:string;timestampMs:string;status:'confirmed'};
+export type TradeEvent={hash:string;executionIndex?:number;side:Side;owner:string;quantity:string;amountShannons:string;blockNumber:string;timestampMs:string;status:'confirmed'};
 export type MarketData={
   id:string;
   identity:string;
