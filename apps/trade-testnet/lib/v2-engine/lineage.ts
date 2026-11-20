@@ -21,9 +21,14 @@ async function fetchBlock(rpc:Rpc,height:bigint) {
 async function live(rpc:Rpc,p:Point) {const r=await rpc('get_live_cell',[p,true]) as {status?:string;cell?:{output:Output;data:{content:string}}};if(r.status!=='live'||!r.cell) throw Error('Singleton no longer live');return r.cell;}
 /** An indexer proposes live cells only. Every predecessor is authenticated by
  * the full node and the resulting chain must reach the original pair. */
-async function indexedPair(rpc:Rpc,initial:[Point,Point],a:Output,b:Output,tip:{number:string;hash:string},maxDepth=10000):Promise<{pair:[Point,Point];lineage:MarketHistoryTransaction[]}|null>{
+async function indexedPair(rpc:Rpc,initial:[Point,Point],a:Output,b:Output,tip:{number:string;hash:string},maxDepth=10000,allowScanFallback=false):Promise<{pair:[Point,Point];lineage:MarketHistoryTransaction[]}|null>{
  let page:{objects?:{out_point:Point;output:Output}[]};
- try{page=await rpc('get_cells',[{script:a.lock,script_type:'lock',script_search_mode:'exact'},'asc','0x64']) as typeof page;}catch{return null;}
+ try{
+  page=await rpc('get_cells',[{script:a.lock,script_type:'lock',script_search_mode:'exact'},'asc','0x64']) as typeof page;
+ }catch(error){
+  if(allowScanFallback)return null;
+  throw error;
+ }
  if(!Array.isArray(page?.objects)||page.objects.length>=100)return null;
  const objects=page.objects;
  const find=(ref:Output)=>objects.filter(x=>x.output&&same(x.output.lock,ref.lock)&&same(x.output.type,ref.type));
@@ -37,10 +42,14 @@ async function indexedPair(rpc:Rpc,initial:[Point,Point],a:Output,b:Output,tip:{
   if(row.tx_status?.status!=='committed'||!row.tx_status.block_hash||!row.tx_status.block_number||!row.tx_status.tx_index||!row.transaction)throw Error('Indexed lineage transaction unavailable');
   const tx=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(row.transaction as never));if(tx.hash().toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction hash mismatch');
   const height=BigInt(row.tx_status.block_number),index=Number(BigInt(row.tx_status.tx_index));if(height>BigInt(tip.number)||!Number.isSafeInteger(index))throw Error('Indexed lineage position invalid');
-  const header=await rpc('get_header',[row.tx_status.block_hash]) as {hash?:string;number?:string;timestamp?:string};
+  const [header,canonicalHash,block]=await Promise.all([
+    rpc('get_header',[row.tx_status.block_hash]) as Promise<{hash?:string;number?:string;timestamp?:string}>,
+    rpc('get_block_hash',[row.tx_status.block_number]),
+    canonicalBlock(height),
+  ]);
   if(header.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||header.number?.toLowerCase()!==row.tx_status.block_number.toLowerCase()||!header.timestamp)throw Error('Indexed lineage transaction is not in a canonical block');
-  const canonicalHash=await rpc('get_block_hash',[row.tx_status.block_number]);if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Indexed lineage block changed');
-  const block=await canonicalBlock(height),blockTx=block.transactions?.[index];if(block.header?.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||block.header.number?.toLowerCase()!==row.tx_status.block_number.toLowerCase()||blockTx?.hash?.toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction is not in canonical block at reported index');
+  if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Indexed lineage block changed');
+  const blockTx=block.transactions?.[index];if(block.header?.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||block.header.number?.toLowerCase()!==row.tx_status.block_number.toLowerCase()||blockTx?.hash?.toLowerCase()!==hash.toLowerCase())throw Error('Indexed lineage transaction is not in canonical block at reported index');
   if(ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(blockTx as never)).hash().toLowerCase()!==hash.toLowerCase())throw Error('Indexed block transaction hash mismatch');
   const value={tx:blockTx,height,index,timestamp:BigInt(header.timestamp)};cache.set(hash.toLowerCase(),value);return value;
  }
@@ -109,7 +118,7 @@ export async function discoverMarketPair(rpc:Rpc, initial:[Point,Point],options:
     const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase()) throw Error('Chain reorganized; rescan');
     return initial;
   }
-  const indexed=await indexedPair(rpc,initial,a,b,tip,options.maxIndexedDepth??10000);if(indexed)return indexed.pair;
+  const indexed=await indexedPair(rpc,initial,a,b,tip,options.maxIndexedDepth??10000, !options.indexedOnly);if(indexed)return indexed.pair;
   if(options.indexedOnly) throw Error('Indexed market successor is unavailable');
   let pair:[Point,Point]=initial;
   let previousHash:string|undefined,foundInitialization=false;

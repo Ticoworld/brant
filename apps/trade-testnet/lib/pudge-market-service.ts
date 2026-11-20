@@ -40,7 +40,14 @@ function requestRpc():Rpc{
   return (method,params)=>{
     if(!cachedMethods.has(method))return rpc(method,params);
     const key=`${method}:${JSON.stringify(params)}`;
-    let pending=cache.get(key);if(!pending){pending=rpc(method,params);cache.set(key,pending);}
+    let pending=cache.get(key);
+    if(!pending){
+      pending=rpc(method,params).catch(error=>{
+        cache.delete(key);
+        throw error;
+      });
+      cache.set(key,pending);
+    }
     return pending;
   };
 }
@@ -568,7 +575,11 @@ async function refreshRegisteredMarket():Promise<MarketData>{
   let recovered:Awaited<ReturnType<typeof recoverMarketHistory>>|null=null,marketPair:[Point,Point];
   if(registeredLive.every(cell=>cell.status==='live'))marketPair=registeredSellPoints;
   else{
-    try{recovered=await recoverMarketHistory(client,initPair,{maxIndexedDepth:256});}catch{}
+    try{
+      recovered=await recoverMarketHistory(client,initPair,{maxIndexedDepth:256});
+    }catch(error){
+      logRegisteredRecoveryFailure('lineage',error);
+    }
     marketPair=recovered?.pair||await discoverMarketPair(client,initPair,{indexedOnly:true,maxIndexedDepth:256});
   }
   const custodyPair=registeredLive.every(cell=>cell.status==='live')
@@ -606,7 +617,10 @@ async function refreshRegisteredMarket():Promise<MarketData>{
       history=[event(initialization.transaction.hash,'buy',verified.initial.owner,7n,verified.initialAmount,BigInt(initialRow.blockNumber),BigInt(initialRow.timestampMs))];
       await appendMarketExecutions(history,lineage,identity,client);
       historyState='verified';
-    }catch(error){console.warn('Gate 2 market history replay failed',error);historyState='unavailable';}
+    }catch(error){
+      logRegisteredRecoveryFailure('financial-replay',error);
+      history=[];
+    }
   }
   const token=resolvePudgeTokenMetadata({genesis:PUDGE_GATE2_GENESIS,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:PUDGE_GATE2_INITIALIZATION});
   const data:MarketData={
@@ -619,4 +633,10 @@ async function refreshRegisteredMarket():Promise<MarketData>{
   const codeDeps=[...Array.from({length:5},(_,index)=>({outPoint:{txHash:PUDGE_GATE2_STAGE_TXS.code,index:`0x${index.toString(16)}`},depType:'code'})),PUDGE_GATE2_XUDT_DEP];
   if(historyState==='verified')await checkpoint(data,[...marketPair,...custodyPair],cells.map(cell=>({output:cell.cell!.output,data:cell.cell!.data.content})),codeDeps,[PUDGE_GATE2_CODES.custody,PUDGE_GATE2_CODES.market,PUDGE_GATE2_CODES.custodyMarker,PUDGE_GATE2_CODES.marker,PUDGE_GATE2_CODES.ownerLock,PUDGE_GATE2_CODES.xudt]);
   return data;
+}
+
+function logRegisteredRecoveryFailure(stage:'lineage'|'financial-replay',error:unknown){
+  const message=error instanceof Error?error.message:'Unknown recovery error';
+  const reason=message.replace(/[^\s]*:\/\/[^\s]+/g,'[url]').replace(/0x[\da-f]{65,}/gi,'[hex]').replace(/[\r\n\t]/g,' ').slice(0,240);
+  console.warn('Pudge registered market recovery failed',JSON.stringify({stage,reason}));
 }

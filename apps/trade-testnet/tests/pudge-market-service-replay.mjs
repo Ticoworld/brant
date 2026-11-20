@@ -11,6 +11,7 @@ const fixture=JSON.parse(readFileSync(new URL('./fixtures/pudge-market-rpc.json'
 process.env.ROVEKO_PUDGE_PROOF_CACHE_DIR??=mkdtempSync(join(tmpdir(),'brant-market-'));
 process.env.ROVEKO_PUDGE_SNAPSHOT_KEY='ab'.repeat(32);
 let calls=0,offline=false,earlier=false,reorg=false,interruptSuccessor=false,replacement=false;
+let blockReadInterrupted=false;
 const read=(method,params)=>fixture[JSON.stringify([method,params])];
 const sellHash='0xe853a6fd0f5c6cd0d73c1822c0953b728b9e2860cf641d36c4c2bee22f7a9bd1';
 const sell=read('get_transaction',[sellHash]).transaction;
@@ -26,6 +27,10 @@ globalThis.fetch=async(url,options)=>{
  const input=JSON.parse(options.body);
  const lookup=({id,method,params})=>{
   calls++;
+  if(!blockReadInterrupted&&method==='get_block_by_number'&&!process.argv[2]){
+   blockReadInterrupted=true;
+   throw Error('Simulated transient full-node block read failure');
+  }
   if(interruptSuccessor&&method==='get_transaction'&&params[0]===sellHash)throw Error('Interrupted successor read');
   if(offline)throw Error('Simulated provider interruption');
   if(reorg&&method==='get_block_hash')return {id,result:'0x'+'00'.repeat(32)};
@@ -130,6 +135,7 @@ if(process.argv[2]==='resume'){
  process.exit(0);
 }
 const cold=await measure('registered cold',getPudgeCustodyAnchor);
+assert(blockReadInterrupted,'Cold recovery did not exercise the block-read retry');
 assert.equal(cold.market.historyState,'verified');
 assert.equal(cold.market.history.length,9);
 assert.equal(cold.market.history.at(-1).hash,'0xe853a6fd0f5c6cd0d73c1822c0953b728b9e2860cf641d36c4c2bee22f7a9bd1');
