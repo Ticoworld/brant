@@ -207,6 +207,42 @@ async function main() {
   ], [deps.market_smt, deps.marker_candidate, deps.custody_smt, deps.custody_marker, deps.xudt]);
   existingTx.headerDeps = [genesis.header.hash];
   existingTx.witnesses.push(existingProof.witness);
+  if (process.env.TRADE_GATE2_COMPETING_BUYS === '1') {
+    const quantity = 2n;
+    const price = 2n * existingPrice + UNIT;
+    const proof = makeProof(domain, 1, [existingOld], [{...existingNext, balance: initialQty + quantity}]);
+    const competitor = tx(existingInputs, [
+      cell(inventoryCell.capacity + price, market, token, hx(Buffer.concat([le(inventoryAmount - quantity, 16), b(markerIdHash)]))),
+      cell(marketMarkerCell.capacity, market, marker, markerData),
+      cell(custodyCell.capacity, custody, token, u128(initialQty + quantity, proof.root)),
+      cell(custodyMarkerCell.capacity, custody, custodyMarker, custodyMarkerData),
+      cell(initial[4].capacity - price - fee, locks[1]),
+    ], [deps.market_smt, deps.marker_candidate, deps.custody_smt, deps.custody_marker, deps.xudt]);
+    competitor.headerDeps = [genesis.header.hash];
+    competitor.witnesses.push(proof.witness);
+    const first = sign(existingTx, existingInputs, [1]);
+    const second = sign(competitor, existingInputs, [1]);
+    const firstHash = ccc.Transaction.from(first).hash();
+    const secondHash = ccc.Transaction.from(second).hash();
+    assert.notEqual(firstHash, secondHash);
+    const firstCycles = await rpc('estimate_cycles', [C.snake(first)]);
+    const secondCycles = await rpc('estimate_cycles', [C.snake(second)]);
+    const winner = await commit('competing_buy_winner', first);
+    let rejection;
+    try { await rpc('send_transaction', [C.snake(second), 'passthrough']); }
+    catch (error) { rejection = JSON.parse(error.message); }
+    assert.match(rejection?.message || '', /dead|resolve/i);
+    await rpc('generate_block');
+    const loser = await rpc('get_transaction', [secondHash]);
+    assert.notEqual(loser?.tx_status?.status, 'committed');
+    const predecessor = await rpc('get_live_cell', [C.snake(inventoryCell.outPoint), true]);
+    assert.notEqual(predecessor.status, 'live');
+    const cells = await Promise.all(winner.slice(0,4).map(output=>rpc('get_live_cell',[C.snake(output.outPoint),true])));
+    assert(cells.every(item=>item.status==='live'));
+    record('competition.jsonl', {firstHash,secondHash,firstCycles,secondCycles,winnerStatus:await rpc('get_transaction',[firstHash]),loser,rejection,predecessor,cells,competitor:C.snake(second)});
+    console.log('Competition evidence', out);
+    return;
+  }
   const existingPurchase = await commit('existing_owner_additional_purchase', sign(existingTx, existingInputs, [1]));
   inventoryCell = existingPurchase[0]; marketMarkerCell = existingPurchase[1]; custodyCell = existingPurchase[2]; custodyMarkerCell = existingPurchase[3];
   inventoryAmount -= existingQty;
