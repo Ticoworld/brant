@@ -80,7 +80,7 @@ async function readMarketCheckpoint(){
   try{
     const info=await stat(file);if(!info.isFile()||info.size>8*1024*1024)return null;
     const saved=openPudgeSnapshot<Checkpoint>(marketSnapshotScope,await readFile(file,'utf8'));
-    if(saved?.data?.id!==PUDGE_GATE2_REGISTRY_ID||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
+    if(saved?.data?.id!==PUDGE_GATE2_REGISTRY_ID||saved.data.historyState!=='verified'||!saved.data.history?.length||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
     verifiedCheckpoints.add(saved);
     return saved;
   }catch{return null;}
