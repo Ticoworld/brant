@@ -28,7 +28,7 @@ const key='roveko-pudge-trade-v1:'+market.genesis+':'+trade.owner;
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
 try{
   for(const width of [1280,390]){
-    const context=await browser.newContext({viewport:{width,height:850}});
+    const context=await browser.newContext({viewport:{width,height:850},serviceWorkers:'block'});
     const page=await context.newPage();
     const timings=new Map();
     page.on('console',message=>{
@@ -39,19 +39,36 @@ try{
       }
     });
     let state='pending';
-    let refreshFails=false, orphaned=false, broadcasts=0;
+    let refreshFails=false, orphaned=false, broadcasts=0, indexerLag=false;
 
-    await context.route('**/api/markets**',route=>refreshFails?route.fulfill({status:503,json:{error:'Fixture refresh unavailable'}}):route.fulfill({json:market}));
+    await context.route('**/*',route=>{
+      const request=route.request();
+      if(request.method()==='POST'&&/"send_transaction"/.test(request.postData()??'')){
+        broadcasts++;
+        return route.abort();
+      }
+      return route.fallback();
+    });
+    await context.route('**/api/markets**',route=>refreshFails?route.fulfill({status:503,json:{error:'Fixture refresh unavailable'}}):route.fulfill({
+      json:indexerLag?{...market,history:market.history.filter(item=>item.hash!==trade.hash)}:market,
+    }));
     await context.route('**/api/v2/pudge-rpc',route=>{
-      const {method,params}=route.request().postDataJSON();
+      const request=route.request().postDataJSON();
+      if(Array.isArray(request)){
+        if(request.some(call=>call.method==='send_transaction'))return route.fallback();
+        return route.fulfill({json:{result:request.map(({method,params})=>rpc(method,params))}});
+      }
+      const {method,params}=request;
+      if(method==='get_block_hash'&&params[0]==='0x0')return route.fulfill({json:{result:market.genesis}});
       if(method==='get_header'&&params[0]===header.hash)return route.fulfill({json:{result:header}});
       if(method==='get_block_hash'&&params[0]===header.number)return route.fulfill({json:{result:orphaned?'0x'+'00'.repeat(32):header.hash}});
       if(method==='get_transaction'&&params[0]===trade.hash){
+        if(state==='unknown')return route.fulfill({json:{result:null}});
         if(state==='offline')return route.fulfill({status:503,json:{error:'Fixture unavailable'}});
         return route.fulfill({json:{result:state==='committed'?row:{...row,tx_status:{status:state}}}});
       }
       if(method==='get_transaction'&&params[0]===market.manifest.initializationTransactionHash)return route.fulfill({status:503,json:{error:'Reconciliation fixture unavailable'}});
-      if(method==='send_transaction'){broadcasts++;return route.abort();}
+      if(method==='send_transaction')return route.fallback();
       const result=rpc(method,params);
       return result===undefined?route.continue():route.fulfill({json:{result}});
     });
@@ -83,12 +100,21 @@ try{
     state='offline';
     await page.waitForTimeout(2300);
     assert.ok(await page.evaluate(key=>localStorage.getItem(key),key));
-    refreshFails=true;
+    refreshFails=width===390;
+    indexerLag=width===1280;
     state='committed';
     await page.getByRole('status').filter({hasText:'Confirmed'}).getByRole('link',{name:'Explorer'}).waitFor({timeout:30000});
     await peer.getByRole('status').getByText('Confirmed',{exact:true}).waitFor();
     assert.ok((await page.getByText('Trade confirmed',{exact:true}).count())+(await peer.getByText('Trade confirmed',{exact:true}).count())<=1);
     await page.waitForFunction(key=>!localStorage.getItem(key)&&!!localStorage.getItem(key+':settled'),key);
+    if(indexerLag){
+      await page.getByText('Updating trading data',{exact:true}).waitFor();
+      await page.getByRole('button',{name:'50 CKB',exact:true}).click();
+      assert.equal(await page.getByRole('button',{name:'Buy Token',exact:true}).isDisabled(),true);
+      indexerLag=false;
+      await page.getByText('Updating trading data',{exact:true}).waitFor({state:'hidden'});
+      console.log('Confirmed receipt persisted while verified history caught up');
+    }
     await page.waitForFunction(()=>document.querySelector('[role=status]')!==null);
     const refreshMs=timings.get('refresh-request')-timings.get('canonical-confirmation');
     if(Number.isFinite(refreshMs))assert.ok(refreshMs>=0&&refreshMs<3000,String(refreshMs));
@@ -102,6 +128,32 @@ try{
     orphaned=true;
     await page.reload();
     await page.getByRole('status').getByText('Rechecking confirmation',{exact:true}).waitFor();
+    if(width===1280){
+      await peer.close();
+      await page.getByRole('button',{name:'50 CKB',exact:true}).click();
+      assert.equal(await page.getByRole('button',{name:'Buy Token',exact:true}).isDisabled(),true);
+      state='rejected';
+      await page.evaluate(({key,record})=>{
+        localStorage.removeItem(key+':settled');
+        localStorage.removeItem(key+':confirmed');
+        localStorage.setItem(key,JSON.stringify(record));
+        localStorage.setItem(key+':submitted',record.txHash);
+      },{key,record});
+      await page.reload();
+      await page.getByText('Trade rejected',{exact:true}).waitFor();
+      assert.equal(await page.evaluate(key=>localStorage.getItem(key),key),null);
+      console.log('Orphaned receipt blocked trading and node rejection cleared the pending journal');
+      state='unknown';
+      await page.evaluate(({key,record})=>localStorage.setItem(key,JSON.stringify(record)),{key,record});
+      await page.reload();
+      await page.getByRole('status').getByText('Submission outcome uncertain',{exact:true}).waitFor();
+      await page.getByRole('button',{name:'Check status',exact:true}).click();
+      assert.deepEqual(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)),key),record);
+      assert.equal(await page.evaluate(key=>localStorage.getItem(key+':submitted'),key),null);
+      state='pending';
+      await page.getByRole('status').getByText('Pending',{exact:true}).waitFor();
+      console.log('Journal without acknowledgement survived reload and reconciled without resubmission');
+    }
     assert.equal(broadcasts,0);
     console.log({width,verifiedInclusionToReceiptMs:ms,confirmationToRefreshMs:refreshMs});
     await context.close();
