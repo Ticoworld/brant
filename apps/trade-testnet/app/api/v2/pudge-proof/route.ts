@@ -2,6 +2,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {execFile} from 'node:child_process';
 import {access,mkdir,mkdtemp,readdir,readFile,rename,rm,stat,writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
+import {isIP} from 'node:net';
 import path from 'node:path';
 import {promisify} from 'node:util';
 import {ccc} from '@ckb-ccc/core';
@@ -93,8 +94,9 @@ async function writeAuthenticated(file:string|undefined,scope:string,value:unkno
 }
 
 function consumeRateLimit(request:Request,balanceOnly:boolean){
-  const forwarded=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  const address=(forwarded||request.headers.get('x-real-ip')||'unknown').slice(0,96);
+  // Railway's public edge supplies X-Real-IP. Direct requests share one bucket.
+  const edgeIP=process.env.RAILWAY_PUBLIC_DOMAIN ? request.headers.get('x-real-ip')?.trim() : undefined;
+  const address=edgeIP&&isIP(edgeIP) ? edgeIP : 'unknown';
   const now=Date.now(),key=(balanceOnly?"balance:":"proof:")+address,current=rates.get(key);
   if(!current||now-current.startedAt>=RATE_WINDOW_MS){rates.set(key,{startedAt:now,count:1});}
   else if(current.count>=(balanceOnly?24:RATE_LIMIT))return false;
@@ -307,7 +309,9 @@ async function handleProof(request:Request,synchronize=false){
       const loopback=(host:string)=>['localhost','127.0.0.1','[::1]'].includes(host);
       const localAlias=site==='same-origin'&&loopback(url.hostname)&&loopback(source.hostname)&&
         source.protocol===url.protocol&&source.port===url.port&&source.host===request.headers.get('host');
-      if((source.origin!==url.origin&&!localAlias)||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
+      const railwayDomain=synchronize ? undefined : process.env.RAILWAY_PUBLIC_DOMAIN;
+      const expectedOrigin=railwayDomain ? `https://${railwayDomain}` : url.origin;
+      if((source.origin!==expectedOrigin&&(railwayDomain||!localAlias))||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
     }catch{return new Response('Same-origin request required',{status:403});}
 
     if(activeRequests>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
