@@ -23,6 +23,7 @@ const header=rpc('get_header',[row.tx_status.block_hash]);
 assert.equal(rpc('get_block_hash',[header.number]),header.hash);
 const {code_hash:codeHash,hash_type:hashType,args}=row.transaction.outputs[4].lock;
 const address=ccc.Address.from({script:{codeHash,hashType,args},prefix:'ckt'}).toString();
+const otherAddress=ccc.Address.from({script:{codeHash,hashType,args:'0x'+'ab'.repeat(20)},prefix:'ckt'}).toString();
 const record={version:1,genesis:market.genesis,owner:trade.owner,txHash:trade.hash,transaction:row.transaction};
 const key='roveko-pudge-trade-v1:'+market.genesis+':'+trade.owner;
 const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
@@ -39,7 +40,8 @@ try{
       }
     });
     let state='pending';
-    let refreshFails=false, orphaned=false, broadcasts=0, indexerLag=false;
+    let refreshFails=false, orphaned=false, broadcasts=0, indexerLag=width===1280;
+    let delaySettlement;
 
     await context.route('**/*',route=>{
       const request=route.request();
@@ -52,7 +54,7 @@ try{
     await context.route('**/api/markets**',route=>refreshFails?route.fulfill({status:503,json:{error:'Fixture refresh unavailable'}}):route.fulfill({
       json:indexerLag?{...market,history:market.history.filter(item=>item.hash!==trade.hash)}:market,
     }));
-    await context.route('**/api/v2/pudge-rpc',route=>{
+    await context.route('**/api/v2/pudge-rpc',async route=>{
       const request=route.request().postDataJSON();
       if(Array.isArray(request)){
         if(request.some(call=>call.method==='send_transaction'))return route.fallback();
@@ -63,6 +65,7 @@ try{
       if(method==='get_header'&&params[0]===header.hash)return route.fulfill({json:{result:header}});
       if(method==='get_block_hash'&&params[0]===header.number)return route.fulfill({json:{result:orphaned?'0x'+'00'.repeat(32):header.hash}});
       if(method==='get_transaction'&&params[0]===trade.hash){
+        if(delaySettlement&&route.request().frame().page()===page)await delaySettlement();
         if(state==='unknown')return route.fulfill({json:{result:null}});
         if(state==='offline')return route.fulfill({status:503,json:{error:'Fixture unavailable'}});
         return route.fulfill({json:{result:state==='committed'?row:{...row,tx_status:{status:state}}}});
@@ -72,18 +75,37 @@ try{
       const result=rpc(method,params);
       return result===undefined?route.continue():route.fulfill({json:{result}});
     });
-    await context.addInitScript(({address,key,record})=>{
+    await context.route('**/*',route=>{
+      const request=route.request();
+      if(request.method()==='POST'&&/"send_transaction"/.test(request.postData()??''))return route.fallback();
+      if(new URL(request.url()).origin===new URL(base).origin)return route.fallback();
+      const body=request.postDataJSON();
+      if(body?.method==='get_header_by_number'&&body.params?.[0]==='0x0'){
+        return route.fulfill({json:{jsonrpc:'2.0',id:body.id,result:{...header,number:'0x0',hash:market.genesis}}});
+      }
+      return route.abort();
+    });
+    await context.addInitScript(({address,otherAddress,key,record})=>{
       if(!localStorage.getItem(key+':fixture-seeded')){
         localStorage.setItem(key,JSON.stringify(record));
         localStorage.setItem(key+':submitted',record.txHash);
         localStorage.setItem(key+':fixture-seeded','1');
       }
       let connected=sessionStorage.fixtureWalletConnected==='1';
+      let selected=sessionStorage.fixtureWalletAddress||address;
+      const listeners=new Map();
+      window.switchFixtureOwner=other=>{
+        selected=other?otherAddress:address;
+        sessionStorage.fixtureWalletAddress=selected;
+        for(const fn of [...(listeners.get('accountsChanged')??[])])fn([selected]);
+      };
       window.utxoGlobal={ckbSigner:{
         connect:async()=>{connected=true;sessionStorage.fixtureWalletConnected='1';},isConnected:async()=>connected,getNetwork:async()=>'nervos_testnet',
-        getAccount:async()=>[address],getPublicKey:async()=>[],on(){},removeListener(){},
+        getAccount:async()=>[selected],getPublicKey:async()=>[],
+        on(event,fn){if(!listeners.has(event))listeners.set(event,new Set());listeners.get(event).add(fn);},
+        removeListener(event,fn){listeners.get(event)?.delete(fn);},
       }};
-    },{address,key,record});
+    },{address,otherAddress,key,record});
     const connect=async(page)=>{
     await page.getByRole('button',{name:'Connect Wallet',exact:true}).first().click();
     await page.getByText(/UTXO\s*Global/i).first().click();
@@ -101,7 +123,6 @@ try{
     await page.waitForTimeout(2300);
     assert.ok(await page.evaluate(key=>localStorage.getItem(key),key));
     refreshFails=width===390;
-    indexerLag=width===1280;
     state='committed';
     await page.getByRole('status').filter({hasText:'Confirmed'}).getByRole('link',{name:'Explorer'}).waitFor({timeout:30000});
     await peer.getByRole('status').getByText('Confirmed',{exact:true}).waitFor();
@@ -125,6 +146,26 @@ try{
     await page.getByRole('status').getByText('Confirmed',{exact:true}).waitFor({timeout:30000});
     assert.equal(await page.getByText('Trade confirmed',{exact:true}).count(),0);
     assert.equal(await page.evaluate(key=>localStorage.getItem(key+':confirmed'),key),trade.hash);
+    if(width===1280){
+      let release;
+      const held=new Promise(resolve=>{release=resolve;});
+      const {promise:started,resolve:markStarted}=Promise.withResolvers();
+      delaySettlement=()=>{markStarted();return held;};
+      await page.reload();
+      await Promise.race([started,page.waitForResponse(()=>false,{timeout:15000})]);
+      await page.evaluate(()=>window.switchFixtureOwner(true));
+      const receipt=page.getByRole('status').getByRole('link',{name:'Explorer'});
+      await receipt.waitFor({state:'hidden'});
+      delaySettlement=undefined;
+      const rechecked=page.waitForResponse(response=>response.url().endsWith('/api/v2/pudge-rpc')&&
+        response.request().postData()?.includes(header.hash));
+      release();
+      await rechecked;
+      assert.equal(await receipt.count(),0);
+      await page.evaluate(()=>window.switchFixtureOwner(false));
+      await page.getByRole('status').getByText('Confirmed',{exact:true}).waitFor();
+      console.log('Delayed owner A settlement did not appear for owner B');
+    }
     orphaned=true;
     await page.reload();
     await page.getByRole('status').getByText('Rechecking confirmation',{exact:true}).waitFor();
