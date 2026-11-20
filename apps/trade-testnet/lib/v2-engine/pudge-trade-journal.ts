@@ -60,3 +60,30 @@ export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market|P
  const fee=inputs.reduce((n,i)=>n+i.capacity,0n)-tx.outputs.reduce((n,o)=>n+o.capacity,0n);if(fee<=0n||fee>1_000_000n)throw Error('Trade fee outside bounds');
  return {hash:tx.hash(),fee};
 }
+
+/** Persist the original signed attempt before retiring the active journal. */
+export function saveTradeSettlement(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,key:string,raw:string,height:string){
+ const attempt=parseTradeAttempt(raw);
+ if(tradeKey(attempt.genesis,attempt.owner)!==key||storage.getItem(key)!==raw)return false;
+ storage.setItem(key+':settled',JSON.stringify({raw,height}));
+ storage.setItem(key+':confirmed',attempt.txHash);
+ storage.removeItem(key);
+ storage.removeItem(key+':submitted');
+ return true;
+}
+
+export function readTradeSettlement(storage:Pick<Storage,'getItem'>,key:string){
+ const saved=storage.getItem(key+':settled');
+ if(!saved)return null;
+ const {raw}=JSON.parse(saved) as {raw:string};
+ const attempt=parseTradeAttempt(raw);
+ if(tradeKey(attempt.genesis,attempt.owner)!==key)throw Error('Settlement owner or network mismatch');
+ return attempt;
+}
+
+export async function recheckTradeSettlement(rpc:Rpc,storage:Pick<Storage,'getItem'>,key:string){
+ const attempt=readTradeSettlement(storage,key);
+ if(!attempt)return null;
+ const row=await rpc('get_transaction',[attempt.txHash]) as CommittedRow|null;
+ return {hash:attempt.txHash,height:await verifyTradeInclusion(rpc,attempt,row)};
+}

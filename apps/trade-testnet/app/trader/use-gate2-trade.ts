@@ -5,13 +5,11 @@ import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {toast} from 'sonner';
-import {loadPudgeManifest} from '../../lib/v2-engine/pudge-manifest.ts';
-import {verifyPudgeInitialProof} from '../../lib/v2-engine/pudge-proof-client.ts';
 import {prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
 import {validateLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {quote} from '../../lib/v2-engine/curve.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
-import {makeTradeAttempt,parseTradeAttempt,reconcilePudgeTrade,tradeKey,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
+import {makeTradeAttempt,parseTradeAttempt,recheckTradeSettlement,saveTradeSettlement,tradeKey,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
 import {PUDGE_GENESIS,pudgeRpc,pudgeReadBatch} from './rpc';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
@@ -27,7 +25,7 @@ function tradeTiming(hash:string,stage:string,at=Date.now(),detail?:string){
 export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale(),active=useRef(signer);active.current=signer;
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
-  const reconcileLock=useRef(false), accounting=useRef(new Set<string>());
+  const reconcileLock=useRef(false);
   const [failure,setFailure]=useState<{owner:string;message:string}|null>(null);
   const key=account.owner?tradeKey(PUDGE_GENESIS,account.owner):'';
   const currentKey=useRef(key);currentKey.current=key;
@@ -88,6 +86,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return review;
   },[account.owner,account.fundingHint,market,signer]);
   const prepareQuote=(side:Side,quantity:bigint,amount:bigint)=>{
+    if(status==='rechecking'||(inclusion?.key===key&&(market?.historyState!=='verified'||!market.history.some(event=>event.hash===inclusion.hash))))return;
     if(!market||!signer||account.state!=='ready'||pending||busy||document.hidden||localStorage.getItem(key))return;
     void preparation(side,quantity,amount,quoteKey(side,quantity,amount)).catch(()=>{});
   };
@@ -142,49 +141,39 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         localStorage.setItem(notifiedKey,attempt.txHash);
         toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{id:attempt.txHash});
       }
+      if(!saveTradeSettlement(localStorage,key,raw,height))return;
       setInclusion(previous=>previous?.key===key&&previous.hash===attempt.txHash&&previous.height===height?previous:{key,hash:attempt.txHash,height});
       setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
-      if(!market||accounting.current.has(raw))return;
-      accounting.current.add(raw);
-      void (async()=>{
-        try{
-          const history=(async()=>{
-            const manifest=loadPudgeManifest(rpc,JSON.stringify(market.manifest),verifyPudgeInitialProof);
-            void manifest.catch(()=>{});
-            await reconcilePudgeTrade(rpc,attempt,manifest);
-            tradeTiming(attempt.txHash,'reconciliation-complete');
-          })();
-          const incorporated=(async()=>{
-            const params=new URLSearchParams({trade:attempt.txHash,owner:attempt.owner});
-            // Canonical-state reads can outlast a single Pudge RPC timeout.
-            const response=await fetch('/api/v2/pudge-proof?'+params,{cache:'no-store',signal:AbortSignal.timeout(30_000)});
-            if(!response.ok)throw Error('Verified trading state unavailable');
-            const result=await response.json();
-            if(result.incorporated!==true||result.trade!==attempt.txHash||result.owner!==attempt.owner)throw Error('Trade is not in verified trading state yet');
-            tradeTiming(attempt.txHash,'verified-successor-state');
-          })();
-          await Promise.any([history,incorporated]);
-          await verifyTradeInclusion(rpc,attempt,await rpc('get_transaction',[attempt.txHash]) as typeof row);
-          if(!current())return;
-          localStorage.setItem(key+':confirmed',attempt.txHash);
-          localStorage.removeItem(key);localStorage.removeItem(key+':submitted');
-          setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
-
-        }catch(error){
-          if(current())setFailure({owner:account.owner,message:'Trade confirmed. Waiting for updated trading data.'});
-        }finally{accounting.current.delete(raw);}
-      })();
+      prepared.current?.controller.abort();
+      prepared.current=null;
+      setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
+      void refreshMarket().catch(()=>{});
     }catch(error){
       if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}
-  },[account.owner,key,locale,market]);
+  },[account.owner,key,locale,refreshMarket]);
 
   useEffect(()=>{
-    const raw=key?localStorage.getItem(key):null;
-    setFailure(null);
-    setReceipt(!raw&&key?localStorage.getItem(key+':confirmed')||'':'');
-    setStatus(raw&&localStorage.getItem(key+':submitted')?'submitted':'');
-    setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!localStorage.getItem(key+':submitted'));
+    let generation=0;
+    const sync=()=>{
+      const version=++generation;
+      const raw=key?localStorage.getItem(key):null;
+      setFailure(null);setInclusion(null);
+      setReceipt(!raw&&key?localStorage.getItem(key+':confirmed')||'':'');
+      setStatus(raw&&localStorage.getItem(key+':submitted')?'submitted':'');
+      setAttemptRaw(raw||'');setPending(!!raw);setUncertain(!!raw&&!localStorage.getItem(key+':submitted'));
+      if(raw||!key)return;
+      if(localStorage.getItem(key+':settled'))setStatus('rechecking');
+      void recheckTradeSettlement(rpc,localStorage,key).then(settlement=>{
+        if(settlement&&version===generation&&currentKey.current===key){
+          setInclusion({key,...settlement});setStatus('confirmed');
+        }
+      },()=>{if(version===generation)setStatus('rechecking');});
+    };
+    const onStorage=(event:StorageEvent)=>{if(event.key===key||event.key===key+':settled'||event.key===key+':confirmed'||event.key===key+':submitted')sync();};
+    sync();
+    window.addEventListener('storage',onStorage);
+    return()=>{generation++;window.removeEventListener('storage',onStorage);};
   },[key]);
   useEffect(()=>{
     if(!pending||busy)return;
@@ -209,6 +198,11 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const walletGenesis=current.client.getHeaderByNumber(0);
         void walletGenesis.catch(()=>{});
         if(owner.toLowerCase()!==account.owner.toLowerCase())throw Error('Wallet account or network changed');
+        const settlement=await recheckTradeSettlement(rpc,localStorage,key);
+        if(settlement&&(market.historyState!=='verified'||!market.history.some(event=>event.hash===settlement.hash))){
+          void refreshMarket().catch(()=>{});
+          throw Error('Trade confirmed. Waiting for verified market data.');
+        }
         const cacheKey=quoteKey(side,quantity,quotedAmount);
         const review=await preparation(side,quantity,quotedAmount,cacheKey);
         const validationStarted=performance.now();
@@ -242,6 +236,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
         const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
+        await recheckTradeSettlement(rpc,localStorage,key);
         await validateReviewedInputs(review,side,quantity,quotedAmount);
         const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed),raw=JSON.stringify(record);
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
