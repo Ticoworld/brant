@@ -9,14 +9,27 @@ import {copy} from './copy';
 import {formatCkb} from './rpc';
 
 export default function SwapKlinePanel({market,locale,projectedPrice,side}:{market:MarketData;locale:Locale;projectedPrice:number|null;side:Side}){
-  const [view,setView]=useState<'curve'|'full'|'history'>('curve'),container=useRef<HTMLDivElement>(null);
+  const [view,setView]=useState<'curve'|'full'|'history'>(market.historyState==='verified'&&market.history.some(row=>row.status==='confirmed')?'history':'curve'),container=useRef<HTMLDivElement>(null),manuallySelectedView=useRef(false);
   const chinese=locale==='zh-CN';
   const labels={curve:chinese?'当前区间':'Near current price',full:chinese?'完整曲线':'Full curve',history:copy(locale,'history')};
+  useEffect(()=>{
+    if(!manuallySelectedView.current&&market.historyState==='verified'&&market.history.some(row=>row.status==='confirmed'))setView('history');
+  },[market.historyState,market.history]);
   const historyPoints=useMemo(()=>{
-    const rows=market.history.filter(row=>row.status==='confirmed').slice().sort((a,b)=>Number(BigInt(a.timestampMs)-BigInt(b.timestampMs))||a.blockNumber.localeCompare(b.blockNumber));
-    const points:{time:number;value:number}[]=[];
-    for(const row of rows){const timestamp=Math.floor(Number(BigInt(row.timestampMs)/1000n)),amount=Number(BigInt(row.amountShannons))/100_000_000,quantity=Number(BigInt(row.quantity));if(!Number.isFinite(timestamp)||!quantity)continue;const point={time:timestamp,value:amount/quantity};if(points.at(-1)?.time===timestamp)points[points.length-1]=point;else points.push(point);}
-    return points;
+    // Multiple confirmed executions can share the same block timestamp.
+    // One volume-weighted point per second preserves their combined price.
+    const buckets=new Map<number,{amount:bigint;quantity:bigint}>();
+    for(const row of market.history){
+      if(row.status!=='confirmed')continue;
+      const time=Number(BigInt(row.timestampMs)/1000n),quantity=BigInt(row.quantity);
+      if(!Number.isSafeInteger(time)||quantity<=0n)continue;
+      const amount=BigInt(row.amountShannons),bucket=buckets.get(time);
+      if(bucket){bucket.amount+=amount;bucket.quantity+=quantity;}
+      else buckets.set(time,{amount,quantity});
+    }
+    return [...buckets.entries()].sort(([a],[b])=>a-b).map(([time,{amount,quantity}])=>({
+      time,value:Number(amount*10000n/quantity)/1_000_000_000_000,
+    }));
   },[market.history]);
 
   useEffect(()=>{
@@ -27,7 +40,7 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
     const chart=(()=>{
       if(view==='history'){
         const historyChart=createChart(element,{...options,timeScale:{...options.timeScale,timeVisible:true}});
-        historyChart.addSeries(LineSeries,{color:'#72dfb0',lineWidth:2,priceLineVisible:false,lastValueVisible:false})
+        historyChart.addSeries(LineSeries,{color:'#72dfb0',lineWidth:2,priceLineVisible:false,lastValueVisible:true})
           .setData(historyPoints.map(point=>({...point,time:point.time as UTCTimestamp})));
         return historyChart;
       }
@@ -56,9 +69,9 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
 
   return <section className="flex min-h-[530px] min-w-0 flex-col overflow-hidden rounded-[5px] border border-[#28302f] bg-[#111615]">
     <div className="flex min-h-[62px] flex-wrap items-center justify-between gap-3 border-b border-[#28302f] px-4 py-3 sm:px-5">
-      <div className="min-w-0"><span className="text-[16px] font-semibold text-[#edf1ef]">{market.pair}</span><div className="mt-1 text-[11px] text-[#8f9b96]">{view==='history'?(chinese?'已成交均价':'Executed average prices'):(chinese?'假设曲线价格（CKB / RVK）':'Hypothetical curve prices (CKB per RVK)')}</div></div>
+      <div className="min-w-0"><span className="text-[16px] font-semibold text-[#edf1ef]">{market.pair}</span><div className="mt-1 text-[11px] text-[#8f9b96]">{view==='history'?(chinese?'已确认成交均价（同秒按数量加权）':'Confirmed execution prices (volume-weighted per second)'):(chinese?'假设曲线价格（CKB / RVK）':'Hypothetical curve prices (CKB per RVK)')}</div></div>
       <div aria-label={locale==='zh-CN'?'图表视图':'Chart view'} className="inline-flex rounded-[4px] border border-[#303a37] bg-[#0c1110] p-0.5">
-        {(['curve','full','history'] as const).map(item=><button key={item} type="button" onClick={()=>setView(item)} aria-pressed={view===item} className={`min-h-7 rounded-[3px] px-3 text-[10px] font-medium transition-colors ${view===item?'bg-[#26322e] text-[#e8f4ed]':'text-[#87938e] hover:text-[#d7e0dc]'}`}>{labels[item]}</button>)}
+        {(['curve','full','history'] as const).map(item=><button key={item} type="button" onClick={()=>{manuallySelectedView.current=true;setView(item);}} aria-pressed={view===item} className={`min-h-7 rounded-[3px] px-3 text-[10px] font-medium transition-colors ${view===item?'bg-[#26322e] text-[#e8f4ed]':'text-[#87938e] hover:text-[#d7e0dc]'}`}>{labels[item]}</button>)}
       </div>
     </div>
     <div className="flex flex-wrap gap-x-8 gap-y-3 border-b border-[#28302f] px-4 py-3 text-xs sm:px-5">
