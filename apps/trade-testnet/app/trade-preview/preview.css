@@ -156,3 +156,7 @@
   .preview-prices > div:first-child { border: 0; padding-left: 0; }
   .preview-nav nav a, .preview-nav-meta button { min-height: 40px; }
 }
+
+.preview-settlement { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; }
+.trade-preview .preview-note :is(a,button) { text-decoration: underline; text-underline-offset: 3px; }
+.trade-preview .preview-note { overflow-wrap: anywhere; }

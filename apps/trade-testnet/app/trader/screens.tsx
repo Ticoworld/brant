@@ -12,7 +12,7 @@ import {formatCkb,pudgeRpc} from './rpc';
 import type {MarketData,Side,TradeEvent} from './types';
 import {useMarketData} from './use-market-data';
 import {useOwnerPosition} from './use-owner-position';
-import {useGate2Trade} from './use-gate2-trade';
+import {useMarketSession} from './use-market-session';
 import WithdrawalPanel from './WithdrawalPanel';
 import TraderShell from './shell';
 import SwapPanel from './SwapPanel';
@@ -65,31 +65,9 @@ function MarketRefreshState({market,error,lastSuccess,refresh,locale}:{market:Ma
 }
 
 export function MarketScreen({id}:{id:string}){
-  const {locale}=useLocale(),account=useAccount(),marketQuery=useMarketData(id),market=marketQuery.data?.id===id?marketQuery.data:null;
-  const accountOwner=account.state==='ready'?account.owner:'';
+  const {locale}=useLocale();
   const [side,setSide]=useState<Side>('buy');
-  const trade=useGate2Trade(market,marketQuery.refresh);
-  const inclusion=trade.inclusion;
-  const marketCaughtUp=!!inclusion&&market?.historyState==='verified'&&market.history.some(event=>event.hash===inclusion.hash);
-  const position=useOwnerPosition(accountOwner,market,0,side==='sell'||!!inclusion);
-  useEffect(()=>{
-    if(!inclusion)return;
-    console.info('Brant transaction timeline',JSON.stringify({hash:inclusion.hash,stage:'refresh-request',at:Date.now()}));
-    void account.refresh(inclusion.height?BigInt(inclusion.height):undefined);
-  },[inclusion,account.refresh]);
-  useEffect(()=>{
-    if(!inclusion||marketCaughtUp)return;
-    let active=true,delay=2000;
-    let timer:ReturnType<typeof setTimeout>;
-    const refresh=async()=>{
-      await marketQuery.refresh();
-      if(!active)return;
-      timer=setTimeout(refresh,delay);
-      delay=Math.min(delay*2,30_000);
-    };
-    void refresh();
-    return()=>{active=false;clearTimeout(timer);};
-  },[inclusion,marketCaughtUp,marketQuery.refresh]);
+  const {account,marketQuery,market,trade,inclusion,marketCaughtUp,position}=useMarketSession(id,side);
   const [projectedQuote,setProjectedQuote]=useState<{price:number|null;side:Side}>({price:null,side:'buy'});
   const onQuoteChange=useCallback((price:number|null,side:Side)=>setProjectedQuote({price,side}),[]);
   const tokenBalance=position.state==='ready'?BigInt(position.balance):null;

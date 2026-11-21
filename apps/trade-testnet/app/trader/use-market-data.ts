@@ -16,7 +16,7 @@ function publish(id:string,value:Snapshot){
   for(const listener of listeners.get(id)||[])listener(value);
 }
 
-export function useMarketData(requestedId?:string){
+export function useMarketData(requestedId?:string, requireCanonical=false){
   const [marketId,setMarketId]=useState(requestedId||DEFAULT_MARKET),[state,setState]=useState(()=>readSnapshot(requestedId||DEFAULT_MARKET));
   useEffect(()=>{
     if(requestedId){setMarketId(requestedId);return;}
@@ -30,7 +30,7 @@ export function useMarketData(requestedId?:string){
     const request=(async()=>{
       try{
         let response:Response;
-        if(marketId===DEFAULT_MARKET)response=await fetch(force?'/api/markets':'/api/markets?display=1',{cache:'no-store',signal:AbortSignal.timeout(30_000)});
+        if(marketId===DEFAULT_MARKET)response=await fetch(force||requireCanonical?'/api/markets':'/api/markets?display=1',{cache:'no-store',signal:AbortSignal.timeout(30_000)});
         else{
           const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
           if(!manifest)throw Error('This market is not saved in this browser');
@@ -46,7 +46,7 @@ export function useMarketData(requestedId?:string){
       }finally{requests.delete(marketId);}
     })();
     requests.set(marketId,request);return request;
-  },[marketId]);
+  },[marketId,requireCanonical]);
   useEffect(()=>{
     const set=listeners.get(marketId)||new Set();set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));
     const update=()=>{void refresh(false);};
