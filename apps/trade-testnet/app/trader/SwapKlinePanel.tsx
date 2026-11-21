@@ -34,7 +34,7 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
 
   useEffect(()=>{
     const element=container.current;if(!element)return;
-    if(view==='history'&&historyPoints.length===0)return;
+    if(view==='history'&&(market.historyState!=='verified'||historyPoints.length===0))return;
     const base=BigInt(market.curve.base),step=BigInt(market.curve.step),supply=Number(BigInt(market.curve.supply)),sold=Number(BigInt(market.curve.sold));
     const options={width:element.clientWidth,height:360,layout:{background:{type:ColorType.Solid as const,color:'#111615'},textColor:'#9ba6a2',fontFamily:'Arial, Helvetica, sans-serif',fontSize:11},grid:{vertLines:{color:'#252d2b'},horzLines:{color:'#252d2b'}},rightPriceScale:{borderColor:'#303a37',scaleMargins:{top:.12,bottom:.12}},timeScale:{borderColor:'#303a37'},crosshair:{vertLine:{color:'#65706c',labelBackgroundColor:'#29332f'},horzLine:{color:'#65706c',labelBackgroundColor:'#29332f'}}};
     const chart=(()=>{
@@ -65,7 +65,7 @@ export default function SwapKlinePanel({market,locale,projectedPrice,side}:{mark
     chart.timeScale().fitContent();
     const observer=new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width;if(width)chart.applyOptions({width});});observer.observe(element);
     return()=>{observer.disconnect();chart.remove();};
-  },[historyPoints,locale,market.curve,market.buyOneShannons,view]);
+  },[historyPoints,locale,market.curve,market.buyOneShannons,market.historyState,view]);
 
   return <section className="flex min-h-[530px] min-w-0 flex-col overflow-hidden rounded-[5px] border border-[#28302f] bg-[#111615]">
     <div className="flex min-h-[62px] flex-wrap items-center justify-between gap-3 border-b border-[#28302f] px-4 py-3 sm:px-5">
