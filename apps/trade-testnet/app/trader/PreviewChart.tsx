@@ -1,9 +1,11 @@
 "use client";
 
 import {useEffect, useRef, useState} from 'react';
-import {AreaSeries, ColorType, createChart, createOptionsChart, type IChartApiBase, type UTCTimestamp} from 'lightweight-charts';
+import {AreaSeries, ColorType, createChart, createOptionsChart, createSeriesMarkers, type SeriesMarker, type IChartApiBase, type UTCTimestamp} from 'lightweight-charts';
+import {useLocale} from '../i18n-provider';
 import type {MarketData} from './types';
 
+// Lightweight Charts™ is a product of TradingView, Inc. © 2023 TradingView, Inc.
 const seriesStyle = {
   lineColor: '#6CDDB5',
   topColor: 'rgba(108,221,181,.24)',
@@ -20,8 +22,13 @@ function fitChart<HorzScaleItem>(chart: IChartApiBase<HorzScaleItem>) {
   fit();
 }
 
-export default function PreviewChart({market, zh, loading}: {market: MarketData | null; zh: boolean; loading: boolean}) {
+function curvePrice(market: MarketData, sold: number) {
+  return Number(BigInt(market.curve.base) + BigInt(market.curve.step) * BigInt(sold)) / 1e8;
+}
+
+export default function PreviewChart({market, zh, loading, projected}: {projected: number | null; market: MarketData | null; zh: boolean; loading: boolean}) {
   const [history, setHistory] = useState(false);
+  const [hover, setHover] = useState<{sold: number; price: number} | null>(null);
   const plot = useRef<HTMLDivElement>(null);
   const historyAvailable = market?.historyState === 'verified' && market.history.length > 0;
   useEffect(() => {
@@ -29,10 +36,10 @@ export default function PreviewChart({market, zh, loading}: {market: MarketData 
     if (!element || !market) return;
     const options = {
       autoSize: true,
-      layout: {background: {type: ColorType.Solid as const, color: '#151A19'}, textColor: '#859490', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12},
+      layout: {attributionLogo: false, background: {type: ColorType.Solid as const, color: '#151A19'}, textColor: '#859490', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12},
       grid: {vertLines: {color: '#202826'}, horzLines: {color: '#252e2b'}},
-      rightPriceScale: {borderVisible: false, scaleMargins: {top: .16, bottom: .12}},
-      timeScale: {borderVisible: false, rightOffset: 2},
+      rightPriceScale: {borderVisible: false, alignLabels: true, tickMarkDensity: 3, scaleMargins: {top: .15, bottom: .15}},
+      timeScale: {borderVisible: false, allowBoldLabels: false, rightOffset: 1},
     };
     if (history) {
       const points = new Map<number, number>();
@@ -49,22 +56,29 @@ export default function PreviewChart({market, zh, loading}: {market: MarketData 
       return () => chart.remove();
     }
     const sold = Number(market.curve.sold);
-    const low = Math.max(0, sold - 10);
-    const high = Math.min(Number(market.curve.supply) - 1, sold + 20);
-    const base = BigInt(market.curve.base);
-    const step = BigInt(market.curve.step);
+    const low = Math.max(0, Math.min(sold - 10, (projected ?? sold) - 2));
+    const high = Math.min(Number(market.curve.supply), Math.max(sold + 20, (projected ?? sold) + 2));
+    const stride = Math.max(1, Math.ceil((high - low) / 240));
     const chart = createOptionsChart(element, options);
     const series = chart.addSeries(AreaSeries, seriesStyle);
-    series.setData(Array.from({length: high - low + 1}, (_, index) => {
-      const time = low + index;
-      return {time, value: Number(base + step * BigInt(time)) / 1e8};
-    }));
-    if (sold <= high) {
-      series.createPriceLine({price: Number(market.buyOneShannons) / 1e8, color: '#6CDDB5', lineStyle: 2, lineWidth: 1, axisLabelVisible: true});
-    }
+    const positions = new Set([low, high, sold]);
+    if (projected !== null) positions.add(projected);
+    for (let position = low; position < high; position += stride) positions.add(position);
+    series.setData([...positions].sort((a, b) => a - b).map(time => ({time, value: curvePrice(market, time)})));
+    const markers: SeriesMarker<number>[] = [
+      {time: sold, position: 'atPriceMiddle', price: curvePrice(market, sold), shape: 'circle', size: 0.65, color: '#6CDDB5'},
+    ];
+    if (projected !== null) markers.push({
+      time: projected, position: 'atPriceMiddle', price: curvePrice(market, projected), shape: 'circle', size: 0.65, color: '#ecbd84',
+    });
+    createSeriesMarkers(series, markers.sort((a, b) => a.time - b.time));
+    chart.subscribeCrosshairMove(event => {
+      const point = event.seriesData.get(series);
+      setHover(point && 'value' in point ? {sold: point.time, price: point.value} : null);
+    });
     fitChart(chart);
     return () => chart.remove();
-  }, [market, history]);
+  }, [market, history, projected]);
 
   const curveLabel = zh ? '联合曲线' : 'Bonding curve';
   const historyLabel = zh ? '价格历史' : 'Price history';
@@ -74,14 +88,23 @@ export default function PreviewChart({market, zh, loading}: {market: MarketData 
       <div className="preview-card-heading">
         <h2 id="preview-chart-title">{history ? historyLabel : curveLabel}</h2>
         <div className="preview-chart-tabs" aria-label={zh ? '图表视图' : 'Chart view'}>
-          <button type="button" aria-pressed={!history} onClick={() => setHistory(false)}>{zh ? '曲线' : 'Curve'}</button>
-          <button type="button" aria-pressed={history} onClick={() => setHistory(true)}>{historyLabel}</button>
+          <button type="button" aria-pressed={!history} onClick={() => {setHover(null); setHistory(false);}}>{zh ? '曲线' : 'Curve'}</button>
+          <button type="button" aria-pressed={history} onClick={() => {setHover(null); setHistory(true);}}>{historyLabel}</button>
         </div>
       </div>
       <p className="preview-chart-caption">{history ? (zh ? '已确认成交的平均价格' : 'Confirmed execution averages') : (zh ? '当前价格附近的确定性曲线' : 'Deterministic curve near current price')} · CKB / RVK</p>
+      {market && !history && <div className="preview-curve-key">
+        <span data-marker="current">{zh ? '当前' : 'Current'} · <CurveValue sold={Number(market.curve.sold)} price={curvePrice(market, Number(market.curve.sold))} /></span>
+        {projected !== null && <span data-marker="projected">{zh ? '预计' : 'Projected'} · <CurveValue sold={projected} price={curvePrice(market, projected)} /></span>}
+      </div>}
       {visible ? <div key={String(history)} ref={plot} className="preview-plot" role="img" aria-label={history ? historyLabel : curveLabel} /> :
         <div className="preview-plot preview-empty" role="status">{loading ? (zh ? '正在验证市场…' : 'Verifying market…') : (zh ? '图表数据暂不可用' : 'Chart data unavailable')}</div>}
-      <footer><span>{history ? (zh ? '确认时间' : 'Confirmation time') : (zh ? '已售 RVK' : 'RVK sold')}</span><a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noreferrer">Lightweight Charts™</a></footer>
+      <footer><span>{!history && hover ? <CurveValue {...hover} /> : history ? (zh ? '确认时间' : 'Confirmation time') : (zh ? '已售 RVK' : 'RVK sold')}</span><a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Lightweight Charts™ by TradingView</a></footer>
     </section>
   );
+}
+
+function CurveValue({sold, price}: {sold: number; price: number}) {
+  const {locale} = useLocale();
+  return <>{sold.toLocaleString(locale)} {locale === 'zh-CN' ? '已售 RVK' : 'RVK sold'} · {price.toLocaleString(locale, {maximumFractionDigits: 8})} CKB / RVK</>;
 }
