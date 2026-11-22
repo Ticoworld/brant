@@ -158,7 +158,7 @@ try {
   await p.goto(base + "/market/unknown?claim=0");
   for (const reload of [false, true]) {
     if (reload) await p.reload();
-    await p.getByText("Market data is temporarily unavailable", {exact: true}).waitFor();
+    await p.getByText(/^Market data is temporarily unavailable(?: · |$)/).waitFor();
     assert.equal(await p.getByRole("button", {name: /Buy Token|Sell Token|Buy RVK|Sell RVK/}).count(), 0);
   }
   check("Unknown market fails closed after direct navigation and reload");
