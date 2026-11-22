@@ -12,6 +12,7 @@ import TraderShell from './shell';
 import type {MarketData} from './types';
 import {useMarketData} from './use-market-data';
 import {useOwnerPosition} from './use-owner-position';
+import {invalidateExternalBalance,isExternalBalanceCurrent,type ExternalBalance} from './external-balance';
 import WithdrawalPanel from './WithdrawalPanel';
 import './portfolio.css';
 
@@ -20,7 +21,7 @@ export function PortfolioScreen(){
   const account=useAccount(),query=useMarketData(),market=query.data,owner=account.state==='ready'?account.owner:'';
   const position=useOwnerPosition(owner,market);
   const tokenHash=market?.token.typeHash;
-  const [external,setExternal]=useState<{key:string;balance:bigint;expiresAt:number}|null>(null);
+  const [external,setExternal]=useState<ExternalBalance|null>(null);
   const [scan,setScan]=useState<{key:string;state:'refreshing'|'ready'|'failed'}|null>(null);
   const [retryScan,setRetryScan]=useState(0);
   const [,updateFreshness]=useState(0);
@@ -33,6 +34,7 @@ export function PortfolioScreen(){
     return()=>clearTimeout(timer);
   },[external]);
   useEffect(()=>{
+    setExternal(previous=>previous?.key===balanceKey?previous:null);
     if(!owner||!identity||!tokenHash||!root||!account.address)return;
     let active=true;
     let timer:ReturnType<typeof setTimeout>;
@@ -66,7 +68,10 @@ export function PortfolioScreen(){
           setScan({key:balanceKey,state:'ready'});
         }
       }catch{
-        if(active)setScan({key:balanceKey,state:'failed'});
+        if(active){
+          setExternal(previous=>invalidateExternalBalance(previous,balanceKey));
+          setScan({key:balanceKey,state:'failed'});
+        }
       }finally{if(active)timer=setTimeout(refresh,10000);}
     };
     void refresh();
@@ -75,7 +80,7 @@ export function PortfolioScreen(){
   const matching=external?.key===balanceKey ? external : null;
   const walletBalance=matching?.balance??null;
   const scanState=scan?.key===balanceKey ? scan.state : 'refreshing';
-  const currentWallet=!!matching&&matching.expiresAt>Date.now()&&scanState!=='failed';
+  const currentWallet=isExternalBalanceCurrent(matching,balanceKey,Date.now());
   const walletState=matching&&!currentWallet&&scanState!=='failed'?'expired':scanState;
   return <PortfolioOverview account={account} market={market} position={position}
     walletBalance={walletBalance} currentWallet={currentWallet} walletState={walletState} retryWallet={()=>setRetryScan(value=>value+1)} marketError={query.error} refreshMarket={query.refresh}>
@@ -151,7 +156,7 @@ export function PortfolioOverview({account, market, position, walletBalance, cur
       </section>
       {children && <aside className="portfolio-surface portfolio-management" aria-label={zh?'资产管理':'Asset management'}>
 
-        <p>{zh?'将 Brant 托管中的代币提取到已连接的 Pudge 钱包。':'Move tokens from Brant custody to your connected Pudge wallet.'}</p>
+
         <div className="portfolio-withdrawal">{children}</div>
       </aside>}
     </div>}
