@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useState} from 'react';
 import {useLocale} from '../i18n-provider';
 import type {Locale} from '../i18n';
 import {useAccount} from './account-provider';
@@ -73,28 +73,7 @@ function MarketRecentTrades({market,locale}:{market:MarketData;locale:Locale}){
 
 export {PortfolioScreen} from './PortfolioScreen';
 
-export function ActivityScreen(){
-  const {locale}=useLocale(),account=useAccount(),query=useMarketData(),events=query.data?.history||[];
-  const rows=useMemo(()=>events.filter(event=>account.state!=='ready'||event.owner.toLowerCase()===account.owner.toLowerCase()).slice().reverse(),[events,account.owner,account.state]);
-  const pendingKey=account.state==='ready'?`roveko-pudge-trade-v1:${query.data?.genesis.toLowerCase()}:${account.owner.toLowerCase()}`:'';
-  const [pending,setPending]=useState('');
-  useEffect(()=>{
-    if(typeof window==='undefined'||!pendingKey)return;
-    const read=()=>{try{setPending(localStorage.getItem(pendingKey)||'');}catch{setPending('');}};
-    read();const timer=window.setInterval(read,2500);window.addEventListener('storage',read);
-    return()=>{window.clearInterval(timer);window.removeEventListener('storage',read);};
-  },[pendingKey]);
-  let pendingHash='';try{pendingHash=pending?JSON.parse(pending).txHash:'';}catch{}
-  return <TraderShell><div className="space-y-4"><header className="border-b border-[#28302f] pb-4"><h1 className="m-0 text-[21px] font-semibold">{copy(locale,'activity')}</h1><p className="mb-0 mt-1 break-all text-[11px] text-[#85918c]">{account.state==='ready'?walletIdentity(account.address):copy(locale,'transactionHistory')}</p></header>
-    {pendingHash&&<div className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5a4a2e] py-3 text-xs text-[#e8cc94]"><span>{copy(locale,'pending')} · {pendingHash}</span><a href={explorer(pendingHash)} target="_blank" rel="noreferrer" className="text-[#e8d8b6] underline">{copy(locale,'explorer')}</a></div>}
-    {query.data?.historyState==='unavailable'&&<p className="m-0 border-y border-[#5a4a2e] py-3 text-xs text-[#ddc18d]">{copy(locale,'noHistory')}</p>}
-    <section aria-label={copy(locale,'transactionHistory')}><div className="hidden grid-cols-[minmax(92px,.6fr)_minmax(100px,.6fr)_minmax(130px,1fr)_minmax(120px,.8fr)_minmax(100px,.6fr)] gap-3 border-b border-[#303a37] px-2 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'type')}</span><span>{copy(locale,'activityAmount')}</span><span>{copy(locale,'transaction')}</span><span>{copy(locale,'time')}</span><span>{copy(locale,'status')}</span></div>
-      {!rows.length&&<p className="m-0 py-8 text-sm text-[#929d99]">{account.state==='ready'?copy(locale,'noActivity'):copy(locale,'noHistory')}</p>}
-      {rows.map(event=><TradeRow key={event.hash+':'+(event.executionIndex??0)} event={event} locale={locale} detailed symbol={query.data?.token.symbol||'xUDT'}/>)}
-    </section>
-    <div className="pt-2"><button onClick={()=>void query.refresh()} className="min-h-8 rounded-[3px] border border-[#303a37] px-3 text-[11px] text-[#aeb8b4] hover:bg-[#19211e]">{copy(locale,'reload')}</button></div>
-  </div></TraderShell>;
-}
+export {ActivityScreen} from './ActivityScreen';
 
 export function LaunchScreen(){
   const {locale}=useLocale(),query=useMarketData(),market=query.data;
@@ -122,7 +101,6 @@ function TradeRow({event,locale,detailed=false,symbol='xUDT'}:{event:TradeEvent;
 
 function explorer(hash:string){return `https://pudge.explorer.nervos.org/transaction/${hash}`;}
 
-function walletIdentity(address:string){return address.length>28?`${address.slice(0,12)}…${address.slice(-8)}`:address;}
 
 function attemptHash(raw:string){try{return String(JSON.parse(raw)?.txHash||'');}catch{return '';}}
 
