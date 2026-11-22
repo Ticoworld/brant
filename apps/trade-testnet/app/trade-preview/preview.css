@@ -89,7 +89,7 @@
 .trade-preview .preview-note { margin-top: 10px; text-align: center; color: var(--muted); font-size: 13px; }
 .preview-chart-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--canvas); }
 .trade-preview .preview-chart-caption { color: var(--muted); margin: 9px 0 14px; font-size: 13px; }
-.preview-plot { height: 370px; }
+.preview-plot { height: 345px; }
 .preview-empty { display: grid; place-items: center; color: var(--muted); }
 .preview-chart footer { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; margin-top: 8px; }
 .preview-state dl { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; margin-top: 14px; }
@@ -147,7 +147,7 @@
 .preview-candle-readout { display: flex; gap: 2px 14px; flex-wrap: wrap; min-height: 38px; margin: 8px 0; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .preview-candle-readout b { color: var(--ink); font-weight: 560; }
 .preview-plot-wrap { position: relative; }
-.preview-current-price { position: absolute; top: 4px; left: 8px; z-index: 1; pointer-events: none; background: var(--surface); color: var(--mint); padding: 2px 6px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.preview-current-price { position: absolute; top: 4px; left: 8px; z-index: 5; pointer-events: none; background: var(--surface); color: var(--mint); padding: 2px 6px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .preview-recent table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 12px; }
 .preview-recent :is(th,td) { text-align: left; padding: 9px 5px; }
 .preview-recent th { color: var(--muted); font-weight: 500; }
@@ -168,5 +168,3 @@
   .preview-recent :is(th,td) { font-size: 12px; padding-inline: 3px; }
   .preview-recent td a { min-width: 24px; }
 }
-
-.preview-volume-label { position: absolute; left: 8px; bottom: calc(23% + 16px); z-index: 1; pointer-events: none; background: var(--surface); color: var(--muted); padding: 2px 6px; font-size: 12px; }

@@ -31,12 +31,12 @@ export default function PreviewChart({market, zh, loading, stale}: {
       autoSize: true,
       layout: {
         attributionLogo: false, background: {type: ColorType.Solid, color: '#151a19'},
-        textColor: '#abb9b4', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12,
+        panes: {enableResize: false, separatorColor: '#33413c'}, textColor: '#abb9b4', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12,
       },
       localization: {locale, timeFormatter: (time: Time) => typeof time === 'number' ? utc.format(time * 1000) + ' UTC' : ''},
       grid: {vertLines: {color: '#222b28'}, horzLines: {color: '#27312e'}},
       rightPriceScale: {borderVisible: false, minimumWidth: 59},
-      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18},
+      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18, maxBarSpacing: series.bars.length <= 3 ? 64 : 0},
       crosshair: {horzLine: {labelVisible: false}},
     });
     const candles = chart.addSeries(CandlestickSeries, {
@@ -92,12 +92,12 @@ export default function PreviewChart({market, zh, loading, stale}: {
         </div>
         <div className="preview-plot-wrap">
           {series.latest !== null && <span className="preview-current-price">{stale ? (zh ? '上次验证' : 'Last verified') : (zh ? '当前' : 'Current')} · {formatCkb(series.latest)} CKB/RVK</span>}
-          <span className="preview-volume-label">{zh ? '成交量' : 'Volume'} · CKB</span>
+          
           <div ref={plot} className="preview-plot" role="img" aria-label={zh ? '价格蜡烛图和成交量' : 'Price candles and volume'} aria-describedby="preview-price-basis"/>
         </div>
       </> : <div className="preview-plot preview-empty" role="status">{loading ? (zh ? '正在验证市场…' : 'Verifying market…') : (zh ? '已验证价格历史暂不可用' : 'Verified price history unavailable')}</div>}
       <footer>
-        <span>{series && series.bars.length <= 3 ? (zh ? '成交记录较少，仅显示有成交的周期。' : 'Sparse history · only intervals with trades are shown.') : 'UTC'}</span>
+        <span>{series && series.bars.length <= 3 ? (zh ? '成交较少，仅显示有成交的周期 · 成交量以 CKB 计' : 'Sparse history · populated intervals only · Volume in CKB') : (zh ? '成交量 · CKB · UTC' : 'Volume · CKB · UTC')}</span>
         <a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Lightweight Charts™ by TradingView</a>
       </footer>
     </section>
