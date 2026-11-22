@@ -150,7 +150,7 @@ try {
       ["/activity", "Activity", "main"],
     ]) {
       await p.goto(base + route);
-      await p.getByRole("main").waitFor();
+      await p.getByRole("main").first().waitFor();
       await reflow(p, label + width);
       await scan(p, label + width, scope);
     }
