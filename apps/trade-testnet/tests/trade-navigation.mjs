@@ -42,7 +42,7 @@ export async function verifyTradeNavigation(browser, base) {
       await page.getByRole('navigation').getByRole('link', {name: 'Trade', exact: true}).click();
       await page.waitForURL('**/market/pudge-xudt');
       if (scenario !== 'cached') {
-        await page.getByRole('heading', {name: 'Bonding curve'}).waitFor();
+        await page.getByRole('heading', {name: 'Price chart'}).waitFor();
         assert.equal(canonicalRequests, 0);
         release();
       }

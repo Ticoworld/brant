@@ -1,126 +1,135 @@
 "use client";
 
-import {useEffect, useRef, useState} from 'react';
-import {AreaSeries, ColorType, LineSeries, createOptionsChart, createSeriesMarkers, type SeriesMarker, type IChartApiBase} from 'lightweight-charts';
-import {useLocale} from '../i18n-provider';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {CandlestickSeries, ColorType, HistogramSeries, createChart, type Time, type UTCTimestamp} from 'lightweight-charts';
 import type {MarketData, TradeEvent} from './types';
+import {buildVerifiedPriceSeries, intervals, executionKey, type PriceBar, type Timeframe} from './verified-price-series';
+import {formatCkb} from './rpc';
 
-// Lightweight Charts™ is a product of TradingView, Inc. © 2023 TradingView, Inc.
-const seriesStyle = {
-  lineColor: '#6CDDB5',
-  topColor: 'rgba(108,221,181,.24)',
-  bottomColor: 'rgba(108,221,181,.01)',
-  lineWidth: 2 as const,
-  lastValueVisible: false,
-  priceLineVisible: false,
-};
+const up = '#6cddb5';
+const down = '#f08087';
+const ckb = (value: bigint) => Number(value) / 1e8;
+const timestamp = (time: number) => time as UTCTimestamp;
 
-function fitChart<HorzScaleItem>(chart: IChartApiBase<HorzScaleItem>) {
-  const scale = chart.timeScale();
-  const fit = () => scale.fitContent();
-  scale.subscribeSizeChange(fit);
-  fit();
-}
-
-function curvePrice(market: MarketData, sold: number) {
-  return Number(BigInt(market.curve.base) + BigInt(market.curve.step) * BigInt(sold)) / 1e8;
-}
-
-export default function PreviewChart({market, zh, loading, projected}: {projected: number | null; market: MarketData | null; zh: boolean; loading: boolean}) {
-  const [history, setHistory] = useState(false);
-  const [hover, setHover] = useState<{sold: number; price: number} | null>(null);
-  const [hoverTrade, setHoverTrade] = useState<TradeEvent | null>(null);
+export default function PreviewChart({market, zh, loading, stale}: {
+  market: MarketData | null; zh: boolean; loading: boolean; stale: boolean;
+}) {
+  const [frame, setFrame] = useState<Timeframe>('4h');
+  const [hover, setHover] = useState<PriceBar | null>(null);
   const plot = useRef<HTMLDivElement>(null);
-  const historyAvailable = market?.historyState === 'verified' && market.history.length > 0;
+  const reset = useRef<() => void>(() => {});
+  const series = useMemo(() => market && buildVerifiedPriceSeries(market, frame), [market, frame]);
+  const locale = zh ? 'zh-CN' : 'en';
+  const utc = useMemo(() => new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC',
+  }), [locale]);
+
   useEffect(() => {
     const element = plot.current;
-    if (!element || !market) return;
-    const options = {
+    if (!element || !series) return;
+    const chart = createChart(element, {
       autoSize: true,
-      layout: {attributionLogo: false, background: {type: ColorType.Solid as const, color: '#151A19'}, textColor: '#859490', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12},
-      grid: {vertLines: {color: '#202826'}, horzLines: {color: '#252e2b'}},
-      rightPriceScale: {borderVisible: false, alignLabels: true, tickMarkDensity: 3, scaleMargins: {top: .15, bottom: .15}},
-      timeScale: {borderVisible: false, allowBoldLabels: false, rightOffset: 1},
+      layout: {
+        attributionLogo: false, background: {type: ColorType.Solid, color: '#151a19'},
+        textColor: '#abb9b4', fontFamily: getComputedStyle(element).fontFamily, fontSize: 12,
+      },
+      localization: {locale, timeFormatter: (time: Time) => typeof time === 'number' ? utc.format(time * 1000) + ' UTC' : ''},
+      grid: {vertLines: {color: '#222b28'}, horzLines: {color: '#27312e'}},
+      rightPriceScale: {borderVisible: false, minimumWidth: 59},
+      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18},
+      crosshair: {horzLine: {labelVisible: false}},
+    });
+    const candles = chart.addSeries(CandlestickSeries, {
+      upColor: up, downColor: down, borderVisible: false, wickUpColor: up, wickDownColor: down,
+      lastValueVisible: false, priceLineVisible: false,
+      priceFormat: {type: 'custom', minMove: 0.00000001, formatter: (price: number) => price.toLocaleString(locale,{maximumFractionDigits:8})},
+    });
+    const volume = chart.addSeries(HistogramSeries, {
+      priceFormat: {type: 'volume'}, lastValueVisible: false, priceLineVisible: false,
+    }, 1);
+    chart.panes()[0].setStretchFactor(0.77);
+    chart.panes()[1].setStretchFactor(0.23);
+    volume.priceScale().applyOptions({scaleMargins:{top:0.12,bottom:0}});
+    candles.setData(series.bars.map(bar => ({
+      time: timestamp(bar.time), open: ckb(bar.open), high: ckb(bar.high), low: ckb(bar.low), close: ckb(bar.close),
+    })));
+    volume.setData(series.bars.map(bar => ({
+      time: timestamp(bar.time), value: ckb(bar.volume), color: bar.close >= bar.open ? '#438773' : '#9c555c',
+    })));
+    if (series.latest !== null) candles.createPriceLine({
+      price: ckb(series.latest), color: up, lineWidth: 1, lineStyle: 2, axisLabelVisible: false,
+    });
+    const byTime = new Map(series.bars.map(bar => [bar.time, bar]));
+    chart.subscribeCrosshairMove(({time}) => setHover(typeof time === 'number' ? byTime.get(time) ?? null : null));
+    const fit = () => chart.timeScale().fitContent();
+    reset.current = fit;
+    chart.timeScale().subscribeSizeChange(fit);
+    fit();
+    return () => {
+      reset.current = () => {};
+      chart.remove();
     };
-    if (history) {
-      // Use execution order so multiple trades in the same block each get a point.
-      const events = market.history.filter(event => event.status === 'confirmed' && BigInt(event.quantity) > 0n);
-      const chart = createOptionsChart(element, options);
-      const series = chart.addSeries(LineSeries, {
-        lineVisible: false, pointMarkersVisible: true, pointMarkersRadius: 4,
-        lastValueVisible: false, priceLineVisible: false,
-      });
-      series.setData(events.map((event, index) => ({
-        time: index + 1, value: averagePrice(event),
-        color: event.side === 'buy' ? '#6CDDB5' : '#F08087',
-      })));
-      chart.subscribeCrosshairMove(event => {
-        const point = event.seriesData.get(series);
-        setHoverTrade(point ? events[point.time - 1] ?? null : null);
-      });
-      fitChart(chart);
-      return () => chart.remove();
-    }
-    const sold = Number(market.curve.sold);
-    const low = Math.max(0, Math.min(sold - 10, (projected ?? sold) - 2));
-    const high = Math.min(Number(market.curve.supply), Math.max(sold + 20, (projected ?? sold) + 2));
-    const stride = Math.max(1, Math.ceil((high - low) / 240));
-    const chart = createOptionsChart(element, options);
-    const series = chart.addSeries(AreaSeries, seriesStyle);
-    const positions = new Set([low, high, sold]);
-    if (projected !== null) positions.add(projected);
-    for (let position = low; position < high; position += stride) positions.add(position);
-    series.setData([...positions].sort((a, b) => a - b).map(time => ({time, value: curvePrice(market, time)})));
-    const markers: SeriesMarker<number>[] = [
-      {time: sold, position: 'atPriceMiddle', price: curvePrice(market, sold), shape: 'circle', size: 0.65, color: '#6CDDB5'},
-    ];
-    if (projected !== null) markers.push({
-      time: projected, position: 'atPriceMiddle', price: curvePrice(market, projected), shape: 'circle', size: 0.65, color: '#ecbd84',
-    });
-    createSeriesMarkers(series, markers.sort((a, b) => a.time - b.time));
-    chart.subscribeCrosshairMove(event => {
-      const point = event.seriesData.get(series);
-      setHover(point && 'value' in point ? {sold: point.time, price: point.value} : null);
-    });
-    fitChart(chart);
-    return () => chart.remove();
-  }, [market, history, projected]);
+  }, [series, locale, utc]);
 
-  const curveLabel = zh ? '联合曲线' : 'Bonding curve';
-  const historyLabel = zh ? '价格历史' : 'Price history';
-  const afterTradeHint = zh ? '假设所选交易按当前市场状态执行，此点为交易后的下一档曲线买入报价。'
-    : 'Next marginal buy quote if this trade executes against the displayed market state.';
-  const visible = market && (!history || historyAvailable);
+  const active = series && (hover && series.bars.includes(hover) ? hover : series.bars.at(-1));
   return (
     <section className="preview-card preview-chart" aria-labelledby="preview-chart-title">
       <div className="preview-card-heading">
-        <h2 id="preview-chart-title">{history ? historyLabel : curveLabel}</h2>
-        <div className="preview-chart-tabs" aria-label={zh ? '图表视图' : 'Chart view'}>
-          <button type="button" aria-pressed={!history} onClick={() => {setHover(null); setHoverTrade(null); setHistory(false);}}>{zh ? '曲线' : 'Curve'}</button>
-          <button type="button" aria-pressed={history} onClick={() => {setHover(null); setHoverTrade(null); setHistory(true);}}>{historyLabel}</button>
+        <h2 id="preview-chart-title">{zh ? '价格图表' : 'Price chart'}</h2>
+        {series && <button className="preview-chart-fit" type="button" onClick={() => reset.current()}>{zh ? '重置视图' : 'Reset view'} ↺</button>}
+      </div>
+      <div className="preview-chart-toolbar">
+        <p id="preview-price-basis">{zh ? '已验证交易形成的边际买入价' : 'Marginal Buy price from verified trades'}</p>
+        <div className="preview-chart-tabs" aria-label={zh ? '时间周期' : 'Timeframe'}>
+          {(Object.keys(intervals) as Timeframe[]).map(item => <button key={item} type="button" aria-pressed={frame === item} onClick={() => {setHover(null); setFrame(item);}}>{item}</button>)}
         </div>
       </div>
-      <p className="preview-chart-caption">{history ? (zh ? '已确认成交价格' : 'Confirmed trade prices') : (zh ? '曲线边际价格' : 'Marginal curve price')} · CKB / RVK</p>
-      {market && !history && <div className="preview-curve-key">
-        <span data-marker="current">{zh ? '当前' : 'Current'} · <CurveValue sold={Number(market.curve.sold)} price={curvePrice(market, Number(market.curve.sold))} /></span>
-        {projected !== null && <span data-marker="projected" title={afterTradeHint}>{zh ? '交易后' : 'After trade'}<span className="sr-only"> ({afterTradeHint})</span> · <CurveValue sold={projected} price={curvePrice(market, projected)} /></span>}
-      </div>}
-      {visible ? <div key={String(history)} ref={plot} className="preview-plot" role="img" aria-label={history ? historyLabel : curveLabel} /> :
-        <div className="preview-plot preview-empty" role="status">{loading ? (zh ? '正在验证市场…' : 'Verifying market…') : (zh ? '图表数据暂不可用' : 'Chart data unavailable')}</div>}
-      <footer><span>{!history && hover ? <CurveValue {...hover} /> : history ? (zh ? '成交顺序' : 'Execution order') : (zh ? '已售 RVK' : 'RVK sold')}</span><a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Lightweight Charts™ by TradingView</a>
-        {history && hoverTrade && <span className="preview-history-readout">
-          {hoverTrade.side === 'buy' ? (zh ? '买入' : 'Buy') : (zh ? '卖出' : 'Sell')} {hoverTrade.quantity} RVK · {averagePrice(hoverTrade).toLocaleString(zh ? 'zh-CN' : 'en', {maximumFractionDigits: 8})} CKB / RVK · <time>{new Date(Number(hoverTrade.timestampMs)).toLocaleString(zh ? 'zh-CN' : 'en')}</time>
-        </span>}
+      {series && active ? <>
+        <div className="preview-candle-readout" aria-label={zh ? '蜡烛图数据' : 'Candle details'}>
+          <span>{utc.format(active.time * 1000)} UTC</span>
+          <span>{zh ? '开' : 'O'} <b>{formatCkb(active.open)}</b> · {zh ? '高' : 'H'} <b>{formatCkb(active.high)}</b> · {zh ? '低' : 'L'} <b>{formatCkb(active.low)}</b> · {zh ? '收' : 'C'} <b>{formatCkb(active.close)}</b> CKB/RVK</span>
+          <span>{zh ? '成交量' : 'Volume'} <b>{formatCkb(active.volume)} CKB</b> · {active.buys} {zh ? '笔买入' : 'Buy'} / {active.sells} {zh ? '笔卖出' : 'Sell'} · {active.quantity.toString()} RVK</span>
+        </div>
+        <div className="preview-plot-wrap">
+          {series.latest !== null && <span className="preview-current-price">{stale ? (zh ? '上次验证' : 'Last verified') : (zh ? '当前' : 'Current')} · {formatCkb(series.latest)} CKB/RVK</span>}
+          <span className="preview-volume-label">{zh ? '成交量' : 'Volume'} · CKB</span>
+          <div ref={plot} className="preview-plot" role="img" aria-label={zh ? '价格蜡烛图和成交量' : 'Price candles and volume'} aria-describedby="preview-price-basis"/>
+        </div>
+      </> : <div className="preview-plot preview-empty" role="status">{loading ? (zh ? '正在验证市场…' : 'Verifying market…') : (zh ? '已验证价格历史暂不可用' : 'Verified price history unavailable')}</div>}
+      <footer>
+        <span>{series && series.bars.length <= 3 ? (zh ? '成交记录较少，仅显示有成交的周期。' : 'Sparse history · only intervals with trades are shown.') : 'UTC'}</span>
+        <a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Lightweight Charts™ by TradingView</a>
       </footer>
     </section>
   );
 }
 
-function CurveValue({sold, price}: {sold: number; price: number}) {
-  const {locale} = useLocale();
-  return <>{sold.toLocaleString(locale)} {locale === 'zh-CN' ? '已售 RVK' : 'RVK sold'} · {price.toLocaleString(locale, {maximumFractionDigits: 8})} CKB / RVK</>;
+export function RecentTrades({market, zh}: {market: MarketData | null; zh: boolean}) {
+  const symbol = market?.token.symbol ?? 'RVK';
+  const locale = zh ? 'zh-CN' : 'en';
+  const rows = market?.historyState === 'verified' ? market.history.filter(event => event.status === 'confirmed').slice(-6).reverse() : [];
+  return <section className="preview-card preview-recent" aria-labelledby="preview-recent-title">
+    <div className="preview-card-heading">
+      <h2 id="preview-recent-title">{zh ? '最近成交' : 'Recent trades'}</h2>
+      <a href="/activity">{zh ? '查看活动' : 'View activity'} ↗</a>
+    </div>
+    {rows.length ? <table>
+      <thead><tr>{(zh ? ['时间','方向','数量','金额','成交均价','交易'] : ['Time','Side','Quantity','Amount','Average price','Transaction']).map(label => <th key={label} scope="col">{label}</th>)}</tr></thead>
+      <tbody>{rows.map(event => {
+        const date = new Date(Number(event.timestampMs));
+        return <tr key={executionKey(event)}>
+          <td><time dateTime={date.toISOString()}>{date.toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time></td>
+          <td data-tone={event.side === 'buy' ? 'mint' : 'sell'}>{event.side === 'buy' ? (zh ? '买入' : 'Buy') : (zh ? '卖出' : 'Sell')}</td>
+          <td>{event.quantity} {symbol}</td>
+          <td>{formatCkb(event.amountShannons)} CKB</td>
+          <td>{averagePrice(event).toLocaleString(locale,{maximumFractionDigits:8})} CKB/{symbol}</td>
+          <td><a aria-label={(zh ? '交易浏览器 ' : 'Transaction explorer ') + executionKey(event)} href={'https://pudge.explorer.nervos.org/transaction/' + event.hash} target="_blank" rel="noreferrer">↗</a></td>
+        </tr>;
+      })}</tbody>
+    </table> : <p className="preview-chart-caption">{zh ? '暂无已验证成交记录' : 'Verified trades unavailable'}</p>}
+  </section>;
 }
 
 function averagePrice(event: TradeEvent) {
-  return Number(event.amountShannons) / 1e8 / Number(event.quantity);
+  return ckb(BigInt(event.amountShannons)) / Number(event.quantity);
 }

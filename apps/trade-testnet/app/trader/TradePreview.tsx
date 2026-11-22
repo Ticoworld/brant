@@ -9,7 +9,7 @@ import {copy} from './copy';
 import {useMarketSession} from './use-market-session';
 import {formatCkb} from './rpc';
 import type {MarketData, Side} from './types';
-import PreviewChart from './PreviewChart';
+import PreviewChart, {RecentTrades} from './PreviewChart';
 
 const marketId = 'pudge-xudt';
 
@@ -52,8 +52,6 @@ export function TradeV2({session, side, setSide}: {
     }
   }
 
-  const projected = market && amount !== null
-    ? Number(market.curve.sold) + (buying ? 1 : -1) * Number(quantity) : null;
   const stale = !!error || !!market && now - market.refreshedAt > 60_000;
   const catchingUp = trade.status === 'rechecking' || !!inclusion && !marketCaughtUp;
   const historyUnavailable = !!market && market.historyState !== 'verified';
@@ -127,6 +125,11 @@ export function TradeV2({session, side, setSide}: {
           </dl>
         </header>
         <div className="preview-layout">
+          <div className="preview-market-column preview-chart-column">
+            <PreviewChart market={market} zh={zh} loading={loading} stale={stale || catchingUp} />
+            <RecentTrades market={market} zh={zh} />
+          </div>
+          <div className="preview-market-column preview-ticket-column">
           <TradeTicket
             side={side} setSide={setSide} quantity={quantity} setQuantity={setQuantity}
             amount={amount} market={market} balance={balance} holdings={holdings} zh={zh}
@@ -161,11 +164,9 @@ export function TradeV2({session, side, setSide}: {
               {trade.error} {!trade.pending && <button type="button" onClick={trade.dismissError}>{zh ? '关闭' : 'Dismiss'}</button>}
             </p>}
           </TradeTicket>
-          <div className="preview-market-column">
-            <PreviewChart projected={market && projected === Number(market.supply) ? null : projected} market={market} zh={zh} loading={loading} />
             <section className="preview-card preview-state" aria-labelledby="preview-state-title">
               <div className="preview-card-heading">
-                <h2 id="preview-state-title">{zh ? '市场状态' : 'Market state'}</h2>
+                <h2 id="preview-state-title">{zh ? '市场详情' : 'Market details'}</h2>
                 <button type="button" onClick={() => void refresh()}>{zh ? '刷新' : 'Refresh'} ↻</button>
               </div>
               <dl>
