@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {CandlestickSeries, ColorType, HistogramSeries, createChart, type LogicalRange, type Time, type UTCTimestamp} from 'lightweight-charts';
+import {CandlestickSeries, ColorType, HistogramSeries, createChart, type LogicalRange, type Time, type UTCTimestamp, type WhitespaceData} from 'lightweight-charts';
 import type {MarketData, TradeEvent} from './types';
 import {buildVerifiedPriceSeries, intervals, executionKey, type PriceBar, type Timeframe} from './verified-price-series';
 import {formatCkb} from './rpc';
@@ -11,13 +11,28 @@ const down = '#f08087';
 const ckb = (value: bigint) => Number(value) / 1e8;
 const timestamp = (time: number) => time as UTCTimestamp;
 
+const maxWhitespacePoints = 240;
+
+function timelineWhitespace(bars: PriceBar[], frame: Timeframe): WhitespaceData<UTCTimestamp>[] {
+  const interval = intervals[frame];
+  const first = bars[0].time;
+  const last = bars[bars.length - 1].time;
+  const stride = interval * Math.max(1, Math.ceil((last - first) / interval / maxWhitespacePoints));
+  const populated = new Set(bars.map(bar => bar.time));
+  const points: WhitespaceData<UTCTimestamp>[] = [];
+  for (let time = first + stride; time < last; time += stride) {
+    if (!populated.has(time)) points.push({time: timestamp(time)});
+  }
+  return points;
+}
+
 export default function PreviewChart({market, zh, loading, stale}: {
   market: MarketData | null; zh: boolean; loading: boolean; stale: boolean;
 }) {
   const [frame, setFrame] = useState<Timeframe>('4h');
   const [hover, setHover] = useState<PriceBar | null>(null);
   const plot = useRef<HTMLDivElement>(null);
-  const ranges = useRef(new Map<Timeframe, LogicalRange>());
+  const ranges = useRef(new Map<Timeframe, {range: LogicalRange; times: number[]}>());
   const reset = useRef<() => void>(() => {});
   const series = useMemo(() => market && buildVerifiedPriceSeries(market, frame), [market, frame]);
   const locale = zh ? 'zh-CN' : 'en';
@@ -37,7 +52,7 @@ export default function PreviewChart({market, zh, loading, stale}: {
       localization: {locale, timeFormatter: (time: Time) => typeof time === 'number' ? utc.format(time * 1000) + ' UTC' : ''},
       grid: {vertLines: {color: '#222b28'}, horzLines: {color: '#27312e'}},
       rightPriceScale: {borderVisible: false, minimumWidth: 59},
-      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18, maxBarSpacing: 52, minBarSpacing: 4, lockVisibleTimeRangeOnResize: true},
+      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18, maxBarSpacing: 52, minBarSpacing: 4, lockVisibleTimeRangeOnResize: true, ignoreWhitespaceIndices: false},
       crosshair: {horzLine: {labelVisible: false}},
     });
     const candles = chart.addSeries(CandlestickSeries, {
@@ -51,26 +66,37 @@ export default function PreviewChart({market, zh, loading, stale}: {
     chart.panes()[0].setStretchFactor(0.77);
     chart.panes()[1].setStretchFactor(0.23);
     volume.priceScale().applyOptions({scaleMargins:{top:0.12,bottom:0}});
-    candles.setData(series.bars.map(bar => ({
+    const whitespace = timelineWhitespace(series.bars, frame);
+    candles.setData([...whitespace, ...series.bars.map(bar => ({
       time: timestamp(bar.time), open: ckb(bar.open), high: ckb(bar.high), low: ckb(bar.low), close: ckb(bar.close),
-    })));
-    volume.setData(series.bars.map(bar => ({
+    }))].sort((a,b) => a.time - b.time));
+    volume.setData([...whitespace, ...series.bars.map(bar => ({
       time: timestamp(bar.time), value: ckb(bar.volume), color: bar.close >= bar.open ? '#438773' : '#9c555c',
-    })));
+    }))].sort((a,b) => a.time - b.time));
     if (series.latest !== null) candles.createPriceLine({
       price: ckb(series.latest), color: up, lineWidth: 1, lineStyle: 2, axisLabelVisible: false,
     });
     const byTime = new Map(series.bars.map(bar => [bar.time, bar]));
     chart.subscribeCrosshairMove(({time}) => setHover(typeof time === 'number' ? byTime.get(time) ?? null : null));
-    const fit = () => chart.timeScale().fitContent();
-    reset.current = fit;
     const scale = chart.timeScale();
-    const savedRange = ranges.current.get(frame);
-    if (savedRange) scale.setVisibleLogicalRange(savedRange);
-    else fit();
+    const times = [...series.bars.map(bar => bar.time), ...whitespace.map(point => point.time)].sort((a,b) => a - b);
+    const fit = () => {
+      // Keep long timelines navigable at the minimum readable candle spacing.
+      const visible = Math.min(times.length, Math.max(1, Math.floor(scale.width() / 4) - 2));
+      scale.setVisibleLogicalRange({from: times.length - visible - 1, to: times.length - 0.5});
+    };
+    reset.current = fit;
+    const saved = ranges.current.get(frame);
+    if (saved) {
+      const followingLatest = saved.range.to >= saved.times.length - 1;
+      const anchor = Math.max(0, Math.min(saved.times.length - 1, Math.floor(saved.range.from)));
+      const currentAnchor = times.findIndex(time => time >= saved.times[anchor]);
+      const shift = followingLatest ? times.length - saved.times.length : Math.max(0, currentAnchor) - anchor;
+      scale.setVisibleLogicalRange({from: saved.range.from + shift, to: saved.range.to + shift});
+    } else fit();
     return () => {
       const range = scale.getVisibleLogicalRange();
-      if (range) ranges.current.set(frame, range);
+      if (range) ranges.current.set(frame, {range, times});
       reset.current = () => {};
       chart.remove();
     };
@@ -102,7 +128,7 @@ export default function PreviewChart({market, zh, loading, stale}: {
         </div>
       </> : <div className="preview-plot preview-empty" role="status">{loading ? (zh ? '正在验证市场…' : 'Verifying market…') : (zh ? '已验证价格历史暂不可用' : 'Verified price history unavailable')}</div>}
       <footer>
-        <span>{series && series.bars.length <= 3 ? (zh ? '成交较少，仅显示有成交的周期 · 成交量以 CKB 计' : 'Sparse history · populated intervals only · Volume in CKB') : (zh ? '成交量 · CKB · UTC' : 'Volume · CKB · UTC')}</span>
+        <span>{series && series.bars.length <= 3 ? (zh ? '成交较少，空白周期无蜡烛 · 成交量以 CKB 计' : 'Sparse history · blank intervals have no candles · Volume in CKB') : (zh ? '成交量 · CKB · UTC' : 'Volume · CKB · UTC')}</span>
         <a href="https://www.tradingview.com/" target="_blank" rel="noreferrer">Lightweight Charts™ by TradingView</a>
       </footer>
     </section>
