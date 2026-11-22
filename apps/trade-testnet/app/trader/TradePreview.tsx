@@ -133,7 +133,7 @@ export function TradeV2({session, side, setSide}: {
           <TradeTicket
             side={side} setSide={setSide} quantity={quantity} setQuantity={setQuantity}
             amount={amount} market={market} balance={balance} holdings={holdings} zh={zh}
-            action={action} submit={submit}
+            action={action} submit={submit} sellAction={walletReady && !buying && review !== 'unavailable'}
             disabled={walletOpening || trade.busy || (walletReady && (!canPrepare || review === 'updating'))}
           >
             {issue && <p role="alert" className="preview-note">{copy(locale, issue)}</p>}
@@ -201,7 +201,7 @@ function readAttemptHash(raw: string) {
   } catch { return ''; }
 }
 
-function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, setQuantity, amount, action, submit, disabled, children}: {
+function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, setQuantity, amount, action, submit, sellAction, disabled, children}: {
   market: MarketData | null;
   balance: bigint | null;
   holdings: bigint | null;
@@ -213,6 +213,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   amount: bigint | null;
   action: string;
   submit: () => void;
+  sellAction: boolean;
   disabled: boolean;
   children: React.ReactNode;
 }) {
@@ -284,7 +285,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
         <p>{zh ? '交易数量越大，成交价格沿曲线变化越多。此笔交易的平均成交价与当前单价相差至少 10%。' : 'This trade size moves along the curve. Its average execution price differs from the current unit price by at least 10%.'}</p>
       </div>}
       {market && quantity && amount === null && <p role="status" className="preview-note">{zh ? '该数量无法报价。请输入可用范围内的整数。' : 'Quote unavailable. Enter a whole quantity within market limits.'}</p>}
-      <button type="button" className="preview-action" disabled={disabled} onClick={submit}>{action}</button>
+      <button type="button" className="preview-action" data-sell={sellAction} disabled={disabled} onClick={submit}>{action}</button>
       {children}
     </section>
   );

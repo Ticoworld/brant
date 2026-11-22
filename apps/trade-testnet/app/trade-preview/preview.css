@@ -24,7 +24,7 @@
   cursor: pointer;
 }
 .trade-preview :is(a,button,input):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
-.preview-canvas { width: calc(100% - clamp(36px, 7vw, 112px)); max-width: 1520px; }
+.preview-canvas { width: calc(100% - clamp(32px, 3vw, 64px)); max-width: 2200px; }
 .preview-canvas { margin: 0 auto; padding: 34px 0 60px; }
 .preview-market { display: flex; align-items: center; gap: 32px; margin-bottom: 30px; }
 .preview-identity { display: flex; align-items: center; gap: 16px; }
@@ -50,7 +50,7 @@
 .trade-preview dd small { font-size: 13px; color: var(--muted); letter-spacing: 0; font-weight: 450; }
 .trade-preview [data-tone="mint"] { color: var(--mint); }
 .trade-preview [data-tone="sell"] { color: var(--sell); }
-.preview-layout { display: grid; grid-template-columns: minmax(0, 1fr) clamp(360px, 27%, 410px); gap: 32px; align-items: start; }
+.preview-layout { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 24px; align-items: start; }
 .preview-market-column { display: grid; gap: 20px; min-width: 0; }
 .preview-card { background: var(--surface); border-radius: 24px; padding: 24px; min-width: 0; }
 .preview-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -84,7 +84,7 @@
 .preview-ticket-details p { display: flex; justify-content: space-between; gap: 10px; }
 .preview-ticket-details strong { color: var(--ink); font-weight: 500; text-align: right; }
 .trade-preview .preview-action { width: 100%; min-height: 54px; margin-top: 18px; border-radius: 15px; background: var(--mint); color: #0b2219; font-size: 15px; font-weight: 700; }
-.preview-ticket[data-side="sell"] .preview-action { background: var(--sell); color: #281216; }
+.preview-ticket .preview-action[data-sell="true"] { background: var(--sell); color: #281216; }
 .trade-preview .preview-action:disabled { opacity: .5; cursor: default; }
 .trade-preview .preview-note { margin-top: 10px; text-align: center; color: var(--muted); font-size: 13px; }
 .preview-chart-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 13px; background: var(--canvas); }
@@ -167,4 +167,25 @@
   .preview-candle-readout { display: grid; }
   .preview-recent :is(th,td) { font-size: 12px; padding-inline: 3px; }
   .preview-recent td a { min-width: 24px; }
+}
+
+@media (max-width: 560px) {
+  .preview-recent thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .preview-recent :is(table,tbody) { display: block; }
+  .preview-recent tbody tr {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr) 40px;
+    grid-template-areas: "side quantity amount link" "time time average link";
+    gap: 3px 8px;
+    align-items: center;
+    padding-block: 9px;
+  }
+  .preview-recent td { padding: 0; }
+  .preview-recent td:nth-child(1) { grid-area: time; color: var(--muted); }
+  .preview-recent td:nth-child(2) { grid-area: side; font-weight: 650; }
+  .preview-recent td:nth-child(3) { grid-area: quantity; }
+  .preview-recent td:nth-child(4) { grid-area: amount; text-align: right; }
+  .preview-recent td:nth-child(5) { grid-area: average; text-align: right; color: var(--muted); }
+  .preview-recent td:nth-child(6) { grid-area: link; }
+  .preview-recent td a { min-width: 40px; min-height: 40px; }
 }

@@ -10,8 +10,8 @@
   gap: 12px 28px;
   flex-wrap: wrap;
   min-height: 68px;
-  width: calc(100% - clamp(32px, 7vw, 112px));
-  max-width: 1520px;
+  width: calc(100% - clamp(32px, 3vw, 64px));
+  max-width: 2200px;
   margin-inline: auto;
   padding-block: 8px;
 }

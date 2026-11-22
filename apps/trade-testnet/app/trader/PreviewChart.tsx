@@ -1,7 +1,7 @@
 "use client";
 
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {CandlestickSeries, ColorType, HistogramSeries, createChart, type Time, type UTCTimestamp} from 'lightweight-charts';
+import {CandlestickSeries, ColorType, HistogramSeries, createChart, type LogicalRange, type Time, type UTCTimestamp} from 'lightweight-charts';
 import type {MarketData, TradeEvent} from './types';
 import {buildVerifiedPriceSeries, intervals, executionKey, type PriceBar, type Timeframe} from './verified-price-series';
 import {formatCkb} from './rpc';
@@ -17,6 +17,7 @@ export default function PreviewChart({market, zh, loading, stale}: {
   const [frame, setFrame] = useState<Timeframe>('4h');
   const [hover, setHover] = useState<PriceBar | null>(null);
   const plot = useRef<HTMLDivElement>(null);
+  const ranges = useRef(new Map<Timeframe, LogicalRange>());
   const reset = useRef<() => void>(() => {});
   const series = useMemo(() => market && buildVerifiedPriceSeries(market, frame), [market, frame]);
   const locale = zh ? 'zh-CN' : 'en';
@@ -36,7 +37,7 @@ export default function PreviewChart({market, zh, loading, stale}: {
       localization: {locale, timeFormatter: (time: Time) => typeof time === 'number' ? utc.format(time * 1000) + ' UTC' : ''},
       grid: {vertLines: {color: '#222b28'}, horzLines: {color: '#27312e'}},
       rightPriceScale: {borderVisible: false, minimumWidth: 59},
-      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18, maxBarSpacing: series.bars.length <= 3 ? 64 : 0},
+      timeScale: {borderVisible: false, timeVisible: true, secondsVisible: false, allowBoldLabels: false, rightOffsetPixels: 18, maxBarSpacing: 52, minBarSpacing: 4, lockVisibleTimeRangeOnResize: true},
       crosshair: {horzLine: {labelVisible: false}},
     });
     const candles = chart.addSeries(CandlestickSeries, {
@@ -63,13 +64,17 @@ export default function PreviewChart({market, zh, loading, stale}: {
     chart.subscribeCrosshairMove(({time}) => setHover(typeof time === 'number' ? byTime.get(time) ?? null : null));
     const fit = () => chart.timeScale().fitContent();
     reset.current = fit;
-    chart.timeScale().subscribeSizeChange(fit);
-    fit();
+    const scale = chart.timeScale();
+    const savedRange = ranges.current.get(frame);
+    if (savedRange) scale.setVisibleLogicalRange(savedRange);
+    else fit();
     return () => {
+      const range = scale.getVisibleLogicalRange();
+      if (range) ranges.current.set(frame, range);
       reset.current = () => {};
       chart.remove();
     };
-  }, [series, locale, utc]);
+  }, [series, locale, utc, frame]);
 
   const active = series && (hover && series.bars.includes(hover) ? hover : series.bars.at(-1));
   return (
@@ -113,17 +118,17 @@ export function RecentTrades({market, zh}: {market: MarketData | null; zh: boole
       <h2 id="preview-recent-title">{zh ? '最近成交' : 'Recent trades'}</h2>
       <a href="/activity">{zh ? '查看活动' : 'View activity'} ↗</a>
     </div>
-    {rows.length ? <table>
+    {rows.length ? <table role="table">
       <thead><tr>{(zh ? ['时间','方向','数量','金额','成交均价','交易'] : ['Time','Side','Quantity','Amount','Average price','Transaction']).map(label => <th key={label} scope="col">{label}</th>)}</tr></thead>
-      <tbody>{rows.map(event => {
+      <tbody role="rowgroup">{rows.map(event => {
         const date = new Date(Number(event.timestampMs));
-        return <tr key={executionKey(event)}>
-          <td><time dateTime={date.toISOString()}>{date.toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time></td>
-          <td data-tone={event.side === 'buy' ? 'mint' : 'sell'}>{event.side === 'buy' ? (zh ? '买入' : 'Buy') : (zh ? '卖出' : 'Sell')}</td>
-          <td>{event.quantity} {symbol}</td>
-          <td>{formatCkb(event.amountShannons)} CKB</td>
-          <td>{averagePrice(event).toLocaleString(locale,{maximumFractionDigits:8})} CKB/{symbol}</td>
-          <td><a aria-label={(zh ? '交易浏览器 ' : 'Transaction explorer ') + executionKey(event)} href={'https://pudge.explorer.nervos.org/transaction/' + event.hash} target="_blank" rel="noreferrer">↗</a></td>
+        return <tr role="row" key={executionKey(event)}>
+          <td role="cell"><time dateTime={date.toISOString()}>{date.toLocaleString(locale,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</time></td>
+          <td role="cell" data-tone={event.side === 'buy' ? 'mint' : 'sell'}>{event.side === 'buy' ? (zh ? '买入' : 'Buy') : (zh ? '卖出' : 'Sell')}</td>
+          <td role="cell">{event.quantity} {symbol}</td>
+          <td role="cell">{formatCkb(event.amountShannons)} CKB</td>
+          <td role="cell">{averagePrice(event).toLocaleString(locale,{maximumFractionDigits:8})} CKB/{symbol}</td>
+          <td role="cell"><a aria-label={(zh ? '交易浏览器 ' : 'Transaction explorer ') + executionKey(event)} href={'https://pudge.explorer.nervos.org/transaction/' + event.hash} target="_blank" rel="noreferrer">↗</a></td>
         </tr>;
       })}</tbody>
     </table> : <p className="preview-chart-caption">{zh ? '暂无已验证成交记录' : 'Verified trades unavailable'}</p>}
