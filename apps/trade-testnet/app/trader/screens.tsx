@@ -20,49 +20,7 @@ import SwapKlinePanel from './SwapKlinePanel';
 
 const Gate2LaunchFlow=dynamic(()=>import('../v2/deploy/review'),{ssr:false});
 
-export function MarketsScreen(){
-  const {locale}=useLocale(),{data,loading,error,lastSuccess,refresh}=useMarketData('pudge-xudt'),[search,setSearch]=useState('');
-  const filtered=data&&[data].filter(market=>`${market.token.name} ${market.token.symbol} ${market.pair}`.toLowerCase().includes(search.toLowerCase()));
-  return <TraderShell><div className="space-y-6">
-    <section className="flex flex-wrap items-end justify-between gap-4 border-b border-[#28302f] pb-5">
-      <div><h1 className="m-0 text-[22px] font-semibold tracking-normal">{copy(locale,'markets')}</h1></div>
-      <label className="w-full max-w-[360px] text-[11px] text-[#8f9b96]">{copy(locale,'search')}<input value={search} onChange={event=>setSearch(event.target.value)} className="mt-1 min-h-10 w-full rounded-[3px] border border-[#303a37] bg-[#111615] px-3 text-sm text-[#e6ece9] outline-none focus:border-[#6d9583]" /></label>
-    </section>
-    {data&&<MarketList market={data} locale={locale} />}
-    {!data&&loading&&<p role="status" className="py-10 text-sm text-[#a4afab]">{copy(locale,'loading')}</p>}
-    {!data&&error&&<section className="flex flex-wrap items-center justify-between gap-3 border-y border-[#533c36] py-4"><p className="m-0 text-sm text-[#f0b8ad]">{copy(locale,'unavailable')}</p><button onClick={()=>void refresh()} className="min-h-9 rounded-[3px] border border-[#4a5952] px-3 text-xs font-medium text-[#dce5e1] hover:bg-[#1a2420]">{copy(locale,'retry')}</button></section>}
-    {data&&filtered?.length===0&&<p className="border-y border-[#28302f] py-8 text-sm text-[#9ba6a2]">{copy(locale,'searchEmpty')}</p>}
-    {data&&<MarketRefreshState market={data} error={error} lastSuccess={lastSuccess} refresh={refresh} locale={locale} />}
-  </div></TraderShell>;
-}
-
-function MarketList({market,locale}:{market:MarketData;locale:Locale}){
-  return <section aria-label={copy(locale,'markets')}>
-    <div className="hidden grid-cols-[minmax(220px,1.4fr)_minmax(120px,.8fr)_minmax(130px,.8fr)_minmax(130px,.8fr)_minmax(140px,.8fr)_110px] gap-4 border-b border-[#303a37] px-3 py-2 text-[10px] uppercase text-[#7f8b86] md:grid">
-      <span>{copy(locale,'asset')}</span><span>{copy(locale,'pair')}</span><span>{copy(locale,'buyPrice')}</span><span>{copy(locale,'sellPrice')}</span><span>{copy(locale,'reserve')}</span><span />
-    </div>
-    <div className="border-b border-[#28302f]">
-      <div className="grid gap-3 px-2 py-4 md:grid-cols-[minmax(220px,1.4fr)_minmax(120px,.8fr)_minmax(130px,.8fr)_minmax(130px,.8fr)_minmax(140px,.8fr)_110px] md:items-center md:gap-4 md:px-3">
-        <div className="flex min-w-0 items-center gap-3"><div aria-hidden="true" className="grid size-10 shrink-0 place-items-center border border-[#34423c] bg-[#14201b] text-sm font-semibold text-[#83e2b5]">{market.token.symbol.slice(0,1).toUpperCase()}</div><div className="min-w-0"><div className="truncate text-sm font-semibold text-[#e6ece9]">{market.token.name}</div><div className="mt-0.5 text-[11px] text-[#899590]">{market.token.symbol} · {copy(locale,'supply')} {market.supply}</div></div></div>
-        <div className="flex justify-between text-xs md:block"><span className="text-[#87938e] md:hidden">{copy(locale,'pair')}</span><span className="text-[#c8d2ce]">{market.pair}</span></div>
-        <Metric label={copy(locale,'buyPrice')} value={`${formatCkb(market.buyOneShannons,4)} CKB`} />
-        <Metric label={copy(locale,'sellPrice')} value={`${formatCkb(market.sellOneShannons,4)} CKB`} />
-        <Metric label={copy(locale,'reserve')} value={`${formatCkb(market.reserveShannons,2)} CKB`} />
-        <Link href={`/market/${market.id}`} className="inline-flex min-h-9 items-center justify-center rounded-[3px] bg-[#72dfb0] px-3 text-xs font-semibold text-[#0a1710] no-underline transition-colors hover:bg-[#8ce9bd]">{copy(locale,'trade')}</Link>
-      </div>
-      <div className="flex flex-wrap gap-x-6 gap-y-1 px-2 pb-3 text-[10px] text-[#77837e] md:pl-[60px]"><span>{copy(locale,'circulating')}: {market.circulating}</span><span>{copy(locale,'inventory')}: {market.inventory}</span></div>
-    </div>
-    <p className="mb-0 mt-3 text-[10px] text-[#77837e]">{copy(locale,market.token.metadata==='off-chain-testnet-registry'?'registryMetadata':'metadataUnavailable')}</p>
-  </section>;
-}
-
-function Metric({label,value}:{label:string;value:string}){
-  return <div className="flex justify-between gap-3 text-xs md:block"><span className="text-[#87938e] md:hidden">{label}</span><span className="tabular-nums text-[#d4ddd9]">{value}</span></div>;
-}
-
-function MarketRefreshState({market,error,lastSuccess,refresh,locale}:{market:MarketData;error:string;lastSuccess:number;refresh:()=>Promise<void>;locale:Locale}){
-  return <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#252d2b] pt-3 text-[10px] text-[#7f8b86]"><span>{error?(locale==='zh-CN'?'更新失败，显示上次验证的数据':'Refresh failed · showing last verified data'):copy(locale,'marketStatus')} · {market.tip.number}</span><button title={copy(locale,'reload')} onClick={()=>void refresh()} className="min-h-7 rounded-[3px] border border-[#303a37] px-2.5 text-[#aeb8b4] hover:bg-[#19211e]">{lastSuccess?new Date(lastSuccess).toLocaleTimeString(locale==='zh-CN'?'zh-CN':'en-US',{hour:'2-digit',minute:'2-digit'}):copy(locale,'reload')}</button></div>;
-}
+export {default as MarketsScreen} from './MarketsScreen';
 
 export function MarketScreen({id}:{id:string}){
   const {locale}=useLocale();
