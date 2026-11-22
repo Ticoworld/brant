@@ -22,14 +22,14 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     if(requestedId){setMarketId(requestedId);return;}
     try{const active=localStorage.getItem(ACTIVE_MARKET_KEY);setMarketId(active||DEFAULT_MARKET);}catch{setMarketId(DEFAULT_MARKET);}
   },[requestedId]);
-  const refresh=useCallback(async function refreshMarket(force=true): Promise<void> {
-    const canonical=force||requireCanonical||marketId!==DEFAULT_MARKET;
+  const requestMarket=useCallback(async function refreshMarket(force:boolean, canonical:boolean): Promise<void> {
+
     const existing=requests.get(marketId);
     if(existing){
       await existing.promise;
       if(canonical&&!existing.canonical){
         const settled=readSnapshot(marketId);
-        if(settled.displayOnly||settled.error)await refreshMarket(true);
+        if(settled.displayOnly||settled.error)await refreshMarket(true,true);
       }
       return;
     }
@@ -56,7 +56,9 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
       }finally{requests.delete(marketId);}
     })();
     requests.set(marketId,{canonical,promise:request});return request;
-  },[marketId,requireCanonical]);
+  },[marketId]);
+  const refresh=useCallback((force=true)=>requestMarket(force,force||requireCanonical||marketId!==DEFAULT_MARKET),[requestMarket,requireCanonical,marketId]);
+  const refreshDisplay=useCallback(()=>requestMarket(true,requireCanonical||marketId!==DEFAULT_MARKET),[requestMarket,requireCanonical,marketId]);
   useEffect(()=>{
     const set=listeners.get(marketId)||new Set();set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));
     const update=()=>{void refresh(false);};
@@ -65,5 +67,5 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     document.addEventListener('visibilitychange',update);
     return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);document.removeEventListener('visibilitychange',update);};
   },[marketId,refresh]);
-  return {...state,refresh};
+  return {...state,refresh,refreshDisplay};
 }

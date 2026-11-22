@@ -15,7 +15,7 @@ const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/
 
 export default function MarketsScreen() {
   const query = useMarketData('pudge-xudt');
-  return <MarketsListing markets={query.data ? [query.data] : []} {...query}/>;
+  return <MarketsListing markets={query.data ? [query.data] : []} {...query} refresh={query.refreshDisplay}/>;
 }
 
 export function MarketsListing({markets, loading=false, error='', displayOnly=false, refresh}: {
@@ -32,8 +32,8 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
   const term = markets.length > 1 ? search.trim().toLowerCase() : '';
   const shown = markets.filter(({token, pair}) => [token.name, token.symbol, pair].some(value => value.toLowerCase().includes(term)));
   const labels = zh
-    ? ['边际买入价', '边际卖出价', '可用曲线储备', '可用库存']
-    : ['Marginal Buy', 'Marginal Sell', 'Spendable curve reserve', 'Available inventory'];
+    ? ['买入价格', '卖出价格', '可用曲线储备', '可用库存']
+    : ['Buy price', 'Sell price', 'Spendable curve reserve', 'Available inventory'];
   const refreshListing = async () => {
     setRefreshing(true);
     try { await refresh?.(); } finally { setRefreshing(false); }
@@ -44,7 +44,7 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
       <header className="discovery-heading">
         <div>
           <h1>{copy(locale,'markets')}</h1>
-          <p>{markets.length.toLocaleString(locale)} {zh ? '个已列出市场' : markets.length === 1 ? 'listed market' : 'listed markets'}</p>
+          <p>{markets.length === 0 && (loading || error) ? (zh ? '市场数量未知' : 'Market count unavailable') : <>{markets.length.toLocaleString(locale)} {zh ? '个已列出市场' : markets.length === 1 ? 'listed market' : 'listed markets'}</>}</p>
         </div>
         <div className="discovery-controls">
           {markets.length > 1 && <label>{copy(locale,'search')}
@@ -75,28 +75,28 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
                 <div><h2>{market.pair}</h2><p>{market.token.name}</p></div>
               </div>
               {labels.map((label,index) => <dl key={label} className="discovery-metric" data-index={index}>
-                <dt>{label}</dt><dd>{values[index]} <small>{index === 3 ? market.token.symbol : 'CKB'}</small></dd>
+                <dt>{label}</dt><dd>{values[index]} <small>{index < 2 ? 'CKB/' + market.token.symbol : index === 3 ? market.token.symbol : 'CKB'}</small></dd>
               </dl>)}
               <Link className="discovery-trade" href={'/market/'+market.id}>{copy(locale,'trade')} <span aria-hidden="true">↗</span></Link>
             </div>
             <div className="discovery-provenance">
-              <span>{checkpoint ? (zh ? '市场检查点' : 'Market checkpoint') : (zh ? '链上已验证' : 'Chain verified')} · <time dateTime={date.toISOString()}>{date.toLocaleString(locale,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</time></span>
+              <span>{checkpoint ? (zh ? '市场检查点' : 'Market checkpoint') : (zh ? '成交历史已验证' : 'History verified')} · {zh ? '读取时间' : 'Market read'} <time dateTime={date.toISOString()}>{date.toLocaleString(locale,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}</time></span>
               <details>
                 <summary>{zh ? '市场来源' : 'Market provenance'}</summary>
                 <p>{zh ? '登记显示名称' : 'Registry display name'} · {market.token.name}</p>
                 <p>{zh ? '代币类型哈希' : 'Token type hash'} <code>{market.token.typeHash}</code></p>
-                <p>{zh ? '已验证区块' : 'Verified block'} {BigInt(market.tip.number).toLocaleString(locale)}</p>
-                {checkpoint && <p>{zh ? '打开交易页面以验证成交历史。' : 'Open Trade to verify canonical trading history.'}</p>}
+                <p>{zh ? '快照区块' : 'Snapshot block'} {BigInt(market.tip.number).toLocaleString(locale)}</p>
+                {checkpoint && <p>{zh ? '此快照未验证链上成交历史。' : 'Canonical trading history is unavailable in this snapshot.'}</p>}
               </details>
             </div>
           </article>;
         })}
         {shown.length === 0 && <p className="discovery-empty" role="status">
-          {loading ? copy(locale,'loading') : error ? copy(locale,'unavailable') : term ? copy(locale,'searchEmpty') : (zh ? '暂无已列出市场' : 'No listed markets')}
+          {loading ? copy(locale,'loading') : error ? copy(locale,'unavailable') : term ? (zh ? '没有符合搜索条件的市场' : 'No markets match your search') : (zh ? '暂无已列出市场' : 'No listed markets')}
         </p>}
       </section>
       {error && markets.length > 0 && <p className="discovery-error" role="status">
-        {zh ? '刷新失败，继续显示上次验证的数据。' : 'Refresh failed. Showing last verified data.'}
+        {zh ? '刷新失败。正在显示之前的市场快照。' : 'Refresh failed. Showing the previous market snapshot.'}
       </p>}
     </div>
   </TraderShell>;
