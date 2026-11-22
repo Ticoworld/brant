@@ -48,7 +48,7 @@ export async function verifyTradeNavigation(browser, base) {
       }
       await page.getByText('Verified', {exact: true}).waitFor({timeout: 8_000});
       assert.equal(canonicalRequests, scenario === 'canonical-response' ? 0 : 1);
-      await page.getByRole('button', {name: 'Connect Wallet'}).waitFor();
+      await page.locator('.brant-header').getByRole('button', {name: 'Connect Wallet'}).waitFor();
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
       assert.equal(await page.getByRole('link', {name: /Classic Trade|Trade preview|Trade V2/}).count(), 0);
       console.log('PASS Markets to Trade', scenario);

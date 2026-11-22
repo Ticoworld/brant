@@ -172,7 +172,7 @@ try {
   const fixture = async (state = "active", query = "") => {
     await p.goto(base + "/experience-fixture?state=" + state + query);
     await p
-      .getByText("CONTROLLED LOCAL UI FIXTURE", { exact: false })
+      .getByText("LOCAL UI DEMO · sample values only, not live markets · no wallet or Pudge execution", { exact: false })
       .waitFor();
   };
   const firstMarket = () =>

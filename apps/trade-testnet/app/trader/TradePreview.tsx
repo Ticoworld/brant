@@ -1,6 +1,6 @@
 "use client";
 
-import Link from 'next/link';
+import {NavigationHeader} from './navigation';
 import {useEffect, useRef, useState} from 'react';
 import {useLocale} from '../i18n-provider';
 import {quote} from '../../lib/v2-engine/curve';
@@ -24,7 +24,7 @@ export function TradeV2({session, side, setSide}: {
   side: Side;
   setSide: (side: Side) => void;
 }) {
-  const {locale, setLocale} = useLocale();
+  const {locale} = useLocale();
   const zh = locale === 'zh-CN';
   const {account, marketQuery, market, trade, inclusion, marketCaughtUp, position} = session;
   const {loading, error, refresh} = marketQuery;
@@ -112,26 +112,14 @@ export function TradeV2({session, side, setSide}: {
     if (review === 'unavailable') prepareQuote(side, count, amount);
     if (review === 'ready') void trade.trade(side, count, amount);
   };
-  const address = account.state === 'ready' ? account.address : '';
   return (
     <div className="trade-preview">
-      <header className="preview-nav"><div className="preview-nav-inner">
-        <Link href="/" className="preview-brand"><img src="/icon.svg" width="30" height="30" alt="" />Brant</Link>
-        <nav aria-label={zh ? '主导航' : 'Main navigation'}>
-          <Link href="/" className="preview-discover">{zh ? '市场' : 'Markets'}</Link>
-          <Link href={`/market/${marketId}`} aria-current="page">{copy(locale, 'trade')}</Link>
-        </nav>
-        <div className="preview-nav-meta">
-          <span className="preview-network"><i />Pudge</span>
-          {address && <span title={address}>{address.slice(0, 9)}…{address.slice(-5)}</span>}
-          <button type="button" onClick={() => setLocale(zh ? 'en' : 'zh-CN')} aria-label={zh ? 'Switch to English' : '切换到简体中文'}>{zh ? 'EN' : '简中'}</button>
-        </div>
-      </div></header>
+      <NavigationHeader account={account}/>
       <main className="preview-canvas">
         <header className="preview-market">
           <div className="preview-identity">
             <TokenMark symbol="RVK" />
-            <div><h1>{market?.pair ?? 'RVK / CKB'}</h1><p>{market?.token.name ?? 'Roveko Genesis'} <span>·</span> Pudge Testnet</p></div>
+            <div><h1>{market?.pair ?? 'RVK / CKB'}</h1><p>{market?.token.name ?? 'Roveko Genesis'}</p></div>
           </div>
           <dl className="preview-prices">
             <Metric label={zh ? '买入价 / RVK' : 'Buy price / RVK'} value={market && market.inventory !== '0' ? formatCkb(market.buyOneShannons) : '—'} unit="CKB" tone="mint" />
@@ -174,7 +162,7 @@ export function TradeV2({session, side, setSide}: {
             </p>}
           </TradeTicket>
           <div className="preview-market-column">
-            <PreviewChart projected={projected} market={market} zh={zh} loading={loading} />
+            <PreviewChart projected={market && projected === Number(market.supply) ? null : projected} market={market} zh={zh} loading={loading} />
             <section className="preview-card preview-state" aria-labelledby="preview-state-title">
               <div className="preview-card-heading">
                 <h2 id="preview-state-title">{zh ? '市场状态' : 'Market state'}</h2>
@@ -235,6 +223,8 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   const baseline = count !== null && unitPrice !== null ? count * unitPrice : null;
   const impact = amount !== null && baseline
     ? Number((buying ? amount - baseline : baseline - amount) * 10_000n / baseline) / 100 : null;
+  // Presentation warning only. 10% is 1,000 basis points.
+  const highImpact = impact !== null && impact >= 10;
   const unit = ' CKB / RVK';
   const tokenWell = (
     <label className="preview-well preview-editable" key="token">
@@ -247,7 +237,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   );
   const ckbWell = (
     <div className="preview-well preview-estimate" key="ckb">
-      <span>{buying ? (zh ? '交易总额' : 'Gross trade cost') : (zh ? '交易收入总额' : 'Gross proceeds')}</span>
+      <span>{buying ? (zh ? '预计交易金额' : 'Estimated trade amount') : (zh ? '预计收入总额' : 'Estimated gross proceeds')}</span>
       <div className="preview-well-row">
         <output>{amount === null ? '—' : formatCkb(amount)}</output>
         <span className="preview-token"><TokenMark symbol="CKB" />CKB</span>
@@ -256,7 +246,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   );
   return (
     <section className="preview-card preview-ticket" data-side={side} aria-labelledby="preview-ticket-title">
-      <div className="preview-card-heading"><h2 id="preview-ticket-title">{zh ? '交易' : 'Trade'}</h2><span>Pudge Testnet</span></div>
+      <div className="preview-card-heading"><h2 id="preview-ticket-title">{zh ? '交易' : 'Trade'}</h2></div>
       <div className="preview-segment" aria-label={zh ? '交易方向' : 'Trade side'}>
         {(['buy', 'sell'] as const).map(option => (
           <button type="button" key={option} aria-pressed={side === option} onClick={() => {setSide(option);}}>
@@ -279,11 +269,19 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
         <p>{zh ? '价格影响' : 'Price impact'} <strong>{impact === null ? '—' : impact.toLocaleString(zh ? 'zh-CN' : 'en', {maximumFractionDigits: 2}) + '%'}</strong></p>
         {amount !== null && <>
           <p>{zh ? '网络费用' : 'Network fee'} <strong>{formatCkb(PUDGE_TRADE_FEE)} CKB</strong></p>
-          <p>{zh ? '找零容量' : 'Change capacity'} <strong>{formatCkb(PUDGE_TRADE_CHANGE_CAPACITY)} CKB</strong></p>
-          <p>{zh ? '最低输入容量' : 'Minimum input capacity'} <strong>{formatCkb((buying ? amount : 0n) + PUDGE_TRADE_CHANGE_CAPACITY + PUDGE_TRADE_FEE)} CKB</strong></p>
-          <p>{buying ? (zh ? '所需总额（不含找零）' : 'Total CKB required, excluding change') : (zh ? '扣费后收入' : 'Net proceeds')} <strong>{formatCkb(buying ? amount + PUDGE_TRADE_FEE : amount > PUDGE_TRADE_FEE ? amount - PUDGE_TRADE_FEE : 0n)} CKB</strong></p>
+          <p className="preview-total">{buying ? (zh ? '应付总额' : 'Total to pay') : (zh ? '扣费后收入' : 'Net proceeds')} <strong>{formatCkb(buying ? amount + PUDGE_TRADE_FEE : amount > PUDGE_TRADE_FEE ? amount - PUDGE_TRADE_FEE : 0n)} CKB</strong></p>
+          <details className="preview-funding">
+            <summary>{zh ? '钱包资金要求' : 'Wallet funding requirements'}</summary>
+            <p>{zh ? '最低合格资金 Cell 容量' : 'Minimum eligible funding Cell capacity'} <strong>{formatCkb((buying ? amount : 0n) + PUDGE_TRADE_CHANGE_CAPACITY + PUDGE_TRADE_FEE)} CKB</strong></p>
+            <p>{zh ? '返还给钱包的找零容量' : 'Change capacity returned to wallet'} <strong>{formatCkb(PUDGE_TRADE_CHANGE_CAPACITY)} CKB</strong></p>
+            <p>{zh ? '需要一个合格的 CKB Cell。' : 'One eligible CKB Cell is required.'}</p>
+          </details>
         </>}
       </div>
+      {highImpact && <div role="status" className="preview-impact-warning">
+        <strong>{zh ? '价格影响较高' : 'High price impact'}</strong>
+        <p>{zh ? '交易数量越大，成交价格沿曲线变化越多。此笔交易的平均成交价与当前单价相差至少 10%。' : 'This trade size moves along the curve. Its average execution price differs from the current unit price by at least 10%.'}</p>
+      </div>}
       {market && quantity && amount === null && <p role="status" className="preview-note">{zh ? '该数量无法报价。请输入可用范围内的整数。' : 'Quote unavailable. Enter a whole quantity within market limits.'}</p>}
       <button type="button" className="preview-action" disabled={disabled} onClick={submit}>{action}</button>
       {children}

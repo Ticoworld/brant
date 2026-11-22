@@ -24,29 +24,7 @@
   cursor: pointer;
 }
 .trade-preview :is(a,button,input):focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
-.preview-nav-inner {
-  display: flex;
-  align-items: center;
-  gap: 34px;
-  min-height: 68px;
-  width: 100%;
-  margin-inline: auto;
-
-}
-.preview-brand, .preview-nav nav, .preview-nav-meta, .preview-network {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.preview-brand { font-size: 21px; font-weight: 700; letter-spacing: -.04em; }
-.preview-nav nav { gap: 6px; }
-.preview-nav nav a, .preview-nav-meta button { padding: 9px 12px; color: var(--muted); border-radius: 10px; white-space: nowrap; }
-.preview-nav nav a[aria-current] { background: #252b2a; color: var(--ink); }
-.preview-nav-meta { margin-left: auto; gap: 12px; }
-.preview-network { padding: 7px 12px; border-radius: 20px; background: var(--surface); }
-.preview-network i { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); }
-.preview-nav { border-bottom: 1px solid #202825; }
-.preview-nav-inner, .preview-canvas { width: calc(100% - clamp(36px, 7vw, 112px)); max-width: 1520px; }
+.preview-canvas { width: calc(100% - clamp(36px, 7vw, 112px)); max-width: 1520px; }
 .preview-canvas { margin: 0 auto; padding: 34px 0 60px; }
 .preview-market { display: flex; align-items: center; gap: 32px; margin-bottom: 30px; }
 .preview-identity { display: flex; align-items: center; gap: 16px; }
@@ -123,10 +101,6 @@
   .preview-market { gap: 22px; flex-wrap: wrap; }
 }
 @media (max-width: 560px) {
-  .preview-nav-inner { gap: 8px; flex-wrap: wrap; padding-block: 10px; }
-  .preview-nav nav { order: 3; width: 100%; }
-  .preview-nav-meta { gap: 4px; }
-  .preview-nav-meta button { padding-inline: 8px; }
   .preview-canvas { padding-top: 26px; }
   .preview-market { margin-bottom: 20px; }
   .preview-card { padding: 16px; border-radius: 21px; }
@@ -154,9 +128,21 @@
 .preview-chart footer a { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 560px) {
   .preview-prices > div:first-child { border: 0; padding-left: 0; }
-  .preview-nav nav a, .preview-nav-meta button { min-height: 40px; }
 }
 
 .preview-settlement { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; }
 .trade-preview .preview-note :is(a,button) { text-decoration: underline; text-underline-offset: 3px; }
 .trade-preview .preview-note { overflow-wrap: anywhere; }
+
+.preview-ticket-details .preview-total {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid #303936;
+  color: var(--ink);
+  font-size: 15px;
+}
+.preview-funding { margin-top: 8px; }
+.preview-funding summary { cursor: pointer; min-height: 40px; padding-block: 10px; }
+.preview-impact-warning { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #382b20; color: #f3cb9b; font-size: 13px; }
+.preview-impact-warning p { margin-top: 3px; }
+.preview-history-readout { flex-basis: 100%; color: var(--ink); }
