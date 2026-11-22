@@ -1,0 +1,30 @@
+.portfolio-overview { padding: 34px 0 60px; color: #f2f5f4; font-size: 14px; }
+.portfolio-overview :is(h1,h2,p,dl,dd) { margin: 0; }
+.portfolio-heading { margin-bottom: 26px; }
+.portfolio-heading h1 { font-size: clamp(32px,3.1vw,46px); font-weight: 650; letter-spacing: -.055em; }
+.portfolio-heading p,.portfolio-overview dt,.portfolio-overview p { color: #aab7b3; }
+.portfolio-heading span { font-variant-numeric: tabular-nums; }
+.portfolio-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 24px; align-items: start; }
+.portfolio-surface { background: #151a19; border-radius: 22px; padding: 24px; min-width: 0; }
+.portfolio-surface h2 { font-size: 21px; font-weight: 640; letter-spacing: -.03em; }
+.portfolio-asset + .portfolio-asset { border-top: 1px solid #2a3430; margin-top: 24px; padding-top: 24px; }
+.portfolio-asset-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.portfolio-asset-heading a { margin-left: auto; color: #6cddb5; }
+.portfolio-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #d3ded8; color: #20352c; font-weight: 700; }
+.portfolio-mark-rvk { background: #254139; color: #a3f6d9; }
+.portfolio-balances { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.portfolio-balance dd { font-size: clamp(24px,2.6vw,38px); font-variant-numeric: tabular-nums; font-weight: 620; letter-spacing: -.04em; overflow-wrap: anywhere; }
+.portfolio-balance small,.portfolio-balance p { font-size: 13px; color: #aab7b3; letter-spacing: normal; }
+.portfolio-rvk-total { margin-bottom: 16px; }
+.portfolio-rvk-total dd { color: #6cddb5; }
+.portfolio-connect { max-width: 480px; }
+.portfolio-connect p,.portfolio-management > p { margin-top: 8px; }
+.portfolio-primary { background: #6cddb5; color: #10221b; border: 0; border-radius: 12px; min-height: 44px; padding: 0 16px; margin-top: 18px; font-weight: 650; }
+.portfolio-withdrawal { margin-top: 18px; container-type: inline-size; }
+.portfolio-withdrawal > section > div:nth-child(2) { grid-template-columns: minmax(0,1fr); }
+.portfolio-withdrawal :is(button,input) { border-radius: 10px; }
+.portfolio-overview :is(button,a,input):focus-visible { outline: 2px solid #6cddb5; outline-offset: 3px; }
+.portfolio-overview [role="alert"] { margin-top: 12px; color: #ecbd84; }
+.portfolio-overview [role="alert"] button,.portfolio-overview [role="status"] button { color: #6cddb5; text-decoration: underline; }
+@media (max-width: 900px) { .portfolio-layout { grid-template-columns: minmax(0,1fr); gap: 16px; } }
+@media (max-width: 560px) { .portfolio-overview { padding-top: 24px; } .portfolio-surface { padding: 17px; } }
