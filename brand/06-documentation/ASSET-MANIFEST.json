@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "approved_fg": [
+    "#0B0E0E",
+    "#FFFFFF"
+  ],
+  "approved_bg": [
+    "#FFFFFF",
+    "#0B0E0E",
+    "#6CDDB5"
+  ],
+  "master_sources": {
+    "bird": "/mnt/data/brant-identity-v1/06-charcoal-symbol-transparent.svg",
+    "wordmark": "/mnt/data/brant-selected-lockup/04-transparent-charcoal.svg"
+  },
+  "configurations": [
+    "horizontal",
+    "vertical",
+    "symbol",
+    "wordmark"
+  ],
+  "formats": [
+    "SVG",
+    "PNG",
+    "ICO"
+  ],
+  "svg_files": 30
+}
