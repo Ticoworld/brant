@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
 import {ccc} from '@ckb-ccc/core';
-const base='http://127.0.0.1:3000';
+const base=process.env.ROVEKO_TEST_URL||'http://127.0.0.1:3000';
 const response=await fetch(base+'/api/v2/pudge-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({method:'get_transaction',params:['0x7441f36f2467ae22eb223140cf5cab42430aeac5099825556f9a07f85c92179d']})});
 const {result}=await response.json(),l=result.transaction.outputs[4].lock;
 const address=ccc.Address.from({script:{codeHash:l.code_hash,hashType:l.hash_type,args:l.args},prefix:'ckt'}).toString();
@@ -23,9 +23,9 @@ for(const width of [1280,390]){
  await page.getByText(/UTXO\s*Global/i).first().click();
  const start=Date.now();
  await page.getByRole('button',{name:'CKB CKB',exact:true}).click();
- await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor();
+ await page.getByRole('alert').filter({hasText:'Could not verify your RVK balance'}).waitFor();
  await page.locator('#withdraw-quantity').waitFor({timeout:60000});
- await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor({state:'hidden',timeout:60000});
+ await page.getByRole('alert').filter({hasText:'Could not verify your RVK balance'}).waitFor({state:'hidden',timeout:60000});
  const ready=Date.now()-start;
  await page.getByRole('link',{name:'Markets',exact:true}).click();
  await page.getByRole('link',{name:'Portfolio',exact:true}).click();

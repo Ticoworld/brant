@@ -20,10 +20,18 @@ export function PortfolioScreen(){
   const account=useAccount(),query=useMarketData(),market=query.data,owner=account.state==='ready'?account.owner:'';
   const position=useOwnerPosition(owner,market);
   const tokenHash=market?.token.typeHash;
-  const [external,setExternal]=useState<{owner:string;root:string;identity:string;balance:bigint}|null>(null);
-  const [externalCurrent,setExternalCurrent]=useState(false);
+  const [external,setExternal]=useState<{key:string;balance:bigint;expiresAt:number}|null>(null);
+  const [scan,setScan]=useState<{key:string;state:'refreshing'|'ready'|'failed'}|null>(null);
+  const [retryScan,setRetryScan]=useState(0);
+  const [,updateFreshness]=useState(0);
   const root=market?.custodyRoot;
   const identity=market?.identity;
+  const balanceKey=JSON.stringify([owner,account.address,market?.genesis,identity,tokenHash,root]);
+  useEffect(()=>{
+    if(!external)return;
+    const timer=setTimeout(()=>updateFreshness(value=>value+1),Math.max(0,external.expiresAt-Date.now()));
+    return()=>clearTimeout(timer);
+  },[external]);
   useEffect(()=>{
     if(!owner||!identity||!tokenHash||!root||!account.address)return;
     let active=true;
@@ -31,7 +39,7 @@ export function PortfolioScreen(){
     const script=(value:ccc.Script)=>({code_hash:value.codeHash,hash_type:value.hashType,args:value.args});
     const refresh=async()=>{
       if(!active)return;
-      setExternalCurrent(false);
+      setScan({key:balanceKey,state:'refreshing'});
       try{
         const lock=(await ccc.Address.fromString(account.address,new ccc.ClientPublicTestnet())).script;
         if(lock.hash()!==owner)throw Error('Wallet changed');
@@ -53,28 +61,38 @@ export function PortfolioScreen(){
         }
         const [canonical,after]=await Promise.all([pudgeRpc('get_block_hash',[indexed.block_number]),pudgeRpc('get_indexer_tip')]);
         if(canonical!==indexed.block_hash||after.block_hash!==indexed.block_hash)throw Error('Wallet indexer changed');
-        if(active){setExternal({owner,root,identity,balance});setExternalCurrent(true);}
-      }catch{}finally{if(active)timer=setTimeout(refresh,10000);}
+        if(active){
+          setExternal({key:balanceKey,balance,expiresAt:Date.now()+30_000});
+          setScan({key:balanceKey,state:'ready'});
+        }
+      }catch{
+        if(active)setScan({key:balanceKey,state:'failed'});
+      }finally{if(active)timer=setTimeout(refresh,10000);}
     };
     void refresh();
     return()=>{active=false;clearTimeout(timer);};
-  },[owner,tokenHash,root,identity,account.address]);
-  const walletBalance=external?.owner===owner?external.balance:null;
-  const currentWallet=externalCurrent&&external?.owner===owner&&external?.root===root&&external?.identity===identity;
+  },[owner,tokenHash,root,identity,account.address,balanceKey,retryScan]);
+  const matching=external?.key===balanceKey ? external : null;
+  const walletBalance=matching?.balance??null;
+  const scanState=scan?.key===balanceKey ? scan.state : 'refreshing';
+  const currentWallet=!!matching&&matching.expiresAt>Date.now()&&scanState!=='failed';
+  const walletState=matching&&!currentWallet&&scanState!=='failed'?'expired':scanState;
   return <PortfolioOverview account={account} market={market} position={position}
-    walletBalance={walletBalance} currentWallet={currentWallet} marketError={query.error} refreshMarket={query.refresh}>
+    walletBalance={walletBalance} currentWallet={currentWallet} walletState={walletState} retryWallet={()=>setRetryScan(value=>value+1)} marketError={query.error} refreshMarket={query.refresh}>
     {market&&owner&&<WithdrawalPanel key={owner+market.genesis} market={market} owner={owner}
       balance={BigInt(position.balance||'0')} balanceReady={position.state==='ready'}
       onConfirmed={async()=>{await Promise.all([query.refresh(),account.refresh()]);position.retry();}}/>}
   </PortfolioOverview>;
 }
 
-export function PortfolioOverview({account, market, position, walletBalance, currentWallet, marketError='', refreshMarket, children}: {
+export function PortfolioOverview({account, market, position, walletBalance, currentWallet, walletState, retryWallet, marketError='', refreshMarket, children}: {
   account: ReturnType<typeof useAccount>;
   market: MarketData | null;
   position: ReturnType<typeof useOwnerPosition>;
   walletBalance: bigint | null;
   currentWallet: boolean;
+  walletState: 'refreshing'|'ready'|'failed'|'expired';
+  retryWallet: () => void;
   marketError?: string;
   refreshMarket?: () => Promise<void>;
   children?: React.ReactNode;
@@ -90,6 +108,11 @@ export function PortfolioOverview({account, market, position, walletBalance, cur
   const unavailable=copy(locale,'notAvailable');
   const checking=zh?'正在检查':'Checking';
   const lastKnown=zh?'上次验证余额':'Last verified balance';
+  const refreshing=zh?'正在刷新':'Refreshing';
+  const walletStatus=walletState==='failed'
+    ? (zh?'钱包余额刷新失败':'Wallet balance refresh failed')
+    : walletState==='expired' ? (zh?'钱包余额验证已过期':'Wallet balance verification expired')
+    : walletState==='refreshing' ? refreshing : verified;
   const symbol=market?.token.symbol;
   const status=(current:boolean, hasValue:boolean)=>current ? verified : hasValue ? lastKnown : checking;
   const opening=account.state==='checking'||account.state==='connecting';
@@ -116,17 +139,18 @@ export function PortfolioOverview({account, market, position, walletBalance, cur
         </div>
         {market && symbol && <div className="portfolio-asset">
           <div className="portfolio-asset-heading"><span aria-hidden="true" className="portfolio-mark portfolio-mark-rvk">{symbol[0]}</span><div><h2>{symbol}</h2><p>{market.token.name}</p></div><Link href={'/market/'+market.id}>{copy(locale,'trade')} ↗</Link></div>
-          <div className="portfolio-rvk-total"><Balance label={zh?`${symbol} 总额`:`Total ${symbol}`} value={total} unit={symbol} state={total===null?(zh?'等待两个余额完成验证':'Awaiting both balance checks'):verified}/></div>
+          <div className="portfolio-rvk-total"><Balance label={zh?`${symbol} 总额`:`Total ${symbol}`} value={total} unit={symbol} state={total===null?(zh?'等待两个余额完成验证':'Awaiting both balance checks'):walletState==='refreshing'?refreshing:verified}/></div>
           <div className="portfolio-balances">
             <Balance label={zh?'Brant 内':'In Brant'} value={position.balance!==''?BigInt(position.balance).toLocaleString(locale):null} unit={symbol} state={position.state==='unavailable'?(position.balance!==''?lastKnown:unavailable):status(custodyCurrent,position.balance!=='')}/>
-            <Balance label={zh?'钱包内':'In wallet'} value={walletBalance?.toLocaleString(locale)??null} unit={symbol} state={currentWallet?verified:walletBalance!==null?lastKnown:(zh?'检查中或暂不可用':'Checking or temporarily unavailable')}/>
+            <Balance label={zh?'钱包内':'In wallet'} value={walletBalance?.toLocaleString(locale)??null} unit={symbol} state={walletBalance!==null&&!currentWallet?lastKnown+" · "+walletStatus:walletStatus}/>
           </div>
+          {(walletState==='failed'||walletState==='expired')&&<p role='status'>{walletStatus} <button type='button' onClick={retryWallet}>{copy(locale,'retry')}</button></p>}
           {position.state==='unavailable'&&<p role="alert">{position.error||copy(locale,'holdingsUnavailable')} <button type="button" onClick={position.retry}>{copy(locale,'retry')}</button></p>}
         </div>}
         {marketError && <p role="alert">{copy(locale,'unavailable')} {refreshMarket&&<button type="button" onClick={()=>void refreshMarket()}>{copy(locale,'retry')}</button>}</p>}
       </section>
       {children && <aside className="portfolio-surface portfolio-management" aria-label={zh?'资产管理':'Asset management'}>
-        <h2>{zh?'提取到钱包':'Withdraw to wallet'}</h2>
+
         <p>{zh?'将 Brant 托管中的代币提取到已连接的 Pudge 钱包。':'Move tokens from Brant custody to your connected Pudge wallet.'}</p>
         <div className="portfolio-withdrawal">{children}</div>
       </aside>}

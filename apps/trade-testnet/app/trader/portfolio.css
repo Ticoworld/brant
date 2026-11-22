@@ -28,3 +28,7 @@
 .portfolio-overview [role="alert"] button,.portfolio-overview [role="status"] button { color: #6cddb5; text-decoration: underline; }
 @media (max-width: 900px) { .portfolio-layout { grid-template-columns: minmax(0,1fr); gap: 16px; } }
 @media (max-width: 560px) { .portfolio-overview { padding-top: 24px; } .portfolio-surface { padding: 17px; } }
+
+.portfolio-withdrawal > section > div:first-child h2 { font-size: 20px; }
+.portfolio-withdrawal > section > div:nth-child(2) { grid-template-columns: minmax(0,1fr); }
+.portfolio-withdrawal input { min-height: 44px; }
