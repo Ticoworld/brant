@@ -1,4 +1,5 @@
 // Controlled presentation tests; never injects a wallet or constructs/broadcasts a Pudge transaction.
+import { verifyTradeNavigation } from "./trade-navigation.mjs";
 import { chromium } from "playwright-core";
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -78,16 +79,17 @@ const check = (name) => {
   evidence.checks.push(name);
   save();
 };
-async function scan(p, label) {
+async function scan(p, label, scope = ".app-shell") {
   await p.addScriptTag({ content: axe });
   const a = await p.evaluate(
-    async () =>
-      await window.axe.run(document.querySelector(".app-shell"), {
+    async (selector) =>
+      await window.axe.run(document.querySelector(selector), {
         runOnly: {
           type: "tag",
           values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"],
         },
       }),
+    scope,
   );
   evidence.accessibility.push({
     label,
@@ -134,61 +136,32 @@ try {
       } catch {}
     }
   });
+  // Retired WO13 production assumptions: empty market directory, disabled discovery,
+  // button-based tabs, and claim-based position regions. WO13 fixture checks remain below.
   const id = "0x" + "12".repeat(32);
+  await verifyTradeNavigation(browser, base);
   for (const width of [1440, 768, 375]) {
-    await p.setViewportSize({ width, height: width === 375 ? 812 : 1000 });
-    await p.goto(base);
-    await p.getByRole("heading", { name: "Markets", exact: true }).waitFor();
-    assert.equal(
-      await p
-        .getByRole("navigation")
-        .getByRole("button", { name: "Trade", exact: true })
-        .count(),
-      0,
-    );
-    await p.getByRole("heading", { name: "No verified markets yet" }).waitFor();
-    assert(
-      await p
-        .getByRole("button", { name: "Find markets", exact: true })
-        .isDisabled(),
-    );
-    await p.screenshot({
-      path: out + `/production-markets-${width}.png`,
-      fullPage: true,
-    });
-    await reflow(p, "production markets " + width);
-    await scan(p, "production markets " + width);
-    for (const [tab, title] of [
-      ["Positions", "Positions"],
-      ["Create market", "Create Market"],
-      ["Activity", "Activity"],
+    await p.setViewportSize({width, height: width === 375 ? 812 : 1000});
+    for (const [route, label, scope] of [
+      ["/", "Markets", "main"],
+      ["/market/pudge-xudt", "Trade", ".trade-preview"],
+      ["/portfolio", "Portfolio", "main"],
+      ["/launch", "Launch", "main"],
+      ["/activity", "Activity", "main"],
     ]) {
-      await p
-        .getByRole("navigation")
-        .getByRole("button", { name: tab, exact: true })
-        .click();
-      await p.getByRole("heading", { name: title, exact: true }).waitFor();
-      await reflow(p, tab + width);
-      await scan(p, tab + width);
-      if (tab === "Create market")
-        assert(
-          await p
-            .getByRole("button", { name: "Review market creation" })
-            .isDisabled(),
-        );
+      await p.goto(base + route);
+      await p.getByRole("main").waitFor();
+      await reflow(p, label + width);
+      await scan(p, label + width, scope);
     }
   }
-  await p.goto(base + "/market/" + id + "?claim=0");
-  await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
-  assert.equal(
-    await p.getByRole("region", { name: "Selected position" }).count(),
-    0,
-  );
-  await p.reload();
-  await p.getByRole("heading", { name: "Market unavailable" }).waitFor();
-  check(
-    "Real dynamic market route and reload fail closed without a deployment; Markets is default, no Trade tab",
-  );
+  await p.goto(base + "/market/unknown?claim=0");
+  for (const reload of [false, true]) {
+    if (reload) await p.reload();
+    await p.getByText("Market data is temporarily unavailable", {exact: true}).waitFor();
+    assert.equal(await p.getByRole("button", {name: /Buy Token|Sell Token|Buy RVK|Sell RVK/}).count(), 0);
+  }
+  check("Unknown market fails closed after direct navigation and reload");
   await p.goto(base + "/experience-fixture");
   await p.getByRole("heading", { name: "Local UI fixture disabled" }).waitFor();
   check(

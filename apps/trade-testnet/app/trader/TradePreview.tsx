@@ -119,8 +119,7 @@ export function TradeV2({session, side, setSide}: {
         <Link href="/" className="preview-brand"><img src="/icon.svg" width="30" height="30" alt="" />Brant</Link>
         <nav aria-label={zh ? '主导航' : 'Main navigation'}>
           <Link href="/" className="preview-discover">{zh ? '市场' : 'Markets'}</Link>
-          <Link href="/trade-preview" aria-current="page">{zh ? '交易' : 'Trade V2'}</Link>
-          <Link href={`/market/${marketId}`}>{zh ? '原版交易' : 'Classic Trade'}</Link>
+          <Link href={`/market/${marketId}`} aria-current="page">{copy(locale, 'trade')}</Link>
         </nav>
         <div className="preview-nav-meta">
           <span className="preview-network"><i />Pudge</span>

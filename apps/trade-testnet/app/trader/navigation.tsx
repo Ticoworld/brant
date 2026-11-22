@@ -6,7 +6,7 @@ import {LanguageSwitcher,useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
 import {copy} from './copy';
 
-const items=[['/','markets'],['/portfolio','portfolio'],['/activity','activity'],['/launch','launch']] as const;
+const items=[['/','markets'],['/market/pudge-xudt','trade'],['/portfolio','portfolio'],['/activity','activity'],['/launch','launch']] as const;
 
 export default function TraderNavigation(){
   const pathname=usePathname(),account=useAccount(),{locale}=useLocale();
@@ -23,7 +23,7 @@ export default function TraderNavigation(){
         <span>Brant</span>
       </Link>
       <nav aria-label={locale==='zh-CN'?'主导航':'Primary navigation'} className="order-3 -mx-4 flex w-[calc(100%+2rem)] min-w-0 items-center overflow-x-auto border-t border-[#202625] px-2 sm:order-2 sm:mx-0 sm:w-auto sm:flex-1 sm:border-0 sm:px-0">
-        {items.map(([href,key])=>{const active=pathname===href||(href==='/'&&pathname.startsWith('/market/'));return <Link key={href} href={href} aria-current={active?'page':undefined} className={`shrink-0 border-b-2 px-3 py-[21px] text-[13px] font-medium no-underline transition-colors ${active?'border-[#72dfb0] text-[#e7f8ee]':'border-transparent text-[#98a29f] hover:text-[#edf1ef]'}`}>{copy(locale,key)}<NavigationProgress/></Link>;})}
+        {items.map(([href,key])=>{const active=pathname===href||(key==='trade'&&pathname.startsWith('/market/'));return <Link key={href} href={href} aria-current={active?'page':undefined} className={`shrink-0 border-b-2 px-3 py-[21px] text-[13px] font-medium no-underline transition-colors ${active?'border-[#72dfb0] text-[#e7f8ee]':'border-transparent text-[#98a29f] hover:text-[#edf1ef]'}`}>{copy(locale,key)}<NavigationProgress/></Link>;})}
       </nav>
       <div className="order-2 ml-auto flex shrink-0 items-center gap-2 sm:order-3 sm:ml-0">
         <details className="relative hidden sm:block">
