@@ -10,7 +10,7 @@ import {formatCkb, PUDGE_GENESIS} from './rpc';
 import TraderShell from './shell';
 
 const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2',weight:'100 900'});
-const field = 'mt-2 min-h-12 w-full !rounded-xl !border-0 !bg-[#1e2523] px-4 text-base focus-visible:outline-2 focus-visible:outline-[#6cddb5]';
+const field = 'mt-2 min-h-12 w-full !rounded-xl !border-0 !bg-[#1e2523] px-4 text-base focus-visible:!outline-2 focus-visible:!outline-[#7d9e91]';
 const primary = 'justify-self-start min-h-12 !rounded-xl !bg-[#a7e9c6] px-6 text-sm font-semibold !text-[#102019] disabled:opacity-40';
 const secondary = 'min-h-11 !rounded-xl !border-0 !bg-[#1e2523] px-4 text-sm';
 const ckb = (amount: bigint) => formatCkb(amount) + ' CKB';
@@ -66,8 +66,8 @@ export default function LaunchScreen() {
   const message = issue instanceof LaunchPreflightError ? {
     funding: t('The available Cells cannot fund this launch. The plan needs a separate eligible anchor and setup funding.','当前可用 Cell 无法满足发行要求。发行计划需要独立的合格锚点和准备资金。'),
     network: t('Connect the same wallet account on Pudge and retry.','请在 Pudge 上连接同一钱包账户后重试。'),
-    'local-proof': t('The Pudge initialization proof service requires a local origin. A verified quote is unavailable here.','Pudge 初始化证明服务仅允许本地来源。此处无法生成经过验证的报价。'),
-    proof: t('The local Pudge initialization proof could not be verified.','无法验证本地 Pudge 初始化证明。'),
+    'proof-origin': t('Launch proofs are unavailable on this site.','此站点暂不提供发行证明。'),
+    proof: t('The Pudge initialization proof could not be verified.','无法验证 Pudge 初始化证明。'),
   }[issue.reason] : t('Launch funding or dependencies could not be verified. Retry when Pudge is synchronized.','无法验证发行资金或依赖项。请等待 Pudge 同步后重试。');
 
   return <TraderShell wide>
@@ -94,7 +94,7 @@ export default function LaunchScreen() {
               {t('Token logo (optional)','代币图标（选填）')}
               <input className="peer sr-only" type="file" accept="image/png,image/jpeg,image/webp"
                 onChange={event => {const file = event.target.files?.[0]; setLogo(file && ['image/png','image/jpeg','image/webp'].includes(file.type) ? URL.createObjectURL(file) : '');}}/>
-              <span className="flex min-h-28 items-center gap-4 rounded-xl border border-dashed border-[#46534d] bg-[#151a19] p-4 hover:bg-[#1e2523] peer-focus-visible:outline-2 peer-focus-visible:outline-[#6cddb5] sm:px-6">
+              <span className="flex min-h-28 items-center gap-4 rounded-xl bg-[#151a19] p-4 hover:bg-[#1e2523] peer-focus-visible:outline-2 peer-focus-visible:outline-[#6cddb5] sm:px-6">
                 {logo ? <img src={logo} alt="" className="size-12 rounded-lg object-cover"/> :
                   <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#254139] text-2xl text-[#a7e9c6]">+</span>}
                 <span className="grid gap-1">
@@ -147,9 +147,9 @@ export default function LaunchScreen() {
         </section>
         <aside className="min-w-0 space-y-5 border-t border-[#28302f] pt-6 md:border-t-0 md:pt-0">
           <div className="flex min-w-0 items-center gap-4">
-            {/* Local image preview or approved Brant artwork. */}
+            {/* Local image preview. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className={'size-16 shrink-0 rounded-2xl bg-[#1e2523] object-contain sm:size-20 ' + (logo ? '' : 'p-4')} alt="" src={logo || '/brand/brant-symbol-white.svg'}/>
+            {logo ? <img className="size-16 shrink-0 rounded-2xl bg-[#1e2523] object-contain sm:size-20" alt="" src={logo}/> : <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-2xl bg-[#1e2523] text-xl font-semibold text-[#aab7b3] sm:size-20">{ticker.slice(0, 2) || "—"}</span>}
             <div className="min-w-0 break-words"><h2 className="m-0 text-[clamp(24px,2.3vw,34px)] leading-tight font-[640] tracking-[-.04em]">{name.trim() || t('Token preview','代币预览')}</h2><p className="mb-0 mt-1 text-sm text-[#aab7b3]">{ticker || 'xUDT'} / CKB</p></div>
           </div>
           {description.trim() && <p className="break-words text-sm">{description}</p>}

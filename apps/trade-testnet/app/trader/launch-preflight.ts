@@ -1,13 +1,13 @@
 import {planSharedLaunch} from '../../lib/v2-engine/shared-launch';
 import {discoverFunding} from '../../lib/v2-engine/multi-funding';
 import {PUDGE_GATE2_ANCHOR} from '../../lib/v2-engine/pudge-public-registry';
-import {verifyPudgeInitialProof} from '../../lib/v2-engine/pudge-proof-client';
+import {InitialProofOriginError, verifyPudgeInitialProof} from '../../lib/v2-engine/pudge-proof-client';
 import {PUDGE_GENESIS, pudgeRpc} from './rpc';
 
 export const firstPurchaseQuantity = 7n;
 
 export class LaunchPreflightError extends Error {
-  constructor(readonly reason: 'funding' | 'network' | 'local-proof' | 'proof', readonly usable?: bigint) {
+  constructor(readonly reason: 'funding' | 'network' | 'proof-origin' | 'proof', readonly usable?: bigint) {
     super(reason);
   }
 }
@@ -31,13 +31,10 @@ export async function previewLaunch(lock: Parameters<typeof discoverFunding>[2])
         reservedAnchors: [], quantity: firstPurchaseQuantity, feeRate,
         verifyProof: async (owner, quantity, price) => {
           if (quantity !== firstPurchaseQuantity || price !== 9_100_000_000n) throw Error('Unsupported launch proof terms');
-          if (!['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)) {
-            throw new LaunchPreflightError('local-proof', usable);
-          }
           try {
             return await verifyPudgeInitialProof(anchor.outPoint, owner);
-          } catch {
-            throw new LaunchPreflightError('proof', usable);
+          } catch (error) {
+            throw new LaunchPreflightError(error instanceof InitialProofOriginError ? 'proof-origin' : 'proof', usable);
           }
         },
       });
