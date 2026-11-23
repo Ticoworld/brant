@@ -75,6 +75,8 @@ export async function signReview(review: Review, wallet: Wallet, chain: Chain) {
   const inputs = await Promise.all(tx.inputs.map(input => chain.getCellLive(input.previousOutput, true, true)));
   const [custody, marker, funding] = inputs;
   requireReview(custody && marker && funding, 'A reviewed input is no longer live');
+  requireReview(inputs.every((cell, index) => cell?.outPoint?.eq(tx.inputs[index].previousOutput) &&
+    cell.cellOutput && typeof cell.outputData === 'string'), 'Missing or inconsistent live input metadata');
   requireReview([custody, marker].every((cell, index) => {
     const output = tx.outputs[index];
     return cell.cellOutput.lock.hash() === output.lock.hash() &&
@@ -83,11 +85,18 @@ export async function signReview(review: Review, wallet: Wallet, chain: Chain) {
     amount(custody.outputData) - amount(tx.outputsData[0]) === review.quantity && marker.outputData === tx.outputsData[1] &&
     funding.cellOutput.lock.hash() === review.owner.hash() && !funding.cellOutput.type &&
     funding.outputData === '0x' && funding.cellOutput.capacity === review.funding, 'Live input identity or accounting changed');
+  const prepared = tx.clone();
+  [custody, marker, funding].forEach((cell, index) => {
+    prepared.inputs[index].cellOutput = cell.cellOutput.clone();
+    prepared.inputs[index].outputData = cell.outputData;
+  });
+  requireReview(![custody, marker].some(cell => cell.cellOutput.lock.eq(review.owner)),
+    'Unexpected owner signing group');
+  prepared.setWitnessArgs(2, ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}));
   await checkWallet(review, wallet, chain);
-  // CCC signOnlyTransaction performs these two steps. Keep their failures distinct.
   let response;
   try {
-    response = await wallet.provider.signTransaction(tx.clone());
+    response = await wallet.provider.signTransaction(prepared);
   } catch (error) {
     throw providerFailure('Wallet approval', error);
   }

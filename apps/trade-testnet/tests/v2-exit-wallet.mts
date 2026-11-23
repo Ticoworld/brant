@@ -40,7 +40,22 @@ const provider: ConstructorParameters<typeof UtxoGlobal.SignerCkb>[1] = {
   signMessage: async () => {throw Error('Unexpected message signing');},
   async signTransaction(request) {
     calls++;
-    assert.deepEqual(cccA.JsonRpcTransformers.transactionFrom(ccc.Transaction.from(request)), fixture.transaction);
+    const wire = JSON.parse(JSON.stringify(request, (_, value) =>
+      typeof value === 'bigint' ? ccc.numToHex(value) : value));
+    const prepared = ccc.Transaction.from(wire);
+    assert.equal(prepared.hash(), tx.hash());
+    assert.deepEqual(prepared.inputs.map(input => [input.cellOutput, input.outputData]),
+      cells.map(cell => [cell.cellOutput, cell.outputData]));
+    const placeholder = ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}).toHex();
+    assert.equal(ccc.bytesFrom(placeholder).length, 85);
+    assert.deepEqual(prepared.witnesses, ['0x', '0x', placeholder, tx.witnesses[3]]);
+    const digest = new ccc.HasherCkb();
+    digest.update(tx.hash());
+    ccc.Transaction.hashWitnessToHasher(placeholder, digest);
+    ccc.Transaction.hashWitnessToHasher(tx.witnesses[3], digest);
+    assert.deepEqual(await prepared.getSignHashInfo(owner.lock, node), {position: 2, message: digest.digest()});
+    prepared.witnesses[2] = '0x';
+    assert.deepEqual(cccA.JsonRpcTransformers.transactionFrom(prepared), fixture.transaction);
     return approve(request);
   },
   on: () => provider, removeListener: () => provider,
@@ -61,6 +76,14 @@ const chain = {
 };
 const sign = () => signReview(review, wallet, chain);
 assert.deepEqual(JSON.parse(JSON.stringify(await sign())), receipt.transaction);
+assert.deepEqual(cccA.JsonRpcTransformers.transactionFrom(review.tx), fixture.transaction);
+for (const invalid of [undefined, {...cells[2], outPoint: tx.inputs[0].previousOutput},
+  {...cells[2], outPoint: tx.inputs[2].previousOutput, outputData: undefined}]) {
+  await assert.rejects(() => signReview(review, wallet, {
+    ...chain,
+    getCellLive: async point => tx.inputs[2].previousOutput.eq(point) ? invalid as ccc.Cell | undefined : chain.getCellLive(point),
+  }), /no longer live|inconsistent live input metadata/);
+}
 connected = false;
 await assert.rejects(sign, /Connect UTXO/);
 connected = true;
