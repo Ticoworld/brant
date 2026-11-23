@@ -45,11 +45,12 @@ export default function LaunchScreen() {
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
   const [busy, setBusy] = useState(false);
+  const [retry, setRetry] = useState(0);
   const executionLock = useRef(false);
   const [execution, setExecution] = useState('');
   const [setupTestResult, setSetupTestResult] = useState('');
   const [session, setSession] = useState<Session>();
-  const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; owner: string}>();
+  const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; accounting: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
   useEffect(() => () => { if (logo) URL.revokeObjectURL(logo); }, [logo]);
   const active = account.state === 'ready' && review?.owner === account.owner && review.signer === signer ? review : undefined;
@@ -59,14 +60,29 @@ export default function LaunchScreen() {
   const stages = [t('Create market','创建市场'), t('Issue tokens','发行代币'), t('Initial purchase','首次购买')];
   const owner = account.state === 'ready' ? account.owner : '';
   useEffect(() => {
+    if (step !== 1 || !owner || !signer) return;
+    const controller = new AbortController();
+    void refresh(controller.signal);
+    return () => controller.abort();
+    // The review belongs to this wallet, step and explicit retry.
+  }, [step, owner, signer, retry]);
+  useEffect(() => {
     setSession(undefined);
     if (!owner) return;
     const market = localStorage.getItem(sessionKey(owner));
     if (!market) return;
     let active = true;
-    void launchApi('session', {owner, market}).then(result => {
+    void launchApi('session', {owner, market}).then(async result => {
       if (!active) return;
-      if (result) {setSession(result); setStep(2);}
+      if (result) {
+        setSession(result);
+        setStep(2);
+        if (result.entries.at(-1)?.state === 'submitted') {
+          await launchApi('reconcile', {owner, market}).catch(() => {});
+          const latest = await launchApi('session', {owner, market});
+          if (active && latest) setSession(latest);
+        }
+      }
       else if (localStorage.getItem(sessionKey(owner)) === market) localStorage.removeItem(sessionKey(owner));
     }).catch(() => { if (active) setExecution('error'); });
     return () => {active = false;};
@@ -86,41 +102,80 @@ export default function LaunchScreen() {
     };
     try {
       await checkWallet();
-      const current: Session | null = market ? await launchApi('session', identity) : null;
+      let current: Session | null = market ? await launchApi('session', identity) : null;
+      if (savedMarket && !current && step === 2) {
+        setExecution('pending');
+        return;
+      }
       if (!current && prepared && market !== prepared.market) {
         market = prepared.market;
         identity = {owner, market};
       }
-      if (current?.entries.at(-1)?.state === 'submitted') {
+      if (!current && prepared?.enabled) {
+        const lock = (await signer.getRecommendedAddressObj()).script;
+        const fresh = await launchApi('prepare', {creator: lock});
+        if (!fresh.enabled || fresh.market !== prepared.market ||
+            JSON.stringify(fresh.descriptor) !== JSON.stringify(prepared.descriptor) ||
+            JSON.stringify(fresh.transaction) !== JSON.stringify(prepared.transaction) ||
+            JSON.stringify(fresh.accounting) !== JSON.stringify(prepared.accounting)) {
+          setRetry(value => value + 1);
+          setStep(1);
+          setExecution('changed');
+          return;
+        }
+      }
+      setStep(2);
+      for (let index = 0; index < launchStages.length; index++) {
+        await checkWallet();
+        if (current?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length) break;
+        if (current?.entries.at(-1)?.state !== 'submitted') {
+          const next = current ? await launchApi('next-stage', identity) :
+            prepared?.enabled ? {...prepared, stage: 'setup'} : null;
+          if (!next || !(current?.enabled ?? prepared?.enabled)) return;
+          const transaction = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(next.transaction));
+          await Promise.all(transaction.inputs.map(async input => {
+            const row = await pudgeRpc('get_live_cell', [{tx_hash: input.previousOutput.txHash,
+              index: ccc.numToHex(input.previousOutput.index)}, true]);
+            if (row?.status !== 'live' || !row.cell) throw Error('Launch input is no longer live');
+            const output = cccA.JsonRpcTransformers.cellOutputTo(row.cell.output);
+            input.cellOutput = ccc.CellOutput.from(output);
+            input.outputData = row.cell.data.content;
+          }));
+          transaction.setWitnessArgs(next.stage === 'purchase' ? 2 : 0,
+            ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}));
+          await checkWallet();
+          setExecution('wallet');
+          const signed = await requestWalletTransactionSignature(signer, transaction, () => {});
+          await checkWallet();
+          setExecution('submitting');
+          localStorage.setItem(sessionKey(owner), market!);
+          try {
+            await launchApi('submit', {...identity, stage: next.stage, descriptor: current ? undefined : prepared?.descriptor,
+              signed: cccA.JsonRpcTransformers.transactionFrom(signed)});
+          } catch {
+            setExecution('pending');
+            return;
+          }
+        }
         setExecution('checking');
-        await launchApi('reconcile', identity);
-      } else {
-        const next = current ? await launchApi('next-stage', identity) :
-          prepared?.enabled ? {...prepared, stage: 'setup'} : null;
-        if (!next || !(current?.enabled ?? prepared?.enabled)) return;
-        const transaction = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(next.transaction));
-        await Promise.all(transaction.inputs.map(async input => {
-          const row = await pudgeRpc('get_live_cell', [{tx_hash: input.previousOutput.txHash,
-            index: ccc.numToHex(input.previousOutput.index)}, true]);
-          if (row?.status !== 'live' || !row.cell) throw Error('Launch input is no longer live');
-          const output = cccA.JsonRpcTransformers.cellOutputTo(row.cell.output);
-          input.cellOutput = ccc.CellOutput.from(output);
-          input.outputData = row.cell.data.content;
-        }));
-        transaction.setWitnessArgs(next.stage === 'purchase' ? 2 : 0,
-          ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}));
-        await checkWallet();
-        setExecution('wallet');
-        const signed = await requestWalletTransactionSignature(signer, transaction, () => {});
-        await checkWallet();
-        setExecution('submitting');
-        localStorage.setItem(sessionKey(owner), market!);
-        await launchApi('submit', {...identity, stage: next.stage, descriptor: current ? undefined : preparation?.descriptor,
-          signed: cccA.JsonRpcTransformers.transactionFrom(signed)});
+        current = await launchApi('session', identity);
+        if (current && currentSigner.current === signer) setSession(current);
+        for (let attempt = 0; attempt < 6; attempt++) {
+          await checkWallet();
+          const receipt = await launchApi('reconcile', identity).catch(() => null);
+          current = await launchApi('session', identity);
+          if (current && currentSigner.current === signer) setSession(current);
+          if (receipt || current?.entries.at(-1)?.state === 'confirmed') break;
+          if (attempt < 5) await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        if (!current || current.entries.at(-1)?.state !== 'confirmed') {
+          setExecution('pending');
+          return;
+        }
       }
       setExecution('');
     } catch {
-      setExecution('error');
+      setExecution('paused');
     } finally {
       if (market) {
         const latest = await launchApi('session', identity).catch(() => null);
@@ -130,11 +185,12 @@ export default function LaunchScreen() {
     }
   }
 
-  async function refresh() {
-    if (!signer || busy || account.state !== 'ready') return;
+  async function refresh(signal: AbortSignal) {
+    if (!signer || account.state !== 'ready') return;
     const owner = account.owner;
     setBusy(true);
     setReview(undefined);
+    setPreparation(undefined);
     setSetupTestResult('');
     try {
       const checkWallet = async () => {
@@ -147,6 +203,7 @@ export default function LaunchScreen() {
         return address.script;
       };
       const lock = await checkWallet();
+      if (signal.aborted) return;
       const prepared = await launchApi('prepare', {creator: lock});
       const values = prepared.accounting;
       const result: Awaited<ReturnType<typeof previewLaunch>> = {usable: BigInt(values.eligibleFunding),
@@ -154,17 +211,19 @@ export default function LaunchScreen() {
           locked: BigInt(values.locked), change: BigInt(values.change), curveReserve: BigInt(values.curveReserve), fees: BigInt(values.fees),
           stageFees: {setup: BigInt(values.stageFees.setup), issuance: BigInt(values.stageFees.issuance), purchase: BigInt(values.stageFees.purchase)}}};
       await checkWallet();
+      if (signal.aborted) return;
       setPreparation({...prepared, owner});
       setReview({signer, owner, result});
     } catch (error) {
-      setReview({signer, owner, error});
+      if (!signal.aborted) setReview({signer, owner, error});
     } finally {
-      setBusy(false);
+      if (!signal.aborted) setBusy(false);
     }
   }
 
   const localSetupTest = process.env.NODE_ENV === 'development' &&
-    typeof window !== 'undefined' && window.location.hostname === '127.0.0.1';
+    typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' &&
+    new URLSearchParams(window.location.search).get('diagnostics') === 'setup';
 
   async function signSetupLocally() {
     if (!localSetupTest || !signer || !owner || !quote || preparation?.owner !== owner || executionLock.current) return;
@@ -284,6 +343,7 @@ export default function LaunchScreen() {
               <Amount label={t('Locked after launch','发行后锁定')} value={ckb(quote.accounting.locked)}/>
               <Amount label={t('Curve reserve within locked amount','锁定金额中的曲线储备')} value={ckb(quote.accounting.curveReserve)}/>
               <Amount label={t('Estimated network fees','预估网络费用')} value={ckb(quote.accounting.fees)}/>
+              <Amount label={t('Total estimated cost (locked CKB + fees)','预计总成本（锁定 CKB + 手续费）')} value={ckb(quote.accounting.locked + quote.accounting.fees)}/>
               <Amount label={t('Expected remaining usable CKB','预计剩余可用 CKB')} value={ckb(quote.accounting.change)}/>
               <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Advanced','高级详情')}</summary>
                 <p>{t('Provisional market ID','暂定市场标识')} {quote.market}</p>
@@ -299,27 +359,32 @@ export default function LaunchScreen() {
               </button>
               {setupTestResult && <p role="status" className="break-all text-sm">{setupTestResult}</p>}
             </div>}
-            <button className={primary} type="button" disabled={busy || ['checking','connecting'].includes(account.state)}
-              onClick={account.state === 'ready' ? () => void refresh() : account.connect}>
-              {busy ? t('Verifying…','正在验证…') : account.state === 'ready' ? quote ? t('Refresh estimate','刷新估算') : t('Check launch funding','检查发行资金') : t('Connect wallet','连接钱包')}
-            </button>
-            <div className="flex flex-wrap gap-2"><button className={secondary} onClick={() => setStep(0)}>{t('Back','返回')}</button>
-              <button className={secondary} onClick={() => setStep(2)}>{t('View launch stages','查看发行步骤')}</button></div>
+            {owner && busy && <p role="status">{t('Checking launch funding…','正在检查发行资金…')}</p>}
+            {execution === 'changed' && <p role="status">{t('The launch review changed. Review the updated estimate before launching.','发行审核已变更，请在发行前核对最新估算。')}</p>}
+            {quote && !preparation?.enabled && <p>{t('Launching is temporarily unavailable.','发行暂不可用。')}</p>}
+            <div className="flex flex-wrap gap-2">
+              <button className={secondary} onClick={() => setStep(0)}>{t('Back','返回')}</button>
+              {!owner && account.state !== 'wrong-network' && <button className={primary} disabled={['checking','connecting'].includes(account.state)} onClick={account.connect}>{t('Connect wallet','连接钱包')}</button>}
+              {owner && issue != null && !busy && <button className={primary} onClick={() => setRetry(value => value + 1)}>{t('Retry','重试')}</button>}
+              {quote && <button className={primary} disabled={busy || !preparation?.enabled} onClick={() => void execute()}>{t('Launch token','发行代币')}</button>}
+            </div>
           </div>}
           {step === 2 && <div className="mt-5 space-y-4">
             <ol className="space-y-3 pl-5">{stages.map((label, index) => <li key={label} className="border-b border-[#28302f] pb-3">
               <strong className="text-sm">{label}</strong>
-              {session?.entries[index] && <p className="mb-0 mt-1 break-all text-sm text-[#a8b5ae]">
-                {session.entries[index].state === 'confirmed' ? t('Confirmed','已确认') : t('Confirming','确认中')} · {session.entries[index].txHash}</p>}
+              {session?.entries[index] && <details className="mt-1 break-all text-sm text-[#a8b5ae]">
+                <summary>{session.entries[index].state === 'confirmed' ? t('Confirmed','已确认') : t('Confirming','确认中')}</summary>
+                {session.entries[index].txHash}</details>}
             </li>)}</ol>
             {execution && <p role="status">{{wallet:t('Awaiting wallet','等待钱包'),submitting:t('Submitting','正在提交'),
-              checking:t('Checking previous transaction','正在检查上一笔交易'),error:t('Launch action could not be completed. Check the session before retrying.','发行操作未完成。请检查会话后重试。')}[execution]}</p>}
+              checking:t('Checking previous transaction','正在检查上一笔交易'),pending:t('Submission is awaiting confirmation.','正在等待提交结果确认。'),
+              paused:t('Launch paused. Resume when your wallet is ready.','发行已暂停。钱包就绪后可继续。'),
+              error:t('The saved session could not be read.','无法读取已保存的会话。')}[execution]}</p>}
             {!(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
-            <div className="flex gap-2"><button className={secondary} onClick={() => setStep(1)}>{t('Back','返回')}</button>
+            {session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length ?
+              <p role="status">{t('Launch complete','发行完成')}</p> :
               <button className={primary} disabled={!owner || !(session?.enabled || preparation?.owner === owner && preparation.enabled) ||
-                ['wallet','submitting','checking'].includes(execution) || session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length}
-                onClick={() => void execute()}>{session?.entries.at(-1)?.state === 'submitted' ? t('Check confirmation','检查确认') :
-                  stages[session?.entries.length ?? 0] ?? steps[2]}</button></div>
+                ['wallet','submitting','checking'].includes(execution)} onClick={() => void execute()}>{t('Resume launch','继续发行')}</button>}
           </div>}
         </section>
         <aside className="min-w-0 space-y-5 border-t border-[#28302f] pt-6 md:border-t-0 md:pt-0">
