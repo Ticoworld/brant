@@ -1,3 +1,4 @@
+import type {normalizeLaunchMetadata} from './launch-metadata.ts';
 import {DatabaseSync} from 'node:sqlite';
 import {isAbsolute} from 'node:path';
 import {readSharedLaunchJournal, sharedLaunchJournalKey, sharedLaunchStages} from './shared-launch.ts';
@@ -16,6 +17,10 @@ export function openSharedLaunchStore(path: string) {
       anchor_key TEXT NOT NULL UNIQUE,
       plan TEXT NOT NULL,
       journal TEXT NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS shared_launch_publication (
+      market_key TEXT PRIMARY KEY REFERENCES shared_launch(market_key),
+      publication TEXT NOT NULL
     );
     CREATE TABLE IF NOT EXISTS shared_launch_snapshot (
       market_key TEXT PRIMARY KEY REFERENCES shared_launch(market_key),
@@ -46,6 +51,19 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
+    publish(scope: Scope, hashes: Hashes, token: string, metadata: ReturnType<typeof normalizeLaunchMetadata>) {
+      const {key, raw, journal} = loadPlan(scope, hashes);
+      if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {
+        throw Error('Launch is not confirmed');
+      }
+      const publication = {...scope, token, receipts: journal.entries, metadata};
+      const encoded = JSON.stringify(publication);
+      db.prepare('INSERT OR IGNORE INTO shared_launch_publication SELECT market_key, ? FROM shared_launch WHERE market_key = ? AND journal = ?')
+        .run(encoded, key, raw);
+      const row = db.prepare('SELECT publication FROM shared_launch_publication WHERE market_key = ?').get(key);
+      if (row?.publication !== encoded) throw Error('Launch publication differs or journal changed');
+      return publication;
+    },
     find(genesis: string, market: string, owner: string) {
       const row = load.get(`brant-launch-v2:${genesis}:${market}`.toLowerCase()) as {plan: string; journal: string} | undefined;
       if (!row) return null;

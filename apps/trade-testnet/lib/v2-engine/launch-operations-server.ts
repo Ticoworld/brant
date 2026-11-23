@@ -1,3 +1,4 @@
+import {verifyLaunchMetadata} from './launch-metadata.ts';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {discoverFunding} from './multi-funding.ts';
@@ -22,7 +23,8 @@ function creator(value: ccc.ScriptLike) {
   return lock;
 }
 
-export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantity, proof, openStore, send}: {
+export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantity, proof, openStore, send, authorizeCreator = () => true}: {
+  authorizeCreator?: (owner: string) => boolean;
   rpc: Rpc; genesis: string; fixture?: PlanRequest['fixture']; excludedAnchor?: Point; quantity: bigint;
   proof: (anchor: Point, owner: string) => ReturnType<PlanRequest['verifyProof']>;
   openStore: () => Store; send?: (transaction: ccc.Transaction) => Promise<string>;
@@ -65,7 +67,7 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
           return {descriptor: {creator: lock, anchor: anchor.outPoint, funding: funding.map(cell => cell.outPoint),
             feeRate: String(feeRate), market: plan.scope.market, hashes: plan.stageHashes},
             transaction: cccA.JsonRpcTransformers.transactionFrom(plan.projected.setup),
-            accounting: accounting(plan), market: plan.scope.market, token: plan.identity.token.hash(), enabled: Boolean(send)};
+            accounting: accounting(plan), market: plan.scope.market, token: plan.identity.token.hash(), enabled: Boolean(send && authorizeCreator(plan.scope.owner))};
         } catch (error) {
           if (!(error instanceof Error) || !/^(Insufficient (setup|issuance) funding|Output capacity below occupied capacity)$/.test(error.message)) throw error;
         }
@@ -74,7 +76,7 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
     }
     const {owner, market} = input;
     if (typeof owner !== 'string' || !hash.test(owner) || typeof market !== 'string' || !hash.test(market)) throw Error('Invalid session identity');
-    if (action === 'submit' && !send) throw Error('Launch execution is disabled');
+    if (action === 'submit' && (!send || !authorizeCreator(owner))) throw Error('Launch execution is disabled');
     const store = openStore();
     try {
       const session = store.find(genesis, market, owner);
@@ -100,8 +102,19 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       if (!session) return null;
       const {scope, hashes, journal} = session;
       const entries = journal.entries.map(({stage, state, txHash, blockHash}) => ({stage, state, txHash, blockHash}));
-      if (action === 'session') return {entries, hashes, enabled: Boolean(send)};
+      if (action === 'session') return {entries, hashes, enabled: Boolean(send && authorizeCreator(scope.owner))};
       const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
+      if (action === 'publish') {
+        const metadata = verifyLaunchMetadata(scope, input.metadata, input.signature);
+        if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {
+          throw Error('Launch is not confirmed');
+        }
+        for (const entry of journal.entries) {
+          const receipt = await plan.verifyReceipt(entry.stage);
+          if (receipt.blockHash !== entry.blockHash) throw Error('Launch receipt changed');
+        }
+        return store.publish(scope, hashes, plan.identity.token.hash(), metadata);
+      }
       if (action === 'reconcile') return await reconcileSharedLaunchStage(store, plan);
       const stage = sharedLaunchStages[journal.entries.length];
       if (!stage) throw Error('Launch is complete');

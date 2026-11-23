@@ -120,3 +120,18 @@ assert.deepEqual(parseWizard(JSON.stringify(PUDGE_GATE2_JOURNAL)), PUDGE_GATE2_J
 console.log(JSON.stringify({creators:[first,second].map(plan=>({
   market:plan.scope.market, token:plan.identity.token.hash(), custody:plan.identity.custody.hash(),
 })), accounting:first.accounting}, (_, value) => typeof value === 'bigint' ? value.toString() : value));
+
+const metadata = {name: 'Brant test', ticker: 'TEST', description: '', link: ''};
+store = openSharedLaunchStore(storePath);
+assert.throws(() => store.publish(first.scope, first.stageHashes, first.identity.token.hash(), metadata), /not confirmed/);
+for (const stage of ['issuance', 'purchase'] as const) {
+  store.recordSubmission(first.scope, first.stageHashes, stage);
+  store.confirm(first.scope, first.stageHashes, {stage, txHash: first.stageHashes[stage], blockHash});
+}
+const publication = store.publish(first.scope, first.stageHashes, first.identity.token.hash(), metadata);
+store.close();
+store = openSharedLaunchStore(storePath);
+assert.deepEqual(store.publish(first.scope, first.stageHashes, first.identity.token.hash(), metadata), publication);
+assert.throws(() => store.publish(first.scope, first.stageHashes, first.identity.token.hash(),
+  {...metadata, ticker: 'OTHER'}), /publication differs/);
+store.close();

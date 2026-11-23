@@ -1,3 +1,4 @@
+import {cccA} from '@ckb-ccc/core/advanced';
 import {launchOperations} from '../../../../../lib/v2-engine/launch-operations-server';
 import {generatePudgeLaunchProof} from '../../../../../lib/v2-engine/pudge-launch-proof-server';
 import {openConfiguredSharedLaunchStore} from '../../../../../lib/v2-engine/shared-launch-store';
@@ -13,8 +14,17 @@ const rpc = async (method: string, params: unknown[]) => {
   if (!response.ok || data.error || !Object.hasOwn(data, 'result')) throw Error('Pudge RPC failed');
   return data.result;
 };
+const approvedCreator = process.env.BRANT_LAUNCH_APPROVED_CREATOR;
+const launchWritesEnabled = process.env.BRANT_LAUNCH_WRITES === '1' &&
+  typeof approvedCreator === 'string' && /^0x[0-9a-f]{64}$/.test(approvedCreator);
 const operate = launchOperations({rpc, genesis: PUDGE_GATE2_GENESIS, excludedAnchor: PUDGE_GATE2_ANCHOR,
-  quantity: 7n, proof: generatePudgeLaunchProof, openStore: openConfiguredSharedLaunchStore});
+  quantity: 7n, proof: generatePudgeLaunchProof, openStore: openConfiguredSharedLaunchStore,
+  authorizeCreator: owner => owner === approvedCreator,
+  send: launchWritesEnabled ? async transaction => {
+    if (await rpc('get_block_hash', ['0x0']) !== PUDGE_GATE2_GENESIS) throw Error('Wrong Pudge genesis');
+    return rpc('send_transaction', [cccA.JsonRpcTransformers.transactionFrom(transaction)]);
+  } : undefined,
+});
 let active = 0;
 const preparing = new Map<string, Promise<{result: unknown; serverTiming: string}>>();
 
@@ -53,8 +63,8 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     return new Response(null, {status: 403});
   }
   const {action} = await context.params;
-  if (!['prepare','submit','session','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
-  if (action === 'submit') return Response.json({error: 'Launch execution is disabled'}, {status: 403});
+  if (!['prepare','submit','session','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
+  if (action === 'submit' && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
   active++;
@@ -75,6 +85,9 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     clearTimeout(timer);
     const input = JSON.parse(body + decoder.decode());
     if (!input || typeof input !== 'object' || Array.isArray(input)) return new Response(null, {status: 400});
+    if (action === 'submit' && input.owner !== approvedCreator) {
+      return Response.json({error: 'Creator is not approved for launch'}, {status: 403});
+    }
     const {result, serverTiming} = await runOperation(action, input);
     return Response.json(result, {headers: {'Cache-Control': 'no-store', 'Server-Timing': serverTiming}});
   } catch {
