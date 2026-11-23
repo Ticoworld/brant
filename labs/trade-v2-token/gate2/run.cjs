@@ -3,6 +3,7 @@ const C = require(process.env.TRADE_NATIVE_ROOT + '/src/lib.cjs');
 const assert = require('node:assert/strict');
 const { spawn, execFileSync } = require('node:child_process');
 const os = require('node:os');
+const { setTimeout: delay } = require('node:timers/promises');
 const path = require('node:path');
 const { ccc } = require(process.env.TRADE_NATIVE_ROOT + '/node_modules/@ckb-ccc/core');
 const signGroup = require(process.env.TRADE_NATIVE_ROOT + '/node_modules/@nervosnetwork/ckb-sdk-core/lib/signWitnessGroup.js').default;
@@ -37,9 +38,9 @@ let child, secp, rpcSequence = 0;
 let initializationTransactionHash;
 const eventPath = path.join(out, 'events.jsonl');
 function record(file, v) { fs.appendFileSync(path.join(out, file), JSON.stringify(v, (_, x) => typeof x === 'bigint' ? x.toString() : x) + '\n'); }
-async function rpc(method, params = []) {
+async function rpc(method, params = [], signal) {
   const res = await fetch('http://127.0.0.1:19224', {
-    method: 'POST', headers: { 'content-type': 'application/json' },
+    method: 'POST', headers: { 'content-type': 'application/json' }, signal,
     body: JSON.stringify({ jsonrpc: '2.0', id: ++rpcSequence, method, params }),
   });
   const json = await res.json();
@@ -120,6 +121,54 @@ function makeProof(domain, op, owners, updates, extra = Buffer.alloc(0)) {
 }
 function u128(amount, root) { return hx(Buffer.concat([le(amount, 16), b(root)])); }
 
+function startNode(args) {
+  const log = fs.openSync(path.join(out, 'node.log'), 'a');
+  try {
+    const node = spawn(ckbBin, args, { stdio: ['ignore', log, log] });
+    node.once('error', error => { node.failure = error; });
+    return node;
+  } finally {
+    fs.closeSync(log);
+  }
+}
+
+async function ready(node) {
+  let lastError;
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    if (node.failure) throw node.failure;
+    if (node.exitCode !== null || node.signalCode !== null) {
+      throw Error(`CKB PID ${node.pid} exited before RPC readiness`);
+    }
+    try {
+      return await rpc('get_tip_header', [], AbortSignal.timeout(1000));
+    } catch (error) {
+      lastError = error;
+      await delay(100);
+    }
+  }
+  throw Error(`CKB PID ${node.pid} RPC readiness timed out`, { cause: lastError });
+}
+
+async function stopNode(node, signal = 'SIGTERM') {
+  if (node.failure) throw node.failure;
+  if (node.exitCode !== null || node.signalCode !== null) {
+    return { code: node.exitCode, signal: node.signalCode };
+  }
+  return new Promise((resolve, reject) => {
+    const exited = (code, signal) => {
+      clearTimeout(timeout);
+      resolve({ code, signal });
+    };
+    const timeout = setTimeout(() => {
+      node.off('exit', exited);
+      reject(Error(`CKB PID ${node.pid} did not exit after ${signal}`));
+    }, 15_000);
+    node.once('exit', exited);
+    node.kill(signal);
+  });
+}
+
 async function main() {
   execFileSync(process.execPath, [path.join(C.ROOT, 'src/setup.cjs'), chain], { stdio: 'inherit', env: { ...process.env, CKB_BIN: ckbBin } });
   let spec = fs.readFileSync(path.join(chain, 'specs/dev.toml'), 'utf8'), extra = '';
@@ -132,10 +181,8 @@ async function main() {
   fs.writeFileSync(path.join(chain, 'specs/dev.toml'), spec);
   const nodeArgs = ['run', '-C', chain, '--ba-advanced'];
   if (process.env.TRADE_SHARED_LAUNCH_MODULE) nodeArgs.push('--indexer');
-  child = spawn(ckbBin, nodeArgs, { stdio: ['ignore', fs.openSync(path.join(out, 'node.log'), 'w'), 'ignore'] });
-  for (let i = 0; i < 180; i++) {
-    try { await rpc('get_tip_header'); break; } catch { await new Promise(r => setTimeout(r, 100)); }
-  }
+  child = startNode(nodeArgs);
+  await ready(child);
   const genesis = await rpc('get_block_by_number', ['0x0']);
   secp = { outPoint: { txHash: genesis.transactions[1].hash, index: '0x0' }, depType: 'depGroup' };
   const hashes = Object.fromEntries(names.map(name => [name, hash(fs.readFileSync(path.join(build, name)))]));
@@ -153,8 +200,22 @@ async function main() {
   if (process.env.TRADE_SHARED_LAUNCH_MODULE) {
     const {pathToFileURL} = require('node:url');
     const {runSharedLaunch} = await import(pathToFileURL(process.env.TRADE_SHARED_LAUNCH_MODULE).href);
+    const restartNode = async evidence => {
+      const tip = await rpc('get_tip_header');
+      evidence.before = { pid: child.pid, chain, genesis: genesis.header.hash, tip };
+      evidence.shutdown = await stopNode(child);
+      assert.deepEqual(evidence.shutdown, { code: 0, signal: null }, 'CKB did not shut down cleanly');
+      child = startNode(nodeArgs);
+      evidence.after = { pid: child.pid, chain };
+      evidence.after.tip = await ready(child);
+      evidence.after.genesis = await rpc('get_block_hash', ['0x0']);
+      assert.notEqual(evidence.after.pid, evidence.before.pid);
+      assert.equal(evidence.after.genesis, evidence.before.genesis);
+      assert.equal(evidence.after.tip.hash, tip.hash);
+      assert.equal(evidence.after.tip.number, tip.number);
+    };
     await runSharedLaunch({rpc, genesis: genesis.header.hash, hashes, deps, secp, wallets, locks,
-      cell, tx, sign, commit, makeProof, le, out, camel: C.camel});
+      cell, tx, sign, commit, makeProof, le, out, camel: C.camel, restartNode});
     return;
   }
 
@@ -537,4 +598,13 @@ async function main() {
   }
 }
 
-main().catch(error => { console.error(error); process.exitCode = 1; }).finally(() => { if (child) child.kill(); });
+main().finally(async () => {
+  if (!child || child.failure) return;
+  try {
+    await stopNode(child);
+  } catch (error) {
+    console.error(error);
+    await stopNode(child, 'SIGKILL');
+    process.exitCode = 1;
+  }
+}).catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {writeFileSync} from 'node:fs';
 import {join} from 'node:path';
+import {setTimeout as delay} from 'node:timers/promises';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {planSharedLaunch, sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
@@ -8,9 +9,30 @@ import {openSharedLaunchStore} from '../lib/v2-engine/shared-launch-store.ts';
 import {verifyInitializationStage} from '../lib/v2-engine/initialization-lifecycle.ts';
 import {buildTransition} from '../lib/v2-engine/transaction.ts';
 import {decodeCurve} from '../lib/v2-engine/curve.ts';
-import {recoverMarketHistory} from '../lib/v2-engine/lineage.ts';
+import {discoverCustodyPair, recoverMarketHistory} from '../lib/v2-engine/lineage.ts';
 
-export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets, locks, cell, tx, sign, commit, makeProof, le, out, camel}) {
+async function canonicalReceipt(rpc, hash) {
+  const {transaction, tx_status: status} = await rpc('get_transaction', [hash]);
+  assert.equal(status.status, 'committed');
+  assert.equal(transaction.hash, hash);
+  const block = await rpc('get_block_by_number', [status.block_number]);
+  assert.equal(block.header.hash, status.block_hash);
+  assert(block.transactions.some(transaction => transaction.hash === hash));
+  return {hash, blockHash: status.block_hash, blockNumber: status.block_number};
+}
+
+async function waitForIndexer(rpc) {
+  const tip = await rpc('get_tip_header', [], AbortSignal.timeout(1000));
+  const deadline = Date.now() + 15_000;
+  while (Date.now() < deadline) {
+    const indexed = await rpc('get_indexer_tip', [], AbortSignal.timeout(1000));
+    if (indexed?.block_hash === tip.hash) return;
+    await delay(100);
+  }
+  throw Error(`Indexer did not reach canonical tip ${tip.hash}`);
+}
+
+export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets, locks, cell, tx, sign, commit, makeProof, le, out, camel, restartNode}) {
   const unit = 100_000_000n;
   const fundingFee = 100_000n;
   const funded = await commit('wo3b-fund-creators', sign(tx([wallets[2]], [
@@ -35,6 +57,7 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
   const dbPath = join(out, 'launch.sqlite');
   let store = openSharedLaunchStore(dbPath);
   const results = [];
+  const restart = {errors: []};
   try {
     for (const role of [0,1]) {
       const creator = ccc.Script.from(locks[role]);
@@ -69,9 +92,32 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
         store.close();
         store = openSharedLaunchStore(dbPath);
         assert.throws(() => store.recordSubmission(scope, stageHashes, stage), /requires reconciliation/);
+        const restartHere = role === 1 && stage === 'purchase';
+        if (restartHere) {
+          const purchaseHash = outputs[0].outPoint.txHash;
+          restart.transactionsBefore = await Promise.all([results[0].trade, purchaseHash].map(hash => canonicalReceipt(rpc, hash)));
+          const pending = store.read(scope, stageHashes);
+          await restartNode(restart);
+          assert.equal(restart.after.genesis, genesis);
+          restart.transactionsAfter = await Promise.all([results[0].trade, purchaseHash].map(hash => canonicalReceipt(rpc, hash)));
+          assert.deepEqual(restart.transactionsAfter, restart.transactionsBefore);
+          assert.equal(store.read(scope, stageHashes), pending);
+          restart.pending = JSON.parse(pending).entries.at(-1);
+          assert.deepEqual(restart.pending, {stage, txHash: purchaseHash, state: 'submitted'});
+          assert.throws(() => store.reserve(scope, stageHashes), /already reserved/);
+          assert.throws(() => store.recordSubmission(scope, stageHashes, stage), /requires reconciliation/);
+        }
         const receipt = await verifyInitializationStage(rpc, genesis, stage, review, inputs.map(input => input.outPoint),
           stage === 'purchase' ? [0,1,2,3] : [0,1]);
         store.confirm(scope, stageHashes, receipt);
+        if (restartHere) {
+          restart.confirmed = JSON.parse(store.read(scope, stageHashes)).entries.at(-1);
+          assert.equal(restart.confirmed.state, 'confirmed');
+          assert.equal(restart.confirmed.txHash, restart.pending.txHash);
+          assert.equal(restart.confirmed.blockHash, restart.transactionsAfter[1].blockHash);
+          assert.throws(() => store.confirm(scope, stageHashes, receipt), /pending launch stage/);
+          restart.duplicateConfirmationRejected = true;
+        }
         if (stage === 'setup') {
           setup = outputs;
           plan = await planSharedLaunch(rpc, {...config, resumeJournal:store.read(scope, stageHashes)});
@@ -87,19 +133,42 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
       }, inputs, [role]));
       assert.equal(next[0].capacity - purchase[0].capacity, amount);
       const initial = [issuance[0].outPoint, issuance[1].outPoint].map(point);
-      results.push({scope, stageHashes, initial, trade:next[0].outPoint.txHash, root:continuation.root, accounting:plan.accounting});
+      results.push({scope, stageHashes, initial, trade:next[0].outPoint.txHash, root:continuation.root,
+        custodyLock:identity.custody.hash(), token:identity.token.hash(), accounting:plan.accounting});
+      await waitForIndexer(rpc);
+      const recoveredMarkets = [];
       for (const result of results) {
         const recovered = await recoverMarketHistory(rpc, result.initial, {maxIndexedDepth:16});
-        assert.equal(recovered.pair[0].tx_hash, result.trade);
+        assert(recovered.pair.every(output => output.tx_hash === result.trade));
         assert.equal(recovered.lineage.length, 3);
+        const final = recovered.lineage.at(-1).transaction;
+        assert.equal(final.hash, result.trade);
+        assert.equal(ccc.Script.from(camel(final.outputs[0].lock)).hash(), result.scope.market);
+        const custody = await discoverCustodyPair(rpc, {tx_hash: result.trade, index: '0x2'});
+        assert.deepEqual(custody, ['0x2', '0x3'].map(index => ({tx_hash: result.trade, index})));
+        const live = await rpc('get_live_cell', [custody[0], true]);
+        assert.equal(live.status, 'live');
+        assert.equal(live.cell.data.content, final.outputs_data[2]);
+        assert.equal(ccc.Script.from(camel(live.cell.output.lock)).hash(), result.custodyLock);
+        assert.equal(ccc.Script.from(camel(live.cell.output.type)).hash(), result.token);
+        const root = '0x' + live.cell.data.content.slice(34);
+        assert.equal(root, result.root);
+        recoveredMarkets.push({market: result.scope.market, trade: result.trade, pair: recovered.pair, custody, root});
       }
+      if (role === 1) restart.recoveredMarkets = recoveredMarkets;
     }
     assert.notEqual(results[0].scope.market, results[1].scope.market);
+    assert.notEqual(results[0].token, results[1].token);
+    assert.notEqual(results[0].custodyLock, results[1].custodyLock);
     assert.notEqual(results[0].root, results[1].root);
     writeFileSync(join(out,'shared-launch-summary.json'), JSON.stringify({genesis,fixture,results},
       (_, value) => typeof value === 'bigint' ? value.toString() : value, 2));
     console.log('Shared launch evidence', out);
+  } catch (error) {
+    restart.errors.push(error.stack, ...(error.cause ? [String(error.cause)] : []));
+    throw error;
   } finally {
+    writeFileSync(join(out, 'shared-launch-restart.json'), JSON.stringify(restart, null, 2));
     store.close();
   }
 }
