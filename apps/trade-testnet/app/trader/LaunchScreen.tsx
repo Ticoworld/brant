@@ -2,16 +2,17 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {useSigner} from '@ckb-ccc/connector-react';
+import localFont from 'next/font/local';
 import {useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
 import {firstPurchaseQuantity, LaunchPreflightError, previewLaunch} from './launch-preflight';
 import {formatCkb, PUDGE_GENESIS} from './rpc';
 import TraderShell from './shell';
 
-const field = 'mt-2 min-h-11 w-full rounded border border-[#35403b] bg-[#111614] px-3 text-sm';
-const panel = 'min-w-0 rounded-md border border-[#28302f] bg-[#111513] p-5 sm:p-7';
-const primary = 'min-h-11 rounded bg-[#a7e9c6] px-5 text-sm font-semibold text-[#102019] disabled:opacity-40';
-const secondary = 'min-h-11 rounded border border-[#35403b] px-4 text-sm';
+const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2',weight:'100 900'});
+const field = 'mt-2 min-h-12 w-full !rounded-xl !border-0 !bg-[#1e2523] px-4 text-base focus-visible:outline-2 focus-visible:outline-[#6cddb5]';
+const primary = 'justify-self-start min-h-12 !rounded-xl !bg-[#a7e9c6] px-6 text-sm font-semibold !text-[#102019] disabled:opacity-40';
+const secondary = 'min-h-11 !rounded-xl !border-0 !bg-[#1e2523] px-4 text-sm';
 const ckb = (amount: bigint) => formatCkb(amount) + ' CKB';
 
 export default function LaunchScreen() {
@@ -69,33 +70,46 @@ export default function LaunchScreen() {
     proof: t('The local Pudge initialization proof could not be verified.','无法验证本地 Pudge 初始化证明。'),
   }[issue.reason] : t('Launch funding or dependencies could not be verified. Retry when Pudge is synchronized.','无法验证发行资金或依赖项。请等待 Pudge 同步后重试。');
 
-  return <TraderShell>
-    <div className="mx-auto max-w-5xl space-y-6">
-      <header>
-        <h1 className="m-0 text-2xl font-semibold">{t('Launch a token','发行代币')}</h1>
-        <p className="mb-0 mt-2 text-sm text-[#9ba6a2]">{t('Create a CKB / xUDT market on Pudge.','在 Pudge 上创建 CKB / xUDT 市场。')}</p>
+  return <TraderShell wide>
+    <div className={geist.className + ' pb-[60px] pt-7 text-[#f2f5f4] sm:pt-[34px]'}>
+      <header className="mb-[26px]">
+        <h1 className="m-0 text-[clamp(32px,3.1vw,46px)] leading-[1.12] font-[650] tracking-[-.055em]">{t('Launch a token','发行代币')}</h1>
+        <p className="mb-0 mt-[7px] text-sm text-[#98a7a2]">{t('Create a CKB / xUDT market on Pudge.','在 Pudge 上创建 CKB / xUDT 市场。')}</p>
       </header>
-      <ol className="m-0 grid list-none grid-cols-3 gap-2 border-b border-[#28302f] p-0">
+      <ol className="m-0 flex list-none flex-wrap gap-x-5 border-b border-[#28302f] p-0 sm:gap-x-10">
         {steps.map((label, index) => <li key={label} aria-current={step === index ? 'step' : undefined}
           className={'border-b-2 py-3 text-sm ' + (step === index ? 'border-[#a7e9c6] text-[#a7e9c6]' : 'border-transparent text-[#9ba6a2]')}>
           {index + 1}. {label}
         </li>)}
       </ol>
-      <div className="grid items-start gap-4 md:grid-cols-[3fr_2fr]">
-        <section className={panel}>
-          <h2 className="m-0 text-lg font-semibold">{steps[step]}</h2>
-          {step === 0 && <form className="mt-5 grid gap-4" onSubmit={event => {event.preventDefault(); if (name.trim() && ticker.trim()) setStep(1);}}>
+      <div className="mt-8 grid items-start gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,3fr)] lg:mt-10 lg:gap-[clamp(48px,6vw,120px)]">
+        <section className="min-w-0">
+          <h2 className="m-0 text-[21px] font-[640] tracking-[-.03em]">{steps[step]}</h2>
+          {step === 0 && <form className="mt-6 grid gap-6 text-sm" onSubmit={event => {event.preventDefault(); if (name.trim() && ticker.trim()) setStep(1);}}>
+            <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-3 sm:gap-5">
             <label>{t('Token name','代币名称')}<input className={field} required maxLength={40} value={name} onChange={event => setName(event.target.value)}/></label>
             <label>{t('Ticker','代币符号')}<input className={field} required pattern="[A-Z0-9]{1,10}" maxLength={10} value={ticker} onChange={event => setTicker(event.target.value.toUpperCase())}/></label>
-            <label>{t('Token logo (optional)','代币图标（选填）')}<input className="mt-2 block w-full text-sm text-[#a8b5ae]" type="file" accept="image/png,image/jpeg,image/webp"
-              onChange={event => {const file = event.target.files?.[0]; setLogo(file && ['image/png','image/jpeg','image/webp'].includes(file.type) ? URL.createObjectURL(file) : '');}}/></label>
+            </div>
+            <label className="grid cursor-pointer gap-2">
+              {t('Token logo (optional)','代币图标（选填）')}
+              <input className="peer sr-only" type="file" accept="image/png,image/jpeg,image/webp"
+                onChange={event => {const file = event.target.files?.[0]; setLogo(file && ['image/png','image/jpeg','image/webp'].includes(file.type) ? URL.createObjectURL(file) : '');}}/>
+              <span className="flex min-h-28 items-center gap-4 rounded-xl border border-dashed border-[#46534d] bg-[#151a19] p-4 hover:bg-[#1e2523] peer-focus-visible:outline-2 peer-focus-visible:outline-[#6cddb5] sm:px-6">
+                {logo ? <img src={logo} alt="" className="size-12 rounded-lg object-cover"/> :
+                  <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#254139] text-2xl text-[#a7e9c6]">+</span>}
+                <span className="grid gap-1">
+                  <strong className="font-medium">{logo ? t('Replace image','更换图片') : t('Choose an image','选择图片')}</strong>
+                  <span className="text-[#aab7b3]">PNG, JPG, WebP</span>
+                </span>
+              </span>
+            </label>
             <details className="text-sm"><summary className="cursor-pointer text-[#a8b5ae]">{t('Description and social link','描述和社交链接')}</summary>
               <label className="mt-3 block">{t('Description','描述')}<textarea className={field + ' py-2'} maxLength={240} value={description} onChange={event => setDescription(event.target.value)}/></label>
               <label className="mt-3 block">{t('Social link','社交链接')}<input className={field} type="url" value={social} onChange={event => setSocial(event.target.value)}/></label>
             </details>
             <button className={primary} disabled={!name.trim() || !ticker.trim()}>{steps[1]}</button>
           </form>}
-          {step === 1 && <div className="mt-5 space-y-4">
+          {step === 1 && <div className="mt-6 space-y-5">
             {account.state === 'ready' ? <p className="break-all text-sm text-[#a8b5ae]">{account.address}</p> :
               <p role="status" className="text-sm text-[#a8b5ae]">{account.state === 'wrong-network' ? t('Switch your wallet to Pudge.','请将钱包切换到 Pudge。') : account.state === 'unsupported' ? t('Switch to a supported Pudge wallet.','请切换到受支持的 Pudge 钱包。') : t('Connect your Pudge wallet to check funding.','连接 Pudge 钱包以检查资金。')}</p>}
             {usable !== undefined && <Amount label={t('Usable CKB','可用 CKB')} value={ckb(usable)}/>}
@@ -131,12 +145,12 @@ export default function LaunchScreen() {
               <button className={primary} disabled>{steps[2]}</button></div>
           </div>}
         </section>
-        <aside className={panel + ' space-y-4'}>
-          <div className="flex min-w-0 items-center gap-3">
+        <aside className="min-w-0 space-y-5 border-t border-[#28302f] pt-6 md:border-t-0 md:pt-0">
+          <div className="flex min-w-0 items-center gap-4">
             {/* Local image preview or approved Brant artwork. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="h-12 w-12 shrink-0 rounded-md border border-[#35403b] bg-[#1a211e] object-contain p-1" alt="" src={logo || '/brand/brant-symbol-white.svg'}/>
-            <div className="min-w-0 break-words"><h2 className="m-0 text-lg font-semibold">{name.trim() || t('Token preview','代币预览')}</h2><p className="m-0 text-sm text-[#a8b5ae]">{ticker || 'xUDT'} / CKB</p></div>
+            <img className={'size-16 shrink-0 rounded-2xl bg-[#1e2523] object-contain sm:size-20 ' + (logo ? '' : 'p-4')} alt="" src={logo || '/brand/brant-symbol-white.svg'}/>
+            <div className="min-w-0 break-words"><h2 className="m-0 text-[clamp(24px,2.3vw,34px)] leading-tight font-[640] tracking-[-.04em]">{name.trim() || t('Token preview','代币预览')}</h2><p className="mb-0 mt-1 text-sm text-[#aab7b3]">{ticker || 'xUDT'} / CKB</p></div>
           </div>
           {description.trim() && <p className="break-words text-sm">{description}</p>}
           {social.trim() && <p className="break-all text-xs text-[#a8b5ae]">{social}</p>}
@@ -151,7 +165,7 @@ export default function LaunchScreen() {
 }
 
 function Amount({label, value}: {label: string; value: string}) {
-  return <div className="flex flex-wrap justify-between gap-x-2 gap-y-1 border-t border-[#28302f] pt-2 text-sm">
+  return <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-t border-[#28302f] pt-3 text-sm">
     <span className="text-[#a8b5ae]">{label}</span><span className="font-medium tabular-nums">{value}</span>
   </div>;
 }
