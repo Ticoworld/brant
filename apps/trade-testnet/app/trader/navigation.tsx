@@ -32,7 +32,7 @@ export function NavigationHeader({account}: {account: Pick<ReturnType<typeof use
 
   return <header className={`brant-header ${geist.className}`}>
     <div className="brant-header-inner">
-      <Link href="/" className="brant-brand"><img src="/icon.svg" alt="" width={30} height={30}/>Brant</Link>
+      <Link href="/" className="brant-brand"><img src="/brand/brant-horizontal-white.svg" alt="Brant" width={1037} height={273}/></Link>
       <nav aria-label={zh ? '主导航' : 'Primary navigation'}>
         {items.map(([href,key]) => <Link key={key} href={href}
           aria-current={pathname===href || key==='trade'&&pathname.startsWith('/market/') ? 'page' : undefined}>

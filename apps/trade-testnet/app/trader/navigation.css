@@ -16,7 +16,8 @@
   padding-block: 8px;
 }
 .brant-header :is(nav, .brant-brand, .brant-header-meta, .brant-network) { display: flex; align-items: center; gap: 8px; }
-.brant-header .brant-brand { font-size: 21px; font-weight: 700; letter-spacing: -.04em; color: inherit; }
+.brant-header .brant-brand { flex: 0 0 auto; min-height: 40px; }
+.brant-brand img { display: block; width: 120px; height: auto; }
 .brant-header a { text-decoration: none; }
 .brant-header :is(nav a, .brant-header-meta button) {
   display: inline-flex;
@@ -39,6 +40,7 @@
 .brant-network[data-wrong-network="true"] i { background: #f08087; }
 .brant-header .brant-wallet-status { flex-basis: 100%; margin: 0; color: #ecbd84; }
 @media (max-width: 850px) {
+  .brant-brand img { width: 100px; }
   .brant-header-inner { gap: 6px 12px; }
   .brant-header nav { order: 2; flex-basis: 100%; flex-wrap: wrap; gap: 2px; }
   .brant-header .brant-wallet-status { order: 3; }
