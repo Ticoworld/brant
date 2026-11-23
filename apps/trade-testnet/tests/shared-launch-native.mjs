@@ -4,9 +4,9 @@ import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
-import {planSharedLaunch, sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
+import {sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
+import {reserveSharedLaunch, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage} from '../lib/v2-engine/shared-launch-controller.ts';
 import {openSharedLaunchStore} from '../lib/v2-engine/shared-launch-store.ts';
-import {verifyInitializationStage} from '../lib/v2-engine/initialization-lifecycle.ts';
 import {buildTransition} from '../lib/v2-engine/transaction.ts';
 import {decodeCurve} from '../lib/v2-engine/curve.ts';
 import {discoverCustodyPair, recoverMarketHistory} from '../lib/v2-engine/lineage.ts';
@@ -78,21 +78,27 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           const proof = makeProof(domain, 0, [], [leaf], le(price));
           return {owner, witness:proof.witness, newRoot:proof.root};
         }};
-      let plan = await planSharedLaunch(rpc, config);
+      let plan = await reserveSharedLaunch(rpc, store, config);
       const {scope, stageHashes} = plan;
-      store.reserve(scope, stageHashes);
       assert.throws(() => store.reserve(scope, stageHashes), /already reserved/);
       let setup, issuance, purchase;
       for (const stage of sharedLaunchStages) {
         const review = await plan.prepareStage(stage, store.read(scope, stageHashes));
         const inputs = stage === 'setup' ? config.funding : stage === 'issuance' ? [anchor, setup[0]] : [...issuance.slice(0,2), setup[1]];
-        store.recordSubmission(scope, stageHashes, stage);
         const unsigned = legacy(review);
-        const outputs = await commit(`wo3b-creator-${role}-${stage}`, sign(unsigned, inputs, [role]));
+        const signed = ccc.Transaction.from(sign(unsigned, inputs, [role]));
+        let outputs;
+        const restartHere = role === 1 && stage === 'purchase';
+        const submit = () => submitSharedLaunchStage(store, plan, stage, signed, async candidate => {
+          outputs = await commit(`wo3b-creator-${role}-${stage}`, legacy(candidate));
+          if (restartHere) throw Error('Simulated lost acknowledgement');
+          return outputs[0].outPoint.txHash;
+        });
+        if (restartHere) await assert.rejects(submit(), /lost acknowledgement/);
+        else await submit();
         store.close();
         store = openSharedLaunchStore(dbPath);
         assert.throws(() => store.recordSubmission(scope, stageHashes, stage), /requires reconciliation/);
-        const restartHere = role === 1 && stage === 'purchase';
         if (restartHere) {
           const purchaseHash = outputs[0].outPoint.txHash;
           restart.transactionsBefore = await Promise.all([results[0].trade, purchaseHash].map(hash => canonicalReceipt(rpc, hash)));
@@ -107,9 +113,8 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           assert.throws(() => store.reserve(scope, stageHashes), /already reserved/);
           assert.throws(() => store.recordSubmission(scope, stageHashes, stage), /requires reconciliation/);
         }
-        const receipt = await verifyInitializationStage(rpc, genesis, stage, review, inputs.map(input => input.outPoint),
-          stage === 'purchase' ? [0,1,2,3] : [0,1]);
-        store.confirm(scope, stageHashes, receipt);
+        plan = await recoverSharedLaunch(rpc, store, scope, stageHashes);
+        const receipt = await reconcileSharedLaunchStage(store, plan);
         if (restartHere) {
           restart.confirmed = JSON.parse(store.read(scope, stageHashes)).entries.at(-1);
           assert.equal(restart.confirmed.state, 'confirmed');
@@ -120,7 +125,6 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
         }
         if (stage === 'setup') {
           setup = outputs;
-          plan = await planSharedLaunch(rpc, {...config, resumeJournal:store.read(scope, stageHashes)});
         } else if (stage === 'issuance') issuance = outputs;
         else purchase = outputs;
       }

@@ -1,4 +1,5 @@
 import {DatabaseSync} from 'node:sqlite';
+import {isAbsolute} from 'node:path';
 import {readSharedLaunchJournal, sharedLaunchJournalKey, sharedLaunchStages} from './shared-launch.ts';
 
 type Scope = Parameters<typeof readSharedLaunchJournal>[1];
@@ -16,10 +17,16 @@ export function openSharedLaunchStore(path: string) {
       plan TEXT NOT NULL,
       journal TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS shared_launch_snapshot (
+      market_key TEXT PRIMARY KEY REFERENCES shared_launch(market_key),
+      snapshot TEXT NOT NULL
+    );
   `);
   const load = db.prepare('SELECT plan, journal FROM shared_launch WHERE market_key = ?');
   const update = db.prepare('UPDATE shared_launch SET journal = ? WHERE market_key = ? AND journal = ?');
   const insert = db.prepare('INSERT OR IGNORE INTO shared_launch VALUES (?, ?, ?, ?)');
+  const saveSnapshot = db.prepare('INSERT INTO shared_launch_snapshot VALUES (?, ?)');
+  const loadSnapshot = db.prepare('SELECT snapshot FROM shared_launch_snapshot WHERE market_key = ?');
 
   function loadPlan(scope: Scope, hashes: Hashes) {
     const key = sharedLaunchJournalKey(scope).toLowerCase();
@@ -39,7 +46,7 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
-    reserve(scope: Scope, hashes: Hashes) {
+    reserve(scope: Scope, hashes: Hashes, snapshot?: string) {
       const validHash = /^0x[\da-f]{64}$/i;
       if (![scope.genesis, scope.owner, scope.market, scope.anchor.txHash,
         ...sharedLaunchStages.map(stage => hashes[stage])].every(value => validHash.test(value)) ||
@@ -50,8 +57,22 @@ export function openSharedLaunchStore(path: string) {
       const key = sharedLaunchJournalKey(scope).toLowerCase();
       const anchor = `${scope.genesis.toLowerCase()}:${scope.anchor.txHash.toLowerCase()}:${BigInt(scope.anchor.index)}`;
       const plan = JSON.stringify(sharedLaunchStages.map(stage => hashes[stage]));
-      if (insert.run(key, anchor, plan, raw).changes !== 1) throw Error('Launch anchor or market already reserved');
+      db.exec('BEGIN IMMEDIATE');
+      try {
+        if (insert.run(key, anchor, plan, raw).changes !== 1) throw Error('Launch anchor or market already reserved');
+        if (snapshot !== undefined) saveSnapshot.run(key, snapshot);
+        db.exec('COMMIT');
+      } catch (error) {
+        db.exec('ROLLBACK');
+        throw error;
+      }
       return raw;
+    },
+    readSnapshot(scope: Scope, hashes: Hashes) {
+      const {key} = loadPlan(scope, hashes);
+      const row = loadSnapshot.get(key) as {snapshot: string} | undefined;
+      if (!row) throw Error('Launch snapshot unavailable');
+      return row.snapshot;
     },
     read(scope: Scope, hashes: Hashes) {
       return loadPlan(scope, hashes).raw;
@@ -74,4 +95,10 @@ export function openSharedLaunchStore(path: string) {
       });
     },
   };
+}
+
+export function openConfiguredSharedLaunchStore() {
+  const path = process.env.BRANT_LAUNCH_SQLITE_PATH;
+  if (!path || !isAbsolute(path)) throw Error('Configure an absolute persistent BRANT_LAUNCH_SQLITE_PATH');
+  return openSharedLaunchStore(path);
 }

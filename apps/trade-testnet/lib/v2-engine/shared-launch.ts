@@ -2,6 +2,7 @@ import {ccc} from '@ckb-ccc/core';
 import {buildFirstPurchase, buildInitializationSetup, buildIssuance, deriveMarketIdentity} from './initialization.ts';
 import {verifyInitializationLive, verifyInitializationDependencies} from './initialization-live.ts';
 import {verifyInitializationStage} from './initialization-lifecycle.ts';
+import {verifyInitializationSignature} from './initialization-signature.ts';
 import {quote} from './curve.ts';
 import {PUDGE_GATE2_ANCHOR, PUDGE_GATE2_CODES, PUDGE_GATE2_GENESIS, PUDGE_GATE2_STAGE_TXS, PUDGE_GATE2_XUDT_DEP} from './pudge-public-registry.ts';
 
@@ -169,6 +170,14 @@ export async function planSharedLaunch(rpc: Rpc, request: Launch) {
     accounting: {eligibleFunding, locked, change, curveReserve: price, fees,
       stageFees: {setup: setup.fee, issuance: issuance.fee, purchase: firstPurchase.fee}},
     projected: Object.fromEntries(sharedLaunchStages.map(stage => [stage, plans[stage].transaction.clone()])) as Record<Stage, ccc.Transaction>,
+    verifySignature(stage: Stage, signed: ccc.Transaction) {
+      verifyInitializationSignature(plans[stage].transaction, signed, stageInputs[stage],
+        stage === 'purchase' ? 2 : 0, owner);
+    },
+    verifyReceipt(stage: Stage) {
+      return verifyInitializationStage(rpc, genesis, stage, plans[stage].transaction,
+        stageInputs[stage].map(cell => cell.outPoint), stage === 'purchase' ? [0, 1, 2, 3] : [0, 1]);
+    },
     async prepareStage(stage: Stage, rawJournal: string) {
       const journal = readSharedLaunchJournal(rawJournal, scope, stageHashes);
       const index = sharedLaunchStages.indexOf(stage);
