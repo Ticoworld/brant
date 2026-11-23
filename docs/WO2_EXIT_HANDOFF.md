@@ -45,7 +45,7 @@ Build from the repository root with the locked application dependencies installe
 
     node apps/trade-testnet/exit-signer/build.cjs
 
-Serve the two generated files in apps/trade-testnet/.next/exit-signer with a static HTTP server on loopback. Keep the Brant application stopped. The page reads genesis and live Cells directly from the pinned Pudge RPC. The review file and signed export stay in the browser and the selected wallet.
+Serve the two generated files in apps/trade-testnet/exit-signer-dist with a static HTTP server on loopback. Keep the Brant application stopped. The page reads genesis and live Cells directly from the pinned Pudge RPC. The review file and signed export stay in the browser and the selected wallet.
 
 Import the v1 JSON produced by the lab CLI's prepare-public-withdrawal command. Review the address and amounts, connect UTXO Global on CKB testnet, then export the result after approval. The adapter uses CCC core 1.23.0 and UTXO Global 1.2.6. Its sign-only path delegates to the extension signTransaction interface and skips CCC transaction preparation. The signed export uses the RPC transaction format consumed by the isolated CLI. Public submission remains a separate, explicitly authorized owner operation. The isolated submit-signed-withdrawal command stays restricted to isolated chains.
 
@@ -63,3 +63,11 @@ The mock exercises the installed CCC adapter and compares the complete exported 
 | Lost response | 294f9339d18e3859d394dbc9d2918149d08c3b21c8b498ac5a45fe7c2b36bb96 | 5a2b68ebd1ba7d0051be88208f9348fae39d0f0cfa8de74898c5b0890bf3193d | 0x1ff2e8 |
 
 Both receipts recorded 7 RVK in the external output and independent replay found zero owner entitlement afterward. The documented official archive retrieved from the bootstrap.py release URL matched SHA-256 68a94c191109bae172f8dcb71828dbdf0383e2c314e0658743db217472b27bdf. Its extracted node executable hashed to d687e478aa4a395ba9ce839473fe43684cacd4ad7a38096af1e331b8a1ddd178. The R1 portable node executable hashed to a6424a34b2adba5011d3ec1d49569c5effacb54b8dcf97cbb99c0c5800300bf0. These were different executables. R1 remains qualified against its recorded portable executable and matching Gate 2 and xUDT binaries.
+
+### Owner session after the release gate
+
+1. With Brant stopped, prepare a fresh v1 public review from the registered initialization and owner history using the lab CLI. Use the owner's public lock JSON, live funding outpoint and a committed withdrawal whose code dependencies match the registered custody, custody marker and xUDT Cells.
+2. Run npm ci in apps/trade-testnet, then run the standalone build from the repository root as above. Compare the files against SHA256SUMS in the distribution directory.
+3. Run python -m http.server 4173 --bind 127.0.0.1 --directory apps/trade-testnet/exit-signer-dist from the repository root. Open http://127.0.0.1:4173/ in the Chrome profile containing UTXO Global.
+4. Import the review, wait for verification of Roveko Genesis and the RVK type script hash, then compare the displayed destination, quantity, funding outpoint, return and fee to the CLI review.
+5. Connect the recovered owner account on CKB testnet. In the separately authorized owner session, approve Sign and export. Keep the exported RPC JSON locally for signed VM estimation and canonical settlement verification. Public submission requires separate authorization.

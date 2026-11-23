@@ -2,6 +2,7 @@ import {ccc} from '@ckb-ccc/core';
 import {UtxoGlobal} from '@ckb-ccc/utxo-global';
 import {PUDGE_GATE2_GENESIS} from '../lib/v2-engine/pudge-public-registry.ts';
 import {checkWallet, readReview, signReview} from './review.ts';
+import {checkRegisteredTransaction, verifyRegisteredMarket} from './registered-market.ts';
 
 const rpc = new ccc.ClientPublicTestnet({url: 'https://testnet.ckb.dev/', fallbacks: []});
 const file = document.querySelector<HTMLInputElement>('#file')!;
@@ -34,9 +35,14 @@ file.onchange = () => run(async () => {
   const selected = file.files?.[0];
   if (!selected || selected.size > 65536) throw Error('Choose a withdrawal review JSON file under 64 KiB');
   const imported = readReview(await selected.text(), PUDGE_GATE2_GENESIS);
+  checkRegisteredTransaction(imported.tx);
+  status.textContent = 'Checking registered market on Pudge…';
+  await verifyRegisteredMarket(rpc);
   const funding = imported.tx.inputs[2].previousOutput;
   for (const [label, value] of [
-    ['Network', 'CKB Pudge'], ['Transaction hash', imported.tx.hash()],
+    ['Network', 'CKB Pudge'], ['Verified market', 'Roveko Genesis · RVK/CKB'],
+    ['Verified RVK type script hash', imported.tx.outputs[2].type!.hash()],
+    ['Transaction hash', imported.tx.hash()],
     ['Destination', new ccc.Address(imported.owner, rpc.addressPrefix).toString()],
     ['Quantity', imported.quantity + ' RVK'], ['Funding Cell', funding.txHash + ':' + funding.index],
     ['Funding capacity', ccc.fixedPointToString(imported.funding) + ' CKB'],
@@ -82,6 +88,8 @@ connect.onclick = () => run(async () => {
 sign.onclick = () => run(async () => {
   const approved = review!;
   const session = generation;
+  await verifyRegisteredMarket(rpc);
+  if (session !== generation) throw Error('Wallet changed during verification');
   const signed = await signReview(approved, wallet!, rpc);
   if (session !== generation) throw Error('Wallet changed during approval');
   const url = URL.createObjectURL(new Blob([JSON.stringify(signed, null, 2)], {type:'application/json'}));

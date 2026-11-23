@@ -1,7 +1,8 @@
 const fs = require('node:fs');
+const {createHash} = require('node:crypto');
 const path = require('node:path');
 const {webpack} = require('next/dist/compiled/webpack/webpack');
-const out = path.resolve(process.argv[2] || path.join(__dirname, '../.next/exit-signer'));
+const out = path.resolve(process.argv[2] || path.join(__dirname, '../exit-signer-dist'));
 webpack({
   mode: 'production',
   entry: path.join(__dirname, 'browser.ts'),
@@ -15,5 +16,8 @@ webpack({
     return;
   }
   fs.copyFileSync(path.join(__dirname, 'index.html'), path.join(out, 'index.html'));
+  const hashes = ['index.html', 'signer.js'].map(file =>
+    createHash('sha256').update(fs.readFileSync(path.join(out, file))).digest('hex') + '  ' + file);
+  fs.writeFileSync(path.join(out, 'SHA256SUMS'), hashes.join('\n') + '\n');
   console.log(out);
 });
