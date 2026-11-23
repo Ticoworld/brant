@@ -51,6 +51,17 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
+    listSessions(genesis: string, owner: string) {
+      const rows = db.prepare(`
+        SELECT journal FROM shared_launch
+        WHERE json_extract(journal, '$.genesis') = ? AND json_extract(journal, '$.owner') = ?
+        ORDER BY rowid DESC LIMIT 50
+      `).all(genesis, owner);
+      return rows.map(row => {
+        const {market, entries} = JSON.parse(String(row.journal)) as Journal;
+        return {market, entries};
+      });
+    },
     publish(scope: Scope, hashes: Hashes, token: string, metadata: ReturnType<typeof normalizeLaunchMetadata>) {
       const {key, raw, journal} = loadPlan(scope, hashes);
       if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {

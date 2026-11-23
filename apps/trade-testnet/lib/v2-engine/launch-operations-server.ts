@@ -74,6 +74,15 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       }
       throw Error('Insufficient launch funding');
     }
+    if (action === 'sessions') {
+      if (typeof input.owner !== 'string' || !hash.test(input.owner)) throw Error('Invalid creator identity');
+      const store = openStore();
+      try {
+        return store.listSessions(genesis, input.owner);
+      } finally {
+        store.close();
+      }
+    }
     const {owner, market} = input;
     if (typeof owner !== 'string' || !hash.test(owner) || typeof market !== 'string' || !hash.test(market)) throw Error('Invalid session identity');
     if (action === 'submit' && (!send || !authorizeCreator(owner))) throw Error('Launch execution is disabled');

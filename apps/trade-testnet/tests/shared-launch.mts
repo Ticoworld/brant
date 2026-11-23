@@ -78,6 +78,10 @@ store = openSharedLaunchStore(storePath);
 assert.throws(() => store.recordSubmission(first.scope, first.stageHashes, 'setup'), /requires reconciliation/);
 assert.throws(() => store.read(first.scope, {...first.stageHashes, setup: hex('ff')}), /immutable plan differs/);
 assert.equal(store.read(second.scope, second.stageHashes), journal(second));
+assert.deepEqual(store.listSessions(first.scope.genesis, first.scope.owner).map(({market, entries}) =>
+  [market, entries.at(-1)?.state]), [[first.scope.market, 'submitted']]);
+assert.deepEqual(store.listSessions(second.scope.genesis, second.scope.owner).map(({market}) => market),
+  [second.scope.market]);
 await first.prepareStage('setup', journal(first));
 assert.notEqual(sharedLaunchJournalKey(first.scope), sharedLaunchJournalKey(second.scope));
 assert.throws(() => readSharedLaunchJournal(journal(second), first.scope, first.stageHashes), /identity mismatch/);

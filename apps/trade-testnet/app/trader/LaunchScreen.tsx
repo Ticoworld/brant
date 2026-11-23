@@ -22,6 +22,7 @@ const ckb = (amount: bigint) => formatCkb(amount) + ' CKB';
 const launchStages = ['setup', 'issuance', 'purchase'] as const;
 const sessionKey = (owner: string) => 'brant-launch-session:' + owner;
 type Stage = typeof launchStages[number];
+type SessionSummary = {market: string; entries: {state: string}[]};
 type Session = {enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
 
 async function launchApi(action: string, payload: object, signal?: AbortSignal) {
@@ -54,6 +55,10 @@ export default function LaunchScreen() {
   const [setupTestResult, setSetupTestResult] = useState('');
   const verifiedSetups = useRef(new Set<string>());
   const [session, setSession] = useState<Session>();
+  const [resumedMarket, setResumedMarket] = useState<string>();
+  const [savedSessions, setSavedSessions] = useState<SessionSummary[]>([]);
+  const [selection, setSelection] = useState<{owner: string; market: string}>();
+
   const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; accounting: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
   useEffect(() => () => { if (logo) URL.revokeObjectURL(logo); }, [logo]);
@@ -63,6 +68,7 @@ export default function LaunchScreen() {
   const steps = [t('Create token','创建代币'), t('Review launch','审核发行'), t('Launch','发行')];
   const stages = [t('Create market','创建市场'), t('Issue tokens','发行代币'), t('Initial purchase','首次购买')];
   const owner = account.state === 'ready' ? account.owner : '';
+  const selectedMarket = selection?.owner === owner ? selection.market : undefined;
   useEffect(() => {
     if (step !== 1 || !owner || !signer) return;
     const controller = new AbortController();
@@ -72,13 +78,23 @@ export default function LaunchScreen() {
   }, [step, owner, signer, retry]);
   useEffect(() => {
     setSession(undefined);
+    setSavedSessions([]);
+    setResumedMarket(undefined);
     if (!owner) return;
-    const market = localStorage.getItem(sessionKey(owner));
-    if (!market) return;
     let active = true;
-    void launchApi('session', {owner, market}).then(async result => {
+    void (async () => {
+      const sessions: SessionSummary[] = await launchApi('sessions', {owner});
       if (!active) return;
-      if (result) {
+      setSavedSessions(sessions);
+      const remembered = selectedMarket ?? localStorage.getItem(sessionKey(owner));
+      const market = sessions.find(candidate => candidate.market === remembered)?.market ??
+        sessions.find(candidate => candidate.entries.length < launchStages.length ||
+          candidate.entries.some(entry => entry.state !== 'confirmed'))?.market;
+      const result = market ? await launchApi('session', {owner, market}) : null;
+      if (!active) return;
+      if (result && market) {
+        localStorage.setItem(sessionKey(owner), market);
+        setResumedMarket(market);
         setSession(result);
         setStep(2);
         if (result.entries.at(-1)?.state === 'submitted') {
@@ -88,9 +104,9 @@ export default function LaunchScreen() {
         }
       }
       else if (localStorage.getItem(sessionKey(owner)) === market) localStorage.removeItem(sessionKey(owner));
-    }).catch(() => { if (active) setExecution('error'); });
+    })().catch(() => { if (active) setExecution('error'); });
     return () => {active = false;};
-  }, [owner]);
+  }, [owner, selectedMarket]);
 
   async function execute() {
     if (!signer || !owner || executionLock.current) return;
@@ -327,6 +343,20 @@ export default function LaunchScreen() {
       <div className="mt-8 grid items-start gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,3fr)] lg:mt-10 lg:gap-[clamp(48px,6vw,120px)]">
         <section className="min-w-0">
           <h2 className="m-0 text-[21px] font-[640] tracking-[-.03em]">{steps[step]}</h2>
+          {savedSessions.length > 0 && <label className="mt-4 block text-sm">
+            {t('Saved launches', '已保存的发行')}
+            <select className={field} disabled={busy} value={selectedMarket ?? resumedMarket ?? ''}
+              onChange={event => {
+                if (executionLock.current || !event.target.value) return;
+                setExecution('');
+                setSelection({owner, market: event.target.value});
+              }}>
+              <option value="">{t('Select a launch', '选择发行')}</option>
+              {savedSessions.map(({market, entries}) => <option key={market} value={market}>
+                {market.slice(0, 14)}…{market.slice(-8)} · {entries.filter(entry => entry.state === 'confirmed').length}/3
+              </option>)}
+            </select>
+          </label>}
           {step === 0 && <form className="mt-6 grid gap-6 text-sm" onSubmit={event => {event.preventDefault(); if (name.trim() && ticker.trim()) setStep(1);}}>
             <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-3 sm:gap-5">
             <label>{t('Token name','代币名称')}<input className={field} required maxLength={40} value={name} onChange={event => setName(event.target.value)}/></label>

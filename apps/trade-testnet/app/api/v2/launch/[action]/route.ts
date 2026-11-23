@@ -63,7 +63,7 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     return new Response(null, {status: 403});
   }
   const {action} = await context.params;
-  if (!['prepare','submit','session','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
+  if (!['prepare','submit','session','sessions','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
   if (action === 'submit' && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
