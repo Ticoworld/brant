@@ -38,6 +38,3 @@ const after=path.join(out,'after.json');run(['collect-blocks',...collect,'--out'
 const result=require(after+'.result.json');assert.equal(String(result.owner.balance),'0');
 const afterArgs=shared.map(a=>a===before?after:a);run(['prepare-withdrawal',...afterArgs,'--out',path.join(out,'repeat.json')],/no positive owner withdrawal/);
 console.log(JSON.stringify({hash:require(receipt).transaction_hash,cycles:require(receipt).cycles,owner:result.owner,custody:result.custody_amount,receipt:require(receipt).verification},null,2));
-
-
-
