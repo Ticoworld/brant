@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import {useCallback,useState} from 'react';
 import {useLocale} from '../i18n-provider';
@@ -15,7 +14,7 @@ import TraderShell from './shell';
 import SwapPanel from './SwapPanel';
 import SwapKlinePanel from './SwapKlinePanel';
 
-const Gate2LaunchFlow=dynamic(()=>import('../v2/deploy/review'),{ssr:false});
+export {default as LaunchScreen} from './LaunchScreen';
 
 export {default as MarketsScreen} from './MarketsScreen';
 
@@ -74,20 +73,6 @@ function MarketRecentTrades({market,locale}:{market:MarketData;locale:Locale}){
 export {PortfolioScreen} from './PortfolioScreen';
 
 export {ActivityScreen} from './ActivityScreen';
-
-export function LaunchScreen(){
-  const {locale}=useLocale(),query=useMarketData(),market=query.data;
-  return <TraderShell><div className="space-y-5"><header className="border-b border-[#28302f] pb-4"><h1 className="m-0 text-[21px] font-semibold">{copy(locale,'launchTitle')}</h1><p className="mb-0 mt-1 text-[11px] text-[#85918c]">{copy(locale,'firstPurchase')}</p></header>
-    <section className="grid gap-4 border-b border-[#28302f] pb-5 sm:grid-cols-2 lg:grid-cols-4"><LaunchTerm label={copy(locale,'tokenName')} value={locale==='zh-CN'?'此类型不编码名称':'Not encoded by this token type'}/><LaunchTerm label={copy(locale,'symbol')} value="xUDT"/><LaunchTerm label={copy(locale,'totalSupply')} value="2,000 xUDT"/><LaunchTerm label={copy(locale,'basePrice')} value="10 CKB · +1 CKB / token"/></section>
-    <p className="m-0 max-w-3xl text-xs leading-5 text-[#a2aea8]">{copy(locale,'launchTemplate')}</p>
-    <p className="m-0 text-[10px] text-[#78847e]">{copy(locale,'funding')}: {copy(locale,'marketStatus')} · calculated from current wallet cells during preparation.</p>
-    <section className="border-t border-[#28302f] pt-4"><Gate2LaunchFlow embedded/></section>
-  </div></TraderShell>;
-}
-
-function LaunchTerm({label,value}:{label:string;value:string}){
-  return <div className="border-l border-[#3d4a44] pl-3"><div className="text-[10px] text-[#83908a]">{label}</div><div className="mt-1 text-sm font-medium text-[#e0e8e4]">{value}</div></div>;
-}
 
 function TradeRow({event,locale,detailed=false,symbol='xUDT'}:{event:TradeEvent;locale:Locale;detailed?:boolean;symbol?:string}){
   return <div className="grid grid-cols-1 gap-1 border-b border-[#252d2b] px-2 py-3 sm:grid-cols-[minmax(92px,.6fr)_minmax(100px,.6fr)_minmax(130px,1fr)_minmax(120px,.8fr)_minmax(100px,.6fr)] sm:items-center sm:gap-3">
