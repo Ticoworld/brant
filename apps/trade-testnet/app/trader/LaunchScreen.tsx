@@ -2,11 +2,14 @@
 
 import {useEffect, useRef, useState} from 'react';
 import {useSigner} from '@ckb-ccc/connector-react';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {requestWalletTransactionSignature} from '../../lib/v2-engine/wallet-signing';
 import localFont from 'next/font/local';
 import {useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
 import {firstPurchaseQuantity, LaunchPreflightError, previewLaunch} from './launch-preflight';
-import {formatCkb, PUDGE_GENESIS} from './rpc';
+import {formatCkb, PUDGE_GENESIS, pudgeRpc} from './rpc';
 import TraderShell from './shell';
 
 const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2',weight:'100 900'});
@@ -14,6 +17,17 @@ const field = 'mt-2 min-h-12 w-full !rounded-xl !border-0 !bg-[#1e2523] px-4 tex
 const primary = 'justify-self-start min-h-12 !rounded-xl !bg-[#a7e9c6] px-6 text-sm font-semibold !text-[#102019] disabled:opacity-40';
 const secondary = 'min-h-11 !rounded-xl !border-0 !bg-[#1e2523] px-4 text-sm';
 const ckb = (amount: bigint) => formatCkb(amount) + ' CKB';
+const launchStages = ['setup', 'issuance', 'purchase'] as const;
+const sessionKey = (owner: string) => 'brant-launch-session:' + owner;
+type Stage = typeof launchStages[number];
+type Session = {enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
+
+async function launchApi(action: string, payload: object) {
+  const response = await fetch('/api/v2/launch/' + action, {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload), signal: AbortSignal.timeout(45_000)});
+  if (!response.ok) throw Error('Launch request failed');
+  return response.json();
+}
 
 export default function LaunchScreen() {
   const {locale} = useLocale();
@@ -29,6 +43,10 @@ export default function LaunchScreen() {
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
   const [busy, setBusy] = useState(false);
+  const executionLock = useRef(false);
+  const [execution, setExecution] = useState('');
+  const [session, setSession] = useState<Session>();
+  const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
   useEffect(() => () => { if (logo) URL.revokeObjectURL(logo); }, [logo]);
   const active = account.state === 'ready' && review?.owner === account.owner && review.signer === signer ? review : undefined;
@@ -36,6 +54,70 @@ export default function LaunchScreen() {
   const issue = active?.error;
   const steps = [t('Create token','创建代币'), t('Review launch','审核发行'), t('Launch','发行')];
   const stages = [t('Create market','创建市场'), t('Issue tokens','发行代币'), t('Initial purchase','首次购买')];
+  const owner = account.state === 'ready' ? account.owner : '';
+  useEffect(() => {
+    setSession(undefined);
+    if (!owner) return;
+    const market = localStorage.getItem(sessionKey(owner));
+    if (!market) return;
+    let active = true;
+    void launchApi('session', {owner, market}).then(result => {
+      if (active && result) {setSession(result); setStep(2);}
+    }).catch(() => { if (active) setExecution('error'); });
+    return () => {active = false;};
+  }, [owner]);
+
+  async function execute() {
+    if (!signer || !owner || executionLock.current) return;
+    executionLock.current = true;
+    const market = localStorage.getItem(sessionKey(owner)) || preparation?.market;
+    const identity = {owner, market};
+    const checkWallet = async () => {
+      if (currentSigner.current !== signer || !await signer.isConnected() ||
+          (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS ||
+          (await signer.getRecommendedAddressObj()).script.hash() !== owner) throw Error('Wallet changed');
+    };
+    try {
+      await checkWallet();
+      const current: Session | null = market ? await launchApi('session', identity) : null;
+      if (current?.entries.at(-1)?.state === 'submitted') {
+        setExecution('checking');
+        await launchApi('reconcile', identity);
+      } else {
+        const next = current ? await launchApi('next-stage', identity) :
+          preparation?.owner === owner && preparation.enabled ? {...preparation, stage: 'setup'} : null;
+        if (!next || !(current?.enabled ?? preparation?.enabled)) return;
+        const transaction = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(next.transaction));
+        await Promise.all(transaction.inputs.map(async input => {
+          const row = await pudgeRpc('get_live_cell', [{tx_hash: input.previousOutput.txHash,
+            index: ccc.numToHex(input.previousOutput.index)}, true]);
+          if (row?.status !== 'live' || !row.cell) throw Error('Launch input is no longer live');
+          const output = cccA.JsonRpcTransformers.cellOutputTo(row.cell.output);
+          input.cellOutput = ccc.CellOutput.from(output);
+          input.outputData = row.cell.data.content;
+        }));
+        transaction.setWitnessArgs(next.stage === 'purchase' ? 2 : 0,
+          ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}));
+        await checkWallet();
+        setExecution('wallet');
+        const signed = await requestWalletTransactionSignature(signer, transaction, () => {});
+        await checkWallet();
+        setExecution('submitting');
+        localStorage.setItem(sessionKey(owner), market!);
+        await launchApi('submit', {...identity, stage: next.stage, descriptor: current ? undefined : preparation?.descriptor,
+          signed: cccA.JsonRpcTransformers.transactionFrom(signed)});
+      }
+      setExecution('');
+    } catch {
+      setExecution('error');
+    } finally {
+      if (market) {
+        const latest = await launchApi('session', identity).catch(() => null);
+        if (latest && currentSigner.current === signer) setSession(latest);
+      }
+      executionLock.current = false;
+    }
+  }
 
   async function refresh() {
     if (!signer || busy || account.state !== 'ready') return;
@@ -52,8 +134,15 @@ export default function LaunchScreen() {
         }
         return address.script;
       };
-      const result = await previewLaunch(await checkWallet());
+      const lock = await checkWallet();
+      const prepared = await launchApi('prepare', {creator: lock});
+      const values = prepared.accounting;
+      const result: Awaited<ReturnType<typeof previewLaunch>> = {usable: BigInt(values.eligibleFunding),
+        market: prepared.market, token: prepared.token, accounting: {eligibleFunding: BigInt(values.eligibleFunding),
+          locked: BigInt(values.locked), change: BigInt(values.change), curveReserve: BigInt(values.curveReserve), fees: BigInt(values.fees),
+          stageFees: {setup: BigInt(values.stageFees.setup), issuance: BigInt(values.stageFees.issuance), purchase: BigInt(values.stageFees.purchase)}}};
       await checkWallet();
+      setPreparation({...prepared, owner});
       setReview({signer, owner, result});
     } catch (error) {
       setReview({signer, owner, error});
@@ -136,13 +225,19 @@ export default function LaunchScreen() {
               <button className={secondary} onClick={() => setStep(2)}>{t('View launch stages','查看发行步骤')}</button></div>
           </div>}
           {step === 2 && <div className="mt-5 space-y-4">
-            <ol className="space-y-3 pl-5">{stages.map(label => <li key={label} className="border-b border-[#28302f] pb-3">
+            <ol className="space-y-3 pl-5">{stages.map((label, index) => <li key={label} className="border-b border-[#28302f] pb-3">
               <strong className="text-sm">{label}</strong>
-              <p className="mb-0 mt-1 text-sm text-[#a8b5ae]">{t('Wallet approval → canonical confirmation','钱包批准 → 链上确认')}</p>
+              {session?.entries[index] && <p className="mb-0 mt-1 break-all text-sm text-[#a8b5ae]">
+                {session.entries[index].state === 'confirmed' ? t('Confirmed','已确认') : t('Confirming','确认中')} · {session.entries[index].txHash}</p>}
             </li>)}</ol>
-            <p className="text-sm text-[#a8b5ae]">{t('Launch execution requires wallet submission and durable recovery support.','发行执行需要钱包提交和持久化恢复支持。')}</p>
+            {execution && <p role="status">{{wallet:t('Awaiting wallet','等待钱包'),submitting:t('Submitting','正在提交'),
+              checking:t('Checking previous transaction','正在检查上一笔交易'),error:t('Launch action could not be completed. Check the session before retrying.','发行操作未完成。请检查会话后重试。')}[execution]}</p>}
+            {!(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
             <div className="flex gap-2"><button className={secondary} onClick={() => setStep(1)}>{t('Back','返回')}</button>
-              <button className={primary} disabled>{steps[2]}</button></div>
+              <button className={primary} disabled={!owner || !(session?.enabled || preparation?.owner === owner && preparation.enabled) ||
+                ['wallet','submitting','checking'].includes(execution) || session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length}
+                onClick={() => void execute()}>{session?.entries.at(-1)?.state === 'submitted' ? t('Check confirmation','检查确认') :
+                  stages[session?.entries.length ?? 0] ?? steps[2]}</button></div>
           </div>}
         </section>
         <aside className="min-w-0 space-y-5 border-t border-[#28302f] pt-6 md:border-t-0 md:pt-0">

@@ -48,7 +48,7 @@ function serialize(value: unknown) {
   return JSON.stringify(value, (_, item) => typeof item === 'bigint' ? item.toString() : item);
 }
 
-export async function recoverSharedLaunch(rpc: Rpc, store: Store, scope: Plan['scope'], hashes: Plan['stageHashes']) {
+export async function recoverSharedLaunch(rpc: Rpc, store: Store, scope: Parameters<Store['read']>[0], hashes: Plan['stageHashes']) {
   const snapshot = JSON.parse(store.readSnapshot(scope, hashes));
   if (snapshot.version !== 1 || !snapshot.proof) throw Error('Invalid launch snapshot');
   const journal = store.read(scope, hashes);

@@ -5,7 +5,8 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {planSharedLaunch, sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
-import {authorizeSharedLaunchSetup, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage} from '../lib/v2-engine/shared-launch-controller.ts';
+import {recoverSharedLaunch} from '../lib/v2-engine/shared-launch-controller.ts';
+import {launchOperations} from '../lib/v2-engine/launch-operations-server.ts';
 import {openSharedLaunchStore} from '../lib/v2-engine/shared-launch-store.ts';
 import {buildTransition} from '../lib/v2-engine/transaction.ts';
 import {decodeCurve} from '../lib/v2-engine/curve.ts';
@@ -71,7 +72,7 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
         xudt_type_script_hash:identity.token.hash(), custody_marker_type_hash:identity.custodyMarker.hash()};
       const leaf = {owner:creator.hash(), balance:1n, revision:0n};
       const config = {genesis, fixture, creator, anchor, funding:[funded[2*role+1]], reservedAnchors:[], quantity:1n,
-        feeRate:1000n, verifyProof:async (owner, quantity, price) => {
+        feeRate:2000n, verifyProof:async (owner, quantity, price) => {
           assert.equal(owner, leaf.owner);
           assert.equal(quantity, leaf.balance);
           assert.equal(price, 10n*unit);
@@ -93,13 +94,24 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           if (restartHere) throw Error('Simulated lost acknowledgement');
           return outputs[0].outPoint.txHash;
         };
+        const operate = launchOperations({rpc: (method, params) => method === 'tx_pool_info' ?
+          Promise.resolve({min_fee_rate:'0x3e8'}) : rpc(method, params), genesis, fixture, quantity:1n,
+          proof: (_, owner) => config.verifyProof(owner, 1n, 10n*unit),
+          openStore: () => openSharedLaunchStore(dbPath), send});
+        const descriptor = {creator, anchor:anchor.outPoint, funding:config.funding.map(cell => cell.outPoint),
+          feeRate:String(config.feeRate), market:scope.market, hashes:stageHashes};
+        const sessionId = {owner:scope.owner, market:scope.market};
+        const submitTransaction = transaction => operate('submit', {...sessionId, stage, descriptor,
+          signed:cccA.JsonRpcTransformers.transactionFrom(transaction)});
         if (stage === 'setup') {
-          await assert.rejects(authorizeSharedLaunchSetup(rpc, store, config, review, send), /signature witness/);
+          await assert.rejects(submitTransaction(review), /signature witness/);
           assert.throws(() => store.read(scope, stageHashes), /reservation/);
+        } else {
+          const next = await operate('next-stage', sessionId);
+          assert.equal(next.stage, stage);
+          assert.deepEqual(next.transaction, cccA.JsonRpcTransformers.transactionFrom(review));
         }
-        const submit = () => stage === 'setup'
-          ? authorizeSharedLaunchSetup(rpc, store, config, signed, send)
-          : submitSharedLaunchStage(store, plan, stage, signed, send);
+        const submit = () => submitTransaction(signed);
         if (restartHere) await assert.rejects(submit(), /lost acknowledgement/);
         else await submit();
         store.close();
@@ -120,7 +132,7 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           assert.throws(() => store.recordSubmission(scope, stageHashes, stage), /requires reconciliation/);
         }
         plan = await recoverSharedLaunch(rpc, store, scope, stageHashes);
-        const receipt = await reconcileSharedLaunchStage(store, plan);
+        const receipt = await operate('reconcile', sessionId);
         if (restartHere) {
           restart.confirmed = JSON.parse(store.read(scope, stageHashes)).entries.at(-1);
           assert.equal(restart.confirmed.state, 'confirmed');

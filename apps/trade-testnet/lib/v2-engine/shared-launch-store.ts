@@ -46,6 +46,15 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
+    find(genesis: string, market: string, owner: string) {
+      const row = load.get(`brant-launch-v2:${genesis}:${market}`.toLowerCase()) as {plan: string; journal: string} | undefined;
+      if (!row) return null;
+      const {anchor, owner: storedOwner} = JSON.parse(row.journal);
+      if (storedOwner !== owner) return null;
+      const hashes = Object.fromEntries(sharedLaunchStages.map((stage, index) => [stage, JSON.parse(row.plan)[index]])) as Hashes;
+      const scope: Scope = {genesis, market: market as Scope['market'], owner: owner as Scope['owner'], anchor};
+      return {scope, hashes, journal: readSharedLaunchJournal(row.journal, scope, hashes)};
+    },
     reserve(scope: Scope, hashes: Hashes, snapshot?: string, setupSubmitted = false) {
       const validHash = /^0x[\da-f]{64}$/i;
       if (![scope.genesis, scope.owner, scope.market, scope.anchor.txHash,

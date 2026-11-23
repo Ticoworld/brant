@@ -1,8 +1,4 @@
-import {execFile} from 'node:child_process';
-import {deriveMarketIdentity} from '../../../../lib/v2-engine/initialization.ts';
-import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
-import {PUDGE_GATE2_CODES, PUDGE_GATE2_GENESIS} from '../../../../lib/v2-engine/pudge-public-registry.ts';
-
+import {generatePudgeLaunchProof} from '../../../../lib/v2-engine/pudge-launch-proof-server.ts';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -55,16 +51,6 @@ async function readBody(request: Request) {
   }
 }
 
-function runNative(binary: string, args: string[], payload: object) {
-  return new Promise<string>((resolve, reject) => {
-    const child = execFile(binary, args, {
-      encoding: 'utf8', timeout: 5000, maxBuffer: 64 * 1024, killSignal: 'SIGKILL', windowsHide: true,
-    }, (error, stdout) => error ? reject(error) : resolve(stdout));
-    child.stdin?.on('error', () => {});
-    child.stdin?.end(JSON.stringify(payload));
-  });
-}
-
 function reply(message: string, status: number, retry?: string) {
   const headers = new Headers({'Cache-Control': 'no-store'});
   if (retry) headers.set('Retry-After', retry);
@@ -95,38 +81,7 @@ export async function POST(request: Request) {
         !hash.test(anchor.txHash) || typeof anchor.index !== 'string' || !/^0x[0-9a-f]{1,8}$/i.test(anchor.index)) {
       return reply('Invalid proof identity', 400);
     }
-    const {smt, recovery} = await resolveGate2NativeTools();
-    if (!smt || !recovery) return reply('Proof tools unavailable', 503);
-
-    const genesis = PUDGE_GATE2_GENESIS;
-    const id = deriveMarketIdentity({
-      anchor, genesis, base: 1_000_000_000n, step: 100_000_000n, supply: 2000n,
-      codes: {...PUDGE_GATE2_CODES, owner: PUDGE_GATE2_CODES.ownerLock},
-    });
-    const market = id.market.hash();
-    const custody = id.custody.hash();
-    const domain = {market_script_hash: market, xudt_type_script_hash: id.token.hash(),
-      genesis_hash: genesis, custody_marker_type_hash: id.custodyMarker.hash()};
-    const quantity = '7';
-    const price = 9_100_000_000n;
-    const proof = JSON.parse(await runNative(smt, ['proof', '-', '-'], {
-      domain, op: 0, owners: [], updates: [{owner_lock_hash: owner, balance: quantity, revision: '0', active: true}],
-    }));
-    const limit = Buffer.alloc(8);
-    limit.writeBigUInt64LE(price);
-    const newRoot = proof.new_root;
-    const proofWitness = proof.contract_witness?.hex;
-    if (typeof newRoot !== 'string' || !hash.test(newRoot) ||
-        typeof proofWitness !== 'string' || !/^0x(?:[0-9a-f]{2})+$/i.test(proofWitness)) {
-      return reply('Invalid generated proof', 503);
-    }
-    const witness = proofWitness + limit.toString('hex');
-    const check = JSON.parse(await runNative(recovery, ['verify-init', '-'], {
-      domain: id.custody.args, owner, new_root: newRoot, witness, quantity, price: price.toString(),
-    }));
-    if (check.verified !== true || check.new_root !== newRoot) return reply('Proof verification failed', 503);
-
-    return Response.json({owner, newRoot, witness, genesis, market, custody}, {headers: {'Cache-Control': 'no-store'}});
+    return Response.json(await generatePudgeLaunchProof(anchor, owner), {headers: {'Cache-Control': 'no-store'}});
   } catch {
     return reply('Proof preparation failed', 503);
   } finally {
