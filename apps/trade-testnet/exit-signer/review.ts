@@ -1,6 +1,7 @@
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {verifyInitializationSignature} from '../lib/v2-engine/initialization-signature.ts';
+import {providerFailure, SigningDiagnostic} from './diagnostics.ts';
 
 const standard = '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
 const hash = /^0x[0-9a-f]{64}$/;
@@ -47,13 +48,25 @@ export function readReview(raw: string, genesis: string) {
 }
 
 type Review = ReturnType<typeof readReview>;
-type Wallet = Pick<ccc.Signer,'isConnected'|'getRecommendedAddressObj'|'signOnlyTransaction'>;
+type Wallet = Pick<ccc.Signer,'isConnected'|'getRecommendedAddressObj'> & {
+  provider: {signTransaction(tx: ccc.TransactionLike): Promise<ccc.TransactionLike>};
+};
 type Chain = Pick<ccc.Client,'getHeaderByNumber'|'getCellLive'>;
 export async function checkWallet(review: Review, wallet: Wallet, chain: Chain) {
-  requireReview(await wallet.isConnected(), 'Connect UTXO Global on CKB testnet');
-  requireReview((await chain.getHeaderByNumber(0))?.hash === review.genesis, 'Wrong RPC genesis');
-  const address = await wallet.getRecommendedAddressObj();
-  requireReview(address.script.hash() === review.owner.hash(), 'Wrong wallet account or unsupported lock');
+  let connected, address;
+  try {
+    connected = await wallet.isConnected();
+    if (connected) address = await wallet.getRecommendedAddressObj();
+  } catch (error) {
+    throw providerFailure('Wallet identity check', error);
+  }
+  if (!address) throw new SigningDiagnostic('Wallet identity check. Connect UTXO Global on CKB testnet');
+  if (address.script.hash() !== review.owner.hash()) {
+    throw new SigningDiagnostic('Wallet identity check. Wrong wallet account or unsupported lock');
+  }
+  if ((await chain.getHeaderByNumber(0))?.hash !== review.genesis) {
+    throw new SigningDiagnostic('Wallet identity check. Wrong RPC genesis');
+  }
   return address.toString();
 }
 export async function signReview(review: Review, wallet: Wallet, chain: Chain) {
@@ -71,8 +84,28 @@ export async function signReview(review: Review, wallet: Wallet, chain: Chain) {
     funding.cellOutput.lock.hash() === review.owner.hash() && !funding.cellOutput.type &&
     funding.outputData === '0x' && funding.cellOutput.capacity === review.funding, 'Live input identity or accounting changed');
   await checkWallet(review, wallet, chain);
-  const signed = await wallet.signOnlyTransaction(tx.clone());
+  // CCC signOnlyTransaction performs these two steps. Keep their failures distinct.
+  let response;
+  try {
+    response = await wallet.provider.signTransaction(tx.clone());
+  } catch (error) {
+    throw providerFailure('Wallet approval', error);
+  }
+  let signed;
+  try {
+    if (!response || !Array.isArray(response.inputs) || !Array.isArray(response.outputs) ||
+        !Array.isArray(response.outputsData) || !Array.isArray(response.witnesses)) {
+      throw Error('Missing transaction fields');
+    }
+    signed = ccc.Transaction.from(response);
+  } catch {
+    throw new SigningDiagnostic('Wallet response. Malformed signed transaction');
+  }
   await checkWallet(review, wallet, chain);
-  verifyInitializationSignature(tx, signed, [custody.cellOutput, marker.cellOutput, funding.cellOutput], 2, review.owner.hash());
+  try {
+    verifyInitializationSignature(tx, signed, [custody.cellOutput, marker.cellOutput, funding.cellOutput], 2, review.owner.hash());
+  } catch {
+    throw new SigningDiagnostic('Local signature verification. Wallet changed reviewed fields or returned an invalid signature');
+  }
   return cccA.JsonRpcTransformers.transactionFrom(signed);
 }

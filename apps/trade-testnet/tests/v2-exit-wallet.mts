@@ -75,7 +75,15 @@ await assert.rejects(sign, /Wrong wallet account/);
 account = owner.lock;
 assert.equal(calls, 1);
 approve = async () => {throw Error('Owner rejected approval');};
-await assert.rejects(sign, /Owner rejected approval/);
+await assert.rejects(sign, /Wallet approval\. Wallet approval rejected/);
+approve = async () => {throw {code:4001,message:'secret fixture payload',data:receipt.transaction};};
+await assert.rejects(sign, {message:'Wallet approval. Wallet approval rejected (code 4001)'});
+approve = async () => {throw {code:-32602,message:'Invalid params: secret fixture payload'};};
+await assert.rejects(sign, {message:'Wallet approval. Wallet provider reported invalid parameters (code -32602)'});
+approve = async () => {throw 'Wallet timed out with secret fixture payload';};
+await assert.rejects(sign, {message:'Wallet approval. Wallet provider timed out'});
+approve = async () => ({}) as ccc.Transaction;
+await assert.rejects(sign, /Wallet response\. Malformed signed transaction/);
 approve = async () => {connected = false; return signed.clone();};
 await assert.rejects(sign, /Connect UTXO/);
 connected = true;
@@ -91,6 +99,6 @@ for (const mutate of [
   (result: ccc.Transaction) => {result.witnesses[3] = '0x';},
 ]) {
   approve = async () => {const result = signed.clone(); mutate(result); return result;};
-  await assert.rejects(sign, /Wallet changed reviewed/);
+  await assert.rejects(sign, /Local signature verification/);
 }
 console.log('Mock UTXO Global signer accepted the exact transaction and preserved TMS1. Negative cases passed.');
