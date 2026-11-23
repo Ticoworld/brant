@@ -71,3 +71,8 @@ Both receipts recorded 7 RVK in the external output and independent replay found
 3. Run python -m http.server 4173 --bind 127.0.0.1 --directory apps/trade-testnet/exit-signer-dist from the repository root. Open http://127.0.0.1:4173/ in the Chrome profile containing UTXO Global.
 4. Import the review, wait for verification of Roveko Genesis and the RVK type script hash, then compare the displayed destination, quantity, funding outpoint, return and fee to the CLI review.
 5. Connect the recovered owner account on CKB testnet. In the separately authorized owner session, approve Sign and export. Keep the exported RPC JSON locally for signed VM estimation and canonical settlement verification. Public submission requires separate authorization.
+
+The clean-install and working-copy Windows builds produced matching SHA-256 hashes.
+
+- index.html — 771b84265e635acc587c41da69626d820a352f682bdb1ee492f9bd278cba299b
+- signer.js — 8fabc4688c7c0bb9a36ea931465e9c0b879508a6ca6c205143a3aa8e8456f29e

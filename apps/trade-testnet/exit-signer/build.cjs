@@ -5,6 +5,7 @@ const {webpack} = require('next/dist/compiled/webpack/webpack');
 const out = path.resolve(process.argv[2] || path.join(__dirname, '../exit-signer-dist'));
 webpack({
   mode: 'production',
+  context: path.join(__dirname, '..'),
   entry: path.join(__dirname, 'browser.ts'),
   output: {path: out, filename: 'signer.js'},
   module: {rules: [{test: /\.ts$/, use: path.join(__dirname, 'transpile.cjs')}]},
