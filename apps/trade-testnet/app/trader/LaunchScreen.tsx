@@ -24,9 +24,11 @@ const sessionKey = (owner: string) => 'brant-launch-session:' + owner;
 type Stage = typeof launchStages[number];
 type Session = {enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
 
-async function launchApi(action: string, payload: object) {
+async function launchApi(action: string, payload: object, signal?: AbortSignal) {
+  const timeout = AbortSignal.timeout(45_000);
   const response = await fetch('/api/v2/launch/' + action, {method: 'POST',
-    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload), signal: AbortSignal.timeout(45_000)});
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload),
+    signal: signal ? AbortSignal.any([signal, timeout]) : timeout});
   if (!response.ok) throw Error('Launch request failed');
   return response.json();
 }
@@ -45,6 +47,7 @@ export default function LaunchScreen() {
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
   const [busy, setBusy] = useState(false);
+  const [reviewPhase, setReviewPhase] = useState<'wallet' | 'server' | 'slow' | 'long'>('wallet');
   const [retry, setRetry] = useState(0);
   const executionLock = useRef(false);
   const [execution, setExecution] = useState('');
@@ -189,9 +192,12 @@ export default function LaunchScreen() {
     if (!signer || account.state !== 'ready') return;
     const owner = account.owner;
     setBusy(true);
+    setReviewPhase('wallet');
     setReview(undefined);
     setPreparation(undefined);
     setSetupTestResult('');
+    let slowTimer: ReturnType<typeof setTimeout> | undefined;
+    let longTimer: ReturnType<typeof setTimeout> | undefined;
     try {
       const checkWallet = async () => {
         const [connected, genesis, address] = await Promise.all([
@@ -204,7 +210,13 @@ export default function LaunchScreen() {
       };
       const lock = await checkWallet();
       if (signal.aborted) return;
-      const prepared = await launchApi('prepare', {creator: lock});
+      setReviewPhase('server');
+      slowTimer = setTimeout(() => setReviewPhase('slow'), 8000);
+      longTimer = setTimeout(() => setReviewPhase('long'), 15000);
+      const prepared = await launchApi('prepare', {creator: lock}, signal);
+      clearTimeout(slowTimer);
+      clearTimeout(longTimer);
+      setReviewPhase('wallet');
       const values = prepared.accounting;
       const result: Awaited<ReturnType<typeof previewLaunch>> = {usable: BigInt(values.eligibleFunding),
         market: prepared.market, token: prepared.token, accounting: {eligibleFunding: BigInt(values.eligibleFunding),
@@ -217,6 +229,8 @@ export default function LaunchScreen() {
     } catch (error) {
       if (!signal.aborted) setReview({signer, owner, error});
     } finally {
+      clearTimeout(slowTimer);
+      clearTimeout(longTimer);
       if (!signal.aborted) setBusy(false);
     }
   }
@@ -335,22 +349,20 @@ export default function LaunchScreen() {
           {step === 1 && <div className="mt-6 space-y-5">
             {account.state === 'ready' ? <p className="break-all text-sm text-[#a8b5ae]">{account.address}</p> :
               <p role="status" className="text-sm text-[#a8b5ae]">{account.state === 'wrong-network' ? t('Switch your wallet to Pudge.','请将钱包切换到 Pudge。') : account.state === 'unsupported' ? t('Switch to a supported Pudge wallet.','请切换到受支持的 Pudge 钱包。') : t('Connect your Pudge wallet to check funding.','连接 Pudge 钱包以检查资金。')}</p>}
-            {usable !== undefined && <Amount label={t('Usable CKB','可用 CKB')} value={ckb(usable)}/>}
+            <Amount label={t('Usable CKB','可用 CKB')} value={usable === undefined ? undefined : ckb(usable)}/>
             <Amount label={t('First purchase','首次购买')} value={firstPurchaseQuantity + ' ' + ticker + ' · 91 CKB'}/>
-            {quote && <>
-              <p className="text-sm text-[#a7e9c6]">{t('Verified read-only estimate','经过验证的只读估算')}</p>
-              <Amount label={t('Eligible launch funding','合格发行资金')} value={ckb(quote.accounting.eligibleFunding)}/>
-              <Amount label={t('Locked after launch','发行后锁定')} value={ckb(quote.accounting.locked)}/>
-              <Amount label={t('Curve reserve within locked amount','锁定金额中的曲线储备')} value={ckb(quote.accounting.curveReserve)}/>
-              <Amount label={t('Estimated network fees','预估网络费用')} value={ckb(quote.accounting.fees)}/>
-              <Amount label={t('Total estimated cost (locked CKB + fees)','预计总成本（锁定 CKB + 手续费）')} value={ckb(quote.accounting.locked + quote.accounting.fees)}/>
-              <Amount label={t('Expected remaining usable CKB','预计剩余可用 CKB')} value={ckb(quote.accounting.change)}/>
-              <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Advanced','高级详情')}</summary>
+            {quote && <p className="text-sm text-[#a7e9c6]">{t('Verified read-only estimate','经过验证的只读估算')}</p>}
+              <Amount label={t('Eligible launch funding','合格发行资金')} value={quote ? ckb(quote.accounting.eligibleFunding) : undefined}/>
+              <Amount label={t('Locked after launch','发行后锁定')} value={quote ? ckb(quote.accounting.locked) : undefined}/>
+              <Amount label={t('Curve reserve within locked amount','锁定金额中的曲线储备')} value={quote ? ckb(quote.accounting.curveReserve) : undefined}/>
+              <Amount label={t('Estimated network fees','预估网络费用')} value={quote ? ckb(quote.accounting.fees) : undefined}/>
+              <Amount label={t('Total estimated cost (locked CKB + fees)','预计总成本（锁定 CKB + 手续费）')} value={quote ? ckb(quote.accounting.locked + quote.accounting.fees) : undefined}/>
+              <Amount label={t('Expected remaining usable CKB','预计剩余可用 CKB')} value={quote ? ckb(quote.accounting.change) : undefined}/>
+            {quote && <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Advanced','高级详情')}</summary>
                 <p>{t('Provisional market ID','暂定市场标识')} {quote.market}</p>
                 <p>{t('Provisional token type hash','暂定代币类型哈希')} {quote.token}</p>
                 {Object.values(quote.accounting.stageFees).map((fee, index) => <Amount key={stages[index]} label={stages[index]} value={ckb(fee)}/>)}
-              </details>
-            </>}
+              </details>}
             {issue != null && <p role="alert" className="text-sm text-[#efb9ac]">{message}</p>}
             {process.env.NODE_ENV === 'development' && localSetupTest && quote && preparation?.owner === owner && <div className="space-y-2">
               <p className="break-all text-sm">{t('Setup transaction hash','准备交易哈希')} · {(preparation.descriptor as {hashes: {setup: string}}).hashes.setup}</p>
@@ -359,11 +371,17 @@ export default function LaunchScreen() {
               </button>
               {setupTestResult && <p role="status" className="break-all text-sm">{setupTestResult}</p>}
             </div>}
-            {owner && busy && <p role="status">{t('Checking launch funding…','正在检查发行资金…')}</p>}
+            {owner && busy && <div role="status" className="flex items-start gap-3 text-sm">
+              <span aria-hidden="true" className="mt-0.5 size-4 shrink-0 rounded-full border-2 border-[#35403b] border-t-[#a7e9c6] motion-safe:animate-spin"/>
+              {reviewPhase === 'wallet' ? t('Verifying wallet and network…','正在验证钱包和网络…') :
+                reviewPhase === 'server' ? t('Checking launch funding…','正在检查发行资金…') :
+                reviewPhase === 'slow' ? t('Still checking live Pudge data…','仍在检查 Pudge 链上数据…') :
+                t('Still checking live Pudge data. You can wait or cancel the review.','仍在检查 Pudge 链上数据。你可以等待或取消审核。')}
+            </div>}
             {execution === 'changed' && <p role="status">{t('The launch review changed. Review the updated estimate before launching.','发行审核已变更，请在发行前核对最新估算。')}</p>}
-            {quote && !preparation?.enabled && <p>{t('Launching is temporarily unavailable.','发行暂不可用。')}</p>}
+            {quote && !preparation?.enabled && <p>{t('Testnet launch execution is not enabled yet.','测试网发行暂未启用。')}</p>}
             <div className="flex flex-wrap gap-2">
-              <button className={secondary} onClick={() => setStep(0)}>{t('Back','返回')}</button>
+              <button className={secondary} onClick={() => setStep(0)}>{owner && busy && reviewPhase === 'long' ? t('Cancel review','取消审核') : t('Back','返回')}</button>
               {!owner && account.state !== 'wrong-network' && <button className={primary} disabled={['checking','connecting'].includes(account.state)} onClick={account.connect}>{t('Connect wallet','连接钱包')}</button>}
               {owner && issue != null && !busy && <button className={primary} onClick={() => setRetry(value => value + 1)}>{t('Retry','重试')}</button>}
               {quote && <button className={primary} disabled={busy || !preparation?.enabled} onClick={() => void execute()}>{t('Launch token','发行代币')}</button>}
@@ -406,8 +424,8 @@ export default function LaunchScreen() {
   </TraderShell>;
 }
 
-function Amount({label, value}: {label: string; value: string}) {
+function Amount({label, value}: {label: string; value?: string}) {
   return <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-t border-[#28302f] pt-3 text-sm">
-    <span className="text-[#a8b5ae]">{label}</span><span className="font-medium tabular-nums">{value}</span>
+    <span className="text-[#a8b5ae]">{label}</span><span className="font-medium tabular-nums">{value ?? <><span className="sr-only">—</span><span aria-hidden="true" className="inline-block h-3 w-20 rounded bg-[#28302f] align-middle"/></>}</span>
   </div>;
 }
