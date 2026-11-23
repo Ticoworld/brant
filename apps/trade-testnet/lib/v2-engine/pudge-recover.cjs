@@ -39,6 +39,14 @@ function usage() {
     `  node recover.cjs collect-blocks --node http://127.0.0.1:8114 --init 0x<tx-hash> \\\n`+
     `    --owner 0x<lock-hash> --custody-lock custody-lock.json --xudt-type xudt-type.json \\\n`+
     `    --max-blocks 100000 --out recovery-bundle.json\n\n`+
+    `Prepare an unsigned withdrawal on an isolated node:\n`+
+    `  node --experimental-strip-types pudge-recover.cjs prepare-withdrawal\n`+
+    `    --node <localhost-rpc> --bundle <history.json> --owner-lock <lock.json>\n`+
+    `    --funding-outpoint <tx-hash:index> --out <review.json>\n\n`+
+    `Verify, estimate and submit a separately signed RPC transaction on the isolated node:\n`+
+    `  node --experimental-strip-types pudge-recover.cjs submit-signed-withdrawal\n`+
+    `    --node <localhost-rpc> --bundle <history.json> --owner-lock <lock.json>\n`+
+    `    --funding-outpoint <tx-hash:index> --signed <signed.json> --out <receipt.json> [--mine]\n\n`+
     `Authorize, broadcast, and verify a withdrawal from a replayable bundle:\n`+
     `  TRADE_RECOVERY_PRIVATE_KEY=0x<disposable-key> node recover.cjs withdraw \\\n`+
     `    --node http://127.0.0.1:8114 --bundle recovery-bundle.json \\\n`+

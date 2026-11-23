@@ -18,3 +18,23 @@ This procedure requires separate authorization and a working standalone UTXO Glo
 2. Check output 0 is the custody successor with preserved capacity, reduced xUDT amount and the new root. Output 1 recreates the custody marker at the same capacity. Output 2 is an owner-locked xUDT Cell with 142 CKB occupied capacity for the standard 20-byte lock and current token type. Output 3 returns the remaining capacity to the owner, with a minimum of 61 CKB. At the CLI's 0.01 CKB fee cap, the funding Cell must hold at least 203.01 CKB. Check the reviewed fee against current fee policy before approval.
 3. Have the owner approve the exact reviewed transaction via UTXO Global. Verify the returned signature, transaction hash and untouched TMS1 witness locally. Estimate VM cycles using the signed transaction. Under the separate authorization, submit only the approved hash and resolve any uncertain response by querying that hash.
 4. Fetch the full canonical block and committed transaction independently. Verify the spent predecessors, custody root and resulting owner-locked xUDT. Start recovery again from initialization and confirm the withdrawn entitlement cannot be spent again.
+
+## R1 isolated acceptance
+
+Use the three-owner bootstrap in labs/trade-v2-token/gate2/BROWSER_BOOTSTRAP.md with the closure build directory, the repository's labs/rebuild/native as TRADE_NATIVE_ROOT, CKB 0.210.0 and Cargo on PATH. Build the recovery verifier with the locked command in the recovery README. Place the platform recovery executable in apps/trade-testnet/lib/v2-engine/target/release.
+
+From the repository root in PowerShell, run the native test with the newly printed bootstrap path and a fresh output directory.
+
+    node apps/trade-testnet/tests/v2-exit-handoff-native.cjs <browser-bootstrap.json> <fresh-output-directory>
+
+For the lost response case, start a second fresh bootstrap and run the fault proxy in a separate terminal.
+
+    node apps/trade-testnet/tests/v2-exit-handoff-rpc-fault.cjs
+
+Then run the same native test against the proxy with a new evidence directory.
+
+    $env:WO2_EXIT_RPC = 'http://127.0.0.1:19226'
+    $env:WO2_EXPECT_LOST_RESPONSE = '1'
+    node apps/trade-testnet/tests/v2-exit-handoff-native.cjs <browser-bootstrap.json> <fresh-output-directory>
+
+The proxy forwards the transaction, drops the successful reply and mines the isolated chain. The test requires the saved status to remain submission-unknown until a separate process verifies the canonical transaction by hash. Both runs recollect full-block history and check that the owner cannot prepare a second withdrawal.
