@@ -52,6 +52,7 @@ export default function LaunchScreen() {
   const executionLock = useRef(false);
   const [execution, setExecution] = useState('');
   const [setupTestResult, setSetupTestResult] = useState('');
+  const verifiedSetups = useRef(new Set<string>());
   const [session, setSession] = useState<Session>();
   const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; accounting: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
@@ -238,9 +239,13 @@ export default function LaunchScreen() {
   const localSetupTest = process.env.NODE_ENV === 'development' &&
     typeof window !== 'undefined' && window.location.hostname === '127.0.0.1' &&
     new URLSearchParams(window.location.search).get('diagnostics') === 'setup';
+  const setupHash = localSetupTest ? (preparation?.descriptor as {hashes?: {setup: string}} | undefined)?.hashes?.setup : undefined;
+  const setupTestKey = owner && setupHash && preparation?.owner === owner ? `${owner}:${setupHash}` : undefined;
+  const setupVerified = setupTestKey !== undefined && verifiedSetups.current.has(setupTestKey);
 
   async function signSetupLocally() {
-    if (!localSetupTest || !signer || !owner || !quote || preparation?.owner !== owner || executionLock.current) return;
+    if (!localSetupTest || !signer || !quote || !preparation || !setupTestKey ||
+        verifiedSetups.current.has(setupTestKey) || executionLock.current) return;
     executionLock.current = true;
     setExecution('wallet');
     setSetupTestResult('');
@@ -289,7 +294,7 @@ export default function LaunchScreen() {
       verifyInitializationSignature(reviewed, signed, inputs.map(input => ({lock: input.lock as ccc.ScriptLike})), 0, owner);
       failure = t('The connected Pudge wallet changed during approval.','批准期间已连接的 Pudge 钱包发生变化。');
       await verifyWallet();
-      setSetupTestResult(t('Signature verified','签名已验证') + ' · ' + hash);
+      verifiedSetups.current.add(setupTestKey);
     } catch (error) {
       const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
       setSetupTestResult(typeof code === 'number' ? failure + ' (' + code + ')' : failure);
@@ -365,11 +370,12 @@ export default function LaunchScreen() {
               </details>}
             {issue != null && <p role="alert" className="text-sm text-[#efb9ac]">{message}</p>}
             {process.env.NODE_ENV === 'development' && localSetupTest && quote && preparation?.owner === owner && <div className="space-y-2">
-              <p className="break-all text-sm">{t('Setup transaction hash','准备交易哈希')} · {(preparation.descriptor as {hashes: {setup: string}}).hashes.setup}</p>
+              <p className="break-all text-sm">{t('Setup transaction hash','准备交易哈希')} · {setupHash}</p>
+              {setupVerified ? <p role="status" className="text-sm">{t('Signature verified','签名已验证')}</p> :
               <button className={secondary} type="button" disabled={busy || execution === 'wallet'} onClick={() => void signSetupLocally()}>
                 {execution === 'wallet' ? t('Awaiting wallet','等待钱包') : t('Sign Setup without broadcasting','签署准备交易（不广播）')}
-              </button>
-              {setupTestResult && <p role="status" className="break-all text-sm">{setupTestResult}</p>}
+              </button>}
+              {!setupVerified && setupTestResult && <p role="status" className="break-all text-sm">{setupTestResult}</p>}
             </div>}
             {owner && busy && <div role="status" className="flex items-start gap-3 text-sm">
               <span aria-hidden="true" className="mt-0.5 size-4 shrink-0 rounded-full border-2 border-[#35403b] border-t-[#a7e9c6] motion-safe:animate-spin"/>
