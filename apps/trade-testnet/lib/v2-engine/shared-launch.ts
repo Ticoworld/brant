@@ -63,6 +63,7 @@ type Launch = {
   feeRate: bigint;
   resumeJournal?: string;
   verifyProof: (owner: string, quantity: bigint, price: bigint) => Promise<Proof>;
+  timing?: (name: string, ms: number) => void;
 };
 
 function successor(transaction: ccc.Transaction, index: number): Cell {
@@ -102,7 +103,7 @@ export async function planSharedLaunch(rpc: Rpc, request: Launch) {
   }
   const allDeps = Object.values(dependencies);
   if (request.resumeJournal) await verifyInitializationDependencies(rpc, genesis, allDeps);
-  else await verifyInitializationLive(rpc, genesis, allInputs, allDeps);
+  else await verifyInitializationLive(rpc, genesis, allInputs, allDeps, request.timing);
   const identity = deriveMarketIdentity({
     ...curve, genesis, anchor: anchor.outPoint,
     codes: {

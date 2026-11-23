@@ -48,8 +48,10 @@ type Rpc = (method:string, params:unknown[])=>Promise<unknown>;
  * against the full node. Indexer omissions can understate the available funds. */
 export async function discoverFunding(indexer:Rpc, node:Rpc, lock:FundingCandidate['lock']): Promise<FundingCandidate[]> {
   if (lock.codeHash.toLowerCase() !== SECP || lock.hashType !== 'type' || !/^0x[0-9a-f]{40}$/i.test(lock.args)) throw Error('Standard secp wallet required');
-  const start=await node('get_tip_header',[]) as {hash?:string;number?:string};
-  const indexed=await indexer('get_indexer_tip',[]) as {block_hash?:string;block_number?:string};
+  const [start,indexed]=await Promise.all([
+    node('get_tip_header',[]) as Promise<{hash?:string;number?:string}>,
+    indexer('get_indexer_tip',[]) as Promise<{block_hash?:string;block_number?:string}>,
+  ]);
   if(!start?.hash || !start.number) throw Error('Pudge node tip is unavailable; retry funding discovery.');
   let nodeHeight:bigint,indexerHeight:bigint;
   try{nodeHeight=BigInt(start.number);indexerHeight=BigInt(indexed?.block_number||'0');}catch{throw Error('Pudge funding indexer returned an invalid tip; retry funding discovery.');}
@@ -64,12 +66,15 @@ export async function discoverFunding(indexer:Rpc, node:Rpc, lock:FundingCandida
     if(cursor) args.push(cursor);
     const data=await indexer('get_cells',args) as {objects?:Array<{out_point:{tx_hash:string;index:string}}>;last_cursor?:string};
     if(!Array.isArray(data?.objects)) throw Error('Invalid indexer page');
-    for (const row of data.objects) {
+    for (let offset=0;offset<data.objects.length;offset+=4) {
+      const verified = await Promise.all(data.objects.slice(offset,offset+4).map(async row => {
       const live=await node('get_live_cell',[row.out_point,true]) as {status?:string;cell?:{output:{capacity:string;lock:{code_hash:string;hash_type:string;args:string};type?:unknown};data:{content:string}}};
-      if(live?.status!=='live' || !live.cell) continue;
+      if(live?.status!=='live' || !live.cell) return null;
       const o=live.cell.output, l=o.lock;
       if(l.code_hash.toLowerCase()!==lock.codeHash.toLowerCase() || l.hash_type!==lock.hashType || l.args.toLowerCase()!==lock.args.toLowerCase()) throw Error('Indexer returned unrelated lock');
-      result.push({outPoint:{txHash:row.out_point.tx_hash,index:row.out_point.index},capacity:BigInt(o.capacity),lock,type:o.type,data:live.cell.data.content});
+        return {outPoint:{txHash:row.out_point.tx_hash,index:row.out_point.index},capacity:BigInt(o.capacity),lock,type:o.type,data:live.cell.data.content};
+      }));
+      for (const cell of verified) if (cell) result.push(cell);
     }
     if(data.objects.length<100) {
       const canonical=await node('get_block_hash',[start.number]);

@@ -16,6 +16,35 @@ const rpc = async (method: string, params: unknown[]) => {
 const operate = launchOperations({rpc, genesis: PUDGE_GATE2_GENESIS, excludedAnchor: PUDGE_GATE2_ANCHOR,
   quantity: 7n, proof: generatePudgeLaunchProof, openStore: openConfiguredSharedLaunchStore});
 let active = 0;
+const preparing = new Map<string, Promise<{result: unknown; serverTiming: string}>>();
+
+async function measuredOperation(action: string, input: Record<string, unknown>) {
+  const samples = new Map<string, {count: number; ms: number}>();
+  const result = await operate(action, input, (name, ms) => {
+    const sample = samples.get(name) ?? {count: 0, ms: 0};
+    sample.count++;
+    sample.ms += ms;
+    samples.set(name, sample);
+  });
+  const serverTiming = Array.from(samples, ([name, {count, ms}]) =>
+    `${name};dur=${ms.toFixed(1)};desc="${count}"`).join(', ');
+  return {result, serverTiming};
+}
+
+function runOperation(action: string, input: Record<string, unknown>) {
+  if (action !== 'prepare') return measuredOperation(action, input);
+  const lock = input.creator as {codeHash?: string; hashType?: string; args?: string} | undefined;
+  if (typeof lock?.codeHash !== 'string' || !/^0x[0-9a-f]{64}$/i.test(lock.codeHash) ||
+      lock.hashType !== 'type' || typeof lock.args !== 'string' || !/^0x[0-9a-f]{40}$/i.test(lock.args)) {
+    return measuredOperation(action, input);
+  }
+  const key = (lock.codeHash + lock.args).toLowerCase();
+  const existing = preparing.get(key);
+  if (existing) return existing;
+  const pending = measuredOperation(action, input).finally(() => preparing.delete(key));
+  preparing.set(key, pending);
+  return pending;
+}
 
 export async function POST(request: Request, context: {params: Promise<{action: string}>}) {
   const origin = process.env.BRANT_LAUNCH_PROOF_ORIGIN;
@@ -46,7 +75,8 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     clearTimeout(timer);
     const input = JSON.parse(body + decoder.decode());
     if (!input || typeof input !== 'object' || Array.isArray(input)) return new Response(null, {status: 400});
-    return Response.json(await operate(action, input), {headers: {'Cache-Control': 'no-store'}});
+    const {result, serverTiming} = await runOperation(action, input);
+    return Response.json(result, {headers: {'Cache-Control': 'no-store', 'Server-Timing': serverTiming}});
   } catch {
     return Response.json({error: 'Launch could not be verified'}, {status: 409, headers: {'Cache-Control': 'no-store'}});
   } finally {

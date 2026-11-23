@@ -33,23 +33,35 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
   }
   const accounting = (plan: Awaited<ReturnType<typeof planSharedLaunch>>) =>
     JSON.parse(JSON.stringify(plan.accounting, (_, item) => typeof item === 'bigint' ? String(item) : item));
-  return async function operate(action: string, input: Record<string, unknown>) {
+  return async function operate(action: string, input: Record<string, unknown>, timing?: (name: string, ms: number) => void) {
     if (action === 'prepare') {
+      const started = performance.now();
+      const measured = async <T,>(name: string, work: () => Promise<T>) => {
+        const start = performance.now();
+        try { return await work(); }
+        finally { timing?.(name, performance.now() - start); }
+      };
+      const counted: Rpc = (method, params) => measured('rpc_' + method, () => rpc(method, params));
       const lock = creator(input.creator as ccc.ScriptLike);
-      if (await rpc('get_block_hash', ['0x0']) !== genesis) throw Error('Wrong genesis');
-      const cells = (await discoverFunding(rpc, rpc, lock)).filter(cell => !cell.type && cell.data === '0x' &&
+      if (await counted('get_block_hash', ['0x0']) !== genesis) throw Error('Wrong genesis');
+      const cells = (await measured('funding', () => discoverFunding(counted, counted, lock))).filter(cell => !cell.type && cell.data === '0x' &&
         !(excludedAnchor && cell.outPoint.txHash === excludedAnchor.txHash && BigInt(cell.outPoint.index) === BigInt(excludedAnchor.index)))
         .map(cell => ({...cell, type: undefined}))
         .sort((a,b) => a.capacity > b.capacity ? -1 : a.capacity < b.capacity ? 1 :
           JSON.stringify(a.outPoint).localeCompare(JSON.stringify(b.outPoint)));
       if (cells.length < 2 || cells.length > 64) throw Error('Unsupported funding Cell count');
-      const pool = await rpc('tx_pool_info', []) as {min_fee_rate: string};
+      const pool = await counted('tx_pool_info', []) as {min_fee_rate: string};
       const feeRate = BigInt(pool.min_fee_rate) * 2n;
       if (feeRate < 2000n || feeRate > 200000n) throw Error('Unsupported fee rate');
       for (const anchor of cells.slice(0, 2)) {
         const funding = cells.filter(cell => cell !== anchor);
         try {
-          const plan = await planSharedLaunch(rpc, request(lock, anchor, funding, feeRate));
+          const config = request(lock, anchor, funding, feeRate);
+          const plan = await measured('planner', () => planSharedLaunch(counted, {
+            ...config, verifyProof: (...args) => measured('proof', () => config.verifyProof(...args)),
+            timing,
+          }));
+          timing?.('total', performance.now() - started);
           return {descriptor: {creator: lock, anchor: anchor.outPoint, funding: funding.map(cell => cell.outPoint),
             feeRate: String(feeRate), market: plan.scope.market, hashes: plan.stageHashes},
             transaction: cccA.JsonRpcTransformers.transactionFrom(plan.projected.setup),
