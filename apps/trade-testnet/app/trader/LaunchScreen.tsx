@@ -5,6 +5,8 @@ import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {requestWalletTransactionSignature} from '../../lib/v2-engine/wallet-signing';
+import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature';
+import {readFundingCell} from '../../lib/v2-engine/funding';
 import localFont from 'next/font/local';
 import {useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
@@ -45,6 +47,7 @@ export default function LaunchScreen() {
   const [busy, setBusy] = useState(false);
   const executionLock = useRef(false);
   const [execution, setExecution] = useState('');
+  const [setupTestResult, setSetupTestResult] = useState('');
   const [session, setSession] = useState<Session>();
   const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
@@ -132,6 +135,7 @@ export default function LaunchScreen() {
     const owner = account.owner;
     setBusy(true);
     setReview(undefined);
+    setSetupTestResult('');
     try {
       const checkWallet = async () => {
         const [connected, genesis, address] = await Promise.all([
@@ -156,6 +160,69 @@ export default function LaunchScreen() {
       setReview({signer, owner, error});
     } finally {
       setBusy(false);
+    }
+  }
+
+  const localSetupTest = process.env.NODE_ENV === 'development' &&
+    typeof window !== 'undefined' && window.location.hostname === '127.0.0.1';
+
+  async function signSetupLocally() {
+    if (!localSetupTest || !signer || !owner || !quote || preparation?.owner !== owner || executionLock.current) return;
+    executionLock.current = true;
+    setExecution('wallet');
+    setSetupTestResult('');
+    let failure = t('Could not verify the connected Pudge wallet.','无法验证已连接的 Pudge 钱包。');
+    try {
+      const verifyWallet = async () => {
+        if (currentSigner.current !== signer || !await signer.isConnected() ||
+            (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS ||
+            (await signer.getRecommendedAddressObj()).script.hash() !== owner ||
+            await pudgeRpc('get_block_hash', ['0x0']) !== PUDGE_GENESIS) throw Error('Wallet identity changed');
+      };
+      await verifyWallet();
+      failure = t('Setup differs from the server review.','准备交易与服务器审核不一致。');
+      const descriptor = preparation.descriptor as {hashes: {setup: string}; anchor: {txHash: string; index: string};
+        funding: {txHash: string; index: string}[]};
+      const reviewed = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(
+        preparation.transaction as Parameters<typeof cccA.JsonRpcTransformers.transactionTo>[0]));
+      const hash = reviewed.hash();
+      if (hash !== descriptor.hashes.setup || reviewed.inputs.length !== descriptor.funding.length ||
+          reviewed.inputs.some(({previousOutput}, index) => previousOutput.txHash !== descriptor.funding[index].txHash ||
+            previousOutput.index !== BigInt(descriptor.funding[index].index))) throw Error('Setup mismatch');
+
+      failure = t('Setup funding or anchor is spent, unavailable, or belongs to another wallet.','准备资金或锚点已花费、不可用或属于其他钱包。');
+      const [anchor, ...inputs] = await Promise.all([descriptor.anchor, ...descriptor.funding]
+        .map(point => readFundingCell(pudgeRpc, point, owner)));
+      const capacity = inputs.reduce((sum, input) => sum + input.capacity, 0n);
+      failure = t('Live capacity or Setup fee differs from the review.','实时容量或准备交易费用与审核不一致。');
+      if (capacity + anchor.capacity !== quote.accounting.eligibleFunding ||
+          capacity - reviewed.outputs.reduce((sum, output) => sum + output.capacity, 0n) !== quote.accounting.stageFees.setup) {
+        throw Error('Setup capacity changed');
+      }
+      const prepared = reviewed.clone();
+      prepared.inputs.forEach((input, index) => {
+        input.cellOutput = ccc.CellOutput.from({capacity: inputs[index].capacity, lock: inputs[index].lock as ccc.ScriptLike});
+        input.outputData = ccc.hexFrom(inputs[index].data);
+      });
+      prepared.setWitnessArgs(0, ccc.WitnessArgs.from({lock: '0x' + '00'.repeat(65)}));
+      failure = t('The connected Pudge wallet changed before approval.','批准前已连接的 Pudge 钱包发生变化。');
+      await verifyWallet();
+      failure = t('CCC could not prepare the exact reviewed Setup transaction.','CCC 无法准备与审核完全一致的准备交易。');
+      const signed = await requestWalletTransactionSignature(signer, prepared, (stage, received) => {
+        if (received) failure = t('The wallet returned an invalid transaction.','钱包返回了无效交易。');
+        else if (stage !== 'CCC transaction preparation') failure = t('The wallet declined or failed the signing request.','钱包拒绝签名或签名请求失败。');
+      });
+      failure = t('The returned transaction, witnesses, or creator signature failed independent verification.','返回的交易、见证或创建者签名未通过独立验证。');
+      verifyInitializationSignature(reviewed, signed, inputs.map(input => ({lock: input.lock as ccc.ScriptLike})), 0, owner);
+      failure = t('The connected Pudge wallet changed during approval.','批准期间已连接的 Pudge 钱包发生变化。');
+      await verifyWallet();
+      setSetupTestResult(t('Signature verified','签名已验证') + ' · ' + hash);
+    } catch (error) {
+      const code = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+      setSetupTestResult(typeof code === 'number' ? failure + ' (' + code + ')' : failure);
+    } finally {
+      setExecution('');
+      executionLock.current = false;
     }
   }
 
@@ -225,6 +292,13 @@ export default function LaunchScreen() {
               </details>
             </>}
             {issue != null && <p role="alert" className="text-sm text-[#efb9ac]">{message}</p>}
+            {process.env.NODE_ENV === 'development' && localSetupTest && quote && preparation?.owner === owner && <div className="space-y-2">
+              <p className="break-all text-sm">{t('Setup transaction hash','准备交易哈希')} · {(preparation.descriptor as {hashes: {setup: string}}).hashes.setup}</p>
+              <button className={secondary} type="button" disabled={busy || execution === 'wallet'} onClick={() => void signSetupLocally()}>
+                {execution === 'wallet' ? t('Awaiting wallet','等待钱包') : t('Sign Setup without broadcasting','签署准备交易（不广播）')}
+              </button>
+              {setupTestResult && <p role="status" className="break-all text-sm">{setupTestResult}</p>}
+            </div>}
             <button className={primary} type="button" disabled={busy || ['checking','connecting'].includes(account.state)}
               onClick={account.state === 'ready' ? () => void refresh() : account.connect}>
               {busy ? t('Verifying…','正在验证…') : account.state === 'ready' ? quote ? t('Refresh estimate','刷新估算') : t('Check launch funding','检查发行资金') : t('Connect wallet','连接钱包')}
