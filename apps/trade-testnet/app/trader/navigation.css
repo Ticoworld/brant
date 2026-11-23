@@ -19,6 +19,14 @@
 .brant-header .brant-brand { flex: 0 0 auto; min-height: 40px; }
 .brant-brand img { display: block; width: 120px; height: auto; }
 .brant-header a { text-decoration: none; }
+.brant-nav-label { position: relative; }
+.brant-nav-label[aria-busy="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -4px;
+  height: 2px;
+  background: #6cddb5;
+}
 .brant-header :is(nav a, .brant-header-meta button) {
   display: inline-flex;
   align-items: center;
