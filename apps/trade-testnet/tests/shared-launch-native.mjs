@@ -4,8 +4,8 @@ import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
-import {sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
-import {reserveSharedLaunch, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage} from '../lib/v2-engine/shared-launch-controller.ts';
+import {planSharedLaunch, sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
+import {authorizeSharedLaunchSetup, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage} from '../lib/v2-engine/shared-launch-controller.ts';
 import {openSharedLaunchStore} from '../lib/v2-engine/shared-launch-store.ts';
 import {buildTransition} from '../lib/v2-engine/transaction.ts';
 import {decodeCurve} from '../lib/v2-engine/curve.ts';
@@ -78,22 +78,28 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           const proof = makeProof(domain, 0, [], [leaf], le(price));
           return {owner, witness:proof.witness, newRoot:proof.root};
         }};
-      let plan = await reserveSharedLaunch(rpc, store, config);
+      let plan = await planSharedLaunch(rpc, config);
       const {scope, stageHashes} = plan;
-      assert.throws(() => store.reserve(scope, stageHashes), /already reserved/);
       let setup, issuance, purchase;
       for (const stage of sharedLaunchStages) {
-        const review = await plan.prepareStage(stage, store.read(scope, stageHashes));
+        const review = stage === 'setup' ? plan.projected.setup : await plan.prepareStage(stage, store.read(scope, stageHashes));
         const inputs = stage === 'setup' ? config.funding : stage === 'issuance' ? [anchor, setup[0]] : [...issuance.slice(0,2), setup[1]];
         const unsigned = legacy(review);
         const signed = ccc.Transaction.from(sign(unsigned, inputs, [role]));
         let outputs;
         const restartHere = role === 1 && stage === 'purchase';
-        const submit = () => submitSharedLaunchStage(store, plan, stage, signed, async candidate => {
+        const send = async candidate => {
           outputs = await commit(`wo3b-creator-${role}-${stage}`, legacy(candidate));
           if (restartHere) throw Error('Simulated lost acknowledgement');
           return outputs[0].outPoint.txHash;
-        });
+        };
+        if (stage === 'setup') {
+          await assert.rejects(authorizeSharedLaunchSetup(rpc, store, config, review, send), /signature witness/);
+          assert.throws(() => store.read(scope, stageHashes), /reservation/);
+        }
+        const submit = () => stage === 'setup'
+          ? authorizeSharedLaunchSetup(rpc, store, config, signed, send)
+          : submitSharedLaunchStage(store, plan, stage, signed, send);
         if (restartHere) await assert.rejects(submit(), /lost acknowledgement/);
         else await submit();
         store.close();

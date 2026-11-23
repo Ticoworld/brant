@@ -46,14 +46,17 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
-    reserve(scope: Scope, hashes: Hashes, snapshot?: string) {
+    reserve(scope: Scope, hashes: Hashes, snapshot?: string, setupSubmitted = false) {
       const validHash = /^0x[\da-f]{64}$/i;
       if (![scope.genesis, scope.owner, scope.market, scope.anchor.txHash,
         ...sharedLaunchStages.map(stage => hashes[stage])].every(value => validHash.test(value)) ||
         !/^0x[\da-f]+$/i.test(scope.anchor.index) || BigInt(scope.anchor.index) > 0xffffffffn) {
         throw Error('Invalid launch reservation identity');
       }
-      const raw = JSON.stringify({version: 2, ...scope, entries: []});
+      if (setupSubmitted && snapshot === undefined) throw Error('Submitted Setup requires a launch snapshot');
+      const entries = setupSubmitted ? [{stage: 'setup', txHash: hashes.setup, state: 'submitted'}] : [];
+      const raw = JSON.stringify({version: 2, ...scope, entries});
+      readSharedLaunchJournal(raw, scope, hashes);
       const key = sharedLaunchJournalKey(scope).toLowerCase();
       const anchor = `${scope.genesis.toLowerCase()}:${scope.anchor.txHash.toLowerCase()}:${BigInt(scope.anchor.index)}`;
       const plan = JSON.stringify(sharedLaunchStages.map(stage => hashes[stage]));

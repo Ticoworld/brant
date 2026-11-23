@@ -11,7 +11,7 @@ type Stage = typeof sharedLaunchStages[number];
 
 /** Retain the original inputs and independently verified proof for replay after
  * Setup spends the original funding. Only server-created snapshots are used. */
-export async function reserveSharedLaunch(rpc: Rpc, store: Store, request: Request) {
+async function buildLaunchSnapshot(rpc: Rpc, request: Request) {
   let proof: Awaited<ReturnType<Request['verifyProof']>> | undefined;
   const plan = await planSharedLaunch(rpc, {...request, resumeJournal: undefined,
     verifyProof: async (...args) => (proof = await request.verifyProof(...args)),
@@ -21,7 +21,26 @@ export async function reserveSharedLaunch(rpc: Rpc, store: Store, request: Reque
     accounting: plan.accounting,
     transactions: sharedLaunchStages.map(stage => cccA.JsonRpcTransformers.transactionFrom(plan.projected[stage])),
   };
-  store.reserve(plan.scope, plan.stageHashes, serialize(snapshot));
+  return {plan, snapshot: serialize(snapshot)};
+}
+
+export async function reserveSharedLaunch(rpc: Rpc, store: Store, request: Request) {
+  const {plan, snapshot} = await buildLaunchSnapshot(rpc, request);
+  store.reserve(plan.scope, plan.stageHashes, snapshot);
+  return plan;
+}
+
+/** The server derives the request from chain data. The wallet's Setup signature
+ * authenticates the creator before any anchor reservation is written. */
+export async function authorizeSharedLaunchSetup(
+  rpc: Rpc, store: Store, request: Request, signed: ccc.Transaction,
+  send: (signed: ccc.Transaction) => Promise<string>,
+) {
+  const candidate = signed.clone();
+  const {plan, snapshot} = await buildLaunchSnapshot(rpc, request);
+  plan.verifySignature('setup', candidate);
+  store.reserve(plan.scope, plan.stageHashes, snapshot, true);
+  if (await send(candidate) !== plan.stageHashes.setup) throw Error('Launch submission acknowledgement differs from review');
   return plan;
 }
 
