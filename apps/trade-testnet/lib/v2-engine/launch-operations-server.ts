@@ -111,7 +111,7 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       if (!session) return null;
       const {scope, hashes, journal} = session;
       const entries = journal.entries.map(({stage, state, txHash, blockHash}) => ({stage, state, txHash, blockHash}));
-      if (action === 'session') return {entries, hashes, enabled: Boolean(send && authorizeCreator(scope.owner))};
+      if (action === 'session') return {entries, hashes, published: store.isPublished(scope, hashes), enabled: Boolean(send && authorizeCreator(scope.owner))};
       const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
       if (action === 'publish') {
         const metadata = verifyLaunchMetadata(scope, input.metadata, input.signature);

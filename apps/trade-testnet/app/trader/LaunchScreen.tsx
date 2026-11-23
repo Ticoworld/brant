@@ -4,6 +4,7 @@ import {useEffect, useRef, useState} from 'react';
 import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
+import {launchMetadataMessage, normalizeLaunchMetadata} from '../../lib/v2-engine/launch-metadata';
 import {requestWalletTransactionSignature} from '../../lib/v2-engine/wallet-signing';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature';
 import {readFundingCell} from '../../lib/v2-engine/funding';
@@ -23,7 +24,7 @@ const launchStages = ['setup', 'issuance', 'purchase'] as const;
 const sessionKey = (owner: string) => 'brant-launch-session:' + owner;
 type Stage = typeof launchStages[number];
 type SessionSummary = {market: string; entries: {state: string}[]};
-type Session = {enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
+type Session = {published?: boolean; enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
 
 async function launchApi(action: string, payload: object, signal?: AbortSignal) {
   const timeout = AbortSignal.timeout(45_000);
@@ -47,6 +48,7 @@ export default function LaunchScreen() {
   const [description, setDescription] = useState('');
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
+  const [publication, setPublication] = useState<{market: string; status: 'saving' | 'published' | 'pending'}>();
   const [busy, setBusy] = useState(false);
   const [reviewPhase, setReviewPhase] = useState<'wallet' | 'server' | 'slow' | 'long'>('wallet');
   const [retry, setRetry] = useState(0);
@@ -80,6 +82,7 @@ export default function LaunchScreen() {
     setSession(undefined);
     setSavedSessions([]);
     setResumedMarket(undefined);
+    setPublication(undefined);
     if (!owner) return;
     let active = true;
     void (async () => {
@@ -107,6 +110,29 @@ export default function LaunchScreen() {
     })().catch(() => { if (active) setExecution('error'); });
     return () => {active = false;};
   }, [owner, selectedMarket]);
+
+  async function publishMetadata() {
+    const market = localStorage.getItem(sessionKey(owner));
+    if (!owner || !market || !signer || executionLock.current) return;
+    executionLock.current = true;
+    setPublication({market, status: 'saving'});
+    try {
+      const address = await signer.getRecommendedAddressObj();
+      if (address.script.hash() !== owner || (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS) {
+        throw Error('Wallet changed');
+      }
+      const metadata = normalizeLaunchMetadata({name, ticker, description, link: social});
+      const signature = await signer.signMessageRaw(launchMetadataMessage({genesis: PUDGE_GENESIS, owner, market}, metadata));
+      if (currentSigner.current !== signer) throw Error('Wallet changed');
+      await launchApi('publish', {owner, market, metadata, signature});
+      setPublication({market, status: 'published'});
+      setSession(current => current && {...current, published: true});
+    } catch {
+      setPublication({market, status: 'pending'});
+    } finally {
+      executionLock.current = false;
+    }
+  }
 
   async function execute() {
     if (!signer || !owner || executionLock.current) return;
@@ -436,7 +462,19 @@ export default function LaunchScreen() {
               error:t('The saved session could not be read.','无法读取已保存的会话。')}[execution]}</p>}
             {!(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
             {session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length ?
-              <p role="status">{t('Launch complete','发行完成')}</p> :
+              <div className="grid gap-3">
+                <p role="status">{t('Launch transactions confirmed','发行交易已确认')}</p>
+                <label>{t('Token name','代币名称')}<input className={field} disabled={session.published} value={name} maxLength={80} onChange={event => setName(event.target.value)}/></label>
+                <label>{t('Ticker','代币符号')}<input className={field} value={ticker} maxLength={12} onChange={event => setTicker(event.target.value)}/></label>
+                <p>{t('Your wallet will ask you to sign a message to authorize publishing this metadata.','钱包将要求您签署消息以授权发布元数据。')}</p>
+                <button className={primary} disabled={session.published || !owner || !name.trim() || !ticker.trim() || publication?.status === 'saving'}
+                  onClick={() => void publishMetadata()}>{t('Publish token metadata','发布代币元数据')}</button>
+                {session.published ? <p role="status">{t('Metadata saved','元数据已保存')}</p> : publication && <p role="status">{{
+                  saving: t('Authorizing publication','正在授权发布'),
+                  published: t('Metadata saved','元数据已保存'),
+                  pending: t('Publication pending. You can retry without relaunching.','发布待完成。您可重试，无需重新发行。'),
+                }[publication.status]}</p>}
+              </div> :
               <button className={primary} disabled={!owner || !(session?.enabled || preparation?.owner === owner && preparation.enabled) ||
                 ['wallet','submitting','checking'].includes(execution)} onClick={() => void execute()}>{t('Resume launch','继续发行')}</button>}
           </div>}

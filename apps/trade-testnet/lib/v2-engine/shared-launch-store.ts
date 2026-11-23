@@ -62,6 +62,10 @@ export function openSharedLaunchStore(path: string) {
         return {market, entries};
       });
     },
+    isPublished(scope: Scope, hashes: Hashes) {
+      const {key} = loadPlan(scope, hashes);
+      return Boolean(db.prepare('SELECT 1 FROM shared_launch_publication WHERE market_key = ?').get(key));
+    },
     publish(scope: Scope, hashes: Hashes, token: string, metadata: ReturnType<typeof normalizeLaunchMetadata>) {
       const {key, raw, journal} = loadPlan(scope, hashes);
       if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {
