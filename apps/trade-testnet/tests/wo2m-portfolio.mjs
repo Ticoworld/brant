@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
 import {ccc} from '@ckb-ccc/core';
-const base='http://127.0.0.1:3000';
+const base=process.env.ROVEKO_TEST_URL||'http://127.0.0.1:3000';
 const response=await fetch(base+'/api/v2/pudge-rpc',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({method:'get_transaction',params:['0x7441f36f2467ae22eb223140cf5cab42430aeac5099825556f9a07f85c92179d']})});
 const {result}=await response.json(),l=result.transaction.outputs[4].lock;
 const address=ccc.Address.from({script:{codeHash:l.code_hash,hashType:l.hash_type,args:l.args},prefix:'ckt'}).toString();
@@ -9,7 +9,15 @@ const browser=await chromium.launch({executablePath:process.env.CHROME_BIN||'C:/
 try{
 for(const width of [1280,390]){
  const page=await browser.newPage({viewport:{width,height:850}});
- let failures=0;
+ let failures=0, phase='initial';
+ const starts=new WeakMap();
+ page.on('request',request=>{
+  if(request.url().endsWith('/api/v2/pudge-proof')&&request.method()==='POST')starts.set(request,{phase,at:Date.now()});
+ });
+ page.on('response',async response=>{
+  const start=starts.get(response.request());
+  if(start)console.log('Portfolio proof',{phase:start.phase,status:response.status(),ms:Date.now()-start.at});
+ });
  await page.route('**/api/v2/pudge-proof',async route=>{
   if(route.request().method()==='POST'&&route.request().postDataJSON().side==='balance'&&failures++===0)return route.fulfill({status:502,body:'Temporary RPC failure'});
   return route.continue();
@@ -23,13 +31,20 @@ for(const width of [1280,390]){
  await page.getByText(/UTXO\s*Global/i).first().click();
  const start=Date.now();
  await page.getByRole('button',{name:'CKB CKB',exact:true}).click();
- await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor();
+ await page.getByRole('alert').filter({hasText:'Could not verify your RVK balance'}).waitFor();
  await page.locator('#withdraw-quantity').waitFor({timeout:60000});
- await page.getByText('Could not verify your RVK balance',{exact:true}).waitFor({state:'hidden',timeout:60000});
+ await page.getByRole('alert').filter({hasText:'Could not verify your RVK balance'}).waitFor({state:'hidden',timeout:60000});
  const ready=Date.now()-start;
  await page.getByRole('link',{name:'Markets',exact:true}).click();
+ phase='return';
  await page.getByRole('link',{name:'Portfolio',exact:true}).click();
- await page.getByText('Total RVK',{exact:true}).locator('../..').getByText('8',{exact:true}).waitFor({timeout:30000}).catch(async error=>{console.log(await page.locator('main').innerText());throw error;});
+ await page.waitForFunction(()=>{
+  const total=document.querySelector('.portfolio-rvk-total');
+  const holdings=total?.nextElementSibling;
+  const parts=Array.from(holdings?.querySelectorAll('.portfolio-balance dd span')??[],el=>el.textContent.replaceAll(',',''));
+  const value=total?.querySelector('dd span')?.textContent.replaceAll(',','');
+  return parts.length===2&&value&&BigInt(value)===BigInt(parts[0])+BigInt(parts[1]);
+ });
  console.log({width,readyMs:ready,balanceRequests:failures});
  await page.close();
 }

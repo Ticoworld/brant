@@ -7,7 +7,16 @@ const h=/^0x[0-9a-f]{64}$/i;
 /** Freshness and identity check, not a proof of RPC honesty or consensus finality.
  * Run before review, again before signature, and immediately before broadcast. */
 export async function verifyInitializationLive(rpc:Rpc, genesis:string, inputs:ExpectedCell[], dependencies:Dependency[]) {
-  if(!h.test(genesis)||!inputs.length||!dependencies.length) throw Error('Missing initialization identity');
+  if(!inputs.length) throw Error('Missing initialization identity');
+  await verifyInitializationCells(rpc, genesis, inputs, dependencies);
+}
+
+export async function verifyInitializationDependencies(rpc:Rpc, genesis:string, dependencies:Dependency[]) {
+  await verifyInitializationCells(rpc, genesis, [], dependencies);
+}
+
+async function verifyInitializationCells(rpc:Rpc, genesis:string, inputs:ExpectedCell[], dependencies:Dependency[]) {
+  if(!h.test(genesis)||!dependencies.length) throw Error('Missing initialization identity');
   const g=await rpc('get_block_hash',['0x0']);
   if(typeof g!=='string'||g.toLowerCase()!==genesis.toLowerCase()) throw Error('Wrong genesis');
   const seen=new Set<string>();

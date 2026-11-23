@@ -1,0 +1,45 @@
+.market-discovery {
+  color: #f2f5f4;
+  padding: 34px 0 60px;
+  font-size: 14px;
+}
+.market-discovery :is(h1,h2,p,dl,dd) { margin: 0; }
+.discovery-heading { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 16px; margin-bottom: 26px; }
+.discovery-heading h1 { font-size: clamp(32px, 3.1vw, 46px); letter-spacing: -.055em; font-weight: 650; line-height: 1.12; }
+.discovery-heading p { margin-top: 7px; color: #98a7a2; }
+.discovery-controls { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+.discovery-controls label { display: grid; gap: 4px; color: #aab7b3; }
+.market-discovery :is(button,input) { min-height: 44px; border: 0; border-radius: 12px; background: #1e2523; color: inherit; padding: 8px 14px; font: inherit; }
+.market-discovery button { cursor: pointer; }
+.market-discovery button:disabled { opacity: .65; cursor: default; }
+.market-discovery :is(button,input,a,summary):focus-visible { outline: 2px solid #6cddb5; outline-offset: 3px; }
+.discovery-list { border-radius: 20px; background: #151a19; }
+.discovery-columns,.discovery-row { display: grid; grid-template-columns: minmax(170px,1.5fr) repeat(4,minmax(0,1fr)) 105px; gap: 16px; padding-inline: 24px; align-items: center; }
+.discovery-columns { min-height: 48px; color: #aab7b3; font-size: 13px; border-bottom: 1px solid #29312e; }
+.discovery-market + .discovery-market { border-top: 1px solid #29312e; }
+.discovery-market:hover { background: #191f1e; border-radius: 18px; }
+.discovery-row { min-height: 88px; }
+.discovery-identity { display: flex; align-items: center; gap: 13px; }
+.discovery-token { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 50%; color: #a3f6d9; background: #254139; font-weight: 650; }
+.discovery-identity h2 { font-size: 18px; font-weight: 650; letter-spacing: -.025em; }
+.discovery-identity p { color: #aab7b3; font-size: 13px; overflow-wrap: anywhere; }
+.discovery-metric dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.discovery-metric dd { font-weight: 620; font-size: 22px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.discovery-metric small { color: #aab7b3; font-size: 13px; font-weight: 450; }
+.discovery-metric[data-index="0"] dd { color: #6cddb5; }
+.discovery-metric[data-index="1"] dd { color: #f08087; }
+a.discovery-trade { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 12px; background: #6cddb5; color: #10221b; text-decoration: none; font-weight: 680; }
+a.discovery-trade:hover { background: #92eacb; }
+.discovery-provenance { padding: 0 24px 14px; display: flex; flex-wrap: wrap; column-gap: 16px; color: #aab7b3; font-size: 13px; }
+.discovery-provenance summary { cursor: pointer; }
+.discovery-provenance details p { margin-top: 6px; overflow-wrap: anywhere; }
+.market-discovery .discovery-empty { padding: 30px 24px; color: #aab7b3; }
+.market-discovery .discovery-error { margin-top: 12px; color: #ecbd84; }
+@media (max-width: 900px) {
+  .market-discovery { padding-top: 26px; }
+  .discovery-columns { display: none; }
+  .discovery-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); padding: 18px 16px 12px; }
+  .discovery-identity,.discovery-trade { grid-column: 1 / -1; }
+  .discovery-metric dt { position: static; width: auto; height: auto; clip-path: none; color: #aab7b3; font-size: 13px; }
+  .discovery-provenance { padding-inline: 16px; }
+}

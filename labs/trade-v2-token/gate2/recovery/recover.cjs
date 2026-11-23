@@ -710,7 +710,23 @@ async function withdraw(args, unsigned = false) {
     const tip = await rpc(node, 'get_block_hash', [startTip.number]);
     if (tip !== startTip.hash) fail('chain changed during unsigned preparation');
     await Promise.all([custodyPoint, markerPoint, fundingPoint].map(point => requireLiveCell(node, point, 'reviewed input')));
-    fs.writeFileSync(args.out, JSON.stringify({status:'unsigned', transaction_hash:txHash, owner_lock_hash:bundle.owner_lock_hash, quantity:quantity.toString(), occupied_capacity:externalCapacity.toString(), fee:fee.toString(), custody_before:custodyAmount.toString(), custody_after:(custodyAmount-quantity).toString(), transaction:rpcSnake(tx)}, null, 2), {flag:'wx'});
+    fs.writeFileSync(args.out, JSON.stringify({
+      format: 'trade-v2-withdrawal-review-v1',
+      status: 'unsigned',
+      genesis_hash: genesis.header.hash,
+      transaction_hash: txHash,
+      owner_lock_hash: bundle.owner_lock_hash,
+      quantity: quantity.toString(),
+      funding_capacity: fundCapacity.toString(),
+      occupied_capacity: externalCapacity.toString(),
+      external_occupied_capacity: externalCapacity.toString(),
+      change_occupied_capacity: minChangeCapacity.toString(),
+      change_capacity: changeCapacity.toString(),
+      fee: fee.toString(),
+      custody_before: custodyAmount.toString(),
+      custody_after: (custodyAmount - quantity).toString(),
+      transaction: rpcSnake(tx),
+    }, null, 2), {flag:'wx'});
     return;
   }
   const signerGroup = [{ lock: '', inputType: '', outputType: '' }, ...tx.witnesses.slice(inputs.length)];

@@ -39,6 +39,14 @@ function usage() {
     `  node recover.cjs collect-blocks --node http://127.0.0.1:8114 --init 0x<tx-hash> \\\n`+
     `    --owner 0x<lock-hash> --custody-lock custody-lock.json --xudt-type xudt-type.json \\\n`+
     `    --max-blocks 100000 --out recovery-bundle.json\n\n`+
+    `Prepare an unsigned withdrawal on an isolated node:\n`+
+    `  node --experimental-strip-types pudge-recover.cjs prepare-withdrawal\n`+
+    `    --node <localhost-rpc> --bundle <history.json> --owner-lock <lock.json>\n`+
+    `    --funding-outpoint <tx-hash:index> --out <review.json>\n\n`+
+    `Verify, estimate and submit a separately signed RPC transaction on the isolated node:\n`+
+    `  node --experimental-strip-types pudge-recover.cjs submit-signed-withdrawal\n`+
+    `    --node <localhost-rpc> --bundle <history.json> --owner-lock <lock.json>\n`+
+    `    --funding-outpoint <tx-hash:index> --signed <signed.json> --out <receipt.json> [--mine]\n\n`+
     `Authorize, broadcast, and verify a withdrawal from a replayable bundle:\n`+
     `  TRADE_RECOVERY_PRIVATE_KEY=0x<disposable-key> node recover.cjs withdraw \\\n`+
     `    --node http://127.0.0.1:8114 --bundle recovery-bundle.json \\\n`+
@@ -63,7 +71,7 @@ async function rpc(url, method, params = []) {
     response = await fetch(url, {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
-      signal: AbortSignal.timeout(timeoutMs),
+      signal: AbortSignal.timeout(timeoutMs), redirect: 'error',
     });
   } catch (error) {
     if (process.env[RPC_LOG_ENV]) fs.appendFileSync(path.resolve(process.env[RPC_LOG_ENV]), `${JSON.stringify({ method, params, transport_error: String(error) })}\n`);
@@ -719,20 +727,26 @@ async function verifyCommittedReport(node, report, reportPath, utils) {
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
   return { block_number: report.block_number, block_hash: report.block_hash };
 }
-async function withdraw(args) {
+async function withdraw(args, mode = 'legacy') {
   for (const key of ['node', 'bundle', 'out']) if (!args[key]) fail(`missing --${key}`);
   if (path.resolve(args.out) === path.resolve(args.bundle)) fail('--out must not overwrite the recovery bundle');
   if (fs.existsSync(path.resolve(args.out))) fail(`refusing to overwrite existing withdrawal evidence: ${path.resolve(args.out)}`);
   const node = localRpcUrl(args.node);
   const sdk = loadSdk(args);
-  const privateKey = process.env[RECOVERY_KEY_ENV];
-  const ownerLock = privateOwnerLock(sdk.utils, privateKey);
+  const privateKey = mode === 'legacy' ? process.env[RECOVERY_KEY_ENV] : undefined;
+  if (mode !== 'legacy' && (!args['owner-lock'] || !args['funding-outpoint'])) fail('handoff requires --owner-lock and --funding-outpoint');
+  if (mode === 'submit' && !args.signed) fail('missing --signed');
+  const ownerLock = mode === 'legacy'
+    ? privateOwnerLock(sdk.utils, privateKey)
+    : camelScript(JSON.parse(fs.readFileSync(args['owner-lock'], 'utf8')));
   const bundlePath = path.resolve(args.bundle);
   const bundle = JSON.parse(fs.readFileSync(bundlePath, 'utf8'));
   const recovery = replayBundleFile(bundlePath);
   if (bundle.format !== 'trade-v2-recovery-bundle-v1' || recovery.format !== 'trade-v2-recovery-result-v1') fail('unsupported recovery bundle/result format');
   if (recovery.owner_membership_proof?.root_verified !== true || recovery.owner_lock_hash.toLowerCase() !== bundle.owner_lock_hash.toLowerCase()) fail('replayed owner proof or identity does not match the bundle');
-  if (scriptHash(sdk.utils, ownerLock).toLowerCase() !== bundle.owner_lock_hash.toLowerCase()) fail('disposable private key does not match the recovered owner lock hash');
+  if (scriptHash(sdk.utils, ownerLock).toLowerCase() !== bundle.owner_lock_hash.toLowerCase()) fail('signing lock does not match the recovered owner lock hash');
+  if (ownerLock.codeHash.toLowerCase() !== '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8'
+      || ownerLock.hashType !== 'type' || !/^0x[0-9a-f]{40}$/i.test(ownerLock.args)) fail('unsupported owner lock');
   const template = recovery.withdrawal_template;
   if (!template || template.op !== 5 || BigInt(template.quantity) <= 0n) fail('recovery bundle has no positive owner withdrawal');
   if (recovery.entitlement_total !== recovery.custody_amount) fail('replayed entitlement total differs from the custody xUDT amount');
@@ -741,6 +755,7 @@ async function withdraw(args) {
   if (!versionIsPinned(nodeInfo?.version)) fail(`withdraw requires CKB 0.210.0; node reports ${nodeInfo?.version || 'no version'}`);
   const startTip = await rpc(node, 'get_tip_header');
   const genesis = await rpc(node, 'get_block_by_number', ['0x0']);
+  if (genesis?.header?.hash?.toLowerCase() === '0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606') fail('local withdrawal commands require an isolated chain');
   if (genesis?.header?.hash?.toLowerCase() !== recovery.domain.genesis_hash.toLowerCase()) fail('bundle genesis does not match this CKB node');
   const domainArgs = Buffer.from(bundle.custody_lock.args.slice(2), 'hex');
   if (domainArgs.length !== 128 || domainArgs.subarray(64, 96).toString('hex') !== recovery.domain.genesis_hash.slice(2).toLowerCase()) fail('custody script domain does not match recovered genesis');
@@ -823,14 +838,44 @@ async function withdraw(args) {
     witnesses: ['0x', '0x', '0x', `0x${tmsWitness.toString('hex')}`],
   };
   const txHash = txHashOf(sdk.utils, tx);
-  const signerGroup = [{ lock: '', inputType: '', outputType: '' }, ...tx.witnesses.slice(inputs.length)];
-  tx.witnesses[2] = sdk.signGroup(privateKey, txHash, signerGroup)[0];
+  if (mode === 'prepare') {
+    const tip = await rpc(node, 'get_tip_header');
+    if (tip.hash !== startTip.hash) fail('canonical chain changed during withdrawal preparation');
+    fs.writeFileSync(args.out, JSON.stringify({
+      format: 'trade-v2-withdrawal-review-v1',
+      genesis_hash: genesis.header.hash,
+      owner_lock_hash: bundle.owner_lock_hash,
+      transaction_hash: txHash,
+      quantity: quantity.toString(),
+      funding_capacity: fundCapacity.toString(),
+      external_occupied_capacity: minExternalCapacity.toString(),
+      change_occupied_capacity: minChangeCapacity.toString(),
+      change_capacity: changeCapacity.toString(),
+      fee: fee.toString(),
+      transaction: rpcSnake(tx),
+    }, null, 2) + '\n', {flag:'wx'});
+    return;
+  }
+  if (mode === 'submit') {
+    const {cccA} = await import('@ckb-ccc/core/advanced');
+    const {ccc} = await import('@ckb-ccc/core');
+    const {verifyInitializationSignature} = await import('./initialization-signature.ts');
+    const signed = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(JSON.parse(fs.readFileSync(args.signed, 'utf8'))));
+    const reviewed = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(rpcSnake(tx)));
+    verifyInitializationSignature(reviewed, signed, [
+      {lock: custodyLock}, {lock: custodyLock}, {lock: ownerLock},
+    ], 2, bundle.owner_lock_hash);
+    tx.witnesses = signed.witnesses;
+  } else {
+    const signerGroup = [{ lock: '', inputType: '', outputType: '' }, ...tx.witnesses.slice(inputs.length)];
+    tx.witnesses[2] = sdk.signGroup(privateKey, txHash, signerGroup)[0];
+  }
   const rpcTx = rpcSnake(tx);
   const cycles = await rpc(node, 'estimate_cycles', [rpcTx]);
   if (!cycles?.cycles) fail('CKB estimate_cycles returned no VM cycle count');
   const report = {
     format: 'trade-v2-independent-withdrawal-v1',
-    status: 'estimated',
+    status: 'submission-unknown',
     node_version: nodeInfo.version,
     genesis_hash: genesis.header.hash,
     owner_lock_hash: bundle.owner_lock_hash,
@@ -853,6 +898,8 @@ async function withdraw(args) {
     transaction: rpcTx,
   };
   const reportPath = path.resolve(args.out);
+  const tipBeforeSubmission = await rpc(node, 'get_tip_header');
+  if (tipBeforeSubmission.hash !== startTip.hash) fail('canonical chain changed before submission; prepare again');
   const reportFd = fs.openSync(reportPath, 'wx');
   fs.writeFileSync(reportFd, `${JSON.stringify(report, null, 2)}\n`);
   fs.closeSync(reportFd);
@@ -891,6 +938,8 @@ async function main() {
   if (command === 'collect') await collect(args);
   else if (command === 'collect-incremental') await collectIncremental(args);
   else if (command === 'collect-blocks') await collectBlocks(args);
+  else if (command === 'prepare-withdrawal') await withdraw(args, 'prepare');
+  else if (command === 'submit-signed-withdrawal') await withdraw(args, 'submit');
   else if (command === 'withdraw') await withdraw(args);
   else if (command === 'verify-withdrawal') await verifyWithdrawal(args);
   else fail(`unknown command ${command}`);

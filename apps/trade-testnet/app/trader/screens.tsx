@@ -2,94 +2,27 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import {ccc} from '@ckb-ccc/core';
-import {useCallback,useEffect,useMemo,useState} from 'react';
+import {useCallback,useState} from 'react';
 import {useLocale} from '../i18n-provider';
 import type {Locale} from '../i18n';
 import {useAccount} from './account-provider';
 import {copy} from './copy';
-import {formatCkb,pudgeRpc} from './rpc';
+import {formatCkb} from './rpc';
 import type {MarketData,Side,TradeEvent} from './types';
 import {useMarketData} from './use-market-data';
-import {useOwnerPosition} from './use-owner-position';
-import {useGate2Trade} from './use-gate2-trade';
-import WithdrawalPanel from './WithdrawalPanel';
+import {useMarketSession} from './use-market-session';
 import TraderShell from './shell';
 import SwapPanel from './SwapPanel';
 import SwapKlinePanel from './SwapKlinePanel';
 
 const Gate2LaunchFlow=dynamic(()=>import('../v2/deploy/review'),{ssr:false});
 
-export function MarketsScreen(){
-  const {locale}=useLocale(),{data,loading,error,lastSuccess,refresh}=useMarketData('pudge-xudt'),[search,setSearch]=useState('');
-  const filtered=data&&[data].filter(market=>`${market.token.name} ${market.token.symbol} ${market.pair}`.toLowerCase().includes(search.toLowerCase()));
-  return <TraderShell><div className="space-y-6">
-    <section className="flex flex-wrap items-end justify-between gap-4 border-b border-[#28302f] pb-5">
-      <div><h1 className="m-0 text-[22px] font-semibold tracking-normal">{copy(locale,'markets')}</h1></div>
-      <label className="w-full max-w-[360px] text-[11px] text-[#8f9b96]">{copy(locale,'search')}<input value={search} onChange={event=>setSearch(event.target.value)} className="mt-1 min-h-10 w-full rounded-[3px] border border-[#303a37] bg-[#111615] px-3 text-sm text-[#e6ece9] outline-none focus:border-[#6d9583]" /></label>
-    </section>
-    {data&&<MarketList market={data} locale={locale} />}
-    {!data&&loading&&<p role="status" className="py-10 text-sm text-[#a4afab]">{copy(locale,'loading')}</p>}
-    {!data&&error&&<section className="flex flex-wrap items-center justify-between gap-3 border-y border-[#533c36] py-4"><p className="m-0 text-sm text-[#f0b8ad]">{copy(locale,'unavailable')}</p><button onClick={()=>void refresh()} className="min-h-9 rounded-[3px] border border-[#4a5952] px-3 text-xs font-medium text-[#dce5e1] hover:bg-[#1a2420]">{copy(locale,'retry')}</button></section>}
-    {data&&filtered?.length===0&&<p className="border-y border-[#28302f] py-8 text-sm text-[#9ba6a2]">{copy(locale,'searchEmpty')}</p>}
-    {data&&<MarketRefreshState market={data} error={error} lastSuccess={lastSuccess} refresh={refresh} locale={locale} />}
-  </div></TraderShell>;
-}
-
-function MarketList({market,locale}:{market:MarketData;locale:Locale}){
-  return <section aria-label={copy(locale,'markets')}>
-    <div className="hidden grid-cols-[minmax(220px,1.4fr)_minmax(120px,.8fr)_minmax(130px,.8fr)_minmax(130px,.8fr)_minmax(140px,.8fr)_110px] gap-4 border-b border-[#303a37] px-3 py-2 text-[10px] uppercase text-[#7f8b86] md:grid">
-      <span>{copy(locale,'asset')}</span><span>{copy(locale,'pair')}</span><span>{copy(locale,'buyPrice')}</span><span>{copy(locale,'sellPrice')}</span><span>{copy(locale,'reserve')}</span><span />
-    </div>
-    <div className="border-b border-[#28302f]">
-      <div className="grid gap-3 px-2 py-4 md:grid-cols-[minmax(220px,1.4fr)_minmax(120px,.8fr)_minmax(130px,.8fr)_minmax(130px,.8fr)_minmax(140px,.8fr)_110px] md:items-center md:gap-4 md:px-3">
-        <div className="flex min-w-0 items-center gap-3"><div aria-hidden="true" className="grid size-10 shrink-0 place-items-center border border-[#34423c] bg-[#14201b] text-sm font-semibold text-[#83e2b5]">{market.token.symbol.slice(0,1).toUpperCase()}</div><div className="min-w-0"><div className="truncate text-sm font-semibold text-[#e6ece9]">{market.token.name}</div><div className="mt-0.5 text-[11px] text-[#899590]">{market.token.symbol} · {copy(locale,'supply')} {market.supply}</div></div></div>
-        <div className="flex justify-between text-xs md:block"><span className="text-[#87938e] md:hidden">{copy(locale,'pair')}</span><span className="text-[#c8d2ce]">{market.pair}</span></div>
-        <Metric label={copy(locale,'buyPrice')} value={`${formatCkb(market.buyOneShannons,4)} CKB`} />
-        <Metric label={copy(locale,'sellPrice')} value={`${formatCkb(market.sellOneShannons,4)} CKB`} />
-        <Metric label={copy(locale,'reserve')} value={`${formatCkb(market.reserveShannons,2)} CKB`} />
-        <Link href={`/market/${market.id}`} className="inline-flex min-h-9 items-center justify-center rounded-[3px] bg-[#72dfb0] px-3 text-xs font-semibold text-[#0a1710] no-underline transition-colors hover:bg-[#8ce9bd]">{copy(locale,'trade')}</Link>
-      </div>
-      <div className="flex flex-wrap gap-x-6 gap-y-1 px-2 pb-3 text-[10px] text-[#77837e] md:pl-[60px]"><span>{copy(locale,'circulating')}: {market.circulating}</span><span>{copy(locale,'inventory')}: {market.inventory}</span></div>
-    </div>
-    <p className="mb-0 mt-3 text-[10px] text-[#77837e]">{copy(locale,market.token.metadata==='off-chain-testnet-registry'?'registryMetadata':'metadataUnavailable')}</p>
-  </section>;
-}
-
-function Metric({label,value}:{label:string;value:string}){
-  return <div className="flex justify-between gap-3 text-xs md:block"><span className="text-[#87938e] md:hidden">{label}</span><span className="tabular-nums text-[#d4ddd9]">{value}</span></div>;
-}
-
-function MarketRefreshState({market,error,lastSuccess,refresh,locale}:{market:MarketData;error:string;lastSuccess:number;refresh:()=>Promise<void>;locale:Locale}){
-  return <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#252d2b] pt-3 text-[10px] text-[#7f8b86]"><span>{error?(locale==='zh-CN'?'更新失败，显示上次验证的数据':'Refresh failed · showing last verified data'):copy(locale,'marketStatus')} · {market.tip.number}</span><button title={copy(locale,'reload')} onClick={()=>void refresh()} className="min-h-7 rounded-[3px] border border-[#303a37] px-2.5 text-[#aeb8b4] hover:bg-[#19211e]">{lastSuccess?new Date(lastSuccess).toLocaleTimeString(locale==='zh-CN'?'zh-CN':'en-US',{hour:'2-digit',minute:'2-digit'}):copy(locale,'reload')}</button></div>;
-}
+export {default as MarketsScreen} from './MarketsScreen';
 
 export function MarketScreen({id}:{id:string}){
-  const {locale}=useLocale(),account=useAccount(),marketQuery=useMarketData(id),market=marketQuery.data?.id===id?marketQuery.data:null;
-  const accountOwner=account.state==='ready'?account.owner:'';
+  const {locale}=useLocale();
   const [side,setSide]=useState<Side>('buy');
-  const trade=useGate2Trade(market,marketQuery.refresh);
-  const inclusion=trade.inclusion;
-  const marketCaughtUp=!!inclusion&&market?.historyState==='verified'&&market.history.some(event=>event.hash===inclusion.hash);
-  const position=useOwnerPosition(accountOwner,market,0,side==='sell'||!!inclusion);
-  useEffect(()=>{
-    if(!inclusion)return;
-    console.info('Brant transaction timeline',JSON.stringify({hash:inclusion.hash,stage:'refresh-request',at:Date.now()}));
-    void account.refresh(inclusion.height?BigInt(inclusion.height):undefined);
-  },[inclusion,account.refresh]);
-  useEffect(()=>{
-    if(!inclusion||marketCaughtUp)return;
-    let active=true,delay=2000;
-    let timer:ReturnType<typeof setTimeout>;
-    const refresh=async()=>{
-      await marketQuery.refresh();
-      if(!active)return;
-      timer=setTimeout(refresh,delay);
-      delay=Math.min(delay*2,30_000);
-    };
-    void refresh();
-    return()=>{active=false;clearTimeout(timer);};
-  },[inclusion,marketCaughtUp,marketQuery.refresh]);
+  const {account,marketQuery,market,trade,inclusion,marketCaughtUp,position}=useMarketSession(id,side);
   const [projectedQuote,setProjectedQuote]=useState<{price:number|null;side:Side}>({price:null,side:'buy'});
   const onQuoteChange=useCallback((price:number|null,side:Side)=>setProjectedQuote({price,side}),[]);
   const tokenBalance=position.state==='ready'?BigInt(position.balance):null;
@@ -138,84 +71,9 @@ function MarketRecentTrades({market,locale}:{market:MarketData;locale:Locale}){
   return <section aria-label={copy(locale,'confirmedTrades')}><div className="flex items-center justify-between border-b border-[#28302f] pb-2"><h2 className="m-0 text-xs font-semibold text-[#d9e2de]">{copy(locale,'confirmedTrades')}</h2><Link href="/activity" className="text-[10px] text-[#8f9b96] no-underline hover:text-[#d9e2de]">{copy(locale,'activity')}</Link></div>{!events.length?<p className="mb-0 py-4 text-xs text-[#8c9893]">{copy(locale,'noHistory')}</p>:<div>{events.map(event=><TradeRow key={event.hash+':'+(event.executionIndex??0)} event={event} locale={locale} symbol={market.token.symbol}/>)}</div>}</section>;
 }
 
-export function PortfolioScreen(){
-  const {locale}=useLocale(),account=useAccount(),query=useMarketData(),market=query.data,owner=account.state==='ready'?account.owner:'';
-  const position=useOwnerPosition(owner,market);
-  const tokenHash=market?.token.typeHash;
-  const [external,setExternal]=useState<{owner:string;root:string;balance:bigint}|null>(null);
-  const [externalCurrent,setExternalCurrent]=useState(false);
-  const root=market?.custodyRoot;
-  useEffect(()=>{
-    if(!owner||!tokenHash||!root||!account.address)return;
-    let active=true;
-    let timer:ReturnType<typeof setTimeout>;
-    const script=(value:ccc.Script)=>({code_hash:value.codeHash,hash_type:value.hashType,args:value.args});
-    const refresh=async()=>{
-      if(!active)return;
-      setExternalCurrent(false);
-      try{
-        const lock=(await ccc.Address.fromString(account.address,new ccc.ClientPublicTestnet())).script;
-        if(lock.hash()!==owner)throw Error('Wallet changed');
-        const token=ccc.Script.from(market!.manifest.scripts.token);
-        if(token.hash()!==tokenHash)throw Error('RVK identity mismatch');
-        const query={script:script(lock),script_type:'lock',script_search_mode:'exact',filter:{script:script(token)},with_data:true};
-        const indexed=await pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip');
-        const tip=await pudgeRpc<{number:string}>('get_tip_header');
-        if(BigInt(tip.number)-BigInt(indexed.block_number)>6n)throw Error('Wallet indexer is catching up');
-        const page=await pudgeRpc<{objects:{out_point:unknown}[]}>('get_cells',[query,'asc','0x64']);
-        if(page.objects.length>=100)throw Error('Wallet cell page is incomplete');
-        const cells=await Promise.all(page.objects.map(row=>pudgeRpc('get_live_cell',[row.out_point,true])));
-        let balance=0n;
-        for(const row of cells){
-          const matches=(actual:any,expected:ccc.Script)=>actual?.code_hash===expected.codeHash&&actual.hash_type===expected.hashType&&actual.args===expected.args;
-          const data=row.cell?.data.content;
-          if(row.status!=='live'||!matches(row.cell?.output.lock,lock)||!matches(row.cell?.output.type,token)||!/^0x[0-9a-f]{32}$/i.test(data))throw Error('Wallet token Cell changed');
-          balance+=BigInt('0x'+data.slice(2).match(/../g).reverse().join(''));
-        }
-        const [canonical,after]=await Promise.all([pudgeRpc('get_block_hash',[indexed.block_number]),pudgeRpc('get_indexer_tip')]);
-        if(canonical!==indexed.block_hash||after.block_hash!==indexed.block_hash)throw Error('Wallet indexer changed');
-        if(active){setExternal({owner,root,balance});setExternalCurrent(true);}
-      }catch{}finally{if(active)timer=setTimeout(refresh,10000);}
-    };
-    void refresh();
-    return()=>{active=false;clearTimeout(timer);};
-  },[owner,tokenHash,root,account.address]);
-  const walletBalance=external?.owner===owner?external.balance:null;
-  const currentWallet=externalCurrent&&external?.root===root;
-  return <TraderShell><div className="space-y-5"><header className="border-b border-[#28302f] pb-4"><h1 className="m-0 text-[21px] font-semibold">{copy(locale,'portfolio')}</h1><p className="mb-0 mt-1 break-all text-[11px] text-[#85918c]">{account.state==='ready'?walletIdentity(account.address):copy(locale,'connectPortfolio')}</p></header>
-    {account.state==='ready'&&<section><div className="hidden grid-cols-[minmax(180px,1.5fr)_1fr_1fr_120px] gap-4 border-b border-[#303a37] px-3 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'asset')}</span><span>{copy(locale,'yourBalance')}</span><span>{copy(locale,'marketInfo')}</span><span/></div><HoldingRow name="CKB" amount={account.totalCapacity!==''?formatCkb(account.totalCapacity,4):copy(locale,'notAvailable')} detail={account.balanceState==='ready'?`${copy(locale,'availableToTrade')}: ${formatCkb(account.availableToTrade,4)} CKB · ${copy(locale,'totalCapacity')}`:account.totalCapacity!==''?'Last verified · Updating':copy(locale,'balanceUnavailable')} unit="CKB" action={<span className="text-[10px] text-[#77837e]">CKB</span>}/><HoldingRow name={market?(locale==="zh-CN"?"Brant 内":"In Brant"):'Pudge xUDT'} amount={position.balance||(position.state==='loading'||position.state==='idle'?'Checking your RVK balance':copy(locale,'notAvailable'))} detail={position.balance&&position.state!=='ready'?'Last verified · Updating':market?.pair||'xUDT'} unit={market?.token.symbol||'xUDT'} action={market?<Link href={`/market/${market.id}`} className="text-xs text-[#9adbb7] no-underline">{copy(locale,'trade')}</Link>:null}/>{market&&<><HoldingRow name="In Wallet" amount={walletBalance?.toString()??"—"} detail={currentWallet?"Verified":walletBalance===null?"Checking wallet Cells":"Last verified"} unit={market.token.symbol} action={null}/><HoldingRow name="Total RVK" amount={currentWallet&&walletBalance!==null&&position.state==="ready"?(BigInt(position.balance)+walletBalance).toString():"—"} detail="" unit={market.token.symbol} action={null}/></>}</section>}
-    {account.state!=='ready'&&<section className="border-y border-[#28302f] py-6"><p className="m-0 text-sm text-[#a4afab]">{account.error||copy(locale,'connectPortfolio')}</p></section>}
-    {market&&owner&&<WithdrawalPanel key={owner+market.genesis} market={market} owner={owner} balance={BigInt(position.balance||'0')} balanceReady={position.state==='ready'} onConfirmed={async()=>{await Promise.all([query.refresh(),account.refresh()]);position.retry();}}/>}
-    {market&&position.state==='unavailable'&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5b4a31] py-3 text-xs text-[#d9b783]"><span>{position.error||copy(locale,'holdingsUnavailable')}</span><button type="button" onClick={position.retry} className="min-h-8 rounded-[3px] border border-[#75613c] px-3 text-[11px] text-[#f0dfb8] hover:bg-[#2b241a]">{copy(locale,'retry')}</button></div>}
-    {!market&&query.error&&<LoadState loading={query.loading} error={query.error} retry={query.refresh} locale={locale}/>}</div></TraderShell>;
-}
+export {PortfolioScreen} from './PortfolioScreen';
 
-function HoldingRow({name,amount,detail,unit,action}:{name:string;amount:string;detail:string;unit:string;action:React.ReactNode}){
-  return <div className="grid grid-cols-1 gap-2 border-b border-[#252d2b] px-3 py-3 sm:grid-cols-[minmax(180px,1.5fr)_1fr_1fr_120px] sm:items-center sm:gap-4"><div><div className="text-sm font-medium text-[#dde5e1]">{name}</div><div className="mt-0.5 text-[10px] text-[#808c87]">{detail}</div></div><div className="text-xs tabular-nums text-[#c7d1cc]">{amount}</div><div className="text-[10px] text-[#84908b]">{unit}</div><div className="text-right">{action}</div></div>;
-}
-
-export function ActivityScreen(){
-  const {locale}=useLocale(),account=useAccount(),query=useMarketData(),events=query.data?.history||[];
-  const rows=useMemo(()=>events.filter(event=>account.state!=='ready'||event.owner.toLowerCase()===account.owner.toLowerCase()).slice().reverse(),[events,account.owner,account.state]);
-  const pendingKey=account.state==='ready'?`roveko-pudge-trade-v1:${query.data?.genesis.toLowerCase()}:${account.owner.toLowerCase()}`:'';
-  const [pending,setPending]=useState('');
-  useEffect(()=>{
-    if(typeof window==='undefined'||!pendingKey)return;
-    const read=()=>{try{setPending(localStorage.getItem(pendingKey)||'');}catch{setPending('');}};
-    read();const timer=window.setInterval(read,2500);window.addEventListener('storage',read);
-    return()=>{window.clearInterval(timer);window.removeEventListener('storage',read);};
-  },[pendingKey]);
-  let pendingHash='';try{pendingHash=pending?JSON.parse(pending).txHash:'';}catch{}
-  return <TraderShell><div className="space-y-4"><header className="border-b border-[#28302f] pb-4"><h1 className="m-0 text-[21px] font-semibold">{copy(locale,'activity')}</h1><p className="mb-0 mt-1 break-all text-[11px] text-[#85918c]">{account.state==='ready'?walletIdentity(account.address):copy(locale,'transactionHistory')}</p></header>
-    {pendingHash&&<div className="flex flex-wrap items-center justify-between gap-3 border-y border-[#5a4a2e] py-3 text-xs text-[#e8cc94]"><span>{copy(locale,'pending')} · {pendingHash}</span><a href={explorer(pendingHash)} target="_blank" rel="noreferrer" className="text-[#e8d8b6] underline">{copy(locale,'explorer')}</a></div>}
-    {query.data?.historyState==='unavailable'&&<p className="m-0 border-y border-[#5a4a2e] py-3 text-xs text-[#ddc18d]">{copy(locale,'noHistory')}</p>}
-    <section aria-label={copy(locale,'transactionHistory')}><div className="hidden grid-cols-[minmax(92px,.6fr)_minmax(100px,.6fr)_minmax(130px,1fr)_minmax(120px,.8fr)_minmax(100px,.6fr)] gap-3 border-b border-[#303a37] px-2 py-2 text-[10px] uppercase text-[#7f8b86] sm:grid"><span>{copy(locale,'type')}</span><span>{copy(locale,'activityAmount')}</span><span>{copy(locale,'transaction')}</span><span>{copy(locale,'time')}</span><span>{copy(locale,'status')}</span></div>
-      {!rows.length&&<p className="m-0 py-8 text-sm text-[#929d99]">{account.state==='ready'?copy(locale,'noActivity'):copy(locale,'noHistory')}</p>}
-      {rows.map(event=><TradeRow key={event.hash+':'+(event.executionIndex??0)} event={event} locale={locale} detailed symbol={query.data?.token.symbol||'xUDT'}/>)}
-    </section>
-    <div className="pt-2"><button onClick={()=>void query.refresh()} className="min-h-8 rounded-[3px] border border-[#303a37] px-3 text-[11px] text-[#aeb8b4] hover:bg-[#19211e]">{copy(locale,'reload')}</button></div>
-  </div></TraderShell>;
-}
+export {ActivityScreen} from './ActivityScreen';
 
 export function LaunchScreen(){
   const {locale}=useLocale(),query=useMarketData(),market=query.data;
@@ -243,7 +101,6 @@ function TradeRow({event,locale,detailed=false,symbol='xUDT'}:{event:TradeEvent;
 
 function explorer(hash:string){return `https://pudge.explorer.nervos.org/transaction/${hash}`;}
 
-function walletIdentity(address:string){return address.length>28?`${address.slice(0,12)}…${address.slice(-8)}`:address;}
 
 function attemptHash(raw:string){try{return String(JSON.parse(raw)?.txHash||'');}catch{return '';}}
 

@@ -3,3 +3,4 @@ node_modules/
 .next-r7-assignment/
 *.tsbuildinfo
 .env*
+/exit-signer-dist/
