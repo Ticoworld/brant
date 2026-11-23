@@ -130,7 +130,9 @@ async function main() {
   }
   spec = spec.replace('[genesis.system_cells_lock]', extra + '[genesis.system_cells_lock]');
   fs.writeFileSync(path.join(chain, 'specs/dev.toml'), spec);
-  child = spawn(ckbBin, ['run', '-C', chain, '--ba-advanced'], { stdio: ['ignore', fs.openSync(path.join(out, 'node.log'), 'w'), 'ignore'] });
+  const nodeArgs = ['run', '-C', chain, '--ba-advanced'];
+  if (process.env.TRADE_SHARED_LAUNCH_MODULE) nodeArgs.push('--indexer');
+  child = spawn(ckbBin, nodeArgs, { stdio: ['ignore', fs.openSync(path.join(out, 'node.log'), 'w'), 'ignore'] });
   for (let i = 0; i < 180; i++) {
     try { await rpc('get_tip_header'); break; } catch { await new Promise(r => setTimeout(r, 100)); }
   }
@@ -147,6 +149,14 @@ async function main() {
   }
   assert.equal(Object.keys(deps).length, 6);
   for (let i = 0; i < 12; i++) await rpc('generate_block');
+
+  if (process.env.TRADE_SHARED_LAUNCH_MODULE) {
+    const {pathToFileURL} = require('node:url');
+    const {runSharedLaunch} = await import(pathToFileURL(process.env.TRADE_SHARED_LAUNCH_MODULE).href);
+    await runSharedLaunch({rpc, genesis: genesis.header.hash, hashes, deps, secp, wallets, locks,
+      cell, tx, sign, commit, makeProof, le, out, camel: C.camel});
+    return;
+  }
 
   const anchor = wallets[0];
   const anchorBytes = Buffer.concat([b(anchor.outPoint.txHash), le(BigInt(anchor.outPoint.index), 4)]);
