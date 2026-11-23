@@ -22,7 +22,9 @@ export function normalizeLaunchMetadata(input: unknown) {
     const url = new URL(link);
     if (url.protocol !== 'https:' || url.username || url.password) throw Error('Expected a public HTTPS link');
   }
-  return {name, ticker, description, link};
+  const logoHash = fields.logoHash;
+  if (logoHash !== undefined && (typeof logoHash !== 'string' || !hash.test(logoHash))) throw Error('Invalid logo hash');
+  return {name, ticker, description, link, ...(logoHash ? {logoHash} : {})};
 }
 
 export function launchMetadataMessage(

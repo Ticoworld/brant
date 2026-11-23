@@ -48,6 +48,7 @@ export default function LaunchScreen() {
   const [description, setDescription] = useState('');
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
+  const [logoFile, setLogoFile] = useState<File>();
   const [publication, setPublication] = useState<{market: string; status: 'saving' | 'published' | 'pending'}>();
   const [busy, setBusy] = useState(false);
   const [reviewPhase, setReviewPhase] = useState<'wallet' | 'server' | 'slow' | 'long'>('wallet');
@@ -121,10 +122,14 @@ export default function LaunchScreen() {
       if (address.script.hash() !== owner || (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS) {
         throw Error('Wallet changed');
       }
-      const metadata = normalizeLaunchMetadata({name, ticker, description, link: social});
+      if (logoFile && logoFile.size > 42_000) throw Error('Token logo exceeds 42 KB');
+      const bytes = logoFile ? new Uint8Array(await logoFile.arrayBuffer()) : undefined;
+      const logoHash = bytes ? ccc.hashCkb(bytes) : undefined;
+      const logoPayload = bytes ? btoa(Array.from(bytes, byte => String.fromCharCode(byte)).join('')) : undefined;
+      const metadata = normalizeLaunchMetadata({name, ticker, description, link: social, logoHash});
       const signature = await signer.signMessageRaw(launchMetadataMessage({genesis: PUDGE_GENESIS, owner, market}, metadata));
       if (currentSigner.current !== signer) throw Error('Wallet changed');
-      await launchApi('publish', {owner, market, metadata, signature});
+      await launchApi('publish', {owner, market, metadata, signature, logo: logoPayload});
       setPublication({market, status: 'published'});
       setSession(current => current && {...current, published: true});
     } catch {
@@ -391,13 +396,13 @@ export default function LaunchScreen() {
             <label className="grid cursor-pointer gap-2">
               {t('Token logo (optional)','代币图标（选填）')}
               <input className="peer sr-only" type="file" accept="image/png,image/jpeg,image/webp"
-                onChange={event => {const file = event.target.files?.[0]; setLogo(file && ['image/png','image/jpeg','image/webp'].includes(file.type) ? URL.createObjectURL(file) : '');}}/>
+                onChange={event => {const file = event.target.files?.[0]; setLogoFile(file); setLogo(file && ['image/png','image/jpeg','image/webp'].includes(file.type) ? URL.createObjectURL(file) : '');}}/>
               <span className="flex min-h-28 items-center gap-4 rounded-xl bg-[#151a19] p-4 hover:bg-[#1e2523] peer-focus-visible:outline-2 peer-focus-visible:outline-[#6cddb5] sm:px-6">
                 {logo ? <img src={logo} alt="" className="size-12 rounded-lg object-cover"/> :
                   <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#254139] text-2xl text-[#a7e9c6]">+</span>}
                 <span className="grid gap-1">
                   <strong className="font-medium">{logo ? t('Replace image','更换图片') : t('Choose an image','选择图片')}</strong>
-                  <span className="text-[#aab7b3]">PNG, JPG, WebP</span>
+                  <span className="text-[#aab7b3]">PNG, JPG, WebP · 42 KB</span>
                 </span>
               </span>
             </label>
@@ -466,6 +471,14 @@ export default function LaunchScreen() {
                 <p role="status">{t('Launch transactions confirmed','发行交易已确认')}</p>
                 <label>{t('Token name','代币名称')}<input className={field} disabled={session.published} value={name} maxLength={80} onChange={event => setName(event.target.value)}/></label>
                 <label>{t('Ticker','代币符号')}<input className={field} value={ticker} maxLength={12} onChange={event => setTicker(event.target.value)}/></label>
+                {!session.published && <label>{t('Token logo (optional)', '代币图标（选填）')}
+                  <input className={field} type="file" accept="image/png,image/jpeg,image/webp"
+                    onChange={event => {
+                      const file = event.target.files?.[0];
+                      setLogoFile(file);
+                      setLogo(file ? URL.createObjectURL(file) : '');
+                    }}/>
+                </label>}
                 <p>{t('Your wallet will ask you to sign a message to authorize publishing this metadata.','钱包将要求您签署消息以授权发布元数据。')}</p>
                 <button className={primary} disabled={session.published || !owner || !name.trim() || !ticker.trim() || publication?.status === 'saving'}
                   onClick={() => void publishMetadata()}>{t('Publish token metadata','发布代币元数据')}</button>

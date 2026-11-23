@@ -1,3 +1,4 @@
+import {validateLaunchLogo} from './launch-logo-server.ts';
 import {verifyLaunchMetadata} from './launch-metadata.ts';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
@@ -122,7 +123,8 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
           const receipt = await plan.verifyReceipt(entry.stage);
           if (receipt.blockHash !== entry.blockHash) throw Error('Launch receipt changed');
         }
-        return store.publish(scope, hashes, plan.identity.token.hash(), metadata);
+        const logo = await validateLaunchLogo(input.logo, metadata.logoHash);
+        return store.publish(scope, hashes, plan.identity.token.hash(), metadata, logo);
       }
       if (action === 'reconcile') return await reconcileSharedLaunchStage(store, plan);
       const stage = sharedLaunchStages[journal.entries.length];

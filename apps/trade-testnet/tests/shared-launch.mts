@@ -139,3 +139,47 @@ assert.deepEqual(store.publish(first.scope, first.stageHashes, first.identity.to
 assert.throws(() => store.publish(first.scope, first.stageHashes, first.identity.token.hash(),
   {...metadata, ticker: 'OTHER'}), /publication differs/);
 store.close();
+
+const {default: sharp} = await import('sharp');
+const {validateLaunchLogo} = await import('../lib/v2-engine/launch-logo-server.ts');
+const {launchMetadataMessage, verifyLaunchMetadata} = await import('../lib/v2-engine/launch-metadata.ts');
+const image = sharp({create: {width: 24, height: 24, channels: 3, background: '#228855'}});
+for (const format of ['jpeg', 'png', 'webp'] as const) {
+  const bytes = await image.clone().toFormat(format).toBuffer();
+  const hash = ccc.hashCkb(bytes);
+  assert.ok(await validateLaunchLogo(bytes.toString('base64'), hash));
+  await assert.rejects(validateLaunchLogo(bytes.toString('base64'), hex('ff')), /does not match/);
+}
+const malformed = Buffer.from('plain text');
+await assert.rejects(validateLaunchLogo(malformed.toString('base64'), ccc.hashCkb(malformed)));
+const large = await image.clone().resize(513, 1, {fit: 'fill'}).png().toBuffer();
+await assert.rejects(validateLaunchLogo(large.toString('base64'), ccc.hashCkb(large)));
+const signer = new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(), ccc.hexFrom(crypto.getRandomValues(new Uint8Array(32))));
+const pub = ccc.recoverMessageSecp256k1(ccc.messageHashCkbSecp256k1('test'), await signer.signMessageRaw('test'));
+const signedScope = {...second.scope, owner: ccc.Script.from({...b.creator, args: ccc.hashCkbShort(pub)}).hash()};
+const bytes = await image.png().toBuffer();
+const withLogo = {...metadata, logoHash: ccc.hashCkb(bytes)};
+const signature = await signer.signMessageRaw(launchMetadataMessage(signedScope, withLogo));
+assert.deepEqual(verifyLaunchMetadata(signedScope, withLogo, signature), withLogo);
+assert.throws(() => verifyLaunchMetadata(signedScope, {...withLogo, logoHash: hex('ff')}, signature));
+assert.throws(() => verifyLaunchMetadata({...signedScope, market: first.scope.market}, withLogo, signature));
+
+const safeLogo = await validateLaunchLogo(bytes.toString('base64'), withLogo.logoHash);
+store = openSharedLaunchStore(storePath);
+for (const stage of ['setup', 'issuance', 'purchase'] as const) {
+  store.recordSubmission(second.scope, second.stageHashes, stage);
+  store.confirm(second.scope, second.stageHashes, {stage, txHash: second.stageHashes[stage], blockHash});
+}
+await assert.rejects(async () => {
+  const tamperedLogo = await validateLaunchLogo(malformed.toString('base64'), withLogo.logoHash);
+  store.publish(second.scope, second.stageHashes, second.identity.token.hash(), withLogo, tamperedLogo);
+});
+assert.equal(store.isPublished(second.scope, second.stageHashes), false);
+const logoPublication = store.publish(second.scope, second.stageHashes, second.identity.token.hash(), withLogo, safeLogo);
+assert.deepEqual(store.publish(second.scope, second.stageHashes, second.identity.token.hash(), withLogo, safeLogo), logoPublication);
+store.close();
+store = openSharedLaunchStore(storePath);
+assert.deepEqual(store.readLogo(second.scope.genesis, second.scope.market), Buffer.from(safeLogo!, 'base64'));
+assert.throws(() => store.publish(second.scope, second.stageHashes, second.identity.token.hash(), metadata), /publication differs/);
+assert.deepEqual(store.readLogo(second.scope.genesis, second.scope.market), Buffer.from(safeLogo!, 'base64'));
+store.close();

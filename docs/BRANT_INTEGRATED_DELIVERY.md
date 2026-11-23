@@ -11,3 +11,7 @@ Production and public writes are untouched. Push requires verification of Railwa
 The next checkpoint connects confirmed launches to wallet message authorization and authenticated text metadata publication. Failed publication is retryable without repeating the launch. Session reads restore the persisted publication status. Typecheck and the shared-launch fixture passed. Browser wallet interoperability and process restart remain unverified.
 
 Next exact action is to bind validated raster image bytes to the signed metadata digest and store them atomically with the SQLite publication. Then expose chain-verified catalog reads that preserve the RVK path.
+
+Logo publication now binds the uploaded bytes to the creator signature, decodes bounded PNG/JPEG/WebP inputs, stores a sanitized PNG atomically with metadata, and serves it through a bounded image route. Typecheck and the shared-launch fixture passed, including signature mismatch, malformed content, oversized dimensions, failed validation before publication, duplicate retry, conflicting metadata and SQLite reopen. Hosted and isolated browser acceptance remain pending.
+
+Railway production Source settings show Ticoworld/brant main with Auto deploy disabled. The next discovery change should reuse canonical launch receipt verification on catalog reads before exposing a market as verified.
