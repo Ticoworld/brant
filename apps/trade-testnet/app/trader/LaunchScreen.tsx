@@ -62,7 +62,9 @@ export default function LaunchScreen() {
     if (!market) return;
     let active = true;
     void launchApi('session', {owner, market}).then(result => {
-      if (active && result) {setSession(result); setStep(2);}
+      if (!active) return;
+      if (result) {setSession(result); setStep(2);}
+      else if (localStorage.getItem(sessionKey(owner)) === market) localStorage.removeItem(sessionKey(owner));
     }).catch(() => { if (active) setExecution('error'); });
     return () => {active = false;};
   }, [owner]);
@@ -70,8 +72,10 @@ export default function LaunchScreen() {
   async function execute() {
     if (!signer || !owner || executionLock.current) return;
     executionLock.current = true;
-    const market = localStorage.getItem(sessionKey(owner)) || preparation?.market;
-    const identity = {owner, market};
+    const savedMarket = localStorage.getItem(sessionKey(owner));
+    const prepared = preparation?.owner === owner ? preparation : undefined;
+    let market = savedMarket || prepared?.market;
+    let identity = {owner, market};
     const checkWallet = async () => {
       if (currentSigner.current !== signer || !await signer.isConnected() ||
           (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS ||
@@ -80,13 +84,17 @@ export default function LaunchScreen() {
     try {
       await checkWallet();
       const current: Session | null = market ? await launchApi('session', identity) : null;
+      if (!current && prepared && market !== prepared.market) {
+        market = prepared.market;
+        identity = {owner, market};
+      }
       if (current?.entries.at(-1)?.state === 'submitted') {
         setExecution('checking');
         await launchApi('reconcile', identity);
       } else {
         const next = current ? await launchApi('next-stage', identity) :
-          preparation?.owner === owner && preparation.enabled ? {...preparation, stage: 'setup'} : null;
-        if (!next || !(current?.enabled ?? preparation?.enabled)) return;
+          prepared?.enabled ? {...prepared, stage: 'setup'} : null;
+        if (!next || !(current?.enabled ?? prepared?.enabled)) return;
         const transaction = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(next.transaction));
         await Promise.all(transaction.inputs.map(async input => {
           const row = await pudgeRpc('get_live_cell', [{tx_hash: input.previousOutput.txHash,
