@@ -10,7 +10,7 @@ const pointKey=(p:Point)=>`${p.txHash.toLowerCase()}:${BigInt(p.index)}`;
 /** Verify a reviewed initialization transaction on a canonical chain. The
  * transaction must already have been built and authorized by the owner.
  * Inputs, proof, dependency and wallet checks remain separate obligations. */
-export async function verifyInitializationStage(rpc:Rpc,genesis:string,stage:Stage,reviewed:ccc.Transaction,requiredInputs:Point[],liveIndices:number[]):Promise<Confirmed>{
+export async function verifyInitializationStage(rpc:Rpc,genesis:string,stage:Stage,reviewed:ccc.Transaction,requiredInputs:Point[],liveIndices:number[], requireLive = true):Promise<Confirmed>{
   if(!h.test(genesis)||!['setup','issuance','purchase'].includes(stage)||!requiredInputs.length||!liveIndices.length||new Set(liveIndices).size!==liveIndices.length||liveIndices.some(i=>!Number.isSafeInteger(i)||i<0||i>=reviewed.outputs.length))throw Error('Invalid stage review');
   const actualInputs=reviewed.inputs.map(x=>pointKey({txHash:x.previousOutput.txHash,index:ccc.numToHex(x.previousOutput.index)}));
   if(new Set(actualInputs).size!==actualInputs.length||requiredInputs.some(p=>!actualInputs.includes(pointKey(p))))throw Error('Stage predecessor mismatch');
@@ -26,6 +26,7 @@ export async function verifyInitializationStage(rpc:Rpc,genesis:string,stage:Sta
   const outputs:Point[]=[];
   for(const i of liveIndices){
     const point={txHash,index:'0x'+i.toString(16)};
+    if (!requireLive) { outputs.push(point); continue; }
     const row=await rpc('get_live_cell',[{tx_hash:txHash,index:point.index},true]) as {status?:string;cell?:{output:{capacity:string;lock:{code_hash:string;hash_type:string;args:string};type?:{code_hash:string;hash_type:string;args:string}|null};data:{content:string}}};
     if(row?.status!=='live'||!row.cell)throw Error('Expected successor is unavailable');
     const script=(s:{code_hash:string;hash_type:string;args:string})=>ccc.Script.from({codeHash:s.code_hash,hashType:s.hash_type as 'data1',args:s.args});

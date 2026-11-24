@@ -86,3 +86,19 @@ export async function reconcileSharedLaunchStage(store: Store, plan: Plan) {
   store.confirm(scope, stageHashes, receipt);
   return receipt;
 }
+
+export async function verifyCompletedSharedLaunch(
+  rpc: Rpc, store: Store, session: NonNullable<ReturnType<Store['find']>>,
+) {
+  const {scope, hashes, journal} = session;
+  if (journal.entries.length !== sharedLaunchStages.length ||
+      journal.entries.some(entry => entry.state !== 'confirmed')) {
+    throw Error('Launch is not confirmed');
+  }
+  const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
+  for (const entry of journal.entries) {
+    const receipt = await plan.verifyReceipt(entry.stage, false);
+    if (receipt.blockHash !== entry.blockHash) throw Error('Launch receipt changed');
+  }
+  return plan;
+}

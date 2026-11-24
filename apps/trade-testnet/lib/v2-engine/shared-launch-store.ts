@@ -62,6 +62,16 @@ export function openSharedLaunchStore(path: string) {
         return {market, entries};
       });
     },
+    publicationCandidates(genesis: string, after: string, limit: number) {
+      return db.prepare('SELECT market_key, publication FROM shared_launch_publication WHERE market_key > ? AND market_key < ? ORDER BY market_key LIMIT ?')
+        .all(`brant-launch-v2:${genesis}:${after}`, `brant-launch-v2:${genesis}:g`, limit)
+        .map(row => ({market: String(row.market_key).split(':').at(-1)!, encoded: String(row.publication)}));
+    },
+    publicationCandidate(genesis: string, market: string) {
+      const row = db.prepare('SELECT publication FROM shared_launch_publication WHERE market_key = ?')
+        .get(`brant-launch-v2:${genesis}:${market}`);
+      return typeof row?.publication === 'string' ? row.publication : null;
+    },
     readLogo(genesis: string, market: string) {
       const row = db.prepare("SELECT json_extract(publication, '$.logo') AS logo FROM shared_launch_publication WHERE market_key = ?")
         .get(`brant-launch-v2:${genesis}:${market}`);
@@ -71,13 +81,13 @@ export function openSharedLaunchStore(path: string) {
       const {key} = loadPlan(scope, hashes);
       return Boolean(db.prepare('SELECT 1 FROM shared_launch_publication WHERE market_key = ?').get(key));
     },
-    publish(scope: Scope, hashes: Hashes, token: string, metadata: ReturnType<typeof normalizeLaunchMetadata>, logo?: string) {
+    publish(scope: Scope, hashes: Hashes, token: string, metadata: ReturnType<typeof normalizeLaunchMetadata>, logo?: string, signature?: string) {
       const {key, raw, journal} = loadPlan(scope, hashes);
       if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {
         throw Error('Launch is not confirmed');
       }
       const publication = {...scope, token, receipts: journal.entries, metadata};
-      const encoded = JSON.stringify({...publication, ...(logo ? {logo} : {})});
+      const encoded = JSON.stringify({...publication, ...(logo ? {logo} : {}), ...(signature ? {signature} : {})});
       db.prepare('INSERT OR IGNORE INTO shared_launch_publication SELECT market_key, ? FROM shared_launch WHERE market_key = ? AND journal = ?')
         .run(encoded, key, raw);
       const row = db.prepare('SELECT publication FROM shared_launch_publication WHERE market_key = ?').get(key);

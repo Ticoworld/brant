@@ -115,11 +115,13 @@ const publicDeps = sharedLaunchDependencies(PUDGE_GATE2_GENESIS);
 assert.throws(() => sharedLaunchDependencies(genesis, publicDeps), /fixture dependencies/);
 assert.throws(() => sharedLaunchDependencies(PUDGE_GATE2_GENESIS, fixture), /pinned/);
 const key = fixture.market.outPoint.txHash + ':' + fixture.market.outPoint.index;
+const originalDependency = live.get(key);
 for (const bad of [undefined, {status:'dead'}, {status:'live',cell:{data:{content:'0xff'}}}]) {
   live.set(key, bad);
   await assert.rejects(planSharedLaunch(rpc, b), /dependency unavailable or changed/);
   await assert.rejects(restart.prepareStage('purchase', purchaseJournal), /dependency unavailable or changed/);
 }
+live.set(key, originalDependency);
 assert.deepEqual(parseWizard(JSON.stringify(PUDGE_GATE2_JOURNAL)), PUDGE_GATE2_JOURNAL);
 console.log(JSON.stringify({creators:[first,second].map(plan=>({
   market:plan.scope.market, token:plan.identity.token.hash(), custody:plan.identity.custody.hash(),
@@ -183,3 +185,23 @@ assert.deepEqual(store.readLogo(second.scope.genesis, second.scope.market), Buff
 assert.throws(() => store.publish(second.scope, second.stageHashes, second.identity.token.hash(), metadata), /publication differs/);
 assert.deepEqual(store.readLogo(second.scope.genesis, second.scope.market), Buffer.from(safeLogo!, 'base64'));
 store.close();
+
+const {reserveSharedLaunch, verifyCompletedSharedLaunch} = await import('../lib/v2-engine/shared-launch-controller.ts');
+const verificationPath = join(mkdtempSync(join(tmpdir(), 'brant-catalog-')), 'launch.sqlite');
+let verificationStore = openSharedLaunchStore(verificationPath);
+const catalogPlan = await reserveSharedLaunch(rpc, verificationStore, b);
+const findCatalogSession = () => verificationStore.find(genesis, catalogPlan.scope.market, catalogPlan.scope.owner)!;
+await assert.rejects(verifyCompletedSharedLaunch(rpc, verificationStore, findCatalogSession()), /not confirmed/);
+for (const stage of ['setup', 'issuance', 'purchase'] as const) {
+  commit(catalogPlan.projected[stage], []);
+  verificationStore.recordSubmission(catalogPlan.scope, catalogPlan.stageHashes, stage);
+  verificationStore.confirm(catalogPlan.scope, catalogPlan.stageHashes, {stage, txHash: catalogPlan.stageHashes[stage], blockHash});
+}
+verificationStore.close();
+verificationStore = openSharedLaunchStore(verificationPath);
+const verifiedPlan = await verifyCompletedSharedLaunch(rpc, verificationStore, findCatalogSession());
+assert.equal(verifiedPlan.identity.token.hash(), second.identity.token.hash());
+const reorgRpc: typeof rpc = async (method, params) =>
+  method === 'get_block_hash' && params[0] !== '0x0' ? hex('ff') : rpc(method, params);
+await assert.rejects(verifyCompletedSharedLaunch(reorgRpc, verificationStore, findCatalogSession()), /not canonical/);
+verificationStore.close();

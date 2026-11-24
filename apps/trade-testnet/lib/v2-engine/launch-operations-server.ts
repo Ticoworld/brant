@@ -5,7 +5,7 @@ import {cccA} from '@ckb-ccc/core/advanced';
 import {discoverFunding} from './multi-funding.ts';
 import {readFundingCell} from './funding.ts';
 import {planSharedLaunch, sharedLaunchStages} from './shared-launch.ts';
-import {authorizeSharedLaunchSetup, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage} from './shared-launch-controller.ts';
+import {authorizeSharedLaunchSetup, recoverSharedLaunch, reconcileSharedLaunchStage, submitSharedLaunchStage, verifyCompletedSharedLaunch} from './shared-launch-controller.ts';
 import type {openSharedLaunchStore} from './shared-launch-store.ts';
 
 type PlanRequest = Parameters<typeof planSharedLaunch>[1];
@@ -116,15 +116,9 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
       if (action === 'publish') {
         const metadata = verifyLaunchMetadata(scope, input.metadata, input.signature);
-        if (journal.entries.length !== sharedLaunchStages.length || journal.entries.some(entry => entry.state !== 'confirmed')) {
-          throw Error('Launch is not confirmed');
-        }
-        for (const entry of journal.entries) {
-          const receipt = await plan.verifyReceipt(entry.stage);
-          if (receipt.blockHash !== entry.blockHash) throw Error('Launch receipt changed');
-        }
+        const plan = await verifyCompletedSharedLaunch(rpc, store, session);
         const logo = await validateLaunchLogo(input.logo, metadata.logoHash);
-        return store.publish(scope, hashes, plan.identity.token.hash(), metadata, logo);
+        return store.publish(scope, hashes, plan.identity.token.hash(), metadata, logo, String(input.signature));
       }
       if (action === 'reconcile') return await reconcileSharedLaunchStage(store, plan);
       const stage = sharedLaunchStages[journal.entries.length];

@@ -175,9 +175,9 @@ export async function planSharedLaunch(rpc: Rpc, request: Launch) {
       verifyInitializationSignature(plans[stage].transaction, signed, stageInputs[stage],
         stage === 'purchase' ? 2 : 0, owner);
     },
-    verifyReceipt(stage: Stage) {
+    verifyReceipt(stage: Stage, requireLive = true) {
       return verifyInitializationStage(rpc, genesis, stage, plans[stage].transaction,
-        stageInputs[stage].map(cell => cell.outPoint), stage === 'purchase' ? [0, 1, 2, 3] : [0, 1]);
+        stageInputs[stage].map(cell => cell.outPoint), stage === 'purchase' ? [0, 1, 2, 3] : [0, 1], requireLive);
     },
     async prepareStage(stage: Stage, rawJournal: string) {
       const journal = readSharedLaunchJournal(rawJournal, scope, stageHashes);

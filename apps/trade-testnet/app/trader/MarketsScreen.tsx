@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import localFont from 'next/font/local';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useLocale} from '../i18n-provider';
 import {copy} from './copy';
 import {formatCkb} from './rpc';
@@ -15,11 +15,42 @@ const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/
 
 export default function MarketsScreen() {
   const query = useMarketData('pudge-xudt');
-  return <MarketsListing markets={query.data ? [query.data] : []} {...query} refresh={query.refreshDisplay}/>;
+  const [catalog, setCatalog] = useState<CatalogMarket[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [catalogError, setCatalogError] = useState(false);
+
+  async function loadCatalog(after?: string, signal?: AbortSignal) {
+    try {
+      const response = await fetch('/api/markets/catalog' + (after ? '?after=' + after : ''), {signal});
+      if (!response.ok) throw Error('Catalog unavailable');
+      const page = await response.json();
+      setCatalog(current => after ? [...current, ...page.markets] : page.markets);
+      setCursor(page.next);
+      setCatalogError(false);
+    } catch {
+      if (!signal?.aborted) setCatalogError(true);
+    }
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void loadCatalog(undefined, controller.signal);
+    return () => controller.abort();
+  }, []);
+
+  return <MarketsListing markets={query.data ? [query.data] : []} catalog={catalog} {...query}
+    refresh={async () => {await Promise.all([query.refreshDisplay(), loadCatalog()]);}}
+    catalogError={catalogError} loadMore={cursor ? () => void loadCatalog(cursor) : undefined}/>;
 }
 
-export function MarketsListing({markets, loading=false, error='', displayOnly=false, refresh}: {
+type CatalogMarket = {market: string; metadata: {name: string; ticker: string}; logo: string | null};
+
+
+export function MarketsListing({markets, loading=false, error='', displayOnly=false, refresh, catalog=[], catalogError=false, loadMore}: {
   markets: MarketData[];
+  catalog?: CatalogMarket[];
+  catalogError?: boolean;
+  loadMore?: () => void;
   loading?: boolean;
   error?: string;
   displayOnly?: boolean;
@@ -29,7 +60,7 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
   const zh = locale === 'zh-CN';
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
-  const term = markets.length > 1 ? search.trim().toLowerCase() : '';
+  const term = markets.length + catalog.length > 1 ? search.trim().toLowerCase() : '';
   const shown = markets.filter(({token, pair}) => [token.name, token.symbol, pair].some(value => value.toLowerCase().includes(term)));
   const labels = zh
     ? ['买入价格', '卖出价格', '可用曲线储备', '可用库存']
@@ -44,10 +75,10 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
       <header className="discovery-heading">
         <div>
           <h1>{copy(locale,'markets')}</h1>
-          <p>{markets.length === 0 && (loading || error) ? (zh ? '市场数量未知' : 'Market count unavailable') : <>{markets.length.toLocaleString(locale)} {zh ? '个已列出市场' : markets.length === 1 ? 'listed market' : 'listed markets'}</>}</p>
+          <p>{markets.length + catalog.length === 0 && (loading || error) ? (zh ? '市场数量未知' : 'Market count unavailable') : <>{(markets.length + catalog.length).toLocaleString(locale)} {zh ? '个已列出市场' : markets.length + catalog.length === 1 ? 'listed market' : 'listed markets'}</>}</p>
         </div>
         <div className="discovery-controls">
-          {markets.length > 1 && <label>{copy(locale,'search')}
+          {markets.length + catalog.length > 1 && <label>{copy(locale,'search')}
             <input type="search" value={search} onChange={event => setSearch(event.target.value)}/>
           </label>}
           {refresh && <button type="button" disabled={loading || refreshing} onClick={() => void refreshListing()}>
@@ -59,6 +90,17 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
         {shown.length > 0 && <div className="discovery-columns" aria-hidden="true">
           <span>{zh ? '市场' : 'Market'}</span>{labels.map(label => <span key={label}>{label}</span>)}<span/>
         </div>}
+        {catalog.filter(({metadata}) => [metadata.name, metadata.ticker].some(value => value.toLowerCase().includes(term))).map(({market, metadata, logo}) =>
+          <article key={market} className="discovery-market">
+            <div className="flex items-center gap-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {logo && <img src={logo} alt="" width={40} height={40}/>}
+              <div><h2>{metadata.ticker} / CKB</h2><p>{metadata.name}</p></div>
+            </div>
+            <Link href={'/market/' + market}>{zh ? '查看市场' : 'View market'}</Link>
+          </article>)}
+        {loadMore && <button type="button" onClick={loadMore}>{zh ? '加载更多' : 'Load more'}</button>}
+        {catalogError && <p role="status">{zh ? '代币目录暂不可用' : 'Token catalog unavailable'}</p>}
         {shown.map(market => {
           const values = [
             market.inventory === '0' ? '—' : formatCkb(market.buyOneShannons),
@@ -91,7 +133,7 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
             </div>
           </article>;
         })}
-        {shown.length === 0 && <p className="discovery-empty" role="status">
+        {shown.length === 0 && catalog.length === 0 && <p className="discovery-empty" role="status">
           {loading ? copy(locale,'loading') : error ? copy(locale,'unavailable') : term ? (zh ? '没有符合搜索条件的市场' : 'No markets match your search') : (zh ? '暂无已列出市场' : 'No listed markets')}
         </p>}
       </section>
