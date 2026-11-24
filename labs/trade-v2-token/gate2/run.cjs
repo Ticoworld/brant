@@ -64,7 +64,8 @@ function sign(t, inputs, roles) {
     const indices = inputs.map((c, i) => U.scriptToHash(c.lock) === U.scriptToHash(locks[role]) ? i : -1).filter(i => i >= 0);
     assert(indices.length, `missing signer input for role ${role}`);
     const i = indices[0], h = U.rawTransactionToHash(t);
-    const group = [{ lock: '', inputType: '', outputType: '' }, ...indices.slice(1).map(j => t.witnesses[j]), ...t.witnesses.slice(inputs.length)];
+    const reviewedWitness=ccc.Transaction.from(t).getWitnessArgs(i);
+    const group = [{ lock: '', inputType: reviewedWitness?.inputType||'', outputType: reviewedWitness?.outputType||'' }, ...indices.slice(1).map(j => t.witnesses[j]), ...t.witnesses.slice(inputs.length)];
     t.witnesses[i] = signGroup(keys[role], h, group)[0];
   }
   return t;
@@ -178,6 +179,8 @@ async function main() {
   execFileSync(process.execPath, [path.join(C.ROOT, 'src/setup.cjs'), chain], { stdio: 'inherit', env: { ...process.env, CKB_BIN: ckbBin } });
   let spec = fs.readFileSync(path.join(chain, 'specs/dev.toml'), 'utf8'), extra = '';
   const names = ['marker_candidate', 'market_smt', 'owner_lineage_candidate', 'custody_smt', 'custody_marker'];
+  if(process.env.TRADE_ATOMIC_PROBE)names.push('atomic_owner_probe');
+  if(process.env.TRADE_ATOMIC_INITIALIZER)names.push('atomic_initializer');
   for (const name of names) {
     fs.copyFileSync(path.join(build, name), path.join(chain, name));
     extra += `[[genesis.system_cells]]\nfile = { file = "../${name}" }\ncreate_type_id = false\ncapacity = 100_000_0000_0000\n\n`;
@@ -199,7 +202,7 @@ async function main() {
     for (const [name, codeHash] of Object.entries(hashes)) if (dataHash === codeHash) deps[name] = { outPoint: { txHash: t.hash, index: hex(i) }, depType: 'code' };
     for (let role = 0; role < 3; role++) if (t.outputs[i].lock.args === locks[role].args) wallets[role] = { ...C.camel(t.outputs[i]), capacity: BigInt(t.outputs[i].capacity), data: t.outputs_data[i], outPoint: { txHash: t.hash, index: hex(i) } };
   }
-  assert.equal(Object.keys(deps).length, 6);
+  assert.equal(Object.keys(deps).length, names.length+1);
   for (let i = 0; i < 12; i++) await rpc('generate_block');
 
   if (process.env.TRADE_SHARED_LAUNCH_MODULE) {
