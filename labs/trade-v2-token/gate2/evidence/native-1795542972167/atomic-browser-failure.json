@@ -1,0 +1,36 @@
+{
+  "error": "TimeoutError: page.waitForFunction: Timeout 120000ms exceeded.",
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/sessions",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/prepare",
+      "status": 200,
+      "serverTiming": "rpc_get_tip_header;dur=18.2;desc=\"1\", rpc_get_indexer_tip;dur=16.1;desc=\"1\", rpc_get_cells;dur=8.1;desc=\"1\", rpc_get_live_cell;dur=205.4;desc=\"9\", rpc_get_block_hash;dur=8.7;desc=\"2\", proof;dur=77.2;desc=\"1\""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/session",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/sessions",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/session",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/reconcile",
+      "status": 200,
+      "serverTiming": "rpc_get_block_hash;dur=17.8;desc=\"2\", rpc_get_transaction;dur=12.0;desc=\"1\", rpc_get_header;dur=10.9;desc=\"1\""
+    }
+  ]
+}

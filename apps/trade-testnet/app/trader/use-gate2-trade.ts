@@ -5,6 +5,7 @@ import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {toast} from 'sonner';
+import {safeSigningError} from '../../lib/v2-engine/wallet-signing.ts';
 import {prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
 import {validateLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {quote} from '../../lib/v2-engine/curve.ts';
@@ -79,8 +80,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       if(prepared.current===entry&&!controller.signal.aborted){
         setFailure(null);renderPreparation(value=>value+1);
       }
-    },()=>{
+    },error=>{
       if(prepared.current===entry&&!controller.signal.aborted){
+        console.warn('Brant quote preparation unavailable',safeSigningError(error).message);
         prepared.current=null;
         setFailedQuote(key);
       }

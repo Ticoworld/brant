@@ -1,0 +1,231 @@
+{
+  "verdict": "VERIFIED completed Launch assertions; later quote preparation timed out",
+  "source": "Completed assertions before the quote wait in atomic-launch-browser-native.mjs; original failure preserved",
+  "genesis": "0x984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321",
+  "market": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08f",
+  "wallet": "SIMULATED disposable signer",
+  "chain": "REAL isolated CKB",
+  "assertions": [
+    "one transaction approval",
+    "separate metadata signature forbidden",
+    "submit response deliberately dropped after server persistence/broadcast",
+    "application process restarted",
+    "automatic metadata publication after canonical confirmation",
+    "catalog discovery",
+    "recovered market supply 2000",
+    "creator custody proof balance seven and root match"
+  ],
+  "initializationReceipt": {
+    "stage": "purchase",
+    "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+    "blockHash": "0x3688aa5314eb2416f11604fc14aa171339c21c7530f13030ee2c7db2a7cfc396",
+    "outputs": [
+      {
+        "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+        "index": "0x0"
+      },
+      {
+        "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+        "index": "0x1"
+      },
+      {
+        "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+        "index": "0x2"
+      },
+      {
+        "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+        "index": "0x3"
+      }
+    ]
+  },
+  "signedInitialization": {
+    "version": "0x0",
+    "cell_deps": [
+      {
+        "out_point": {
+          "index": "0xa",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0x9",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0xc",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0xd",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0xe",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0x6",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "dep_type": "code"
+      },
+      {
+        "out_point": {
+          "index": "0x0",
+          "tx_hash": "0x1f1cbcd580025e214765449259c043e583f1a79cec53e6f4a854cce15c789ca8"
+        },
+        "dep_type": "dep_group"
+      }
+    ],
+    "header_deps": [
+      "0x984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321"
+    ],
+    "inputs": [
+      {
+        "previous_output": {
+          "index": "0x12",
+          "tx_hash": "0x0bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6"
+        },
+        "since": "0x0"
+      }
+    ],
+    "outputs": [
+      {
+        "capacity": "0x91a8aa700",
+        "lock": {
+          "code_hash": "0xb5ca7369dba433a13801ccb23ca64d586897010afac1eff04aa691829edd59a9",
+          "hash_type": "data1",
+          "args": "0x6e4f655fbced6afbd19c7aee21869969e41e559a6a5ac7e0be4a89264fbe7f5000ca9a3b0000000000e1f50500000000d007000000000000aed3602cfefb2d3db27c2c2febf5143404b90e6d3471118648e48a77c5222e12"
+        },
+        "type": {
+          "code_hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hash_type": "data1",
+          "args": "0x72aef3b28e4d21f81a9f19fddd26f2470e70c8bfba3ed4b9e147c614708fba00"
+        }
+      },
+      {
+        "capacity": "0x6fc23ac00",
+        "lock": {
+          "code_hash": "0xb5ca7369dba433a13801ccb23ca64d586897010afac1eff04aa691829edd59a9",
+          "hash_type": "data1",
+          "args": "0x6e4f655fbced6afbd19c7aee21869969e41e559a6a5ac7e0be4a89264fbe7f5000ca9a3b0000000000e1f50500000000d007000000000000aed3602cfefb2d3db27c2c2febf5143404b90e6d3471118648e48a77c5222e12"
+        },
+        "type": {
+          "code_hash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+          "hash_type": "data1",
+          "args": "0x6cc01623ad22b366e83c4beb54dd2bce650bf4613fe06c55d86fab19628fa229"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "code_hash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hash_type": "data1",
+          "args": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08fd7dfb2532dde8c05637f82f44760c53a57ce40e09e6286766f64e32c5050b190984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321df2c5de51956ad2e36ee4c0b2d2e71161ea343931b7982776bc4486d4807d274"
+        },
+        "type": {
+          "code_hash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95",
+          "hash_type": "data1",
+          "args": "0x72aef3b28e4d21f81a9f19fddd26f2470e70c8bfba3ed4b9e147c614708fba00"
+        }
+      },
+      {
+        "capacity": "0x826299e00",
+        "lock": {
+          "code_hash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+          "hash_type": "data1",
+          "args": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08fd7dfb2532dde8c05637f82f44760c53a57ce40e09e6286766f64e32c5050b190984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321df2c5de51956ad2e36ee4c0b2d2e71161ea343931b7982776bc4486d4807d274"
+        },
+        "type": {
+          "code_hash": "0x2cb3516cf108c85e8f836bdf44d1c035c5bd9ff110bc5b0e8cd439d364cffd96",
+          "hash_type": "data1",
+          "args": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08f"
+        }
+      },
+      {
+        "capacity": "0x2386d20cb02ec0",
+        "lock": {
+          "code_hash": "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+          "hash_type": "type",
+          "args": "0x67f08e2153e10e8d4f358b6090b44bd6a9745a6d"
+        }
+      }
+    ],
+    "outputs_data": [
+      "0xc9070000000000000000000000000000df2c5de51956ad2e36ee4c0b2d2e71161ea343931b7982776bc4486d4807d274",
+      "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08fd7dfb2532dde8c05637f82f44760c53a57ce40e09e6286766f64e32c5050b190",
+      "0x07000000000000000000000000000000f3ff44ba0b4118c27bf90f6a30559d59f7df3750d2ad6468cf17f1479d0a894f",
+      "0x62cdba80bbe9ae7aef61e39dd0579bd727df3099100e8f22ff817ec50f464a51d7dfb2532dde8c05637f82f44760c53a57ce40e09e6286766f64e32c5050b190",
+      "0x"
+    ],
+    "witnesses": [
+      "0xfa000000100000005500000055000000410000005753a227f8321f7bdf8010c5209bd68628f0848515f9b7577f6aa3604f7788131325369fb79eedd65680b55449efe96c17db71f0f42c7c295d896f97b30d987300a1000000a1000000140000009d0000009d0000009d00000089000000100000003000000031000000aef09c5c6565ccc6bc4c1878fb97014df9f185fe1c84aa4093e8f216607ba4d702540000000bae4827e838debbc48d6c9a283af439f9aee5728c0bc39a2d1ec796dd1fe4f6120000004fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08fd00700000000000000ac23fc0600000004000000",
+      "0x544d5331010001000300000059297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b000000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000010000000000000000000000000000004c4f0000fb661e02000000",
+      "0x7b2276657273696f6e223a312c226b696e64223a226272616e742d61746f6d69632d6d65746164617461222c2267656e65736973223a22307839383464613133333235633362373462656164323033313436633432396465356131306238353965326636373964326535363834306239666537663234333231222c226d61726b6574223a22307834666132393362373865353230373335326164373061623631313432666237653432323063303139353661343838373662336433663637376634663666303866222c226f776e6572223a22307835393239373839346266663462386637653134323762663439343362343637626131363835363564323566653735646532303763313436646562616563313462222c226d65746164617461223a7b226e616d65223a2241746f6d69632042726f77736572222c227469636b6572223a22414252222c226465736372697074696f6e223a22222c226c696e6b223a22227d7d"
+    ]
+  },
+  "requests": [
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/sessions",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/prepare",
+      "status": 200,
+      "serverTiming": "rpc_get_tip_header;dur=18.2;desc=\"1\", rpc_get_indexer_tip;dur=16.1;desc=\"1\", rpc_get_cells;dur=8.1;desc=\"1\", rpc_get_live_cell;dur=205.4;desc=\"9\", rpc_get_block_hash;dur=8.7;desc=\"2\", proof;dur=77.2;desc=\"1\""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/session",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/sessions",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/session",
+      "status": 200,
+      "serverTiming": ""
+    },
+    {
+      "url": "http://127.0.0.1:3143/api/v2/launch/reconcile",
+      "status": 200,
+      "serverTiming": "rpc_get_block_hash;dur=17.8;desc=\"2\", rpc_get_transaction;dur=12.0;desc=\"1\", rpc_get_header;dur=10.9;desc=\"1\""
+    }
+  ],
+  "applicationLatencyMs": {
+    "prepare": 435,
+    "submit": 519,
+    "reconcile": 172
+  },
+  "rpcCounts": {
+    "prepare": 14,
+    "reconcile": 4
+  },
+  "limitations": [
+    "This checkpoint alone is not full browser acceptance.",
+    "Development route compilation excluded from application latency; no production guarantee."
+  ],
+  "applicationTimingLines": [
+    " POST /api/v2/launch/prepare 200 in 17.3s (next.js: 16.9s, application-code: 435ms)",
+    " POST /api/v2/launch/submit 200 in 526ms (next.js: 7ms, application-code: 519ms)",
+    " POST /api/v2/launch/reconcile 200 in 179ms (next.js: 7ms, application-code: 172ms)"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "verdict": "VERIFIED ISOLATED ATOMIC BROWSER APPLICATION INTEGRATION",
+  "genesis": "0x984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321",
+  "market": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08f",
+  "scope": "Real isolated CKB; simulated disposable wallet. Native implementation remained frozen.",
+  "boundaries": {
+    "approvedLaunchUiToAtomicApi": "PASS",
+    "oneLaunchTransactionApproval": "PASS (original Launch checkpoint)",
+    "automaticPublicationWithoutMetadataApproval": "PASS",
+    "droppedSubmitResponseAndProcessRestart": "PASS (original Launch checkpoint)",
+    "catalogAndFreshBrowserDiscovery": "PASS",
+    "atomicRecoveryAndCustodyProof": "PASS",
+    "browserBuyAndSell": "PASS (canonical retained receipts revalidated on cloned chain)",
+    "portfolioAndActivity": "PASS, including fresh browser context without prior local storage",
+    "savedLaunchAfterSecondProcessRestart": "PASS via existing Saved launches control"
+  },
+  "accounting": {
+    "initial": {
+      "inventory": 1993,
+      "custody": 7,
+      "conservedSupply": 2000,
+      "reserveShannons": "9100000000",
+      "outputs": [
+        {
+          "capacityShannons": "39100000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    },
+    "afterBuy": {
+      "inventory": 1992,
+      "custody": 8,
+      "conservedSupply": 2000,
+      "reserveShannons": "10800000000",
+      "outputs": [
+        {
+          "capacityShannons": "40800000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    },
+    "afterSell": {
+      "inventory": 1993,
+      "custody": 7,
+      "conservedSupply": 2000,
+      "reserveShannons": "9100000000",
+      "outputs": [
+        {
+          "capacityShannons": "39100000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    }
+  },
+  "receipts": {
+    "initialization": {
+      "stage": "purchase",
+      "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+      "blockHash": "0x3688aa5314eb2416f11604fc14aa171339c21c7530f13030ee2c7db2a7cfc396",
+      "outputs": [
+        {
+          "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+          "index": "0x0"
+        },
+        {
+          "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+          "index": "0x1"
+        },
+        {
+          "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+          "index": "0x2"
+        },
+        {
+          "txHash": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+          "index": "0x3"
+        }
+      ]
+    },
+    "buy": "0x684286d48398b6754978c60ff9c9d5bee8cc945f2481d7b9fa3be367d9c0a93e",
+    "sell": "0xc2728d6d30cc3e8dc055c8d48a0a5cf0b7e33dbc161d51fde0ff173561eaf2e1"
+  },
+  "evidence": {
+    "launch": "atomic-browser-launch-checkpoint.json",
+    "originalLaunchFailure": "atomic-browser-failure.json",
+    "tradeAndPortfolioActivity": "browser-continuation-1795544631172/atomic-browser-failure.json",
+    "finalRecovery": "browser-continuation-1795544631172/browser-continuation-1795545122678/atomic-browser-acceptance.json",
+    "retainedRunnerState": "browser-continuation-1795544631172/browser-continuation-1795545122678/resume-state.json"
+  },
+  "measurements": {
+    "rpc": {
+      "prepare": 14,
+      "reconcile": 4
+    },
+    "applicationLatencyMs": {
+      "prepare": 435,
+      "submit": 519,
+      "reconcile": 172
+    },
+    "caveat": "Development compilation excluded; submit response intentionally dropped; no production latency guarantee."
+  },
+  "checks": [
+    "TypeScript PASS",
+    "Legacy shared-launch, boundaries, replay/reorg, local review and CKBM publication retry previously passed in this milestone; not repeated."
+  ],
+  "limitations": [
+    "Atomic write path remains restricted to trusted isolated configuration; public defaults remain legacy.",
+    "External wallet interoperability and public atomic deployment/acceptance NOT TESTED.",
+    "CKBM hosted retry NOT EXECUTED; existing safe saved-authorization retry preserved."
+  ],
+  "accountingClassification": "DERIVED from signed initialization and canonically revalidated Buy/Sell transaction outputs; no synthetic balances"
+}

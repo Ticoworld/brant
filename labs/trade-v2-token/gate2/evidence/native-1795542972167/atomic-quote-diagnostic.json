@@ -1,0 +1,8 @@
+{
+  "source": "labs\\trade-v2-token\\gate2\\evidence\\native-1795542972167\\browser-continuation-1795544132533\\app.log",
+  "observed": [
+    "[browser] Brant quote preparation unavailable Funding index changed during selection. Retry shortly. (app/trader/use-gate2-trade.ts:85:17)"
+  ],
+  "resolution": "Keep canonical funding snapshot guards. Stop harness empty-block mining before preparation; mine trades on submission.",
+  "nativeCodeChanged": false
+}

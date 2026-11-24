@@ -1,0 +1,10 @@
+{
+  "sourceEvidence": "/mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/trade-v2-token/gate2/evidence/native-1795542972167",
+  "sourceChain": "/tmp/trade-gate2-D9z16k/chain",
+  "chain": "/tmp/brant-atomic-browser-resume-5Q5BtV/chain",
+  "out": "/mnt/c/Users/timot/Desktop/2026/CKB/trade/labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172",
+  "genesis": "0x984da13325c3b74bead203146c429de5a10b859e2f679d2e56840b9fe7f24321",
+  "market": "0x4fa293b78e5207352ad70ab61142fb7e4220c01956a48876b3d3f677f4f6f08f",
+  "status": "failed",
+  "error": "TimeoutError: locator.waitFor: Timeout 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Token launched and metadata published', { exact: true }) to be visible\u001b[22m\n"
+}
