@@ -5,6 +5,7 @@ import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {launchMetadataMessage, normalizeLaunchMetadata} from '../../lib/v2-engine/launch-metadata';
+import {publicationErrors,publicationRecovery} from '../../lib/v2-engine/launch-publication-errors';
 import {requestWalletTransactionSignature} from '../../lib/v2-engine/wallet-signing';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature';
 import {readFundingCell} from '../../lib/v2-engine/funding';
@@ -32,7 +33,7 @@ async function launchApi(action: string, payload: object, signal?: AbortSignal) 
   const response = await fetch('/api/v2/launch/' + action, {method: 'POST',
     headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload),
     signal: signal ? AbortSignal.any([signal, timeout]) : timeout});
-  if (!response.ok) throw Error('Launch request failed');
+  if (!response.ok){const body=await response.json().catch(()=>({}));throw Error((publicationErrors[body.code as keyof typeof publicationErrors]||'Launch request failed')+' '+(publicationRecovery[body.code as keyof typeof publicationRecovery]||'')+(typeof body.diagnosticId==='string'&&/^[0-9a-f-]{36}$/.test(body.diagnosticId)?' Reference: '+body.diagnosticId:''));}
   return response.json();
 }
 
@@ -50,7 +51,7 @@ export default function LaunchScreen() {
   const [social, setSocial] = useState('');
   const [logo, setLogo] = useState('');
   const [logoFile, setLogoFile] = useState<File>();
-  const [publication, setPublication] = useState<{market: string; status: 'saving' | 'published' | 'pending'}>();
+  const [publication, setPublication] = useState<{market: string; status: 'saving' | 'published' | 'pending';error?:string}>();
   const [busy, setBusy] = useState(false);
   const [reviewPhase, setReviewPhase] = useState<'wallet' | 'server' | 'slow' | 'long'>('wallet');
   const [retry, setRetry] = useState(0);
@@ -113,6 +114,14 @@ export default function LaunchScreen() {
     return () => {active = false;};
   }, [owner, selectedMarket]);
 
+  async function retrySavedPublication(){
+    const market=localStorage.getItem(sessionKey(owner));
+    if(!market||!owner||executionLock.current)return;
+    executionLock.current=true;setPublication({market,status:'saving'});
+    try{await launchApi('retry-publication',{owner,market});setPublication({market,status:'published'});setSession(current=>current&&{...current,published:true});}
+    catch(error){setPublication({market,status:'pending',error:error instanceof Error?error.message:'Retry saved publication failed'});}
+    finally{executionLock.current=false;}
+  }
   async function publishMetadata() {
     const market = localStorage.getItem(sessionKey(owner));
     if (!owner || !market || !signer || executionLock.current) return;
@@ -125,16 +134,24 @@ export default function LaunchScreen() {
       }
       if (logoFile && logoFile.size > 42_000) throw Error('Token logo exceeds 42 KB');
       const bytes = logoFile ? new Uint8Array(await logoFile.arrayBuffer()) : undefined;
-      const logoHash = bytes ? ccc.hashCkb(bytes) : undefined;
-      const logoPayload = bytes ? btoa(Array.from(bytes, byte => String.fromCharCode(byte)).join('')) : undefined;
+      const originalLogo = bytes ? btoa(Array.from(bytes, byte => String.fromCharCode(byte)).join('')) : undefined;
+      const normalized = bytes ? await launchApi('normalize-logo', {logo: originalLogo, logoHash: ccc.hashCkb(bytes)}) : {};
+      const logoHash = normalized.logoHash as string | undefined;
+      const logoPayload = normalized.logo as string | undefined;
       const metadata = normalizeLaunchMetadata({name, ticker, description, link: social, logoHash});
-      const signature = await signer.signMessageRaw(launchMetadataMessage({genesis: PUDGE_GENESIS, owner, market}, metadata));
+      const message=launchMetadataMessage({genesis:PUDGE_GENESIS,owner,market},metadata);
+      const authorizationKey='brant-launch-publication:'+ccc.hashCkb(new TextEncoder().encode(message));
+      const saved=localStorage.getItem(authorizationKey);
+      const signature=saved||await signer.signMessageRaw(message);
+      if(!/^0x[0-9a-fA-F]{130}$/.test(signature))throw Error('Unsupported metadata authorization response');
+      localStorage.setItem(authorizationKey,signature);
       if (currentSigner.current !== signer) throw Error('Wallet changed');
       await launchApi('publish', {owner, market, metadata, signature, logo: logoPayload});
       setPublication({market, status: 'published'});
       setSession(current => current && {...current, published: true});
-    } catch {
-      setPublication({market, status: 'pending'});
+    } catch(error) {
+      const message=error instanceof Error&&Object.values(publicationErrors).some(value=>error.message.startsWith(value))?error.message:'Metadata authorization or delivery failed. Your confirmed token is preserved.';
+      setPublication({market, status: 'pending',error:message});
     } finally {
       executionLock.current = false;
     }
@@ -498,11 +515,12 @@ export default function LaunchScreen() {
                 <p>{t('Your wallet will ask you to sign a message to authorize publishing this metadata.','钱包将要求您签署消息以授权发布元数据。')}</p>
                 <button className={primary} disabled={session.published || !owner || !name.trim() || !ticker.trim() || publication?.status === 'saving'}
                   onClick={() => void publishMetadata()}>{t('Publish token metadata','发布代币元数据')}</button>
+                {!session.published&&<button className={secondary} disabled={publication?.status==='saving'} onClick={()=>void retrySavedPublication()}>{t('Retry saved publication','重试已保存的发布')}</button>}
                 {session.published ? <p role="status">{t('Metadata saved','元数据已保存')}</p> : publication && <p role="status">{{
                   saving: t('Authorizing publication','正在授权发布'),
                   published: t('Metadata saved','元数据已保存'),
                   pending: t('Publication pending. You can retry without relaunching.','发布待完成。您可重试，无需重新发行。'),
-                }[publication.status]}</p>}
+                }[publication.status]} {publication.error}</p>}
               </div> :
               <button className={primary} disabled={!owner || !(session?.enabled || preparation?.owner === owner && preparation.enabled) ||
                 ['wallet','submitting','checking'].includes(execution)} onClick={() => void execute()}>{t('Resume launch','继续发行')}</button>}

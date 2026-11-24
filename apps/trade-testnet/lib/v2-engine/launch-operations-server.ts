@@ -1,5 +1,6 @@
 import {validateLaunchLogo} from './launch-logo-server.ts';
 import {verifyLaunchMetadata} from './launch-metadata.ts';
+import {publicationStep} from './launch-publication-errors.ts';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {discoverFunding} from './multi-funding.ts';
@@ -37,6 +38,10 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
   const accounting = (plan: Awaited<ReturnType<typeof planSharedLaunch>>) =>
     JSON.parse(JSON.stringify(plan.accounting, (_, item) => typeof item === 'bigint' ? String(item) : item));
   return async function operate(action: string, input: Record<string, unknown>, timing?: (name: string, ms: number) => void) {
+    if (action === 'normalize-logo') {
+      const logo = await publicationStep('publication_logo', () => validateLaunchLogo(input.logo, input.logoHash as string | undefined));
+      return {logo, logoHash: logo ? ccc.hashCkb(Buffer.from(logo, 'base64')) : undefined};
+    }
     if (action === 'prepare') {
       const started = performance.now();
       const measured = async <T,>(name: string, work: () => Promise<T>) => {
@@ -113,6 +118,19 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       const {scope, hashes, journal} = session;
       const entries = journal.entries.map(({stage, state, txHash, blockHash}) => ({stage, state, txHash, blockHash}));
       if (action === 'session') return {entries, hashes, published: store.isPublished(scope, hashes), enabled: Boolean(send && authorizeCreator(scope.owner))};
+      if(action==='publish'||action==='retry-publication'){
+        const saved=store.readPublicationAuthorization(scope,hashes);
+        if(action==='retry-publication'&&!saved)await publicationStep('publication_signature',()=>{throw Error('No saved publication authorization');});
+        const authorization=saved?JSON.parse(saved):input;
+        const metadata=await publicationStep('publication_signature',()=>verifyLaunchMetadata(scope,authorization.metadata,authorization.signature));
+        if(saved&&input.metadata)await publicationStep('publication_signature',()=>{
+          if(JSON.stringify(metadata)!==JSON.stringify(verifyLaunchMetadata(scope,input.metadata,authorization.signature)))throw Error('Publication metadata differs');
+        });
+        const logo=await publicationStep('publication_logo',()=>validateLaunchLogo(authorization.logo,metadata.logoHash));
+        if(!saved)await publicationStep('publication_storage',()=>store.savePublicationAuthorization(scope,hashes,JSON.stringify({metadata,signature:authorization.signature,logo:authorization.logo})));
+        const verified=await publicationStep('publication_chain',()=>verifyCompletedSharedLaunch(rpc,store,session));
+        return publicationStep('publication_storage',()=>store.publish(scope,hashes,verified.identity.token.hash(),metadata,logo,String(authorization.signature)));
+      }
       const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
       if(action==='pending-review'||action==='resubmit'){
         const pending=journal.entries.at(-1);
@@ -130,12 +148,6 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
         plan.verifySignature(pending.stage,signed);
         if(await send!(signed)!==pending.txHash)throw Error('Launch submission acknowledgement differs from review');
         return {submitted:pending.txHash};
-      }
-      if (action === 'publish') {
-        const metadata = verifyLaunchMetadata(scope, input.metadata, input.signature);
-        const plan = await verifyCompletedSharedLaunch(rpc, store, session);
-        const logo = await validateLaunchLogo(input.logo, metadata.logoHash);
-        return store.publish(scope, hashes, plan.identity.token.hash(), metadata, logo, String(input.signature));
       }
       if (action === 'reconcile') return await reconcileSharedLaunchStage(store, plan);
       const stage = sharedLaunchStages[journal.entries.length];

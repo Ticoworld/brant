@@ -9,9 +9,12 @@ export function verifyInitializationSignature(reviewed:ccc.Transaction,signed:cc
  const group=inputs.map((c,i)=>ccc.Script.from(c.lock).hash().toLowerCase()===ownerLockHash.toLowerCase()?i:-1).filter(i=>i>=0);
  if(group[0]!==signerIndex||signed.witnesses.some((w,i)=>i!==signerIndex&&w.toLowerCase()!==reviewed.witnesses[i].toLowerCase()))throw Error('Wallet changed reviewed witnesses');
  const witness=signed.getWitnessArgs(signerIndex);
- if(!witness?.lock||ccc.bytesFrom(witness.lock).length!==65||witness.inputType||witness.outputType)throw Error('Invalid standard-secp signature witness');
+ const reviewedWitness=reviewed.getWitnessArgs(signerIndex);
+ if(!witness?.lock||ccc.bytesFrom(witness.lock).length!==65||
+   (witness.inputType||'0x').toLowerCase()!==(reviewedWitness?.inputType||'0x').toLowerCase()||
+   (witness.outputType||'0x').toLowerCase()!==(reviewedWitness?.outputType||'0x').toLowerCase())throw Error('Invalid standard-secp signature witness');
  const hasher=new ccc.HasherCkb();hasher.update(reviewed.hash());
- ccc.Transaction.hashWitnessToHasher(ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex(),hasher);
+ ccc.Transaction.hashWitnessToHasher(ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65),inputType:witness.inputType,outputType:witness.outputType}).toHex(),hasher);
  for(const i of group.slice(1))ccc.Transaction.hashWitnessToHasher(signed.witnesses[i]||'0x',hasher);
  for(const witness of signed.witnesses.slice(inputs.length))ccc.Transaction.hashWitnessToHasher(witness,hasher);
  const digest=hasher.digest(),pub=ccc.recoverMessageSecp256k1(digest,witness.lock);

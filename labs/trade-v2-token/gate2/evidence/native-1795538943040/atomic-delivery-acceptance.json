@@ -1,0 +1,9 @@
+{
+  "reviewPersistedBeforeSubmission": true,
+  "lostAcknowledgementAfterCommit": true,
+  "separateProcessCanonicalPublication": true,
+  "sqliteReopenRetry": true,
+  "historicalSpentOutputPublicationRetry": true,
+  "metadataTicker": "ATM",
+  "initializationTransaction": "0xf427055604ecfd439e536aafbff4e5e59495325104d9ba0e9d417422ec7f9ba0"
+}

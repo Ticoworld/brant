@@ -4,6 +4,7 @@ import {generatePudgeLaunchProof} from '../../../../../lib/v2-engine/pudge-launc
 import {openConfiguredSharedLaunchStore} from '../../../../../lib/v2-engine/shared-launch-store';
 import {PUDGE_GATE2_ANCHOR, PUDGE_GATE2_GENESIS} from '../../../../../lib/v2-engine/pudge-public-registry';
 import {marketNetwork} from '../../../../../lib/v2-engine/market-network-server';
+import {LaunchPublicationError,publicationRecovery} from '../../../../../lib/v2-engine/launch-publication-errors';
 
 export const runtime = 'nodejs';
 
@@ -59,13 +60,14 @@ function runOperation(action: string, input: Record<string, unknown>) {
 }
 
 export async function POST(request: Request, context: {params: Promise<{action: string}>}) {
+  const diagnosticId=crypto.randomUUID();
   const origin = process.env.BRANT_LAUNCH_PROOF_ORIGIN;
   if (!origin || request.headers.get('origin') !== origin || request.headers.get('host') !== new URL(origin).host ||
       (request.headers.has('sec-fetch-site') && request.headers.get('sec-fetch-site') !== 'same-origin')) {
     return new Response(null, {status: 403});
   }
   const {action} = await context.params;
-  if (!['prepare','submit','resubmit','pending-review','session','sessions','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
+  if (!['prepare','submit','resubmit','pending-review','session','sessions','publish','retry-publication','normalize-logo','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
   if (['submit','resubmit'].includes(action) && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
@@ -92,7 +94,11 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     }
     const {result, serverTiming} = await runOperation(action, input);
     return Response.json(result, {headers: {'Cache-Control': 'no-store', 'Server-Timing': serverTiming}});
-  } catch {
+  } catch(error) {
+    if(error instanceof LaunchPublicationError){
+      console.warn('Brant publication rejected',{code:error.code,diagnosticId,action});
+      return Response.json({error:error.message,code:error.code,diagnosticId,recovery:publicationRecovery[error.code]},{status:409,headers:{'Cache-Control':'no-store'}});
+    }
     return Response.json({error: 'Launch could not be verified'}, {status: 409, headers: {'Cache-Control': 'no-store'}});
   } finally {
     clearTimeout(timer);

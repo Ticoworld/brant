@@ -15,3 +15,17 @@ const signature=ccc.signMessageSecp256k1(h.digest(),privateKey),signed=ccc.Trans
 signed.witnesses[0]=ccc.WitnessArgs.from({lock:signature}).toHex();assert(verifyInitializationSignature(result.transaction,signed,result.selected,0,ccc.Script.from(lock).hash()));
 signed.witnesses[1]='0x12';assert.throws(()=>verifyInitializationSignature(result.transaction,signed,result.selected,0,ccc.Script.from(lock).hash()),/witness/);
 console.log('multiple-input deployment signature checks passed');
+// Atomic xUDT issuance uses outputType in the creator's first lock witness.
+const atomicReview=result.transaction.clone();
+atomicReview.witnesses[0]=ccc.WitnessArgs.from({outputType:'0x123456',inputType:'0xabcd'}).toHex();
+const atomicHasher=new ccc.HasherCkb();atomicHasher.update(atomicReview.hash());
+ccc.Transaction.hashWitnessToHasher(ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65),outputType:'0x123456',inputType:'0xabcd'}).toHex(),atomicHasher);
+ccc.Transaction.hashWitnessToHasher(atomicReview.witnesses[1]||'0x',atomicHasher);
+const atomicSigned=atomicReview.clone();
+atomicSigned.witnesses[0]=ccc.WitnessArgs.from({lock:ccc.signMessageSecp256k1(atomicHasher.digest(),privateKey),outputType:'0x123456',inputType:'0xabcd'}).toHex();
+assert(verifyInitializationSignature(atomicReview,atomicSigned,result.selected,0,ccc.Script.from(lock).hash()));
+for(const field of ['inputType','outputType'] as const){
+ const tampered=atomicSigned.clone(),args=tampered.getWitnessArgs(0)!;args[field]='0xdead';tampered.witnesses[0]=args.toHex();
+ assert.throws(()=>verifyInitializationSignature(atomicReview,tampered,result.selected,0,ccc.Script.from(lock).hash()),/witness/);
+}
+console.log('reviewed issuance witness fields are signed and mutation rejected');

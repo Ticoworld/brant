@@ -76,7 +76,7 @@ export function verifyAtomicMetadataAuthorization(signed:ccc.Transaction,inputs:
   if(!raw||ccc.bytesFrom(raw).length>8192)throw Error('Missing atomic metadata authorization');
   const payload=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(ccc.bytesFrom(raw)));
   const metadata=normalizeLaunchMetadata(payload.metadata);
-  const expected={version:1,kind:'brant-atomic-metadata',...scope,metadata};
+  const expected={version:1,kind:'brant-atomic-metadata',genesis:scope.genesis,market:scope.market,owner:scope.owner,metadata};
   if(JSON.stringify(payload)!==JSON.stringify(expected)||signed.headerDeps[0]!==scope.genesis||signed.outputs[0].lock.hash()!==scope.market||inputs.some(c=>ccc.Script.from(c.lock).hash()!==scope.owner))throw Error('Atomic publication identity differs');
   const reviewed=signed.clone(),w=reviewed.getWitnessArgs(0);
   reviewed.setWitnessArgsAt(0,{...w,lock:'0x'+'00'.repeat(65)});

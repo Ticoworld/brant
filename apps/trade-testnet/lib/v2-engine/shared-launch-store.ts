@@ -12,6 +12,10 @@ export function openSharedLaunchStore(path: string) {
   const db = new DatabaseSync(path);
   db.exec(`
     PRAGMA busy_timeout = 5000;
+    CREATE TABLE IF NOT EXISTS shared_launch_publication_authorization (
+      market_key TEXT PRIMARY KEY,
+      authorization TEXT NOT NULL
+    );
     CREATE TABLE IF NOT EXISTS shared_launch (
       market_key TEXT PRIMARY KEY,
       anchor_key TEXT NOT NULL UNIQUE,
@@ -51,6 +55,18 @@ export function openSharedLaunchStore(path: string) {
 
   return {
     close: () => db.close(),
+    readPublicationAuthorization(scope:Scope,hashes:Hashes){
+      const {key}=loadPlan(scope,hashes);
+      const row=db.prepare('SELECT authorization FROM shared_launch_publication_authorization WHERE market_key=?').get(key);
+      return typeof row?.authorization==='string'?row.authorization:null;
+    },
+    savePublicationAuthorization(scope:Scope,hashes:Hashes,authorization:string){
+      const {key}=loadPlan(scope,hashes);
+      if(Buffer.byteLength(authorization)>98304)throw Error('Publication authorization exceeds limit');
+      db.prepare('INSERT OR IGNORE INTO shared_launch_publication_authorization VALUES (?,?)').run(key,authorization);
+      const row=db.prepare('SELECT authorization FROM shared_launch_publication_authorization WHERE market_key=?').get(key);
+      if(row?.authorization!==authorization)throw Error('Publication authorization differs');
+    },
     listSessions(genesis: string, owner: string) {
       const rows = db.prepare(`
         SELECT journal FROM shared_launch
