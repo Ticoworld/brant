@@ -1,0 +1,4 @@
+{
+  "label": "atomic-wrong-genesis",
+  "error": "Error: {\"code\":-301,\"message\":\"TransactionFailedToResolve: InvalidHeader(Byte32(0x0000000000000000000000000000000000000000000000000000000000000000))\",\"data\":\"InvalidHeader(Byte32(0x0000000000000000000000000000000000000000000000000000000000000000))\"}"
+}

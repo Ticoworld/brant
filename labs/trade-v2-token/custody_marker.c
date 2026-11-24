@@ -9,7 +9,11 @@ if(!ic){uint8_t cl[181],market[141],mh[32];if(oi!=3)return 4;
  n=181;if(ckb_load_cell_by_field(cl,&n,0,2,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK)||n!=181||cl[49]!=128||cl[50]||cl[51]||cl[52]||memcmp(cl+149,self,32))return 5;
  memcpy(mh,cl+53,32);
 #ifdef BRANT_ATOMIC_MARKER
+#ifdef BRANT_ATOMIC_MULTI
+ if(ni>=1&&!lock_is(0,CKB_SOURCE_INPUT,mh)){
+#else
  if(ni==1){
+#endif
   if(memcmp(script+53,mh,32)||!standard_owner(0,CKB_SOURCE_INPUT)||!plain(0,CKB_SOURCE_INPUT))return 5;
   n=44;if(ckb_load_input(in,&n,0,0,CKB_SOURCE_INPUT)||n!=44)return 5;hash(in+8,36,id);
   n=141;if(ckb_load_cell_by_field(market,&n,0,0,CKB_SOURCE_OUTPUT,CKB_CELL_FIELD_LOCK)||n!=141||market[49]!=88||memcmp(market+53,id,32)||!lock_is(0,CKB_SOURCE_OUTPUT,mh)||!type_is(1,CKB_SOURCE_OUTPUT,market+109))return 5;

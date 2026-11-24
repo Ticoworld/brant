@@ -1,0 +1,4 @@
+{
+  "label": "atomic-inflated-supply",
+  "error": "Error: {\"code\":-302,\"message\":\"TransactionFailedToVerify: Script(TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 })\",\"data\":\"Error { kind: Script, inner: TransactionScriptError { source: Outputs[0].Type, cause: ValidationFailure: see error code -52 on page https://nervosnetwork.github.io/ckb-script-error-codes/by-data-hash/50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95.html#-52 } }\"}"
+}

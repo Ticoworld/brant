@@ -1,0 +1,22 @@
+{
+  "scope": "All retained runner RPC calls, including startup, fixture funding, negative cases, mining and lifecycle; planner subset is separately measured. Not HTTP/browser latency.",
+  "totalRequests": 114,
+  "rpcCounts": {
+    "get_tip_header": 1,
+    "get_block_by_number": 1,
+    "generate_block": 32,
+    "estimate_cycles": 11,
+    "send_transaction": 5,
+    "get_transaction": 29,
+    "get_live_cell": 28,
+    "get_block_hash": 7
+  },
+  "planner": {
+    "elapsedMs": 139.27333499999804,
+    "rpcCounts": {
+      "get_live_cell": 9,
+      "get_block_hash": 1
+    }
+  },
+  "injectedHarnessElapsedMs": 3235.1295059999975
+}
