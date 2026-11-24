@@ -1,3 +1,4 @@
+import {getAtomicCatalogMarket,listAtomicCatalog} from './atomic-market-catalog.ts';
 import {marketNetwork} from './market-network-server.ts';
 import {verifyLaunchMetadata} from './launch-metadata.ts';
 import {PUDGE_GATE2_GENESIS} from './pudge-public-registry.ts';
@@ -38,7 +39,7 @@ async function verifyCandidate(store: ReturnType<typeof openConfiguredSharedLaun
   const execution = includeExecution ? {
     genesis, marketScriptHash: market, routeId: market, creatorLockHash: session.scope.owner,
     tokenTypeHash: token, scripts: plan.identity, stages,
-    dependencies: plan.projected.purchase.cellDeps,
+    dependencies: plan.projected.purchase.cellDeps,codeDependencies:plan.dependencies,
     initial: [0, 1, 2, 3].map(index => ({tx_hash: plan.stageHashes.purchase, index: '0x' + index.toString(16)})),
     issuanceCapacityFloor: plan.projected.issuance.outputs[0].capacity.toString(),
     metadata,
@@ -53,7 +54,8 @@ export async function getCatalogMarket(market: string, includeExecution = false)
   const store = openConfiguredSharedLaunchStore();
   try {
     const encoded = store.publicationCandidate(genesis, market);
-    return encoded ? await verifyCandidate(store, market, encoded, includeExecution) : null;
+    if(encoded)return await verifyCandidate(store,market,encoded,includeExecution);
+    const atomic=await getAtomicCatalogMarket(readRpc,market);return atomic&&includeExecution?atomic:atomic?{...atomic,execution:undefined}:null;
   } catch {
     return null;
   } finally {
@@ -68,10 +70,10 @@ async function loadCatalog(after: string) {
   try {
     const rows = store.publicationCandidates(genesis, after, 5);
     const results = await Promise.allSettled(rows.slice(0, 4).map(({market, encoded}) => verifyCandidate(store, market, encoded)));
-    return {
-      markets: results.flatMap(result => result.status === 'fulfilled' && result.value ? [result.value] : []),
-      next: rows.length === 5 ? rows[3].market : null,
-    };
+    const atomic=await listAtomicCatalog(readRpc,after);
+    const merged=[...atomic.markets,...results.flatMap(result=>result.status==='fulfilled'&&result.value?[result.value]:[])].sort((a,b)=>a.market.localeCompare(b.market));
+    const markets=merged.slice(0,4);
+    return {markets,next:merged.length>4||rows.length===5||atomic.next?markets.at(-1)?.market||atomic.next||rows[3]?.market||null:null};
   } finally {
     store.close();
   }

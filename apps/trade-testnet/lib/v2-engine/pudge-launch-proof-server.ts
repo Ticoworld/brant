@@ -60,3 +60,19 @@ async function generateProof(anchor: {txHash: string; index: string}, owner: str
     return {owner, newRoot, witness, genesis, market, custody};
 
 }
+
+/** Same bounded native proof infrastructure, using the atomic planner's domain. */
+export async function generateAtomicLaunchProof(domain:{genesis_hash:string;market_script_hash:string;xudt_type_script_hash:string;custody_marker_type_hash:string},owner:string,quantity:bigint,price:bigint){
+ if(Object.values(domain).some(v=>!hash.test(v))||!hash.test(owner)||domain.genesis_hash!==marketNetwork().genesis||quantity<=0n||price<=0n||activeProofs>=2)throw Error('Invalid or busy atomic proof request');
+ activeProofs++;
+ try{
+  const {smt,recovery}=await resolveGate2NativeTools();if(!smt||!recovery)throw Error('Proof tools unavailable');
+  const proof=JSON.parse(await runNative(smt,['proof','-','-'],{domain,op:0,owners:[],updates:[{owner_lock_hash:owner,balance:String(quantity),revision:'0',active:true}]}));
+  if(!hash.test(proof.new_root)||typeof proof.contract_witness?.hex!=='string'||!/^0x(?:[0-9a-f]{2})+$/.test(proof.contract_witness.hex))throw Error('Invalid atomic proof');
+  const limit=Buffer.alloc(8);limit.writeBigUInt64LE(price);const witness=proof.contract_witness.hex+limit.toString('hex');
+  const args='0x'+[domain.market_script_hash,domain.xudt_type_script_hash,domain.genesis_hash,domain.custody_marker_type_hash].map(v=>v.slice(2)).join('');
+  const check=JSON.parse(await runNative(recovery,['verify-init','-'],{domain:args,owner,new_root:proof.new_root,witness,quantity:String(quantity),price:String(price)}));
+  if(check.verified!==true||check.new_root!==proof.new_root)throw Error('Atomic proof verification failed');
+  return {newRoot:proof.new_root,witness};
+ }finally{activeProofs--;}
+}

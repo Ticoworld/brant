@@ -1,0 +1,72 @@
+{
+  "basis": "Completed browser assertions before the retained TradePreview readiness timeout; derived checkpoint, not a full acceptance verdict.",
+  "wallet": "SIMULATED disposable fixture",
+  "chain": "REAL isolated CKB",
+  "oneLaunchApproval": true,
+  "separateMetadataApproval": false,
+  "lostSubmissionResponse": true,
+  "applicationRestartRecovery": true,
+  "canonicalPublication": {
+    "version": 1,
+    "genesis": "0x83d9eef06f6a77be83f19b9be2df95bb39fa7d953d4f460ad27bcf285d8e04a1",
+    "market": "0xb23ea9ef63851d2bc1442fb1340001ec4577888d578c490e24014a99ac49e234",
+    "owner": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+    "token": "0xf34fbc2273afebedbc9e83a77a218d78195e6f7789f150af37d1d847b9b04a3f",
+    "metadata": {
+      "name": "Atomic Browser",
+      "ticker": "ABR",
+      "description": "",
+      "link": ""
+    },
+    "receipt": {
+      "stage": "purchase",
+      "txHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2",
+      "blockHash": "0x36e75f231e62151870a1deeb842ccfc4b6f5eb79492440df05700dcba813d627",
+      "outputs": [
+        {
+          "txHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2",
+          "index": "0x0"
+        },
+        {
+          "txHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2",
+          "index": "0x1"
+        },
+        {
+          "txHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2",
+          "index": "0x2"
+        },
+        {
+          "txHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2",
+          "index": "0x3"
+        }
+      ]
+    },
+    "transactionHash": "0xf9b3880f2620cfd6e1c657a93f29cff429a9c5a9c1f92b815860a6f58270aad2"
+  },
+  "catalogDiscovery": true,
+  "liveStateRecovery": true,
+  "creatorProofBalance": "7",
+  "browserTrading": "BLOCKED by legacy-only market binary pin; application fix awaits new browser verdict",
+  "metrics": {
+    "prepare": {
+      "rpcCounts": {
+        "rpc_get_tip_header": 1,
+        "rpc_get_indexer_tip": 1,
+        "rpc_get_cells": 1,
+        "rpc_get_live_cell": 9,
+        "rpc_get_block_hash": 2
+      },
+      "totalRpcCalls": 14,
+      "serverTiming": "rpc_get_tip_header;dur=21.9;desc=\"1\", rpc_get_indexer_tip;dur=17.6;desc=\"1\", rpc_get_cells;dur=8.3;desc=\"1\", rpc_get_live_cell;dur=321.3;desc=\"9\", rpc_get_block_hash;dur=11.9;desc=\"2\", proof;dur=197.4;desc=\"1\""
+    },
+    "reconcile": {
+      "rpcCounts": {
+        "rpc_get_block_hash": 2,
+        "rpc_get_transaction": 1,
+        "rpc_get_header": 1
+      },
+      "totalRpcCalls": 4,
+      "serverTiming": "rpc_get_block_hash;dur=69.3;desc=\"2\", rpc_get_transaction;dur=19.8;desc=\"1\", rpc_get_header;dur=19.7;desc=\"1\""
+    }
+  }
+}

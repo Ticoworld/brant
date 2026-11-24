@@ -1,3 +1,4 @@
+import {atomicV2Codes} from './atomic-launch-v2.ts';
 import { ccc } from '@ckb-ccc/core';
 import { readLiveSingletons } from './live.ts';
 import { readFundingCell } from './funding.ts';
@@ -11,7 +12,7 @@ import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from './market-capacity.ts'
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
-type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;initializationTransactionHash?:string;scripts?:{owner?:ccc.Script;market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
+type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;atomic?:boolean;initializationTransactionHash?:string;scripts?:{owner?:ccc.Script;market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
 const le64 = (n:bigint) => Array.from({length:8},(_,i)=>Number((n >> BigInt(i*8)) & 255n).toString(16).padStart(2,'0')).join('');
 const pinned:Record<string,string> = {
   market_smt:'0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770',
@@ -60,7 +61,8 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
     const locks=[config.scripts.market,config.scripts.market,config.scripts.custody,config.scripts.custody],types=[config.scripts.token,config.scripts.marker,config.scripts.token,config.scripts.custodyMarker];
     if(live.cells.some((c,i)=>script(c.output.lock)!==locks[i].hash()||!c.output.type||script(c.output.type)!==types[i].hash()))throw Error('Market singleton identity mismatch');
   }
-  if (live.cells[0].output.lock.code_hash.toLowerCase() !== pinned.market_smt || live.cells[0].output.lock.hash_type !== 'data1' || live.cells[2].output.lock.code_hash.toLowerCase() !== pinned.custody_smt || live.cells[2].output.lock.hash_type !== 'data1') throw Error('Market or custody script is not the pinned Gate 2 binary');
+  const marketCode=verified&&config.atomic===true?atomicV2Codes.market:pinned.market_smt;
+  if (live.cells[0].output.lock.code_hash.toLowerCase() !== marketCode || live.cells[0].output.lock.hash_type !== 'data1' || live.cells[2].output.lock.code_hash.toLowerCase() !== pinned.custody_smt || live.cells[2].output.lock.hash_type !== 'data1') throw Error('Market or custody script is not the pinned Gate 2 binary');
   if (live.custodyRoot.toLowerCase() !== p.old_root.toLowerCase()) throw Error('Stale custody proof');
   const cells = live.cells.map((cell,i) => {
     const transform = (s: {code_hash:string;hash_type:string;args:string}) => ({codeHash:s.code_hash,hashType:s.hash_type,args:s.args});

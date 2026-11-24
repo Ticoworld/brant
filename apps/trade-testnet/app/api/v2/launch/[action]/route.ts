@@ -1,3 +1,5 @@
+import {atomicLaunchOperations} from '../../../../../lib/v2-engine/atomic-launch-operations';
+import {atomicV2Codes} from '../../../../../lib/v2-engine/atomic-launch-v2';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {launchOperations} from '../../../../../lib/v2-engine/launch-operations-server';
 import {generatePudgeLaunchProof} from '../../../../../lib/v2-engine/pudge-launch-proof-server';
@@ -20,7 +22,7 @@ const approvedCreator = process.env.BRANT_LAUNCH_APPROVED_CREATOR;
 const launchWritesEnabled = process.env.BRANT_LAUNCH_WRITES === '1' &&
   typeof approvedCreator === 'string' && /^0x[0-9a-f]{64}$/.test(approvedCreator);
 const network=marketNetwork();
-const operate = launchOperations({rpc, genesis: network.genesis, fixture:network.fixture, excludedAnchor: network.fixture?undefined:PUDGE_GATE2_ANCHOR,
+const legacyOperate = launchOperations({rpc, genesis: network.genesis, fixture:network.fixture, excludedAnchor: network.fixture?undefined:PUDGE_GATE2_ANCHOR,
   quantity: 7n, proof: generatePudgeLaunchProof, openStore: openConfiguredSharedLaunchStore,
   authorizeCreator: owner => owner === approvedCreator,
   send: launchWritesEnabled ? async transaction => {
@@ -28,6 +30,12 @@ const operate = launchOperations({rpc, genesis: network.genesis, fixture:network
     return rpc('send_transaction', [cccA.JsonRpcTransformers.transactionFrom(transaction)]);
   } : undefined,
 });
+const atomicOperate=network.fixture?.market.dataHash===atomicV2Codes.market?atomicLaunchOperations(rpc,network,launchWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>owner===approvedCreator):undefined;
+const operate=async(action:string,input:Record<string,unknown>,timing?:(name:string,ms:number)=>void):Promise<unknown>=>{
+ if(!atomicOperate||action==='normalize-logo')return legacyOperate(action,input,timing);
+ if(action==='sessions'){const [atomic,legacy]=await Promise.all([atomicOperate(action,input,timing),legacyOperate(action,input,timing)]);return [...atomic as unknown[],...legacy as unknown[]];}
+ const result=await atomicOperate(action,input,timing);return result===null?legacyOperate(action,input,timing):result;
+};
 let active = 0;
 const preparing = new Map<string, Promise<{result: unknown; serverTiming: string}>>();
 
@@ -51,7 +59,7 @@ function runOperation(action: string, input: Record<string, unknown>) {
       lock.hashType !== 'type' || typeof lock.args !== 'string' || !/^0x[0-9a-f]{40}$/i.test(lock.args)) {
     return measuredOperation(action, input);
   }
-  const key = (lock.codeHash + lock.args).toLowerCase();
+  const key = JSON.stringify(input);
   const existing = preparing.get(key);
   if (existing) return existing;
   const pending = measuredOperation(action, input).finally(() => preparing.delete(key));

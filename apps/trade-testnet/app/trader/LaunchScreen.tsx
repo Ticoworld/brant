@@ -25,8 +25,8 @@ const ckb = (amount: bigint) => formatCkb(amount) + ' CKB';
 const launchStages = ['setup', 'issuance', 'purchase'] as const;
 const sessionKey = (owner: string) => 'brant-launch-session:' + owner;
 type Stage = typeof launchStages[number];
-type SessionSummary = {market: string; entries: {state: string}[]};
-type Session = {published?: boolean; enabled: boolean; entries: {stage: Stage; state: string; txHash: string}[]};
+type SessionSummary = {family?:'atomic';market: string; entries: {state: string}[]};
+type Session = {market?:string;metadata?:ReturnType<typeof normalizeLaunchMetadata>;family?:'atomic';transaction?:unknown;inputs?:{capacity:string;lock:ccc.ScriptLike;data:string;outPoint:{txHash:string;index:string}}[];published?: boolean; enabled: boolean; entries: {stage: Stage|'atomic'; state: string; txHash: string}[]};
 
 async function launchApi(action: string, payload: object, signal?: AbortSignal) {
   const timeout = AbortSignal.timeout(45_000);
@@ -64,14 +64,19 @@ export default function LaunchScreen() {
   const [savedSessions, setSavedSessions] = useState<SessionSummary[]>([]);
   const [selection, setSelection] = useState<{owner: string; market: string}>();
 
-  const [preparation, setPreparation] = useState<{enabled: boolean; market: string; descriptor: object; transaction: unknown; accounting: unknown; owner: string}>();
+  const [preparation, setPreparation] = useState<{family?:'atomic';inputs?:Session['inputs'];enabled: boolean; market: string; descriptor: object; transaction: unknown; accounting: unknown; owner: string}>();
   const [review, setReview] = useState<{signer: typeof signer; owner: string; result?: Awaited<ReturnType<typeof previewLaunch>>; error?: unknown}>();
+  function acceptSession(value:Session){
+    setSession(value);
+    if(value.family==='atomic'&&value.metadata){setName(value.metadata.name);setTicker(value.metadata.ticker);setDescription(value.metadata.description);setSocial(value.metadata.link);if(value.published&&value.metadata.logoHash&&value.market)setLogo('/api/v2/launch/logo?market='+value.market);}
+    if(value.family==='atomic'&&value.market){const market=value.market;setSavedSessions(current=>current.some(s=>s.market===market)?current.map(s=>s.market===market?{...s,entries:value.entries}:s):[{family:'atomic',market,entries:value.entries},...current]);}
+  }
   useEffect(() => () => { if (logo) URL.revokeObjectURL(logo); }, [logo]);
   const active = account.state === 'ready' && review?.owner === account.owner && review.signer === signer ? review : undefined;
   const quote = active?.result;
   const issue = active?.error;
   const steps = [t('Create token','创建代币'), t('Review launch','审核发行'), t('Launch','发行')];
-  const stages = [t('Create market','创建市场'), t('Issue tokens','发行代币'), t('Initial purchase','首次购买')];
+  const stages = session?.family==='atomic'||preparation?.family==='atomic'?[t('Launch token','发行代币')]:[t('Create market','创建市场'), t('Issue tokens','发行代币'), t('Initial purchase','首次购买')];
   const owner = account.state === 'ready' ? account.owner : '';
   const selectedMarket = selection?.owner === owner ? selection.market : undefined;
   useEffect(() => {
@@ -94,19 +99,19 @@ export default function LaunchScreen() {
       setSavedSessions(sessions);
       const remembered = selectedMarket ?? localStorage.getItem(sessionKey(owner));
       const market = sessions.find(candidate => candidate.market === remembered)?.market ??
-        sessions.find(candidate => candidate.entries.length < launchStages.length ||
+        sessions.find(candidate => candidate.entries.length < (candidate.family==='atomic'?1:launchStages.length) ||
           candidate.entries.some(entry => entry.state !== 'confirmed'))?.market;
       const result = market ? await launchApi('session', {owner, market}) : null;
       if (!active) return;
       if (result && market) {
         localStorage.setItem(sessionKey(owner), market);
         setResumedMarket(market);
-        setSession(result);
+        acceptSession(result);
         setStep(2);
         if (result.entries.at(-1)?.state === 'submitted') {
-          await launchApi('reconcile', {owner, market}).catch(() => {});
-          const latest = await launchApi('session', {owner, market});
-          if (active && latest) setSession(latest);
+          const reconciled=await launchApi('reconcile', {owner, market}).catch(() => null);
+          const latest = reconciled?.family==='atomic'?reconciled:await launchApi('session', {owner, market});
+          if (active && latest) acceptSession(latest);
         }
       }
       else if (localStorage.getItem(sessionKey(owner)) === market) localStorage.removeItem(sessionKey(owner));
@@ -173,6 +178,7 @@ export default function LaunchScreen() {
     const prepared = preparation?.owner === owner ? preparation : undefined;
     let market = savedMarket || prepared?.market;
     let identity = {owner, market};
+    let atomicHandled=false;
     const checkWallet = async () => {
       if (currentSigner.current !== signer || !await signer.isConnected() ||
           (await signer.client.getHeaderByNumber(0))?.hash !== PUDGE_GENESIS ||
@@ -184,6 +190,32 @@ export default function LaunchScreen() {
       if (savedMarket && !current && step === 2) {
         setExecution('pending');
         return;
+      }
+      if(current?.family==='atomic'||prepared?.family==='atomic'){
+        atomicHandled=true;
+        market=current?.family==='atomic'?market:prepared!.market;identity={owner,market};setStep(2);
+        let atomic=current?.family==='atomic'?current:undefined;
+        const resuming=atomic?.entries.at(-1)?.state==='submitted';
+        if(!atomic||atomic.entries.length===0){
+          const source=atomic||prepared!;
+          if(!source.enabled||!source.inputs||!source.transaction)return;
+          const transaction=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(source.transaction as never));
+          transaction.inputs.forEach((input,index)=>{const cell=source.inputs![index];if(!cell||input.previousOutput.txHash!==cell.outPoint.txHash||input.previousOutput.index!==BigInt(cell.outPoint.index))throw Error('Atomic review inputs differ');input.cellOutput=ccc.CellOutput.from(cell);input.outputData=ccc.hexFrom(cell.data);});
+          await checkWallet();setExecution('wallet');
+          const signed=await requestWalletTransactionSignature(signer,transaction,()=>{});
+          await checkWallet();localStorage.setItem(sessionKey(owner),market!);setExecution('submitting');
+          try{atomic=await launchApi('submit',{...identity,stage:'atomic',signed:cccA.JsonRpcTransformers.transactionFrom(signed)});}catch{setExecution('pending');return;}
+        }
+        if(resuming){await launchApi('resubmit',identity);}
+        await checkWallet();
+        if(atomic&&currentSigner.current===signer)acceptSession(atomic);
+        if(!atomic?.published){setExecution('checking');for(let attempt=0;attempt<8;attempt++){
+          await checkWallet();
+          const confirmed=await launchApi('reconcile',identity).catch(()=>null);
+          if(confirmed?.published){await checkWallet();atomic=confirmed;if(currentSigner.current===signer)acceptSession(confirmed);break;}
+          if(attempt<7)await new Promise(resolve=>setTimeout(resolve,2000));
+        }}
+        setExecution(atomic?.published?'':'pending');return;
       }
       if (!current && prepared && market !== prepared.market) {
         market = prepared.market;
@@ -261,7 +293,7 @@ export default function LaunchScreen() {
     } catch {
       setExecution('paused');
     } finally {
-      if (market) {
+      if (market&&!atomicHandled) {
         const latest = await launchApi('session', identity).catch(() => null);
         if (latest && currentSigner.current === signer) setSession(latest);
       }
@@ -294,7 +326,10 @@ export default function LaunchScreen() {
       setReviewPhase('server');
       slowTimer = setTimeout(() => setReviewPhase('slow'), 8000);
       longTimer = setTimeout(() => setReviewPhase('long'), 15000);
-      const prepared = await launchApi('prepare', {creator: lock}, signal);
+      const bytes=logoFile?new Uint8Array(await logoFile.arrayBuffer()):undefined;
+      const logoPayload=bytes?btoa(Array.from(bytes,byte=>String.fromCharCode(byte)).join('')):undefined;
+      const normalized=bytes?await launchApi('normalize-logo',{logo:logoPayload,logoHash:ccc.hashCkb(bytes)},signal):{};
+      const prepared = await launchApi('prepare', {creator: lock,metadata:normalizeLaunchMetadata({name,ticker,description,link:social,logoHash:normalized.logoHash}),logo:normalized.logo}, signal);
       clearTimeout(slowTimer);
       clearTimeout(longTimer);
       setReviewPhase('wallet');
@@ -416,8 +451,8 @@ export default function LaunchScreen() {
                 setSelection({owner, market: event.target.value});
               }}>
               <option value="">{t('Select a launch', '选择发行')}</option>
-              {savedSessions.map(({market, entries}) => <option key={market} value={market}>
-                {market.slice(0, 14)}…{market.slice(-8)} · {entries.filter(entry => entry.state === 'confirmed').length}/3
+              {savedSessions.map(({market, entries,family}) => <option key={market} value={market}>
+                {market.slice(0, 14)}…{market.slice(-8)} · {entries.filter(entry => entry.state === 'confirmed').length}/{family==='atomic'?1:3}
               </option>)}
             </select>
           </label>}
@@ -460,7 +495,7 @@ export default function LaunchScreen() {
             {quote && <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Advanced','高级详情')}</summary>
                 <p>{t('Provisional market ID','暂定市场标识')} {quote.market}</p>
                 <p>{t('Provisional token type hash','暂定代币类型哈希')} {quote.token}</p>
-                {Object.values(quote.accounting.stageFees).map((fee, index) => <Amount key={stages[index]} label={stages[index]} value={ckb(fee)}/>)}
+                {Object.values(quote.accounting.stageFees).filter((_,index)=>preparation?.family!=='atomic'||index===0).map((fee, index) => <Amount key={stages[index]} label={stages[index]} value={ckb(fee)}/>)}
               </details>}
             {issue != null && <p role="alert" className="text-sm text-[#efb9ac]">{message}</p>}
             {process.env.NODE_ENV === 'development' && localSetupTest && quote && preparation?.owner === owner && <div className="space-y-2">
@@ -499,7 +534,7 @@ export default function LaunchScreen() {
               paused:t('Launch paused. Resume when your wallet is ready.','发行已暂停。钱包就绪后可继续。'),
               error:t('The saved session could not be read.','无法读取已保存的会话。')}[execution]}</p>}
             {!(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
-            {session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length ?
+            {session?.family==='atomic'&&session.published?<p role="status">{t('Token launched and metadata published','代币已发行，元数据已发布')}</p>:session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length ?
               <div className="grid gap-3">
                 <p role="status">{t('Launch transactions confirmed','发行交易已确认')}</p>
                 <label>{t('Token name','代币名称')}<input className={field} disabled={session.published} value={name} maxLength={80} onChange={event => setName(event.target.value)}/></label>

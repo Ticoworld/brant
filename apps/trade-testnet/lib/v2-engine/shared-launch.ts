@@ -167,6 +167,7 @@ export async function planSharedLaunch(rpc: Rpc, request: Launch) {
   const stageHashes = Object.fromEntries(sharedLaunchStages.map(stage => [stage, plans[stage].transaction.hash()])) as Record<Stage, string>;
   if (request.resumeJournal) readSharedLaunchJournal(request.resumeJournal, scope, stageHashes);
   return {
+    dependencies:structuredClone(dependencies),
     identity, scope: structuredClone(scope), stageHashes: {...stageHashes},
     accounting: {eligibleFunding, locked, change, curveReserve: price, fees,
       stageFees: {setup: setup.fee, issuance: issuance.fee, purchase: firstPurchase.fee}},

@@ -478,6 +478,7 @@ async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>
 
 export type RecoveryManifest=Pick<Awaited<ReturnType<typeof loadPudgeManifest>>,'genesis'|'scripts'|'initial'|'deps'> & {
   initializationTransactionHash:string;
+  atomic?:boolean;
   format:string;
   journal:{owner:string;entries:{stage:string;txHash:string;state:string;blockHash?:string}[]};
   verifiedMarket?:VerifiedMarketRecord;
@@ -499,12 +500,12 @@ async function recoverVerifiedMarket(client:Rpc,manifest:RecoveryManifest,rawMan
   }));
   const initialPoints=manifest.initial as [Point,Point,Point,Point];
   const issuance=manifest.journal.entries.filter(entry=>entry.stage==='issuance');
-  if(issuance.length!==1||issuance[0].state!=='confirmed')throw Error('Missing unique confirmed issuance');
+  if(!manifest.atomic&&(issuance.length!==1||issuance[0].state!=='confirmed'))throw Error('Missing unique confirmed issuance');
   const [initialized,issued]=await Promise.all([
     canonical(manifest.initializationTransactionHash,undefined,client),
-    canonical(issuance[0].txHash,issuance[0].blockHash,client),
+    manifest.atomic?Promise.resolve(null):canonical(issuance[0].txHash,issuance[0].blockHash,client),
   ]);
-  verifyOutput(issued.transaction.outputs[0],issued.transaction.outputs_data[0],identity.market,identity.token);
+  if(issued)verifyOutput(issued.transaction.outputs[0],issued.transaction.outputs_data[0],identity.market,identity.token);
   const recovered=await recoverMarketHistory(client,[initialPoints[0],initialPoints[1]],{maxIndexedDepth:256});
   if(recovered.lineage[0]?.transaction.hash.toLowerCase()!==manifest.initializationTransactionHash.toLowerCase())throw Error('Market history does not begin at the registered launch');
   const current=await canonical(recovered.pair[0].tx_hash,undefined,client);
@@ -531,24 +532,24 @@ async function recoverVerifiedMarket(client:Rpc,manifest:RecoveryManifest,rawMan
   if(inventory+custody>supply||!/^0x[0-9a-f]{64}$/i.test(root))throw Error('Gate 2 supply and custody totals do not reconcile');
   let historyState:MarketData['historyState']='verified',history:TradeEvent[]=[];
   try{
-    const purchase=initialized.transaction,initial=parseTransition(purchase.witnesses[3]||''),initialQuantity=initial.newBalance-initial.oldBalance;
-    const issuedData=issued.transaction.outputs_data[0],initialCurve=decodeCurve(issued.transaction.outputs[0].lock.args,`0x${issuedData.slice(2)}${identity.custodyMarker.hash().slice(2)}`);
+    const purchase=initialized.transaction,initial=parseTransition(purchase.witnesses[manifest.atomic?purchase.inputs.length:3]||''),initialQuantity=initial.newBalance-initial.oldBalance;
+    const issuedData=issued?.transaction.outputs_data[0],initialCurve=issued?decodeCurve(issued.transaction.outputs[0].lock.args,`0x${issuedData!.slice(2)}${identity.custodyMarker.hash().slice(2)}`):{...decodeCurve(purchase.outputs[0].lock.args,purchase.outputs_data[0]),inventory:supply};
     if(initial.operation!==0||initial.oldBalance!==0n||initialQuantity<=0n||initial.owner.toLowerCase()!==manifest.journal.owner.toLowerCase())throw Error('Launch purchase terms differ from the verified owner');
     const initialAmount=quote(initialCurve,'buy',initialQuantity);
     history=[event(purchase.hash,'buy',initial.owner,initialQuantity,initialAmount,initialized.blockNumber,initialized.timestampMs)];
     await appendMarketExecutions(history,recovered.lineage,identity,client);
     if(recovered.lineage.at(-1)?.transaction.hash.toLowerCase()!==current.transaction.hash.toLowerCase())throw Error('Current market is not the end of the verified history');
   }catch(error){console.warn('Gate 2 market history replay failed',error);historyState='unavailable';}
-  const liquidity=marketLiquidity(current.transaction.outputs[marketIndex].capacity,issued.transaction.outputs[0].capacity);
+  const liquidity=marketLiquidity(current.transaction.outputs[marketIndex].capacity,issued?issued.transaction.outputs[0].capacity:'30000000000');
   const token=display||resolvePudgeTokenMetadata({genesis:manifest.genesis,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:manifest.initializationTransactionHash});
   const stages={} as VerifiedMarketRecord['stages'];
-  for(const name of ['setup','issuance','purchase'] as const){
-    const entries=manifest.journal.entries.filter(entry=>entry.stage===name);
+  for(const name of (manifest.atomic?['purchase']:['setup','issuance','purchase']) as ('setup'|'issuance'|'purchase')[]){
+    const entries=manifest.journal.entries.filter(entry=>entry.stage===(manifest.atomic?'atomic':name));
     if(entries.length!==1||entries[0].state!=='confirmed'||!entries[0].blockHash)throw Error('Missing canonical market stage');
     stages[name]={txHash:entries[0].txHash,blockHash:entries[0].blockHash};
   }
   const secp=manifest.secpDependency||{outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup' as const};
-  manifest={...manifest,verifiedMarket:{genesis:manifest.genesis,marketScriptHash:identity.market.hash(),routeId:identity.market.hash().toLowerCase(),creatorLockHash:manifest.journal.owner,tokenTypeHash:identity.token.hash(),scripts:identity,dependencies:[...codeCells,secp],stages,initial:initialPoints,issuanceCapacityFloor:BigInt(issued.transaction.outputs[0].capacity).toString(),metadata:{...token,typeHash:identity.token.hash()}}};
+  manifest={...manifest,verifiedMarket:{family:manifest.atomic?'atomic':undefined,genesis:manifest.genesis,marketScriptHash:identity.market.hash(),routeId:identity.market.hash().toLowerCase(),creatorLockHash:manifest.journal.owner,tokenTypeHash:identity.token.hash(),scripts:identity,dependencies:[...codeCells,secp],stages,initial:initialPoints,issuanceCapacityFloor:issued?BigInt(issued.transaction.outputs[0].capacity).toString():'30000000000',metadata:{...token,typeHash:identity.token.hash()}}};
   const data:MarketData={
     id:identity.market.hash().toLowerCase(),identity:identity.market.hash(),genesis:manifest.genesis,
     token:{...token,typeHash:identity.token.hash()},pair:`${token.symbol} / CKB`,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
@@ -571,10 +572,10 @@ export function getPublishedPudgeMarketData(id:string):Promise<MarketData>{
 async function refreshPublishedPudgeMarketData(id:string):Promise<MarketData>{
   const catalog=await getCatalogMarket(id,true),record=catalog?.execution;
   if(!catalog||!record||record.marketScriptHash!==id||record.scripts.market.hash()!==id)throw Error('Verified published market not found');
-  const pinned=sharedLaunchDependencies(record.genesis,marketNetwork().fixture);
+  const pinned=record.codeDependencies;
   const dep=(name:keyof typeof pinned)=>({outPoint:{txHash:pinned[name].outPoint.txHash,index:ccc.numToHex(pinned[name].outPoint.index)},depType:'code' as const});
   const manifest:RecoveryManifest={
-    format:'brant-shared-pudge-market-v1',genesis:record.genesis,scripts:record.scripts,
+    atomic:'family' in record&&record.family==='atomic',format:'brant-shared-pudge-market-v1',genesis:record.genesis,scripts:record.scripts,
     initial:record.initial as RecoveryManifest['initial'],initializationTransactionHash:record.stages.purchase.txHash,
     journal:{owner:record.creatorLockHash,entries:catalog.receipts},
     secpDependency:{outPoint:pinned.secp.outPoint,depType:'depGroup'},

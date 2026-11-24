@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {ccc} from '@ckb-ccc/core';
+import {copyFileSync,readFileSync,writeFileSync,mkdtempSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import {DatabaseSync} from 'node:sqlite';
+import {openAtomicLaunchDelivery} from '../lib/v2-engine/atomic-launch-delivery.ts';
+import {getAtomicCatalogMarket,listAtomicCatalog} from '../lib/v2-engine/atomic-market-catalog.ts';
+const source=resolve('../../labs/trade-v2-token/gate2/evidence/native-1795538943040');
+const evidence=JSON.parse(readFileSync(join(source,'atomic-market-qualification.json'),'utf8'));
+const rows=readFileSync(join(source,'rpc.jsonl'),'utf8').trim().split('\n').map(s=>JSON.parse(s));
+const root=mkdtempSync(join(tmpdir(),'brant-atomic-catalog-')),dbPath=join(root,'delivery.sqlite');copyFileSync(join(source,'atomic-delivery.sqlite'),dbPath);
+const tx=evidence.receipts[0].receipt.transaction,fixture={};
+for(const [name,key]of Object.entries({market:'market_smt',marker:'marker_candidate',custody:'custody_smt',custodyMarker:'custody_marker',ownerLock:'atomic_initializer',xudt:'xudt'})){
+ const row=rows.find(r=>r.method==='get_live_cell'&&r.response.result?.cell?.data?.content&&ccc.hashCkb(r.response.result.cell.data.content)===evidence.hashes[key]);
+ assert(row,name);fixture[name]={outPoint:{txHash:row.params[0].tx_hash,index:row.params[0].index},dataHash:evidence.hashes[key]};
+}
+const secp=tx.cell_deps.find(d=>d.dep_type==='dep_group'),secpRow=rows.find(r=>r.method==='get_live_cell'&&r.params[0].tx_hash===secp.out_point.tx_hash&&r.params[0].index===secp.out_point.index);fixture.secp={outPoint:{txHash:secp.out_point.tx_hash,index:secp.out_point.index},dataHash:ccc.hashCkb(secpRow.response.result.cell.data.content)};
+const config=join(root,'network.json');writeFileSync(config,JSON.stringify({genesis:evidence.genesis,fixture,endpoint:'http://127.0.0.1:19224/'}));
+process.env.BRANT_ISOLATED_TEST='1';process.env.BRANT_ISOLATED_CONFIG=config;process.env.BRANT_LAUNCH_SQLITE_PATH=dbPath;
+const calls=[];const rpc=async(method,params)=>{calls.push(method);const found=[...rows].reverse().find(r=>r.method===method&&JSON.stringify(r.params)===JSON.stringify(params)&&r.response.result!==undefined);assert(found,method+' '+JSON.stringify(params));return found.response.result;};
+const market=ccc.Script.from(evidence.scripts.market).hash();
+const catalog=await getAtomicCatalogMarket(rpc,market);assert(catalog);assert.equal(catalog.metadata.ticker,'ATM');assert.equal(catalog.execution.family,'atomic');assert.deepEqual(Object.keys(catalog.execution.stages),['purchase']);assert.equal(catalog.execution.issuanceCapacityFloor,'30000000000');
+const publicCatalog=await listAtomicCatalog(rpc,'');assert.equal(publicCatalog.markets.length,1);assert(!('execution' in publicCatalog.markets[0]));assert.doesNotThrow(()=>JSON.stringify(publicCatalog));
+await assert.rejects(()=>getAtomicCatalogMarket(async(method,params)=>method==='get_block_hash'&&params[0]!=='0x0'?'0x'+'ff'.repeat(32):rpc(method,params),market),/canonical/);
+let db=new DatabaseSync(dbPath);const row=db.prepare('SELECT snapshot FROM atomic_launch_delivery WHERE market=?').get(market),snapshot=JSON.parse(row.snapshot),original=structuredClone(snapshot);snapshot.state='submitted';db.prepare('UPDATE atomic_launch_delivery SET snapshot=? WHERE market=?').run(JSON.stringify(snapshot),market);db.close();
+let sends=0;
+const beforeArrival=async(method,params)=>{if(method==='get_transaction')return null;const found=rows.find(r=>r.method===method&&JSON.stringify(r.params)===JSON.stringify(params)&&r.response.result!==undefined&&(method!=='get_live_cell'||r.response.result?.status==='live'));assert(found,method);return found.response.result;};
+let delivery=openAtomicLaunchDelivery(dbPath,beforeArrival);
+await delivery.resubmit(market,snapshot.owner,async signed=>{sends++;assert.deepEqual(signed.witnesses,snapshot.signed.witnesses);return signed.hash();});delivery.close();assert.equal(sends,1);
+delivery=openAtomicLaunchDelivery(dbPath,rpc);await delivery.resubmit(market,snapshot.owner,async()=>{throw Error('Known transaction must not be broadcast again');});delivery.close();
+db=new DatabaseSync(dbPath);snapshot.state=original.state;snapshot.signed.witnesses[snapshot.signed.witnesses.length-1]='0x00';db.prepare('UPDATE atomic_launch_delivery SET snapshot=? WHERE market=?').run(JSON.stringify(snapshot),market);db.close();
+await assert.rejects(()=>getAtomicCatalogMarket(rpc,market));
+console.log(JSON.stringify({catalogReplay:true,noSyntheticLegacyStages:true,reorgRejected:true,corruptMetadataRejected:true,immutablePreArrivalResubmission:true,knownTransactionNotRebroadcast:true,calls}));

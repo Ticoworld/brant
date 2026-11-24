@@ -226,6 +226,7 @@ async function main() {
       cell, tx, sign, commit, makeProof, le, out, camel: C.camel, restartNode,
       signMetadata:(role,message)=>new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(),keys[role]).signMessageRaw(message),
       connectBrowserWallet:async(page,bundle)=>{
+        await page.waitForFunction(()=>Boolean(document.head&&document.body));
         await page.addScriptTag({path:bundle});
         await page.waitForFunction(()=>typeof document.querySelector('ccc-connector')?.updateSigner==='function');
         // A custom element can upgrade before React hydrates its sibling button.

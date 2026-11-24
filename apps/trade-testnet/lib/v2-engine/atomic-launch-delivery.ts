@@ -25,6 +25,10 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
  function inputs(value:Snapshot):Inputs{return value.inputs.map(raw=>{const c=raw as Inputs[number];return {...c,capacity:BigInt(c.capacity)};});}
  return {
   close:()=>db.close(),
+  find(market:string,owner:string){const row=db.prepare('SELECT snapshot FROM atomic_launch_delivery WHERE market=?').get(market);if(typeof row?.snapshot!=='string')return null;const value=JSON.parse(row.snapshot) as Snapshot;return value.owner===owner?value:null;},
+  candidate(market:string){const row=db.prepare("SELECT snapshot FROM atomic_launch_delivery WHERE market=? AND json_extract(snapshot,'$.state')='published'").get(market);return typeof row?.snapshot==='string'?JSON.parse(row.snapshot) as Snapshot:null;},
+  candidates(genesis:string,after:string){return db.prepare("SELECT market FROM atomic_launch_delivery WHERE market>? AND json_extract(snapshot,'$.genesis')=? AND json_extract(snapshot,'$.state')='published' ORDER BY market LIMIT 5").all(after,genesis).map(r=>String(r.market));},
+  sessions(genesis:string,owner:string){return db.prepare("SELECT snapshot FROM atomic_launch_delivery WHERE json_extract(snapshot,'$.genesis')=? AND json_extract(snapshot,'$.owner')=? ORDER BY rowid DESC LIMIT 50").all(genesis,owner).map(r=>JSON.parse(String(r.snapshot)) as Snapshot);},
   read(market:string,owner:string){const {value}=load(market);if(value.owner!==owner)throw Error('Atomic creator differs');return value;},
   async reserve(plan:Plan,creatorInputs:Inputs,dependencies:Dependencies,logo?:string){
    const {genesis,market,owner,metadata}=plan.authorization;
@@ -32,6 +36,7 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
    if(logo!==undefined||metadata.logoHash){const normalized=await validateLaunchLogo(logo,metadata.logoHash);if(normalized!==logo)throw Error('Normalize logo before atomic review');}
    if(creatorInputs.some(c=>ccc.Script.from(c.lock).hash()!==owner)||plan.transaction.inputs.length!==creatorInputs.length||creatorInputs.some((c,i)=>plan.transaction.inputs[i].previousOutput.txHash!==c.outPoint.txHash||plan.transaction.inputs[i].previousOutput.index!==BigInt(c.outPoint.index)))throw Error('Atomic funding identity differs');
    const snapshot:Snapshot={genesis,market,owner,reviewed:cccA.JsonRpcTransformers.transactionFrom(plan.transaction),inputs:JSON.parse(encode(creatorInputs)),dependencies:structuredClone(dependencies),logo,state:'reviewed'};
+   const existing=db.prepare('SELECT snapshot FROM atomic_launch_delivery WHERE market=?').get(market);if(existing){if(existing.snapshot!==encode(snapshot))throw Error('Atomic immutable review differs');return snapshot;}
    db.exec('BEGIN IMMEDIATE');try{
     db.prepare('INSERT INTO atomic_launch_delivery VALUES(?,?,?)').run(market,plan.transaction.hash(),encode(snapshot));
     for(const c of creatorInputs)db.prepare('INSERT INTO atomic_launch_funding VALUES(?,?)').run(`${genesis}:${c.outPoint.txHash}:${BigInt(c.outPoint.index)}`,market);
@@ -48,6 +53,16 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
    const next={...value,state:'submitted' as const,signed:cccA.JsonRpcTransformers.transactionFrom(signed)};
    save(market,raw,next); // Persist before broadcast. Errors must retain this hash.
    if(await send(signed.clone())!==reviewed.hash())throw Error('Atomic acknowledgement differs; reconcile saved transaction');
+   return {state:'submitted',txHash:reviewed.hash()};
+  },
+  async resubmit(market:string,owner:string,send:(tx:ccc.Transaction)=>Promise<string>){
+   const {value}=load(market);if(value.owner!==owner||value.state!=='submitted'||!value.signed)throw Error('No pending atomic transaction');
+   const signed=decodeTx(value.signed),reviewed=decodeTx(value.reviewed),creatorInputs=inputs(value);
+   const row=await rpc('get_transaction',[reviewed.hash()]) as {transaction?:unknown;tx_status?:{status?:string}}|null;
+   if(row?.transaction||row?.tx_status?.status&&row.tx_status.status!=='unknown')return {state:'submitted',txHash:reviewed.hash()};
+   verifyInitializationSignature(reviewed,signed,creatorInputs,0,owner);verifyAtomicMetadataAuthorization(signed,creatorInputs,value);
+   await verifyInitializationLive(rpc,value.genesis,creatorInputs,value.dependencies);
+   if(await send(signed.clone())!==reviewed.hash())throw Error('Atomic acknowledgement differs; retain pending transaction');
    return {state:'submitted',txHash:reviewed.hash()};
   },
   async reconcile(market:string,owner:string){

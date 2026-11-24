@@ -11,7 +11,7 @@ import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 
 /** Runs actual application routes against the harness's genuine isolated node. */
-export async function startSharedMarketApp({genesis,fixture,out,dbPath}){
+export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedCreator,startupTimeoutMs=180_000}){
   const app=fileURLToPath(new URL('..',import.meta.url));
   const root=resolve(app,'../..'),config=join(out,'isolated-app-config.json');
   const base='http://127.0.0.1:3143';
@@ -19,7 +19,7 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath}){
   const env={...process.env,NODE_ENV:'development',BRANT_ISOLATED_TEST:'1',BRANT_ISOLATED_CONFIG:config,
     R7_NEXT_DIST_DIR:'.next-r7-assignment/shared-native-acceptance',NEXT_TELEMETRY_DISABLED:'1',
     NEXT_PUBLIC_BRANT_ISOLATED_TEST:'1',NEXT_PUBLIC_BRANT_ISOLATED_GENESIS:genesis,
-    BRANT_LAUNCH_SQLITE_PATH:dbPath,BRANT_LAUNCH_PROOF_ORIGIN:base,BRANT_LAUNCH_WRITES:'0',
+    BRANT_LAUNCH_SQLITE_PATH:dbPath,BRANT_LAUNCH_PROOF_ORIGIN:base,BRANT_LAUNCH_WRITES:approvedCreator?'1':'0',BRANT_LAUNCH_APPROVED_CREATOR:approvedCreator,
     ROVEKO_PUDGE_SNAPSHOT_KEY:'cd'.repeat(32),ROVEKO_PUDGE_PROOF_CACHE_DIR:join(out,'app-checkpoints'),
     ROVEKO_SMT_BINARY:join(root,'labs/trade-v2-token/gate2/smt-tools/target/debug/trade-v2-smt-tools'),
     ROVEKO_PROOF_BINARY:join(root,'labs/trade-v2-token/gate2/browser-proof/target/debug/trade-v2-recovery')};
@@ -40,7 +40,7 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath}){
     child=spawn(process.execPath,[join(app,'node_modules/next/dist/bin/next'),'dev','--webpack','--hostname','127.0.0.1','--port','3143'],{cwd:app,env,stdio:['ignore','pipe','pipe'],detached:true});
     processes.push({epoch:++epoch,pid:child.pid,node:process.version,genesis});
     child.stdout.pipe(log);child.stderr.pipe(log);
-    const deadline=Date.now()+180_000;
+    const deadline=Date.now()+startupTimeoutMs;
     while(Date.now()<deadline){
       if(child.exitCode!==null)throw Error('Application exited during startup; see app.log');
       try{const response=await fetch(base+'/api/markets/catalog',{signal:AbortSignal.timeout(5000)});if(response.ok)return;}catch{}
