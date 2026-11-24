@@ -1,0 +1,131 @@
+{
+  "status": "UNSIGNED PLAN; NOT DEPLOYED",
+  "baseline": "e182752",
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "codeCells": [
+    {
+      "name": "market",
+      "file": "market_smt",
+      "index": 0,
+      "bytes": 38464,
+      "ckbDataHash": "0xb5ca7369dba433a13801ccb23ca64d586897010afac1eff04aa691829edd59a9",
+      "sha256": "9fa885e511d95f67ef66feab8e88c8f4102c2cae62fe3fd9c73f42ddae38e8cb",
+      "capacityShannons": "3852500000000",
+      "hashType": "data1"
+    },
+    {
+      "name": "custodyMarker",
+      "file": "custody_marker",
+      "index": 1,
+      "bytes": 21176,
+      "ckbDataHash": "0x2cb3516cf108c85e8f836bdf44d1c035c5bd9ff110bc5b0e8cd439d364cffd96",
+      "sha256": "8c0cfede81cc0d134b2afdd53841ba098c2a9b77b2bbb83fc7e5bfeffe332f22",
+      "capacityShannons": "2123700000000",
+      "hashType": "data1"
+    },
+    {
+      "name": "initializer",
+      "file": "atomic_initializer",
+      "index": 2,
+      "bytes": 43752,
+      "ckbDataHash": "0xaef09c5c6565ccc6bc4c1878fb97014df9f185fe1c84aa4093e8f216607ba4d7",
+      "sha256": "b1d6cedd334b1a6e735663c5e7bacc6befb289abab2e79ebea3e1c09b40de2f6",
+      "capacityShannons": "4381300000000",
+      "hashType": "data1"
+    }
+  ],
+  "reusedDependencies": {
+    "custody": {
+      "outPoint": {
+        "txHash": "0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e",
+        "index": "0x0"
+      },
+      "dataHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+      "depType": "code"
+    },
+    "marker": {
+      "outPoint": {
+        "txHash": "0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e",
+        "index": "0x3"
+      },
+      "dataHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+      "depType": "code"
+    },
+    "xudt": {
+      "outPoint": {
+        "txHash": "0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f",
+        "index": "0x0"
+      },
+      "depType": "code",
+      "dataHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+    },
+    "secp": {
+      "outPoint": {
+        "txHash": "0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37",
+        "index": "0x0"
+      },
+      "dataHash": "0xf66ca3517241864672b7f47d093aec4d6d4d07824068993eacd728eb9078e236",
+      "depType": "depGroup"
+    }
+  },
+  "provenance": [
+    {
+      "path": "labs/trade-v2-token/gate2/atomic-v2/atomic_initializer.c",
+      "sha256": "a0fd9cb5059779c2bc6d4e823031963a1e3a5dccc5ae09e72be9f97be146c7d1",
+      "lastSourceCommit": "ed462ec51bfeda027217c59239a7c3cacb325a71"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/atomic-v2/build.sh",
+      "sha256": "16fa9c4bed7022d443bf159e77b1d140c7e32531ca4d6ebe80c9244e0863b997",
+      "lastSourceCommit": "ed462ec51bfeda027217c59239a7c3cacb325a71"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/atomic-v2/build/atomic_codes.h",
+      "sha256": "81b52faa2191b8ed5683d1581d2a72cac7adfe090ebd131e07f0c6394e0d7367",
+      "lastSourceCommit": null
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/atomic-v2/build/codes.h",
+      "sha256": "4be324c7096b1b198e1594fe2d3503bf08ed48bed3ef22ed9def571471cc251b",
+      "lastSourceCommit": null
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/market_smt.c",
+      "sha256": "fa0f0db4f1eb545468deacc2d81e0ebc9a56983e616e3e0727ba6591700b4cfa",
+      "lastSourceCommit": "5abda5f57ef97e518b48df97d77ed21c0146927a"
+    },
+    {
+      "path": "labs/trade-v2-token/custody_marker.c",
+      "sha256": "ce058368ba33d8f3f4aa6d7ceb69b48b1e264c89b4177b158b8ffb5ee2f73177",
+      "lastSourceCommit": "ed462ec51bfeda027217c59239a7c3cacb325a71"
+    },
+    {
+      "path": "labs/wo16-launch-v2/owner-control/link.ld",
+      "sha256": "6590cd993133d1a1bf571fb574825dbf882fa61e79354d4fa5978425bc5d3941",
+      "lastSourceCommit": "79c597d9447eebfbe8a1ed1aaf0c7dc1b3332ecd"
+    }
+  ],
+  "compilerRecipe": {
+    "zig": "0.14.1",
+    "lld": "18",
+    "initializerLinker": "-shared -Bsymbolic --hash-style=sysv --strip-all -z max-page-size=4096; historical owner-control/link.ld",
+    "rebuiltDuringClosure": false
+  },
+  "cost": {
+    "classification": "DERIVED estimate, not a funded or signed transaction",
+    "feeRateShannonsPerKB": "1000",
+    "singleStandardSecpInputSerializedBytes": "104070",
+    "estimatedFeeShannons": "104074",
+    "lockedCodeCapacityShannons": "10357500000000",
+    "minimumChangeShannons": "6100000000",
+    "minimumFundingShannons": "10363600104074",
+    "feeCaveat": "Actual fee must be recomputed for actual input count; occupied capacity is locked, not a fee.",
+    "defaultLaunchMinimumFundingShannons": "145201000000"
+  },
+  "limits": [
+    "New transaction/block identities are unknowable before owner-approved deployment; draft null identities fail closed.",
+    "Owner must supply and verify the approved creator script hash.",
+    "Shared dependency cells must remain live and match the pinned bytes.",
+    "No contracts were rebuilt or deployed."
+  ]
+}

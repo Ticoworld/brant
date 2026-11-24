@@ -1,0 +1,24 @@
+// Owner preparation ONLY. This command cannot sign, send a transaction or mine.
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {ccc} from '@ckb-ccc/core';
+import {cccA} from '@ckb-ccc/core/advanced';
+import {prepareCodeDeployment} from '../lib/v2-engine/deployment.ts';
+import {discoverFunding} from '../lib/v2-engine/multi-funding.ts';
+import {verifyInitializationLive} from '../lib/v2-engine/initialization-live.ts';
+import {PUDGE_GATE2_ANCHOR} from '../lib/v2-engine/pudge-public-registry.ts';
+const args=process.argv.slice(2);if(args.length!==2)throw Error('Usage: node --experimental-strip-types scripts/prepare-atomic-pudge-transaction.mjs OWNER-LOCK.json NEW-REVIEW.json');
+const [lockPath,out]=args;assert(!existsSync(out),'Refusing to overwrite a review');
+const folder=fileURLToPath(new URL('../../../releases/atomic-pudge-rc1/',import.meta.url)),plan=JSON.parse(readFileSync(resolve(folder,'deployment-plan.json'),'utf8'));
+const owner=ccc.Script.from(JSON.parse(readFileSync(lockPath,'utf8')));assert.equal(owner.codeHash,'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8');assert.equal(owner.hashType,'type');assert.match(owner.args,/^0x[0-9a-f]{40}$/);
+const rpc=async(method,params)=>{assert(['get_block_hash','get_tip_header','get_indexer_tip','get_cells','get_live_cell'].includes(method));const response=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params}),signal:AbortSignal.timeout(20000)});const body=await response.json();assert(response.ok&&!body.error);return body.result;};
+assert.equal(await rpc('get_block_hash',['0x0']),plan.genesis);
+const codes=plan.codeCells.map(code=>({name:code.name,data:ccc.hexFrom(readFileSync(resolve(folder,code.file))),expectedDataHash:code.ckbDataHash}));
+const candidates=await discoverFunding(rpc,rpc,owner),secp=plan.reusedDependencies.secp;
+const result=prepareCodeDeployment(codes,candidates,owner,secp,1000n,[`${PUDGE_GATE2_ANCHOR.txHash}:${PUDGE_GATE2_ANCHOR.index}`]);
+assert.equal(result.status,'review','Insufficient eligible owner funding; no preparatory split is signed by this command');
+await verifyInitializationLive(rpc,plan.genesis,result.selected,[secp]);
+writeFileSync(out,JSON.stringify({kind:'UNSIGNED atomic code deployment review',genesis:plan.genesis,owner:owner.hash(),codeCells:plan.codeCells,transaction:cccA.JsonRpcTransformers.transactionFrom(result.transaction),inputs:result.selected,dependencies:[secp],feeShannons:String(result.fee),size:String(result.size),transactionHash:result.hash,warning:'Recheck owner, genesis, all code bytes, inputs and dependencies immediately before individual wallet approval. Broadcasting is a separate owner action.'},(_,v)=>typeof v==='bigint'?String(v):v,2)+'\n',{flag:'wx'});
+console.log('Unsigned review saved; no signing or broadcast performed.');

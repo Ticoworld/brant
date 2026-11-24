@@ -1,0 +1,30 @@
+{
+  "classification": "VERIFIED regression fixtures; retained read-only canonical CKBM evidence",
+  "rvk": {
+    "registryId": "pudge-xudt",
+    "marketHashUnchanged": true,
+    "fixture": "tests/pudge-market-service-replay.mjs",
+    "passed": [
+      "registered recovery",
+      "manifest recovery",
+      "process restart",
+      "successor checkpoint",
+      "stale anchor rejection",
+      "interruption",
+      "orphaned Sell replacement"
+    ]
+  },
+  "ckbm": {
+    "market": "0xeb8058b6a1f9a50e67024fd0e4e86210eba80ddea364bab3c567c114868367c0",
+    "retainedCanonicalTransactions": [
+      "0x40b0ff3314f947a86e64709faff21da5770a1cd82c07ae143a3f680ef6e0bc46",
+      "0x0ec51e5955bc96529d5440914dd24dfd262eb65aaca1618074c83491a9331481",
+      "0x725fb716a680785092b972121d6f9fc20383657de76ed74861dd542070c610cd"
+    ],
+    "retryFixture": "tests/legacy-publication-retry.mts",
+    "retryWithoutAuthorization": "publication_signature; no chain query, signing or broadcast",
+    "hostedRetry": "NOT INVOKED",
+    "relaunch": false
+  },
+  "runtime": "Legacy default is unchanged; missing atomic sessions still fall back to legacy; atomic configuration is opt-in and off by default."
+}

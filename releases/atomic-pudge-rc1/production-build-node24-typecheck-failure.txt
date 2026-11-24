@@ -1,0 +1,11 @@
+▲ Next.js 16.4.5 (webpack)
+- Environments: .env.local
+✓ Running next.config.mjs took 749ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 116s
+  Running TypeScript ...
+tests/atomic-pudge-config.mts(21,14): error TS2540: Cannot assign to 'NODE_ENV' because it is a read-only property.
+tests/atomic-pudge-config.mts(25,110): error TS2540: Cannot assign to 'NODE_ENV' because it is a read-only property.
+Failed to type check.
+

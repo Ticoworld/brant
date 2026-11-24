@@ -8,7 +8,7 @@ type Rpc = Parameters<typeof verifyInitializationLive>[0];
 type Cell = Parameters<typeof verifyInitializationLive>[2][number];
 type Dependency = Parameters<typeof verifyInitializationLive>[3][number] & {depType?: 'code' | 'depGroup'};
 const unit = 100_000_000n;
-// Qualified isolated family only. Public launch routes continue using the legacy family.
+// Qualified family. Public use additionally requires pinned operator configuration and restricted creator authorization.
 export const atomicV2Codes = {
   market: '0xb5ca7369dba433a13801ccb23ca64d586897010afac1eff04aa691829edd59a9',
   marker: '0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2',
@@ -25,14 +25,15 @@ const table=(fields:ccc.Hex[])=>{
   return ccc.hexFrom(concat(le(BigInt(offset),4),...offsets,...fields));
 };
 export async function planAtomicLaunchV2(rpc:Rpc,request:{
-  isolatedDevelopment:true; metadata:unknown; genesis:string; anchor:Cell; funding:Cell[]; supply:bigint; base:bigint; step:bigint; quantity:bigint; fee:bigint;
+  isolatedDevelopment?:true; publicQualification?:{approvedCreator:string}; metadata:unknown; genesis:string; anchor:Cell; funding:Cell[]; supply:bigint; base:bigint; step:bigint; quantity:bigint; fee:bigint;
   dependencies:Record<keyof typeof atomicV2Codes | 'secp',Dependency>;
   proof:(domain:{genesis_hash:string;market_script_hash:string;xudt_type_script_hash:string;custody_marker_type_hash:string},owner:string,quantity:bigint,price:bigint)=>Promise<{witness:string;newRoot:string}>;
 }){
   const anchor={...request.anchor,lock:ccc.Script.from(request.anchor.lock).clone(),outPoint:{...request.anchor.outPoint}};
   const {genesis,quantity,fee,supply,base,step}=request;
   const inputs=[anchor,...request.funding.map(c=>({...c,lock:ccc.Script.from(c.lock).clone(),outPoint:{...c.outPoint}}))];
-  if(request.isolatedDevelopment!==true||genesis===PUDGE_GATE2_GENESIS||!/^0x[0-9a-f]{64}$/.test(genesis))throw Error('Atomic family is isolated-development only');
+  if(!/^0x[0-9a-f]{64}$/.test(genesis)||
+    (genesis===PUDGE_GATE2_GENESIS ? request.isolatedDevelopment===true||request.publicQualification?.approvedCreator!==ccc.Script.from(anchor.lock).hash() : request.isolatedDevelopment!==true||Boolean(request.publicQualification)))throw Error('Atomic qualification network/creator is not authorized');
   const owner=ccc.Script.from(anchor.lock);
   if(owner.codeHash!=='0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8'||owner.hashType!=='type'||!/^0x[0-9a-f]{40}$/.test(owner.args)||anchor.type||anchor.data!=='0x')throw Error('Unsupported atomic creator input');
   if(quantity<=0n||quantity>=supply||supply>0xffffffffn||base<=0n||step<=0n||base>0xffffffffffffffffn||step>0xffffffffffffffffn||fee<=0n||fee>1_000_000n)throw Error('Invalid atomic launch terms');

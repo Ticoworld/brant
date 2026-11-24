@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "genesis": "0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606",
+  "creator": null,
+  "deployment": {
+    "txHash": null,
+    "blockHash": null
+  },
+  "dependencies": {
+    "custody": {
+      "outPoint": {
+        "txHash": "0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e",
+        "index": "0x0"
+      },
+      "dataHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000",
+      "depType": "code"
+    },
+    "market": {
+      "outPoint": {
+        "txHash": null,
+        "index": "0x0"
+      },
+      "dataHash": "0xb5ca7369dba433a13801ccb23ca64d586897010afac1eff04aa691829edd59a9",
+      "depType": "code"
+    },
+    "custodyMarker": {
+      "outPoint": {
+        "txHash": null,
+        "index": "0x1"
+      },
+      "dataHash": "0x2cb3516cf108c85e8f836bdf44d1c035c5bd9ff110bc5b0e8cd439d364cffd96",
+      "depType": "code"
+    },
+    "marker": {
+      "outPoint": {
+        "txHash": "0x573be2deb4bd7cd28679e5f30a194b2774fd674bd4d96844898cc25dcc49897e",
+        "index": "0x3"
+      },
+      "dataHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2",
+      "depType": "code"
+    },
+    "ownerLock": {
+      "outPoint": {
+        "txHash": null,
+        "index": "0x2"
+      },
+      "dataHash": "0xaef09c5c6565ccc6bc4c1878fb97014df9f185fe1c84aa4093e8f216607ba4d7",
+      "depType": "code"
+    },
+    "xudt": {
+      "outPoint": {
+        "txHash": "0xbf6fb538763efec2a70a6a3dcb7242787087e1030c4e7d86585bc63a9d337f5f",
+        "index": "0x0"
+      },
+      "depType": "code",
+      "dataHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+    },
+    "secp": {
+      "outPoint": {
+        "txHash": "0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37",
+        "index": "0x0"
+      },
+      "dataHash": "0xf66ca3517241864672b7f47d093aec4d6d4d07824068993eacd728eb9078e236",
+      "depType": "depGroup"
+    }
+  }
+}

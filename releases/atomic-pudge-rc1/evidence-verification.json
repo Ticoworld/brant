@@ -1,0 +1,136 @@
+{
+  "verified": true,
+  "chain": "REAL isolated",
+  "wallet": "SIMULATED disposable fixture",
+  "metadataSignatureVerified": true,
+  "transactionHashesVerified": true,
+  "oneMarketAcrossLinkedContinuations": true,
+  "independentExitVerified": true,
+  "qualifiedBinariesMatch": true,
+  "accounting": {
+    "initial": {
+      "inventory": 1993,
+      "custody": 7,
+      "conservedSupply": 2000,
+      "reserveShannons": "9100000000",
+      "outputs": [
+        {
+          "capacityShannons": "39100000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    },
+    "afterBuy": {
+      "inventory": 1992,
+      "custody": 8,
+      "conservedSupply": 2000,
+      "reserveShannons": "10800000000",
+      "outputs": [
+        {
+          "capacityShannons": "40800000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    },
+    "afterSell": {
+      "inventory": 1993,
+      "custody": 7,
+      "conservedSupply": 2000,
+      "reserveShannons": "9100000000",
+      "outputs": [
+        {
+          "capacityShannons": "39100000000",
+          "occupiedBytes": 242
+        },
+        {
+          "capacityShannons": "30000000000",
+          "occupiedBytes": 258
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 282
+        },
+        {
+          "capacityShannons": "35000000000",
+          "occupiedBytes": 298
+        }
+      ]
+    }
+  },
+  "evidence": [
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/atomic-browser-launch-checkpoint.json",
+      "bytes": 10407,
+      "sha256": "c72c0964c765e8d6fa7e62c6c0d650ddff9e6fb9dd8b238bdbdc8e73b50097d6"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795545122678/atomic-browser-acceptance.json",
+      "bytes": 19504,
+      "sha256": "74d033fa2790eb2d8669eb79a89ec3c30a2cce3692d00e74c2761d501f68a5cc"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795545122678/fresh-browser-discovery.png",
+      "bytes": 28711,
+      "sha256": "157f06de029f236b539a08b8e87c69138ac501efca28fbd4d3bd48e2ba39c77c"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795545122678/fresh-browser-ABR.png",
+      "bytes": 154213,
+      "sha256": "3573728831e808d20dad5d4b811c3cd3f0a43dc9ea7d6c7359b0475022aed262"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795545122678/atomic-portfolio.png",
+      "bytes": 78791,
+      "sha256": "32268c4d0c450afc218343351b20850e2f64afc36f7e3facad422b88ba9e207a"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795545122678/atomic-activity.png",
+      "bytes": 68341,
+      "sha256": "d736d6b976fcb9fafd9eff274cc3ca0156f480d31abe7571bf9877de28d79529"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795547354667/independent-atomic-verdict.json",
+      "bytes": 14156,
+      "sha256": "448db5e9bfe765623a123158fe9fc69c7f322216f45a9989ed59a72c97fa4582"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795547354667/atomic-release-timing.json",
+      "bytes": 9461,
+      "sha256": "2aeceeebb79eb771b5d2a16bc7e40e86e58cf47975bd9ac0bb18bb6a85bafa96"
+    },
+    {
+      "path": "labs/trade-v2-token/gate2/evidence/native-1795542972167/browser-continuation-1795544631172/browser-continuation-1795547354667/timed-atomic-launch.png",
+      "bytes": 62418,
+      "sha256": "e5d65727907d79ba3f5119b258777021d47963c6036c7a62b36c3a6015c02bb7"
+    }
+  ],
+  "limits": [
+    "Original browser interrupted-execution acceptance spans linked continuations, not one uninterrupted run.",
+    "Canonical status is retained receipt evidence plus the fresh independent full-block scan; no claim of CKB consensus proof from RPC.",
+    "Real external wallet/public atomic execution remains unverified."
+  ]
+}

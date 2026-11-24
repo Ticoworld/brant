@@ -1,0 +1,65 @@
+▲ Next.js 16.4.5 (webpack)
+- Environments: .env.local
+✓ Running next.config.mjs took 500ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 31.0s
+  Running TypeScript ...
+  Finished TypeScript in 37.9s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/18) ...
+  Generating static pages using 7 workers (4/18) 
+  Generating static pages using 7 workers (8/18) 
+  Generating static pages using 7 workers (13/18) 
+✓ Generating static pages using 7 workers (18/18) in 23.0s
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /activity
+├ ƒ /api/health
+├ ƒ /api/local-rpc
+├ ƒ /api/markets
+├ ƒ /api/markets/[id]
+├ ƒ /api/markets/catalog
+├ ƒ /api/pudge-r7-deployment
+├ ƒ /api/pudge-r7-deployment/reconcile
+├ ƒ /api/pudge-r7-deployment/verify
+├ ƒ /api/pudge-wallet-test
+├ ƒ /api/r7/assignment-review
+├ ƒ /api/r7/markets
+├ ƒ /api/r7/message-check
+├ ƒ /api/r7/offers
+├ ƒ /api/r7/rpc
+├ ƒ /api/v2-init-bootstrap
+├ ƒ /api/v2-init-proof
+├ ƒ /api/v2-local-bootstrap
+├ ƒ /api/v2-recovery-identity
+├ ƒ /api/v2/code
+├ ƒ /api/v2/launch/[action]
+├ ƒ /api/v2/launch/logo
+├ ƒ /api/v2/order-proof
+├ ƒ /api/v2/orders
+├ ƒ /api/v2/proof
+├ ƒ /api/v2/pudge-init-proof
+├ ƒ /api/v2/pudge-journey
+├ ƒ /api/v2/pudge-proof
+├ ƒ /api/v2/pudge-rpc
+├ ○ /experience-fixture
+├ ○ /fixture
+├ ○ /launch
+├ ƒ /market/[id]
+├ ○ /portfolio
+├ ƒ /pudge/r7-deploy
+├ ƒ /pudge/wallet-test
+├ ○ /r7
+├ ƒ /r7-assignment
+├ ƒ /r7-wallet-check
+└ ○ /trade-preview
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

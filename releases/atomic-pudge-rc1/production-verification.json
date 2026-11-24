@@ -1,0 +1,28 @@
+{
+  "verified": true,
+  "node": "v24.19.0",
+  "mode": "production",
+  "isolatedOverrides": false,
+  "qualificationEnabled": false,
+  "launchWritesEnabled": false,
+  "health": 200,
+  "launch": 200,
+  "responses": [
+    {
+      "action": "submit",
+      "status": 403
+    },
+    {
+      "action": "resubmit",
+      "status": 403
+    }
+  ],
+  "legacyRetryRecognized": true,
+  "legacyUnknownSessionReturnsNull": true,
+  "legacyRetryHTTP": 200,
+  "temporaryDatabase": "/tmp/brant-rc-production-WJhCFx",
+  "publicTransactions": false,
+  "limitations": [
+    "This is a local production runtime smoke test, not a Railway deployment or hosted CKBM retry."
+  ]
+}

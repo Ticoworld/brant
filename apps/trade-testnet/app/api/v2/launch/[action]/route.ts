@@ -30,7 +30,7 @@ const legacyOperate = launchOperations({rpc, genesis: network.genesis, fixture:n
     return rpc('send_transaction', [cccA.JsonRpcTransformers.transactionFrom(transaction)]);
   } : undefined,
 });
-const atomicOperate=network.fixture?.market.dataHash===atomicV2Codes.market?atomicLaunchOperations(rpc,network,launchWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>owner===approvedCreator):undefined;
+const atomicOperate=(network.atomic||network.fixture?.market.dataHash===atomicV2Codes.market)?atomicLaunchOperations(rpc,network,launchWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>owner===approvedCreator):undefined;
 const operate=async(action:string,input:Record<string,unknown>,timing?:(name:string,ms:number)=>void):Promise<unknown>=>{
  if(!atomicOperate||action==='normalize-logo')return legacyOperate(action,input,timing);
  if(action==='sessions'){const [atomic,legacy]=await Promise.all([atomicOperate(action,input,timing),legacyOperate(action,input,timing)]);return [...atomic as unknown[],...legacy as unknown[]];}

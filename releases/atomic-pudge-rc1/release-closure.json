@@ -1,0 +1,114 @@
+{
+  "verdict": "RELEASE CANDIDATE PREPARED FOR OWNER-CONTROLLED PUDGE QUALIFICATION; NOT DEPLOYED OR ACTIVATED",
+  "sourceBaseline": "e182752",
+  "evidenceVerified": true,
+  "measurements": {
+    "sample": "one instrumented application Launch on a real isolated chain and disposable simulated signer",
+    "prepareRPC": 15,
+    "submitVerificationRPC": 9,
+    "canonicalConfirmationAndPublicationRPC": 4,
+    "broadcasts": {
+      "count": 1,
+      "classification": "DERIVED from single-submit execution and committed receipt; not in Server-Timing"
+    },
+    "countScope": "Instrumented server validation calls. Excludes wallet RPC, mining and bootstrap; broadcast not counted by Server-Timing.",
+    "reviewPreparationApplicationMs": 470,
+    "reviewPreparationResponseHeadersMs": 20656.617394,
+    "clickToFixtureSignerMs": 141.69999999925494,
+    "canonicalObservationToPublicationResponseMs": 195.64331300000777,
+    "timingLimit": "Canonical commitment observed after local block generation; first reconcile waits for that observation. Includes publication request/response, excludes unknown native commitment-to-observer delay. Not a real wallet opening latency.",
+    "developmentCompilationMs": 14500,
+    "priorBrowserPreparationRPC": 14,
+    "qualifiedTwoInputPlannerRPC": 10
+  },
+  "independentRecoveryAndExit": {
+    "verified": true,
+    "initialization": "0x90affaff4602b2c2996514c41747c888676ec6164eda9c03a79a69d70789eee7",
+    "withdrawal": "0xde9980bfdfc61fed30ed26d5f52eb8badfa482c42cc89e39f3d33139fb0030d3",
+    "canonicalBlockHash": "0x21dfb14884d836b916e355f0bb9f7c3f68d0769143a53a5216b0e0d90c9b7064",
+    "before": 7,
+    "externalWithdrawn": 7,
+    "remainingCustody": 0,
+    "entitlement": 0,
+    "inventory": 1993,
+    "conservedSupply": 2000,
+    "applicationStopped": true,
+    "indexerUsed": false,
+    "databaseUsed": false,
+    "proofCacheUsed": false,
+    "evidence": "labs\\trade-v2-token\\gate2\\evidence\\native-1795542972167\\browser-continuation-1795544631172\\browser-continuation-1795547354667\\independent-atomic-verdict.json"
+  },
+  "legacyCompatibility": "legacy-compatibility.json",
+  "deploymentPlan": "deployment-plan.json",
+  "configuration": "qualification-manifest.draft.json",
+  "configurationGates": "qualification.env.example",
+  "procedure": "README.md",
+  "production": {
+    "verified": true,
+    "node": "v24.19.0",
+    "mode": "production",
+    "isolatedOverrides": false,
+    "qualificationEnabled": false,
+    "launchWritesEnabled": false,
+    "health": 200,
+    "launch": 200,
+    "responses": [
+      {
+        "action": "submit",
+        "status": 403
+      },
+      {
+        "action": "resubmit",
+        "status": 403
+      }
+    ],
+    "legacyRetryRecognized": true,
+    "legacyUnknownSessionReturnsNull": true,
+    "legacyRetryHTTP": 200,
+    "temporaryDatabase": "/tmp/brant-rc-production-WJhCFx",
+    "publicTransactions": false,
+    "limitations": [
+      "This is a local production runtime smoke test, not a Railway deployment or hosted CKBM retry."
+    ]
+  },
+  "railwayPushGate": {
+    "verifiedDuringThisRun": true,
+    "method": "read-only authenticated Railway Source settings UI",
+    "projectId": "1ceb0f64-fb41-4e18-852e-958f7c10bb0a",
+    "serviceId": "dc3e1d7c-ca22-4b9d-8037-0a4e26c35ef9",
+    "environment": "production",
+    "sourceRepository": "Ticoworld/brant",
+    "branch": "main",
+    "observed": "Auto deploy is disabled",
+    "adjacentAction": "Enable",
+    "settingsChanged": false,
+    "deploymentInitiated": false,
+    "reloadedAndRecheckedBeforePush": "2026-11-24T19:36:57.310Z"
+  },
+  "frozen": [
+    "native contracts",
+    "native ELF hashes/linker",
+    "transaction construction and economics",
+    "metadata transaction authorization",
+    "submission and publication reconciliation",
+    "approved UI"
+  ],
+  "releaseBlockerFixed": "Previously every public Pudge atomic plan/route was unconditionally rejected. Added only a dormant operator-pinned deployment/creator/network gate; both activation and writes remain off.",
+  "retainedFailures": [
+    "WSL collector initially selected the existing Windows verifier; compiled the pinned standalone verifier for Linux, no protocol source changed.",
+    "Node 24 build caught read-only NODE_ENV assignment in the new test; fixed test-only environment typing.",
+    "Production smoke initially expected 409 for an unknown legacy session; corrected to the existing null/200 no-op. Existing-session missing-authorization fixture separately verifies publication_signature."
+  ],
+  "limitations": [
+    "No public atomic contract deployment, Launch, trading or withdrawal was initiated.",
+    "Actual deployment transaction/block hashes and approved creator are intentionally null in the draft until owner selection/approval and canonical commitment.",
+    "Real external-wallet interoperability, wallet popup latency, hosted CKBM retry and public atomic acceptance remain unverified.",
+    "Canonical-observation timing excludes unknown actual commitment-to-observer delay; it is not full public commitment-to-publication latency.",
+    "Standalone signed exit acceptance is private-node/disposable-key only; public wallet signing and archival availability still require owner qualification.",
+    "Native/source tests are not a security audit or production readiness claim."
+  ],
+  "publicTransactions": false,
+  "publicWriteActivation": false,
+  "deployment": false,
+  "ownerChanges": "Existing owner tsconfig changes and all historical evidence retained."
+}

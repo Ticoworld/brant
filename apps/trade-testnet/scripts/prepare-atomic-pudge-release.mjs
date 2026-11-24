@@ -1,0 +1,27 @@
+// Read-only release preparation: no RPC writes, signing or deployment.
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
+import {resolve,join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {ccc} from '@ckb-ccc/core';
+import {atomicV2Codes} from '../lib/v2-engine/atomic-launch-v2.ts';
+import {sharedLaunchDependencies} from '../lib/v2-engine/shared-launch.ts';
+import {PUDGE_GATE2_GENESIS} from '../lib/v2-engine/pudge-public-registry.ts';
+import {prepareCodeDeployment} from '../lib/v2-engine/deployment.ts';
+const root=resolve(fileURLToPath(new URL('../../..',import.meta.url))),out=join(root,'releases/atomic-pudge-rc1');mkdirSync(out,{recursive:true});
+const sha=b=>createHash('sha256').update(b).digest('hex'),read=p=>readFileSync(join(root,p));
+const definitions=[['market','market_smt',0],['custodyMarker','custody_marker',1],['initializer','atomic_initializer',2]];
+const codes=definitions.map(([name,file,index])=>{const path='labs/trade-v2-token/gate2/atomic-v2/build/'+file,data=read(path);assert.equal(ccc.hashCkb(data),atomicV2Codes[name]);copyFileSync(join(root,path),join(out,file));return {name,file,index,bytes:data.length,ckbDataHash:atomicV2Codes[name],sha256:sha(data),capacityShannons:String(BigInt(data.length+61)*100000000n),hashType:'data1',expectedDataHash:atomicV2Codes[name],data:ccc.hexFrom(data)};});
+const deps=Object.fromEntries(Object.entries(sharedLaunchDependencies(PUDGE_GATE2_GENESIS)).map(([name,d])=>[name,{...d,depType:name==='secp'?'depGroup':'code'}]));
+for(const [name,index] of [['market',0],['custodyMarker',1],['ownerLock',2]])deps[name]={outPoint:{txHash:null,index:'0x'+index},dataHash:name==='ownerLock'?atomicV2Codes.initializer:atomicV2Codes[name],depType:'code'};
+const owner={codeHash:'0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8',hashType:'type',args:'0x'+'00'.repeat(20)};
+const minimum=codes.reduce((n,c)=>n+BigInt(c.capacityShannons),0n),candidate={outPoint:{txHash:'0x'+'11'.repeat(32),index:'0x0'},capacity:minimum+100n*100000000n,lock:owner,data:'0x'};
+const fee=prepareCodeDeployment(codes,[candidate],owner,deps.secp,1000n);assert.equal(fee.status,'review');
+const sources=['labs/trade-v2-token/gate2/atomic-v2/atomic_initializer.c','labs/trade-v2-token/gate2/atomic-v2/build.sh','labs/trade-v2-token/gate2/atomic-v2/build/atomic_codes.h','labs/trade-v2-token/gate2/atomic-v2/build/codes.h','labs/trade-v2-token/gate2/market_smt.c','labs/trade-v2-token/custody_marker.c','labs/wo16-launch-v2/owner-control/link.ld'];
+const provenance=sources.map(path=>({path,sha256:sha(read(path)),lastSourceCommit:path.includes('/build/')?null:execFileSync('git',['log','-1','--format=%H','--',path],{cwd:root,encoding:'utf8'}).trim()}));
+const manifest={version:1,genesis:PUDGE_GATE2_GENESIS,creator:null,deployment:{txHash:null,blockHash:null},dependencies:deps};
+writeFileSync(join(out,'qualification-manifest.draft.json'),JSON.stringify(manifest,null,2)+'\n');
+writeFileSync(join(out,'deployment-plan.json'),JSON.stringify({status:'UNSIGNED PLAN; NOT DEPLOYED',baseline:'e182752',genesis:PUDGE_GATE2_GENESIS,codeCells:codes.map(({data,expectedDataHash,...c})=>c),reusedDependencies:Object.fromEntries(['custody','marker','xudt','secp'].map(n=>[n,deps[n]])),provenance,compilerRecipe:{zig:'0.14.1',lld:'18',initializerLinker:'-shared -Bsymbolic --hash-style=sysv --strip-all -z max-page-size=4096; historical owner-control/link.ld',rebuiltDuringClosure:false},cost:{classification:'DERIVED estimate, not a funded or signed transaction',feeRateShannonsPerKB:'1000',singleStandardSecpInputSerializedBytes:String(fee.size),estimatedFeeShannons:String(fee.fee),lockedCodeCapacityShannons:String(minimum),minimumChangeShannons:'6100000000',minimumFundingShannons:String(minimum+6100000000n+fee.fee),feeCaveat:'Actual fee must be recomputed for actual input count; occupied capacity is locked, not a fee.',defaultLaunchMinimumFundingShannons:'145201000000'},limits:['New transaction/block identities are unknowable before owner-approved deployment; draft null identities fail closed.','Owner must supply and verify the approved creator script hash.','Shared dependency cells must remain live and match the pinned bytes.','No contracts were rebuilt or deployed.']},null,2)+'\n');
+console.log(JSON.stringify({out,codeCapacityCKB:String(minimum/100000000n),estimatedFeeShannons:String(fee.fee),serializedBytes:String(fee.size)}));

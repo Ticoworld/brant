@@ -1,0 +1,14 @@
+{
+  "verifiedDuringThisRun": true,
+  "method": "read-only authenticated Railway Source settings UI",
+  "projectId": "1ceb0f64-fb41-4e18-852e-958f7c10bb0a",
+  "serviceId": "dc3e1d7c-ca22-4b9d-8037-0a4e26c35ef9",
+  "environment": "production",
+  "sourceRepository": "Ticoworld/brant",
+  "branch": "main",
+  "observed": "Auto deploy is disabled",
+  "adjacentAction": "Enable",
+  "settingsChanged": false,
+  "deploymentInitiated": false,
+  "reloadedAndRecheckedBeforePush": "2026-11-24T19:36:57.310Z"
+}

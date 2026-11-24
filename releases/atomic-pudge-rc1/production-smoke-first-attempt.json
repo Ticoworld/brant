@@ -1,0 +1,9 @@
+{
+  "status": "test assertion corrected",
+  "expected": 409,
+  "observed": 200,
+  "response": null,
+  "reason": "Legacy retry returns null for an unknown session. The missing-saved-authorization 409 fixture uses an existing session; it is a separate case.",
+  "applicationDefect": false,
+  "publicWrites": false
+}
