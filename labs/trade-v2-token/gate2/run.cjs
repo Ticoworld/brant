@@ -215,7 +215,8 @@ async function main() {
       assert.equal(evidence.after.tip.number, tip.number);
     };
     await runSharedLaunch({rpc, genesis: genesis.header.hash, hashes, deps, secp, wallets, locks,
-      cell, tx, sign, commit, makeProof, le, out, camel: C.camel, restartNode});
+      cell, tx, sign, commit, makeProof, le, out, camel: C.camel, restartNode,
+      signMetadata:(role,message)=>new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(),keys[role]).signMessageRaw(message)});
     return;
   }
 

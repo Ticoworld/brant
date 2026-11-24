@@ -86,7 +86,7 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
     }
     const {owner, market} = input;
     if (typeof owner !== 'string' || !hash.test(owner) || typeof market !== 'string' || !hash.test(market)) throw Error('Invalid session identity');
-    if (action === 'submit' && (!send || !authorizeCreator(owner))) throw Error('Launch execution is disabled');
+    if (['submit','resubmit'].includes(action) && (!send || !authorizeCreator(owner))) throw Error('Launch execution is disabled');
     const store = openStore();
     try {
       const session = store.find(genesis, market, owner);
@@ -114,6 +114,23 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       const entries = journal.entries.map(({stage, state, txHash, blockHash}) => ({stage, state, txHash, blockHash}));
       if (action === 'session') return {entries, hashes, published: store.isPublished(scope, hashes), enabled: Boolean(send && authorizeCreator(scope.owner))};
       const plan = await recoverSharedLaunch(rpc, store, scope, hashes);
+      if(action==='pending-review'||action==='resubmit'){
+        const pending=journal.entries.at(-1);
+        if(!pending||pending.state!=='submitted')throw Error('No pending immutable launch transaction');
+        const row=await rpc('get_transaction',[pending.txHash]) as {transaction?:unknown;tx_status?:{status?:string}}|null;
+        if(row?.transaction||(row?.tx_status?.status&&row.tx_status.status!=='unknown'))throw Error('Reconcile the known transaction before renewed approval');
+        // Absence permits only renewed approval of this exact immutable stage.
+        // The persisted pending entry remains intact throughout the operation.
+        const prior={...journal,entries:journal.entries.slice(0,-1)};
+        const transaction=await plan.prepareStage(pending.stage,JSON.stringify(prior));
+        if(transaction.hash()!==pending.txHash)throw Error('Pending launch transaction changed');
+        if(action==='pending-review')return {stage:pending.stage,transaction:cccA.JsonRpcTransformers.transactionFrom(transaction)};
+        if(input.stage!==pending.stage)throw Error('Pending launch stage mismatch');
+        const signed=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(input.signed as never));
+        plan.verifySignature(pending.stage,signed);
+        if(await send!(signed)!==pending.txHash)throw Error('Launch submission acknowledgement differs from review');
+        return {submitted:pending.txHash};
+      }
       if (action === 'publish') {
         const metadata = verifyLaunchMetadata(scope, input.metadata, input.signature);
         const plan = await verifyCompletedSharedLaunch(rpc, store, session);

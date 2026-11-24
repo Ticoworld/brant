@@ -9,13 +9,15 @@ type Config = {genesis:string;funding?:{txHash:string;index:string};deps:Record<
 const codes:Record<string,string>={custody_smt:'0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000',custody_marker:'0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc',xudt:'0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95'};
 // Construct only from canonical replay and a wallet-owned plain funding cell.
 export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, quantity:bigint, walletLock?:ccc.Script, fundingHint?:FundingHint) {
-  const pudge=config.format==='roveko-pudge-market-v1';
+  const pudge=(config.format==='roveko-pudge-market-v1'||config.format==='brant-shared-pudge-market-v1');
   const response=await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side:'withdraw',quantity:quantity.toString(),...(pudge?{manifest:config}:{})})});
   if(!response.ok)throw Error(response.headers.get('content-type')?.startsWith('text/plain')?(await response.text()).slice(0,200):'Recovery proof unavailable');
   const body=await response.json();
   const p=body.proof;
   if(body.genesis!==config.genesis || p.side!=='withdraw' || p.quantity!==quantity.toString()) throw Error('Recovery identity mismatch');
   if(pudge){
+    if(!config.scripts||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Withdrawal market identity mismatch');
+    if(!body.manifest||['market','custody','custodyMarker','token'].some(name=>ccc.Script.from(config.scripts![name]).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash()))throw Error('Withdrawal proof script identity mismatch');
     if(!p.tip_outpoint?.tx_hash||!p.tip_outpoint?.index||!p.old_root||!p.new_root||typeof p.witness!=='string'||!config.scripts)throw Error('Pudge withdrawal proof is incomplete');
     const [genesis,points]=await Promise.all([rpc('get_block_hash',['0x0']),discoverCustodyPair(rpc,p.tip_outpoint)]);if(typeof genesis!=='string'||genesis.toLowerCase()!==config.genesis.toLowerCase())throw Error('Wrong Pudge network');
 
@@ -52,7 +54,13 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
     }
     const tokenOutput=ccc.CellOutput.from({capacity:0,lock:ownerScript,type:tokenType});
     const minimum=BigInt(tokenOutput.occupiedSize+16)*100_000_000n+1_000_000n;
-    const secp={outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup'} as const;
+    let secpHash='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
+    if(config.format==='brant-shared-pudge-market-v1'){
+      const block=await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
+      if(block.header.hash!==config.genesis||!block.transactions[1]?.hash)throw Error('Withdrawal genesis dependency mismatch');
+      secpHash=block.transactions[1].hash;
+    }
+    const secp={outPoint:{txHash:secpHash,index:'0x0'},depType:'depGroup'} as const;
     const funding=await selectTradeFunding(rpc,ownerScript,minimum+61n*100_000_000n,fundingHint);
     const review=buildWithdrawal([...cells,funding],quantity,p.new_root,p.witness,1_000_000n,[secp,config.deps.custody_smt,config.deps.custody_marker,config.deps.xudt],config.genesis,owner);
     return {...review,externalAfter:externalBalance+quantity,internalAfter:BigInt(p.owner.balance)-quantity,inputs:[...cells,funding] as [Cell,Cell,Cell]};

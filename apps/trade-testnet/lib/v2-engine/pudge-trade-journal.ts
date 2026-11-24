@@ -3,19 +3,21 @@ import {cccA} from '@ckb-ccc/core/advanced';
 import {verifyInitializationSignature} from './initialization-signature.ts';
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 type Market={genesis:string;scripts:{market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
-type Attempt={version:1;genesis:string;owner:string;txHash:string;transaction:unknown};
+type Attempt={market?:string;version:1;genesis:string;owner:string;txHash:string;transaction:unknown};
 const hash=/^0x[0-9a-f]{64}$/i;
-export const tradeKey=(genesis:string,owner:string)=>`roveko-pudge-trade-v1:${genesis.toLowerCase()}:${owner.toLowerCase()}`;
+export const tradeKey=(genesis:string,owner:string,market?:string)=>`roveko-pudge-trade-v1:${genesis.toLowerCase()}:${owner.toLowerCase()}${market?':'+market.toLowerCase():''}`;
 const from=(value:unknown)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(value as never));
-export function makeTradeAttempt(genesis:string,owner:string,tx:ccc.Transaction):Attempt{
+export function makeTradeAttempt(genesis:string,owner:string,tx:ccc.Transaction,market?:string):Attempt{
  if(!hash.test(genesis)||!hash.test(owner)||tx.inputs.length!==5||tx.outputs.length!==5||tx.witnesses.length!==6)throw Error('Invalid trade attempt');
- return {version:1,genesis,owner,txHash:tx.hash(),transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
+ if(market&&(!hash.test(market)||tx.outputs[0].lock.hash().toLowerCase()!==market.toLowerCase()))throw Error('Trade market mismatch');
+ return {...(market?{market}:{}),version:1,genesis,owner,txHash:tx.hash(),transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
 }
 export function parseTradeAttempt(raw:string):Attempt{
  if(raw.length>262144)throw Error('Trade record too large');const v=JSON.parse(raw) as Attempt;
  if(!v||v.version!==1||!hash.test(v.genesis)||!hash.test(v.owner)||!hash.test(v.txHash)||!v.transaction)throw Error('Invalid trade record');
  const tx=from(v.transaction);if(tx.hash().toLowerCase()!==v.txHash.toLowerCase()||tx.inputs.length!==5||tx.outputs.length!==5||tx.witnesses.length!==6)throw Error('Trade record transaction mismatch');
- return {version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
+ if(v.market&&(!hash.test(v.market)||tx.outputs[0].lock.hash().toLowerCase()!==v.market.toLowerCase()))throw Error('Trade market mismatch');
+ return {...(v.market?{market:v.market}:{}),version:1,genesis:v.genesis,owner:v.owner,txHash:v.txHash,transaction:cccA.JsonRpcTransformers.transactionFrom(tx)};
 }
 type CommittedRow={transaction?:unknown;tx_status?:{status?:string;block_hash?:string}};
 
@@ -24,7 +26,7 @@ export async function submitJournaledTrade(
  storage:Pick<Storage,'getItem'|'setItem'>,attempt:Attempt,
  send:()=>Promise<string>,onPersist:(raw:string)=>void,
 ){
- const key=tradeKey(attempt.genesis,attempt.owner);
+ const key=tradeKey(attempt.genesis,attempt.owner,attempt.market);
  if(storage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
  const raw=JSON.stringify(attempt);
  storage.setItem(key,raw);
@@ -79,7 +81,7 @@ export async function reconcilePudgeTrade(rpc:Rpc,record:Attempt,market:Market|P
 /** Persist the original signed attempt before retiring the active journal. */
 export function saveTradeSettlement(storage:Pick<Storage,'getItem'|'setItem'|'removeItem'>,key:string,raw:string,height:string){
  const attempt=parseTradeAttempt(raw);
- if(tradeKey(attempt.genesis,attempt.owner)!==key||storage.getItem(key)!==raw)return false;
+ if(tradeKey(attempt.genesis,attempt.owner,attempt.market)!==key||storage.getItem(key)!==raw)return false;
  storage.setItem(key+':settled',JSON.stringify({raw,height}));
  storage.setItem(key+':confirmed',attempt.txHash);
  storage.removeItem(key);
@@ -92,7 +94,7 @@ export function readTradeSettlement(storage:Pick<Storage,'getItem'>,key:string){
  if(!saved)return null;
  const {raw}=JSON.parse(saved) as {raw:string};
  const attempt=parseTradeAttempt(raw);
- if(tradeKey(attempt.genesis,attempt.owner)!==key)throw Error('Settlement owner or network mismatch');
+ if(tradeKey(attempt.genesis,attempt.owner,attempt.market)!==key)throw Error('Settlement owner or network mismatch');
  return attempt;
 }
 

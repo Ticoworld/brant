@@ -1,4 +1,7 @@
-export const PUDGE_GENESIS='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
+const isolatedGenesis=process.env.NEXT_PUBLIC_BRANT_ISOLATED_GENESIS;
+if(isolatedGenesis&&(process.env.NODE_ENV==='production'||process.env.NEXT_PUBLIC_BRANT_ISOLATED_TEST!=='1'||!/^0x[0-9a-f]{64}$/.test(isolatedGenesis)))throw Error('Isolated client configuration is disabled');
+const publicGenesis='0x10639e0895502b5688a6be8cf69460d76541bfa4821629d86d62ba0aae3f9606';
+export const PUDGE_GENESIS=isolatedGenesis||publicGenesis;
 const SECP_CODE='0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
 
 export type RpcScript={code_hash:string;hash_type:string;args:string};

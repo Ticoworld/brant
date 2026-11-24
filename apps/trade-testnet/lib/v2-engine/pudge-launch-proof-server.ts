@@ -2,6 +2,7 @@ import {execFile} from 'node:child_process';
 import {deriveMarketIdentity} from './initialization.ts';
 import {resolveGate2NativeTools} from './native-tools.ts';
 import {PUDGE_GATE2_CODES, PUDGE_GATE2_GENESIS} from './pudge-public-registry.ts';
+import {marketNetwork} from './market-network-server.ts';
 const hash = /^0x[0-9a-f]{64}$/i;
 function runNative(binary: string, args: string[], payload: object) {
   return new Promise<string>((resolve, reject) => {
@@ -27,10 +28,11 @@ async function generateProof(anchor: {txHash: string; index: string}, owner: str
     const {smt, recovery} = await resolveGate2NativeTools();
     if (!smt || !recovery) throw Error('Proof tools unavailable');
 
-    const genesis = PUDGE_GATE2_GENESIS;
+    const network=marketNetwork(),genesis = network.genesis;
+    const codes=network.fixture?Object.fromEntries(Object.entries(network.fixture).map(([name,dep])=>[name,dep.dataHash])):PUDGE_GATE2_CODES;
     const id = deriveMarketIdentity({
       anchor, genesis, base: 1_000_000_000n, step: 100_000_000n, supply: 2000n,
-      codes: {...PUDGE_GATE2_CODES, owner: PUDGE_GATE2_CODES.ownerLock},
+      codes: {market:codes.market,marker:codes.marker,owner:codes.ownerLock,custody:codes.custody,custodyMarker:codes.custodyMarker,xudt:codes.xudt},
     });
     const market = id.market.hash();
     const custody = id.custody.hash();

@@ -17,18 +17,18 @@ export function averageShannons(event:TradeEvent) {
 
 export type LocalAttempt={kind:'trade'|'withdrawal';hash:string};
 const hash=/^0x[0-9a-f]{64}$/i;
-export function readActivityAttempts(storage:Pick<Storage,'getItem'>,genesis:string,owner:string,confirmed:TradeEvent[]):LocalAttempt[] {
+export function readActivityAttempts(storage:Pick<Storage,'getItem'>,genesis:string,owner:string,confirmed:TradeEvent[],market?:string):LocalAttempt[] {
   if(!hash.test(genesis)||!hash.test(owner))return [];
   genesis=genesis.toLowerCase();
   owner=owner.toLowerCase();
   const attempts:LocalAttempt[]=[];
   for(const kind of ['trade','withdrawal'] as const){
     try {
-      const key=kind==='trade'?tradeKey(genesis,owner):'roveko-pudge-withdrawal-v1:'+genesis+':'+owner;
+      const key=kind==='trade'?tradeKey(genesis,owner,market):'roveko-pudge-withdrawal-v1:'+genesis+':'+owner+(market?':'+market:'');
       const raw=storage.getItem(key);
       if(!raw||raw.length>262144)continue;
       const record=kind==='trade'?parseTradeAttempt(raw):JSON.parse(raw);
-      if(record.version!==1||record.genesis.toLowerCase()!==genesis||record.owner.toLowerCase()!==owner||!hash.test(record.txHash))continue;
+      if(record.market!==market||record.version!==1||record.genesis.toLowerCase()!==genesis||record.owner.toLowerCase()!==owner||!hash.test(record.txHash))continue;
       const txHash=record.txHash.toLowerCase();
       if(kind==='withdrawal'){
         const tx=cccA.JsonRpcTransformers.transactionTo(record.transaction);

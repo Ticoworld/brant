@@ -11,9 +11,7 @@ import {formatCkb} from './rpc';
 import type {MarketData, Side} from './types';
 import PreviewChart, {RecentTrades} from './PreviewChart';
 
-const marketId = 'pudge-xudt';
-
-export default function TradePreview() {
+export default function TradePreview({marketId='pudge-xudt'}:{marketId?:string}) {
   const [side, setSide] = useState<Side>('buy');
   const session = useMarketSession(marketId, side, true);
   return <TradeV2 session={session} side={side} setSide={setSide} />;
@@ -35,6 +33,7 @@ export function TradeV2({session, side, setSide}: {
     return () => clearInterval(timer);
   }, []);
 
+  const symbol = market?.token.symbol ?? 'Token';
   const buying = side === 'buy';
   const validQuantity = /^[0-9]{1,10}$/.test(quantity) && BigInt(quantity) > 0n;
   let amount: bigint | null = null;
@@ -103,7 +102,7 @@ export function TradeV2({session, side, setSide}: {
   const action = !walletReady
     ? copy(locale, walletOpening ? (account.state === 'checking' ? 'walletChecking' : 'connecting') : 'connect')
     : review === 'unavailable' ? (zh ? '重新准备报价' : 'Retry quote preparation')
-    : zh ? (buying ? '买入 RVK' : '卖出 RVK') : (buying ? 'Buy RVK' : 'Sell RVK');
+    : zh ? (buying ? `买入 ${symbol}` : `卖出 ${symbol}`) : (buying ? `Buy ${symbol}` : `Sell ${symbol}`);
   const submit = () => {
     if (!walletReady) {account.connect(); return;}
     if (!canPrepare || amount === null || !market || Date.now() - market.refreshedAt > 60_000) return;
@@ -116,12 +115,12 @@ export function TradeV2({session, side, setSide}: {
       <main className="preview-canvas">
         <header className="preview-market">
           <div className="preview-identity">
-            <TokenMark symbol="RVK" />
-            <div><h1>{market?.pair ?? 'RVK / CKB'}</h1><p>{market?.token.name ?? 'Roveko Genesis'}</p></div>
+            <TokenMark symbol={symbol} />
+            <div><h1>{market?.pair ?? '— / CKB'}</h1><p>{market?.token.name ?? 'Loading market'}</p></div>
           </div>
           <dl className="preview-prices">
-            <Metric label={zh ? '买入价 / RVK' : 'Buy price / RVK'} value={market && market.inventory !== '0' ? formatCkb(market.buyOneShannons) : '—'} unit="CKB" tone="mint" />
-            <Metric label={zh ? '卖出价 / RVK' : 'Sell price / RVK'} value={market && market.curve.sold !== '0' ? formatCkb(market.sellOneShannons) : '—'} unit="CKB" tone="sell" />
+            <Metric label={zh ? `买入价 / ${symbol}` : `Buy price / ${symbol}`} value={market && market.inventory !== '0' ? formatCkb(market.buyOneShannons) : '—'} unit="CKB" tone="mint" />
+            <Metric label={zh ? `卖出价 / ${symbol}` : `Sell price / ${symbol}`} value={market && market.curve.sold !== '0' ? formatCkb(market.sellOneShannons) : '—'} unit="CKB" tone="sell" />
           </dl>
         </header>
         <div className="preview-layout">
@@ -171,8 +170,8 @@ export function TradeV2({session, side, setSide}: {
               </div>
               <dl>
                 <Metric label={zh ? '可用曲线储备' : 'Spendable curve reserve'} detail={zh ? '不含 Cell 占用容量' : 'Excludes occupied Cell capacity'} value={market ? formatCkb(market.reserveShannons) : '—'} unit="CKB" />
-                <Metric label={zh ? '市场可用库存' : 'Market inventory'} detail={market && (zh ? '已验证供应量 ' : 'Verified supply ') + BigInt(market.supply).toLocaleString(locale) + ' RVK'} value={market ? BigInt(market.inventory).toLocaleString(locale) : '—'} unit="RVK" />
-                <Metric label={zh ? '共享默克尔托管' : 'Shared Merkle custody'} detail={zh ? '不含外部 L1 持有量' : 'Excludes external L1 holdings'} value={market ? BigInt(market.custody).toLocaleString(locale) : '—'} unit="RVK" />
+                <Metric label={zh ? '市场可用库存' : 'Market inventory'} detail={market && (zh ? '已验证供应量 ' : 'Verified supply ') + BigInt(market.supply).toLocaleString(locale) + ' ' + symbol} value={market ? BigInt(market.inventory).toLocaleString(locale) : '—'} unit={symbol} />
+                <Metric label={zh ? '共享默克尔托管' : 'Shared Merkle custody'} detail={zh ? '不含外部 L1 持有量' : 'Excludes external L1 holdings'} value={market ? BigInt(market.custody).toLocaleString(locale) : '—'} unit={symbol} />
                 <Metric label={zh ? '链上验证' : 'Canonical verification'} detail={market && <><span title={market.tip.hash}>{zh ? '区块' : 'Block'} {BigInt(market.tip.number).toLocaleString(locale)}</span><br/><time dateTime={new Date(market.refreshedAt).toISOString()}>{new Date(market.refreshedAt).toLocaleString(locale)}</time></>} value={market ? (blocked ? (zh ? '上次验证' : 'Last verified') : (zh ? '已验证' : 'Verified')) : '—'} tone={market && !blocked ? 'mint' : undefined} />
               </dl>
               <p role="status">
@@ -217,7 +216,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   disabled: boolean;
   children: React.ReactNode;
 }) {
-  const symbol = market?.token.symbol ?? 'RVK';
+  const symbol = market?.token.symbol ?? 'Token';
   const buying = side === 'buy';
   const unitPrice = market && (buying ? market.inventory !== '0' : market.curve.sold !== '0')
     ? BigInt(buying ? market.buyOneShannons : market.sellOneShannons) : null;
@@ -227,10 +226,10 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
     ? Number((buying ? amount - baseline : baseline - amount) * 10_000n / baseline) / 100 : null;
   // Presentation warning only. 10% is 1,000 basis points.
   const highImpact = impact !== null && impact >= 10;
-  const unit = ' CKB / RVK';
+  const unit = ` CKB / ${symbol}`;
   const tokenWell = (
     <label className="preview-well preview-editable" key="token">
-      <span>{buying ? (zh ? '买入数量' : 'RVK quantity to buy') : (zh ? '卖出数量' : 'RVK quantity to sell')}</span>
+      <span>{buying ? (zh ? '买入数量' : `${symbol} quantity to buy`) : (zh ? '卖出数量' : `${symbol} quantity to sell`)}</span>
       <span className="preview-well-row">
         <input aria-invalid={!!market && !!quantity && amount === null} inputMode="numeric" pattern="[0-9]*" maxLength={10} value={quantity} placeholder="0" onChange={event => {setQuantity(event.target.value);}} />
         <span className="preview-token"><TokenMark symbol={symbol} />{symbol}</span>

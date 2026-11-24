@@ -178,9 +178,15 @@ export default function LaunchScreen() {
       setStep(2);
       for (let index = 0; index < launchStages.length; index++) {
         await checkWallet();
+        if(current?.entries.at(-1)?.state==='submitted'){
+          await launchApi('reconcile',identity).catch(()=>null);
+          current=await launchApi('session',identity);
+          if(current&&currentSigner.current===signer)setSession(current);
+        }
         if (current?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length) break;
-        if (current?.entries.at(-1)?.state !== 'submitted') {
-          const next = current ? await launchApi('next-stage', identity) :
+        const renewing=current?.entries.at(-1)?.state==='submitted';
+        {
+          const next = current ? await launchApi(renewing?'pending-review':'next-stage', identity) :
             prepared?.enabled ? {...prepared, stage: 'setup'} : null;
           if (!next || !(current?.enabled ?? prepared?.enabled)) return;
           const transaction = ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(next.transaction));
@@ -201,7 +207,7 @@ export default function LaunchScreen() {
           setExecution('submitting');
           localStorage.setItem(sessionKey(owner), market!);
           try {
-            await launchApi('submit', {...identity, stage: next.stage, descriptor: current ? undefined : prepared?.descriptor,
+            await launchApi(renewing?'resubmit':'submit', {...identity, stage: next.stage, descriptor: current ? undefined : prepared?.descriptor,
               signed: cccA.JsonRpcTransformers.transactionFrom(signed)});
           } catch {
             setExecution('pending');

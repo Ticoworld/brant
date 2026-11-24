@@ -5,11 +5,16 @@ import {setTimeout as delay} from 'node:timers/promises';
 import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {planSharedLaunch, sharedLaunchStages} from '../lib/v2-engine/shared-launch.ts';
+import {launchMetadataMessage} from '../lib/v2-engine/launch-metadata.ts';
 import {recoverSharedLaunch} from '../lib/v2-engine/shared-launch-controller.ts';
 import {launchOperations} from '../lib/v2-engine/launch-operations-server.ts';
 import {openSharedLaunchStore} from '../lib/v2-engine/shared-launch-store.ts';
 import {buildTransition} from '../lib/v2-engine/transaction.ts';
-import {decodeCurve} from '../lib/v2-engine/curve.ts';
+import {startSharedMarketApp} from './shared-market-app-runner.mjs';
+import {prepareLocalReview} from '../lib/v2-engine/local-review.ts';
+import {prepareWithdrawal} from '../lib/v2-engine/withdrawal-review.ts';
+import {buildWithdrawal} from '../lib/v2-engine/withdrawal.ts';
+import {quote,decodeCurve} from '../lib/v2-engine/curve.ts';
 import {discoverCustodyPair, recoverMarketHistory} from '../lib/v2-engine/lineage.ts';
 
 async function canonicalReceipt(rpc, hash) {
@@ -33,13 +38,13 @@ async function waitForIndexer(rpc) {
   throw Error(`Indexer did not reach canonical tip ${tip.hash}`);
 }
 
-export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets, locks, cell, tx, sign, commit, makeProof, le, out, camel, restartNode}) {
+export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets, locks, cell, tx, sign, commit, makeProof, le, out, camel, restartNode, signMetadata}) {
   const unit = 100_000_000n;
   const fundingFee = 100_000n;
   const funded = await commit('wo3b-fund-creators', sign(tx([wallets[2]], [
-    cell(500n * unit, locks[0]), cell(1100n * unit, locks[0]),
-    cell(500n * unit, locks[1]), cell(1100n * unit, locks[1]),
-    cell(wallets[2].capacity - 3200n * unit - fundingFee, locks[2]),
+    cell(500n * unit, locks[0]), cell(1500n * unit, locks[0]),
+    cell(500n * unit, locks[1]), cell(1500n * unit, locks[1]),
+    cell(wallets[2].capacity - 4000n * unit - fundingFee, locks[2]),
   ]), [wallets[2]], [2]));
   const names = {market:'market_smt', marker:'marker_candidate', ownerLock:'owner_lineage_candidate',
     custody:'custody_smt', custodyMarker:'custody_marker', xudt:'xudt'};
@@ -58,6 +63,8 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
   const dbPath = join(out, 'launch.sqlite');
   let store = openSharedLaunchStore(dbPath);
   const results = [];
+  const runtimeMarkets=[];
+  let application;const originalFetch=globalThis.fetch;
   const restart = {errors: []};
   try {
     for (const role of [0,1]) {
@@ -70,12 +77,12 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
       });
       const domain = {genesis_hash:genesis, market_script_hash:identity.market.hash(),
         xudt_type_script_hash:identity.token.hash(), custody_marker_type_hash:identity.custodyMarker.hash()};
-      const leaf = {owner:creator.hash(), balance:1n, revision:0n};
-      const config = {genesis, fixture, creator, anchor, funding:[funded[2*role+1]], reservedAnchors:[], quantity:1n,
+      const leaf = {owner:creator.hash(), balance:7n, revision:0n};
+      const config = {genesis, fixture, creator, anchor, funding:[funded[2*role+1]], reservedAnchors:[], quantity:7n,
         feeRate:2000n, verifyProof:async (owner, quantity, price) => {
           assert.equal(owner, leaf.owner);
           assert.equal(quantity, leaf.balance);
-          assert.equal(price, 10n*unit);
+          assert.equal(price, 91n*unit);
           const proof = makeProof(domain, 0, [], [leaf], le(price));
           return {owner, witness:proof.witness, newRoot:proof.root};
         }};
@@ -89,14 +96,16 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
         const signed = ccc.Transaction.from(sign(unsigned, inputs, [role]));
         let outputs;
         const restartHere = role === 1 && stage === 'purchase';
+        let beforeNode=role===0&&stage==='setup';
         const send = async candidate => {
+          if(beforeNode){beforeNode=false;throw Error('Simulated loss before node');}
           outputs = await commit(`wo3b-creator-${role}-${stage}`, legacy(candidate));
           if (restartHere) throw Error('Simulated lost acknowledgement');
           return outputs[0].outPoint.txHash;
         };
         const operate = launchOperations({rpc: (method, params) => method === 'tx_pool_info' ?
-          Promise.resolve({min_fee_rate:'0x3e8'}) : rpc(method, params), genesis, fixture, quantity:1n,
-          proof: (_, owner) => config.verifyProof(owner, 1n, 10n*unit),
+          Promise.resolve({min_fee_rate:'0x3e8'}) : rpc(method, params), genesis, fixture, quantity:7n,
+          proof: (_, owner) => config.verifyProof(owner, 7n, 91n*unit),
           openStore: () => openSharedLaunchStore(dbPath), send});
         const descriptor = {creator, anchor:anchor.outPoint, funding:config.funding.map(cell => cell.outPoint),
           feeRate:String(config.feeRate), market:scope.market, hashes:stageHashes};
@@ -112,7 +121,12 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           assert.deepEqual(next.transaction, cccA.JsonRpcTransformers.transactionFrom(review));
         }
         const submit = () => submitTransaction(signed);
-        if (restartHere) await assert.rejects(submit(), /lost acknowledgement/);
+        if(role===0&&stage==='setup'){
+          await assert.rejects(submit(),/loss before node/);
+          const renewed=await operate('pending-review',sessionId);
+          assert.equal(ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(renewed.transaction)).hash(),signed.hash());
+          await operate('resubmit',{...sessionId,stage,signed:cccA.JsonRpcTransformers.transactionFrom(signed)});
+        } else if (restartHere) await assert.rejects(submit(), /lost acknowledgement/);
         else await submit();
         store.close();
         store = openSharedLaunchStore(dbPath);
@@ -126,6 +140,15 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
           restart.transactionsAfter = await Promise.all([results[0].trade, purchaseHash].map(hash => canonicalReceipt(rpc, hash)));
           assert.deepEqual(restart.transactionsAfter, restart.transactionsBefore);
           assert.equal(store.read(scope, stageHashes), pending);
+          const application=await startSharedMarketApp({genesis,fixture,out,dbPath});
+          try{
+            const before=await application.request('/api/v2/launch/session',sessionId);
+            await application.restart();
+            const after=await application.request('/api/v2/launch/session',sessionId);
+            assert.deepEqual(after,before);
+            assert.equal(after.entries.at(-1).state,'submitted');
+            restart.application={pendingPreserved:true,timings:application.timings};
+          }finally{await application.stop();}
           restart.pending = JSON.parse(pending).entries.at(-1);
           assert.deepEqual(restart.pending, {stage, txHash: purchaseHash, state: 'submitted'});
           assert.throws(() => store.reserve(scope, stageHashes), /already reserved/);
@@ -146,15 +169,21 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
         } else if (stage === 'issuance') issuance = outputs;
         else purchase = outputs;
       }
-      const continuation = makeProof(domain, 1, [leaf], [{...leaf, balance:2n, revision:1n}]);
+      const metadata={name:`Native Token ${role}`,ticker:`NT${role}`,description:'Isolated native acceptance',link:''};
+      const signature=await signMetadata(role,launchMetadataMessage(scope,metadata));
+      const publish=launchOperations({rpc,genesis,fixture,quantity:7n,proof:()=>{throw Error('Publication must not regenerate proof');},openStore:()=>openSharedLaunchStore(dbPath)});
+      await publish('publish',{owner:scope.owner,market:scope.market,metadata,signature});
+      assert(store.isPublished(scope,stageHashes));
+      const continuation = makeProof(domain, 1, [leaf], [{...leaf, balance:8n, revision:1n}]);
       const inputs = [...purchase.slice(0,4), setup[2]];
       const {amount, ...trade} = buildTransition({curve:decodeCurve(identity.market.args,purchase[0].data), cells:inputs,
-        custodyAmount:1n, newRoot:continuation.root, witness:continuation.witness, fee:fundingFee, side:'buy', quantity:1n});
+        custodyAmount:7n, newRoot:continuation.root, witness:continuation.witness, fee:fundingFee, side:'buy', quantity:1n});
       const next = await commit(`wo3b-creator-${role}-buy`, sign({
         ...trade, version:'0x0', cellDeps:legacy(plan.projected.purchase).cellDeps, headerDeps:[genesis],
       }, inputs, [role]));
       assert.equal(next[0].capacity - purchase[0].capacity, amount);
       const initial = [issuance[0].outPoint, issuance[1].outPoint].map(point);
+      runtimeMarkets.push({plan,identity,domain,leaf:{...leaf,balance:8n,revision:1n},cells:next});
       results.push({scope, stageHashes, initial, trade:next[0].outPoint.txHash, root:continuation.root,
         custodyLock:identity.custody.hash(), token:identity.token.hash(), accounting:plan.accounting});
       await waitForIndexer(rpc);
@@ -179,6 +208,69 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
       }
       if (role === 1) restart.recoveredMarkets = recoveredMarkets;
     }
+    application=await startSharedMarketApp({genesis,fixture,out,dbPath});
+    const catalog=await application.request('/api/markets/catalog');
+    assert.equal(catalog.markets.length,2);
+    const browser=await application.browserAcceptance(catalog.markets);
+    writeFileSync(join(out,'browser-acceptance.json'),JSON.stringify(browser,null,2));
+    globalThis.fetch=(url,options)=>originalFetch(typeof url==='string'&&url.startsWith('/')?application.base+url:url,options);
+    // One independent disposable trader crosses both native markets.
+    let funding=funded[4];
+    const trader=ccc.Script.from(locks[2]).hash();
+    const lifecycle=[];
+    for(const [index,market] of runtimeMarkets.entries()){
+      const {plan,domain,leaf}=market;
+      let cells=market.cells;
+      const marketData=await application.request('/api/markets/'+plan.scope.market);
+      assert.equal(marketData.historyState,'verified');
+      const wallet=ccc.Script.from(locks[2]);
+      const hint=()=>({txHash:funding.outPoint.txHash,index:funding.outPoint.index,owner:trader,genesis});
+      let holder={owner:trader,balance:2n,revision:1n};
+      const buy=makeProof(domain,1,[leaf],[holder]);
+      let inputs=[...cells.slice(0,4),funding];
+      let curve=decodeCurve(market.identity.market.args,cells[0].data);
+      const {amount:buyAmount,...buyTx}=buildTransition({curve,cells:inputs,custodyAmount:8n,newRoot:buy.root,witness:buy.witness,fee:fundingFee,side:'buy',quantity:2n});
+      const buyReview=await prepareLocalReview(rpc,marketData.manifest,trader,'buy',2n,wallet,undefined,hint(),buyAmount);
+      assert.equal(buyReview.transaction.outputsData[2].slice(34),buy.root.slice(2));
+      cells=await commit(`integrated-trader-${index}-buy`,sign(legacy(buyReview.transaction),buyReview.inputs,[2]));
+      const buyHash=cells[0].outPoint.txHash;
+      funding=cells[4];curve=decodeCurve(market.identity.market.args,cells[0].data);
+      const payout=quote(curve,'sell',1n),remaining={...holder,balance:1n,revision:2n};
+      const sell=makeProof(domain,4,[leaf,holder],[remaining],Buffer.concat([le(1n),le(payout)]));
+      inputs=[...cells.slice(0,4),funding];
+      const {amount:sellAmount,...sellTx}=buildTransition({curve,cells:inputs,custodyAmount:10n,newRoot:sell.root,witness:sell.witness,fee:fundingFee,side:'sell',quantity:1n});
+      const sellReview=await prepareLocalReview(rpc,marketData.manifest,trader,'sell',1n,wallet,undefined,hint(),sellAmount);
+      assert.equal(sellReview.transaction.outputsData[2].slice(34),sell.root.slice(2));
+      cells=await commit(`integrated-trader-${index}-sell`,sign(legacy(sellReview.transaction),sellReview.inputs,[2]));
+      funding=cells[4];
+      const marketPoints=cells.slice(0,2).map(cell=>point(cell.outPoint));
+      const withdrawn={...remaining,balance:0n,revision:3n};
+      const withdrawal=makeProof(domain,5,[leaf,remaining],[withdrawn]);
+      const withdrawalInputs=[cells[2],cells[3],funding];
+      const reviewed=await prepareWithdrawal(rpc,marketData.manifest,trader,1n,wallet,hint());
+      assert.equal(reviewed.transaction.outputsData[0].slice(34),withdrawal.root.slice(2));
+      const outside=await commit(`integrated-trader-${index}-withdrawal`,sign(legacy(reviewed.transaction),reviewed.inputs,[2]));
+      funding=outside[3];
+      await waitForIndexer(rpc);
+      const recovered=await recoverMarketHistory(rpc,marketPoints,{maxIndexedDepth:32});
+      assert.deepEqual(recovered.pair,marketPoints);
+      const custody=await discoverCustodyPair(rpc,{tx_hash:cells[2].outPoint.txHash,index:'0x2'});
+      assert.deepEqual(custody,['0x0','0x1'].map(index=>({tx_hash:outside[0].outPoint.txHash,index})));
+      assert.equal(outside[0].data.slice(34),withdrawal.root.slice(2));
+      assert.equal(cells[0].capacity-plan.projected.issuance.outputs[0].capacity,quote({base:10n*unit,step:unit,supply:2000n,inventory:2000n},'buy',9n));
+      const finalData=await application.request('/api/markets/'+plan.scope.market);
+      assert.equal(finalData.custody,'8');assert.equal(finalData.inventory,'1991');assert.equal(finalData.historyState,'verified');
+      const balance=await application.request('/api/v2/pudge-proof',{manifest:finalData.manifest,owner:trader,side:'balance'});
+      assert.equal(balance.balance,'0');assert.equal(balance.root,withdrawal.root);
+      lifecycle.push({market:plan.scope.market,buy:await canonicalReceipt(rpc,buyHash),sell:await canonicalReceipt(rpc,cells[0].outPoint.txHash),withdrawal:await canonicalReceipt(rpc,outside[0].outPoint.txHash),marketPoints,custody,buyAmount:String(buyAmount),sellAmount:String(sellAmount)});
+    }
+    writeFileSync(join(out,'isolated-app-config.json'),JSON.stringify({genesis,fixture,endpoint:'http://127.0.0.1:19224/'}));
+    const beforeRestart=await application.request('/api/markets/catalog');
+    await application.restart();
+    assert.deepEqual(await application.request('/api/markets/catalog'),beforeRestart);
+    for(const market of runtimeMarkets)assert.equal((await application.request('/api/markets/'+market.plan.scope.market)).historyState,'verified');
+    writeFileSync(join(out,'application-timings.json'),JSON.stringify(application.timings,null,2));
+    writeFileSync(join(out,'integrated-native-lifecycle.json'),JSON.stringify({genesis,trader,lifecycle},null,2));
     assert.notEqual(results[0].scope.market, results[1].scope.market);
     assert.notEqual(results[0].token, results[1].token);
     assert.notEqual(results[0].custodyLock, results[1].custodyLock);
@@ -190,6 +282,8 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
     restart.errors.push(error.stack, ...(error.cause ? [String(error.cause)] : []));
     throw error;
   } finally {
+    globalThis.fetch=originalFetch;
+    if(application)await application.stop();
     writeFileSync(join(out, 'shared-launch-restart.json'), JSON.stringify(restart, null, 2));
     store.close();
   }

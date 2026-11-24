@@ -42,9 +42,14 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
         let response:Response;
         if(marketId===DEFAULT_MARKET)response=await fetch(canonical?'/api/markets':'/api/markets?display=1',{cache:'no-store',signal:AbortSignal.timeout(30_000)});
         else{
-          const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
-          if(!manifest)throw Error('This market is not saved in this browser');
-          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest}),cache:'no-store',signal:AbortSignal.timeout(30_000)});
+          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{cache:'no-store',signal:AbortSignal.timeout(30_000)});
+          if(!response.ok){
+            const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
+            if(manifest){
+              let saved;try{saved=JSON.parse(manifest);}catch{}
+              if(saved?.format==='roveko-pudge-market-v1')response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({manifest}),cache:'no-store',signal:AbortSignal.timeout(30_000)});
+            }
+          }
         }
         const body=await response.json();if(!response.ok)throw Error(body.error||'Pudge market is unavailable');
         if(body.id!==marketId)throw Error('Market identity does not match the requested market');
@@ -67,5 +72,6 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     document.addEventListener('visibilitychange',update);
     return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);document.removeEventListener('visibilitychange',update);};
   },[marketId,refresh]);
-  return {...state,refresh,refreshDisplay};
+  const data=state.data?.id===marketId&&(!requestedId||requestedId===marketId)?state.data:null;
+  return {...state,data,refresh,refreshDisplay};
 }

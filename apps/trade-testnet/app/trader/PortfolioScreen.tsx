@@ -10,6 +10,7 @@ import {copy} from './copy';
 import {formatCkb,pudgeRpc} from './rpc';
 import TraderShell from './shell';
 import type {MarketData} from './types';
+import {useMarketSelection} from './use-market-selection';
 import {useMarketData} from './use-market-data';
 import {useOwnerPosition} from './use-owner-position';
 import {invalidateExternalBalance,isExternalBalanceCurrent,type ExternalBalance} from './external-balance';
@@ -18,7 +19,8 @@ import './portfolio.css';
 
 const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2',weight:'100 900'});
 export function PortfolioScreen(){
-  const account=useAccount(),query=useMarketData(),market=query.data,owner=account.state==='ready'?account.owner:'';
+  const selection=useMarketSelection();
+  const account=useAccount(),query=useMarketData(selection.id),market=query.data,owner=account.state==='ready'?account.owner:'';
   const position=useOwnerPosition(owner,market);
   const tokenHash=market?.token.typeHash;
   const [external,setExternal]=useState<ExternalBalance|null>(null);
@@ -46,7 +48,7 @@ export function PortfolioScreen(){
         const lock=(await ccc.Address.fromString(account.address,new ccc.ClientPublicTestnet())).script;
         if(lock.hash()!==owner)throw Error('Wallet changed');
         const token=ccc.Script.from(market!.manifest.scripts.token);
-        if(token.hash()!==tokenHash)throw Error('RVK identity mismatch');
+        if(token.hash()!==tokenHash)throw Error('Token identity mismatch');
         const query={script:script(lock),script_type:'lock',script_search_mode:'exact',filter:{script:script(token)},with_data:true};
         const indexed=await pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip');
         const tip=await pudgeRpc<{number:string}>('get_tip_header');
@@ -84,7 +86,9 @@ export function PortfolioScreen(){
   const walletState=matching&&!currentWallet&&scanState!=='failed'?'expired':scanState;
   return <PortfolioOverview account={account} market={market} position={position}
     walletBalance={walletBalance} currentWallet={currentWallet} walletState={walletState} retryWallet={()=>setRetryScan(value=>value+1)} marketError={query.error} refreshMarket={query.refresh}>
-    {market&&owner&&<WithdrawalPanel key={owner+market.genesis} market={market} owner={owner}
+    <label>Market <select aria-label="Portfolio market" value={selection.id} onChange={event=>selection.select(event.target.value)}>{selection.options.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+    {selection.error&&<p role="status">{selection.error}</p>}
+    {market&&owner&&<WithdrawalPanel key={owner+market.genesis+market.identity} market={market} owner={owner}
       balance={BigInt(position.balance||'0')} balanceReady={position.state==='ready'}
       onConfirmed={async()=>{await Promise.all([query.refresh(),account.refresh()]);position.retry();}}/>}
   </PortfolioOverview>;

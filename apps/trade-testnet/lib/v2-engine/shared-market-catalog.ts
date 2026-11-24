@@ -1,13 +1,14 @@
+import {marketNetwork} from './market-network-server.ts';
 import {verifyLaunchMetadata} from './launch-metadata.ts';
 import {PUDGE_GATE2_GENESIS} from './pudge-public-registry.ts';
 import {verifyCompletedSharedLaunch} from './shared-launch-controller.ts';
 import {openConfiguredSharedLaunchStore} from './shared-launch-store.ts';
 
-const genesis = PUDGE_GATE2_GENESIS;
+const genesis = marketNetwork().genesis;
 export const marketHash = /^0x[0-9a-f]{64}$/;
 
 async function readRpc(method: string, params: unknown[]) {
-  const response = await fetch('https://testnet.ckb.dev/', {
+  const response = await fetch(marketNetwork().endpoint, {
     method: 'POST', headers: {'Content-Type': 'application/json'}, cache: 'no-store',
     body: JSON.stringify({jsonrpc: '2.0', id: 1, method, params}),
     signal: AbortSignal.timeout(4000),

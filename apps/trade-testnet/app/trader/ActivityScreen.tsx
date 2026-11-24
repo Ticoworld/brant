@@ -10,6 +10,7 @@ import {useAccount} from './account-provider';
 import {copy} from './copy';
 import {formatCkb,PUDGE_GENESIS,pudgeRpc} from './rpc';
 import TraderShell from './shell';
+import {useMarketSelection} from './use-market-selection';
 import {useMarketData} from './use-market-data';
 import './activity.css';
 
@@ -21,7 +22,8 @@ export function ActivityScreen(){
   const zh=locale==='zh-CN';
   const t=(en:string,cn:string)=>zh?cn:en;
   const account=useAccount();
-  const query=useMarketData(undefined,true);
+  const selection=useMarketSelection();
+  const query=useMarketData(selection.id,true);
   const market=query.data;
   const owner=account.state==='ready'&&market?.genesis.toLowerCase()===PUDGE_GENESIS?account.owner.toLowerCase():'';
   const [selected,setSelected]=useState<Scope|null>(null);
@@ -35,7 +37,7 @@ export function ActivityScreen(){
 
   useEffect(()=>{
     if(!owner)return;
-    const read=()=>setJournals({owner,records:readActivityAttempts(localStorage,PUDGE_GENESIS,owner,history??[])});
+    const read=()=>setJournals({owner,records:readActivityAttempts(localStorage,PUDGE_GENESIS,owner,history??[],market?.id==='pudge-xudt'?undefined:market?.identity)});
     read();
     window.addEventListener('storage',read);
     return()=>window.removeEventListener('storage',read);
@@ -59,6 +61,8 @@ export function ActivityScreen(){
       <button type="button" onClick={()=>void refresh()} disabled={refreshing||query.loading}>{refreshing?t('Refreshing…','正在刷新…'):copy(locale,'reload')}</button>
     </header>
     <div className="activity-controls">
+      <label>Market <select aria-label="Activity market" value={selection.id} onChange={event=>selection.select(event.target.value)}>{selection.options.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+      {selection.error&&<p role="status">{selection.error}</p>}
       <div className="activity-scopes" role="group" aria-label={t('Activity scope','活动范围')}>
         <button type="button" aria-pressed={scope==='personal'} onClick={()=>setSelected('personal')}>{t('My activity','我的活动')}</button>
         <button type="button" aria-pressed={scope==='market'} onClick={()=>setSelected('market')}>{t('Market trades','市场成交')}</button>

@@ -1,7 +1,14 @@
-import {getPudgeMarketDataForManifest} from '../../../../lib/pudge-market-service.ts';
+import {getPudgeMarketDataForManifest,getPublishedPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
+
+export async function GET(_request:Request,{params}:{params:Promise<{id:string}>}){
+  const {id}=await params;
+  if(!/^0x[0-9a-f]{64}$/.test(id))return Response.json({error:'Invalid market identity'},{status:404});
+  try{return Response.json(await getPublishedPudgeMarketData(id),{headers:{'Cache-Control':'no-store'}});}
+  catch{return Response.json({error:'Verified market recovery unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});}
+}
 
 export async function POST(request:Request,{params}:{params:Promise<{id:string}>}){
   try{

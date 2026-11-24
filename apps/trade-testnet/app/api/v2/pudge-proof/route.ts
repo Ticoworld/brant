@@ -1,3 +1,4 @@
+import {marketNetwork} from '../../../../lib/v2-engine/market-network-server.ts';
 import {createHash,randomUUID} from 'node:crypto';
 import {execFile} from 'node:child_process';
 import {access,mkdir,mkdtemp,readdir,readFile,rename,rm,stat,writeFile} from 'node:fs/promises';
@@ -7,7 +8,7 @@ import path from 'node:path';
 import {promisify} from 'node:util';
 import {ccc} from '@ckb-ccc/core';
 import {loadPudgeManifest} from '../../../../lib/v2-engine/pudge-manifest.ts';
-import {getPudgeCustodyAnchor,getPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
+import {getPudgeCustodyAnchor,getPudgeMarketData,getPublishedPudgeMarketData,type RecoveryManifest} from '../../../../lib/pudge-market-service.ts';
 import {after} from 'next/server.js';
 import {openPudgeSnapshot,sealPudgeSnapshot} from '../../../../lib/pudge-snapshot.ts';
 import {startPudgeProofWorker} from '../../../../lib/pudge-proof-worker.ts';
@@ -43,14 +44,16 @@ type RecoveryBundle={
   history:{tx_hash:string;transaction:{outputs:unknown[];outputs_data:string[]}}[];
   live:{tx_hash:string;index:string;capacity:string;data:string;output:{capacity:string;lock:Script;type?:Script|null}};
 };
-type VerifiedManifest=Awaited<ReturnType<typeof loadPudgeManifest>>;
+type VerifiedManifest=RecoveryManifest;
 const verifiedManifests=new Map<string,{manifest:VerifiedManifest;verifiedAt:number}>();
 type CustodyState={bundle:RecoveryBundle;snapshot:Record<string,unknown>};
 const custodyStates=new Map<string,CustodyState>();
 const custodyRefreshes=new Map<string,Promise<{state:CustodyState;live:Awaited<ReturnType<typeof getPudgeCustodyAnchor>>|null}>>();
-let proofWorker:{state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;idle?:ReturnType<typeof setTimeout>}|undefined;
+type ProofWorker={state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;users:number;idle?:ReturnType<typeof setTimeout>};
+const proofWorkers=new Map<CustodyState,ProofWorker>();
 
 function rpcEndpoint(){
+  if(process.env.BRANT_ISOLATED_CONFIG)return marketNetwork().endpoint;
   if(process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_PUDGE_TEST_HOOK==='1'&&process.env.ROVEKO_PUDGE_TEST_RPC){
     const url=new URL(process.env.ROVEKO_PUDGE_TEST_RPC);
     if(url.protocol!=='http:'||!['127.0.0.1','localhost','[::1]'].includes(url.hostname)||url.username||url.password)throw Error('Test RPC must be local');
@@ -122,13 +125,13 @@ async function readBoundedBody(request:Request){
   return text+decoder.decode();
 }
 
-function validBundle(value:unknown,manifest:Awaited<ReturnType<typeof loadPudgeManifest>>,owner:string):value is RecoveryBundle{
+function validBundle(value:unknown,manifest:RecoveryManifest,owner:string):value is RecoveryBundle{
   const bundle=value as RecoveryBundle;
   return !!bundle&&bundle.format==='trade-v2-recovery-bundle-v1'&&bundle.init_tx_hash?.toLowerCase()===manifest.initializationTransactionHash.toLowerCase()&&bundle.owner_lock_hash?.toLowerCase()===owner.toLowerCase()&&sameScript(bundle.custody_lock,toScript(manifest.scripts.custody))&&sameScript(bundle.xudt_type_script,toScript(manifest.scripts.token))&&bundle.collection?.canonical_block_checked===true&&bundle.collection?.live_outpoint_checked_with_get_live_cell===true&&Array.isArray(bundle.history)&&bundle.history.length>0&&bundle.history.length<=512&&hash.test(bundle.live?.tx_hash||'')&&/^0x(?:[0-9a-f]{2})+$/i.test(bundle.live?.data||'')&&bundle.live.data.length===98&&bundle.live.index!==undefined&&bundle.live.output?.capacity!==undefined;
 }
 
 async function validateRegisteredManifest(manifest:VerifiedManifest,rpc:(method:string,params?:unknown[])=>Promise<any>){
-  if(manifest.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||manifest.initializationTransactionHash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION||manifest.codeDeploymentTransactionHash.toLowerCase()!==PUDGE_GATE2_STAGE_TXS.code)throw Error('Market is not registered for proof requests');
+  if(manifest.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||manifest.initializationTransactionHash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION||manifest.deps.market_smt.outPoint.txHash.toLowerCase()!==PUDGE_GATE2_STAGE_TXS.code)throw Error('Market is not registered for proof requests');
   const dependencies=[manifest.deps.custody_smt,manifest.deps.market_smt,manifest.deps.custody_marker,manifest.deps.marker_candidate,manifest.deps.owner_lineage_candidate,manifest.deps.xudt];
   const hashes=[manifest.scripts.custody.codeHash,manifest.scripts.market.codeHash,manifest.scripts.custodyMarker.codeHash,manifest.scripts.marker.codeHash,manifest.scripts.owner.codeHash,manifest.scripts.token.codeHash];
   const canonicalTransaction=async(hashValue:string)=>{
@@ -159,7 +162,7 @@ function rememberManifest(key:string,manifest:VerifiedManifest){
   while(verifiedManifests.size>8){const oldest=verifiedManifests.keys().next().value;if(oldest)verifiedManifests.delete(oldest);else break;}
 }
 
-async function loadCheckpoint(key:string,file:string|undefined,manifest:Awaited<ReturnType<typeof loadPudgeManifest>>,owner:string){
+async function loadCheckpoint(key:string,file:string|undefined,manifest:RecoveryManifest,owner:string){
   const valid=(value:unknown)=>{
     const checkpoint=value as {format?:string;genesis?:string;marketScriptHash?:string;tokenTypeHash?:string;initializationTransactionHash?:string;owner?:string;chainAnchor?:{number?:string;hash?:string};bundle?:RecoveryBundle};
     return checkpoint?.format==='roveko-pudge-proof-checkpoint-v1'&&checkpoint.genesis?.toLowerCase()===manifest.genesis.toLowerCase()&&checkpoint.marketScriptHash?.toLowerCase()===manifest.scripts.market.hash().toLowerCase()&&checkpoint.tokenTypeHash?.toLowerCase()===manifest.scripts.token.hash().toLowerCase()&&checkpoint.initializationTransactionHash?.toLowerCase()===manifest.initializationTransactionHash.toLowerCase()&&checkpoint.owner?.toLowerCase()===owner.toLowerCase()&&checkpoint.chainAnchor?.number===checkpoint.bundle?.collection?.end_tip?.number&&checkpoint.chainAnchor?.hash?.toLowerCase()===checkpoint.bundle?.collection?.end_tip?.hash?.toLowerCase()&&hash.test(checkpoint.chainAnchor?.hash||'')&&validBundle(checkpoint.bundle,manifest,owner)?checkpoint.bundle:null;
@@ -175,7 +178,7 @@ async function loadCheckpoint(key:string,file:string|undefined,manifest:Awaited<
   return saved?valid(saved.value):null;
 }
 
-async function saveCheckpoint(key:string,file:string|undefined,bundle:RecoveryBundle,manifest:Awaited<ReturnType<typeof loadPudgeManifest>>,owner:string){
+async function saveCheckpoint(key:string,file:string|undefined,bundle:RecoveryBundle,manifest:RecoveryManifest,owner:string){
   const checkpoint={format:'roveko-pudge-proof-checkpoint-v1',genesis:manifest.genesis,marketScriptHash:manifest.scripts.market.hash(),tokenTypeHash:manifest.scripts.token.hash(),initializationTransactionHash:manifest.initializationTransactionHash,owner,chainAnchor:bundle.collection.end_tip,bundle};
   const content=JSON.stringify(checkpoint);
   if(Buffer.byteLength(content)>MAX_CACHE_BYTES)throw Error('Verified recovery checkpoint exceeds storage limit');
@@ -211,7 +214,7 @@ async function pruneCheckpointCache(directory:string,keepFile:string){
   }
 }
 
-async function validateLiveCheckpoint(bundle:RecoveryBundle,manifest:Awaited<ReturnType<typeof loadPudgeManifest>>,rpc:(method:string,params?:unknown[])=>Promise<any>){
+async function validateLiveCheckpoint(bundle:RecoveryBundle,manifest:RecoveryManifest,rpc:(method:string,params?:unknown[])=>Promise<any>){
   const anchor=bundle.collection.end_tip;
   const storedAnchorHash=anchor?.hash;
   if(!anchor?.number||!storedAnchorHash||!hash.test(storedAnchorHash))return false;
@@ -242,15 +245,18 @@ let synchronization:Promise<void>|undefined;
 let readiness:'syncing'|'ready'|'updating'|'unavailable'='syncing';
 let verifiedIdentity:string|undefined;
 let checkedAt=0;
+const sharedReadiness=new Map<string,{status:string;checkedAt:number;identity?:string;pending?:Promise<void>}>();
 
 export async function GET(request:Request){
   const params=new URL(request.url).searchParams;
+  const requested=params.get('market')||'pudge-xudt';
+  if(requested!=='pudge-xudt'&&!/^0x[0-9a-f]{64}$/.test(requested))return new Response('Invalid market',{status:400});
   if(params.has('trade')){
     const trade=params.get('trade')||'',owner=params.get('owner')||'';
     const result=(incorporated:boolean)=>Response.json({incorporated,trade,owner},{headers:{'Cache-Control':'no-store'}});
     if(!hash.test(trade)||!hash.test(owner)||rpcEndpoint()!=='https://testnet.ckb.dev/'||!custodyStates.size)return result(false);
     try{
-      const {market,point,data}=await getPudgeCustodyAnchor();
+      const {market,point,data}=await getPudgeCustodyAnchor(requested);
       const marketScript=ccc.Script.from(market.manifest.scripts.market);
       const state=custodyStates.get(requestKey({...market.manifest,scripts:{market:marketScript}},'https://testnet.ckb.dev/'));
       const external=state?.snapshot.net_external;
@@ -263,13 +269,34 @@ export async function GET(request:Request){
         state.bundle.history.some(row=>row.tx_hash===trade));
     }catch{return result(false);}
   }
+  if(requested!=='pudge-xudt'){
+    let state=sharedReadiness.get(requested);
+    if(!state){
+      if(sharedReadiness.size>=16){const unused=[...sharedReadiness.entries()].find(([,value])=>!value.pending);if(!unused)return new Response('Market synchronization busy',{status:503});sharedReadiness.delete(unused[0]);}
+      state={status:'syncing',checkedAt:0};sharedReadiness.set(requested,state);
+    }
+    const selected=state;
+    if(!selected.pending&&Date.now()-selected.checkedAt>=20_000){
+      selected.pending=(async()=>{
+        const market=await getPublishedPudgeMarketData(requested);
+        const response=await handleProof(new Request('http://127.0.0.1/api/v2/pudge-proof',{
+          method:'POST',headers:{origin:'http://127.0.0.1','content-type':'application/json'},
+          body:JSON.stringify({owner:market.manifest.journal.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
+        }),true);
+        if(!response.ok)throw Error('Market synchronization failed');
+        selected.identity=(await response.json()).identity;selected.status='ready';
+      })().catch(()=>{selected.status='unavailable';}).finally(()=>{selected.checkedAt=Date.now();selected.pending=undefined;});
+      const running=selected.pending;after(()=>running);
+    }
+    return Response.json({market:requested,status:selected.status,identity:selected.identity},{headers:{'Cache-Control':'no-store'}});
+  }
   if(!synchronization&&Date.now()-checkedAt>=20_000){
     if(!verifiedIdentity)readiness='syncing';
     synchronization=(async()=>{
       const market=await getPudgeMarketData();
       const result=await handleProof(new Request('http://127.0.0.1/api/v2/pudge-proof',{
         method:'POST',headers:{origin:'http://127.0.0.1','content-type':'application/json'},
-        body:JSON.stringify({owner:market.manifest.attempt.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
+        body:JSON.stringify({owner:market.manifest.journal.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
       }),true);
       if(!result.ok)throw Error('Custody synchronization failed');
       const state=await result.json();
@@ -302,6 +329,7 @@ export async function POST(request:Request){
 async function handleProof(request:Request,synchronize=false){
   const proofStarted=performance.now(),proofTrace:string[]=[];
   let dir:string|undefined,entered=false;
+  let leasedWorker:ProofWorker|undefined;
   try{
     const origin=request.headers.get('origin'),site=request.headers.get('sec-fetch-site');
     try{
@@ -322,12 +350,13 @@ async function handleProof(request:Request,synchronize=false){
     const balanceOnly=body.side==='balance';
     if(!synchronize&&!consumeRateLimit(request,balanceOnly))return new Response('Proof request rate limit reached',{status:429,headers:{'Retry-After':'60'}});
     if(!hash.test(body.owner||'')||!body.manifest||(!balanceOnly&&(!['buy','sell','withdraw'].includes(body.side||'')||!/^[1-9][0-9]{0,19}$/.test(body.quantity||'')||BigInt(body.quantity!)>(1n<<64n)-1n)))return new Response('Invalid proof request',{status:400});
-    if(typeof body.manifest.genesis!=='string'||typeof body.manifest.codeDeploymentTransactionHash!=='string'||typeof body.manifest.initializationTransactionHash!=='string'||body.manifest.genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||body.manifest.codeDeploymentTransactionHash.toLowerCase()!==PUDGE_GATE2_STAGE_TXS.code||body.manifest.initializationTransactionHash.toLowerCase()!==PUDGE_GATE2_INITIALIZATION)return new Response('Market is not registered for proof requests',{status:403});
+    const shared=body.manifest.format==='brant-shared-pudge-market-v1';
+    if(!shared&&(body.manifest.genesis!==PUDGE_GATE2_GENESIS||body.manifest.initializationTransactionHash!==PUDGE_GATE2_INITIALIZATION||body.manifest.codeDeploymentTransactionHash!==PUDGE_GATE2_STAGE_TXS.code))return new Response('Market is not registered for proof requests',{status:403});
     const deadline=Date.now()+60_000;
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
     if(!binary||!tools.smt)return new Response('Proof tool unavailable',{status:503});
     const endpoint=rpcEndpoint();let rpcCalls=0;
-    const readyOnly=!synchronize&&!balanceOnly&&endpoint==='https://testnet.ckb.dev/';
+    const readyOnly=!shared&&!synchronize&&!balanceOnly&&endpoint==='https://testnet.ckb.dev/';
     if(readyOnly&&readiness!=='ready')return new Response('Trading state is synchronizing. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     const rpc=async(method:string,params:unknown[]=[] )=>{
       if(++rpcCalls>MAX_RPC_CALLS||Date.now()>=deadline)throw Error('Pudge RPC work limit exceeded');
@@ -347,9 +376,15 @@ async function handleProof(request:Request,synchronize=false){
         savedManifest.scripts[name]=ccc.Script.from(savedManifest.scripts[name]);
       }
     }
-    const manifest=cachedManifest&&Date.now()-cachedManifest.verifiedAt<300_000?cachedManifest.manifest:
-      savedManifest||await loadPudgeManifest(rpc,rawManifest,proof);
-    if(manifest!==cachedManifest?.manifest&&!savedManifest){
+    const requestedMarket=shared?ccc.Script.from(body.manifest.scripts.market).hash().toLowerCase():undefined;
+    const published=shared?await getPublishedPudgeMarketData(requestedMarket!):undefined;
+    if(published){
+      if(body.manifest.genesis!==published.genesis||body.manifest.initializationTransactionHash!==published.manifest.initializationTransactionHash)throw Error('Requested market provenance mismatch');
+      for(const name of ['market','marker','owner','token','custody','custodyMarker'] as const)if(ccc.Script.from(body.manifest.scripts[name]).hash()!==ccc.Script.from(published.manifest.scripts[name]).hash())throw Error('Requested market script mismatch');
+    }
+    const manifest:VerifiedManifest=published?.manifest||(cachedManifest&&Date.now()-cachedManifest.verifiedAt<300_000?cachedManifest.manifest:
+      savedManifest||await loadPudgeManifest(rpc,rawManifest,proof));
+    if(!shared&&manifest!==cachedManifest?.manifest&&!savedManifest){
       await validateRegisteredManifest(manifest,rpc);
       await writeAuthenticated(manifestFile,manifestScope,manifest).catch(()=>{});
     }
@@ -358,15 +393,15 @@ async function handleProof(request:Request,synchronize=false){
     }
     const marketHash=manifest.scripts.market.hash().toLowerCase(),tokenHash=manifest.scripts.token.hash().toLowerCase();
     const metadata=resolvePudgeTokenMetadata({genesis:manifest.genesis,marketScriptHash:marketHash,tokenTypeHash:tokenHash,initializationTransactionHash:manifest.initializationTransactionHash});
-    if(metadata.metadata!=='off-chain-testnet-registry')return new Response('Market is not registered for proof requests',{status:403});
+    if(!shared&&metadata.metadata!=='off-chain-testnet-registry')return new Response('Market is not registered for proof requests',{status:403});
     dir=await mkdtemp(path.join(tmpdir(),'roveko-pudge-proof-'));
     const custody=path.join(dir,'custody.json'),token=path.join(dir,'token.json'),bundlePath=path.join(dir,'bundle.json'),checkpointPath=path.join(dir,'checkpoint.json');
     const custodyScript=toScript(manifest.scripts.custody),tokenScript=toScript(manifest.scripts.token),key=requestKey(manifest,endpoint),file=cacheFile(key);
-    const replayOwner=manifest.attempt.owner;
+    const replayOwner=manifest.journal.owner;
     const refresh=async()=>{
     const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
     const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
-    let market=await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor():null);
+    let market=await ((shared||endpoint==='https://testnet.ckb.dev/')?getPudgeCustodyAnchor(requestedMarket):null);
     const matchesMarket=(bundle:RecoveryBundle)=>!market||
       (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
     const reconcile=(snapshot:Record<string,unknown>)=>{
@@ -387,7 +422,7 @@ async function handleProof(request:Request,synchronize=false){
       if(market||await isLive(current.bundle)){
         proofTrace.push('verified-custody-reuse');
         reconcile(current.snapshot);
-        custodyStates.clear();
+        while(custodyStates.size>=16)custodyStates.delete(custodyStates.keys().next().value!);
         custodyStates.set(key,current);
         return {state:current,live:market};
       }
@@ -440,13 +475,13 @@ async function handleProof(request:Request,synchronize=false){
       if(!validBundle(selectedBundle,manifest,replayOwner))throw Error('Rebuilt checkpoint identity mismatch');
       snapshot=await replay(selectedBundle);
     }
-    if(market)market=await getPudgeCustodyAnchor();
+    if(market)market=await getPudgeCustodyAnchor(requestedMarket);
     if(!await isLive(selectedBundle))throw Error('Custody changed during recovery');
     const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,net_external:snapshot.net_external,external_accounting_complete:snapshot.external_accounting_complete,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
     reconcile(state.snapshot);
     if(!reusable||selectedBundle!==bundle)await saveCheckpoint(key,file,selectedBundle,manifest,replayOwner);
     await writeAuthenticated(snapshotFile,snapshotScope,state).catch(()=>{});
-    custodyStates.clear();
+    while(custodyStates.size>=16)custodyStates.delete(custodyStates.keys().next().value!);
     custodyStates.set(key,state);
     return {state,live:market};
     };
@@ -465,23 +500,30 @@ async function handleProof(request:Request,synchronize=false){
       const leaf=owners.find(row=>row.owner_lock_hash===owner);
       const balance=leaf?.balance??'0';
       if(!/^\d+$/.test(balance))throw Error('Verified owner balance is invalid');
-      return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash},{headers:{'Cache-Control':'no-store'}});
+      return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash,token:tokenHash,points:live?.points,custodyOutpoint:{tx_hash:selectedBundle.live.tx_hash,index:selectedBundle.live.index}},{headers:{'Cache-Control':'no-store'}});
     }
-    if(proofWorker?.state!==state){
+    let worker=proofWorkers.get(state);
+    if(!worker){
+      if(proofWorkers.size>=2){
+        const unused=[...proofWorkers.values()].find(candidate=>candidate.users===0);
+        if(!unused)throw Error('Native proof workers busy');
+        clearTimeout(unused.idle);proofWorkers.delete(unused.state);unused.native.stop();
+        await unused.native.exited;
+      }
       const snapshotPath=path.join(dir,'snapshot.json');
       await writeFile(snapshotPath,JSON.stringify(state.snapshot),{flag:'wx',mode:0o600});
-      if(proofWorker?.state!==state){
+      worker=proofWorkers.get(state);
+      if(!worker){
+        if(proofWorkers.size>=2)throw Error('Native proof workers busy');
         proofTrace.push('native-worker-start');
-        proofWorker?.native.stop();
-        const worker={state,native:startPudgeProofWorker(binary,snapshotPath)};
-        proofWorker=worker;
-        void worker.native.exited.then(()=>{if(proofWorker===worker)proofWorker=undefined;});
+        worker={state,native:startPudgeProofWorker(binary,snapshotPath),users:0};
+        proofWorkers.set(state,worker);
+        const created=worker;
+        void worker.native.exited.then(()=>{if(proofWorkers.get(state)===created)proofWorkers.delete(state);});
       }
     }
-    const worker=proofWorker;
+    worker.users++;leasedWorker=worker;
     clearTimeout(worker.idle);
-    worker.idle=setTimeout(worker.native.stop,30_000);
-    worker.idle.unref();
     await worker.native.ready;
     if(synchronize)return Response.json({identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
     const result=await worker.native.proof(body.owner!,body.side!,body.quantity!),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
@@ -505,6 +547,13 @@ async function handleProof(request:Request,synchronize=false){
     console.error('Pudge proof request failed:',error instanceof Error?error.message:'unknown error');
     return new Response('Pudge canonical history or proof unavailable',{status:503});
   }finally{
+    if(leasedWorker){
+      const worker=leasedWorker;worker.users--;
+      if(worker.users===0){
+        worker.idle=setTimeout(()=>{if(worker.users===0){if(proofWorkers.get(worker.state)===worker)proofWorkers.delete(worker.state);worker.native.stop();}},30_000);
+        worker.idle.unref();
+      }
+    }
     if(dir){const target=path.resolve(dir),parent=path.resolve(tmpdir());if(path.dirname(target)===parent&&path.basename(target).startsWith('roveko-pudge-proof-'))await rm(target,{recursive:true,force:true});}
     if(entered)activeRequests--;
   }

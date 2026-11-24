@@ -1,3 +1,4 @@
+import {marketNetwork} from '../../../../lib/v2-engine/market-network-server.ts';
 import {NextResponse} from 'next/server';
 export const runtime='nodejs';
 const allowed=new Set(['get_block_hash','get_block_by_number','get_tip_header','get_header','get_transaction','get_live_cell','get_cells','get_indexer_tip','tx_pool_info']);
@@ -21,7 +22,7 @@ export async function POST(request:Request){
       return NextResponse.json({error:'Unsupported RPC batch'},{status:400});
     }
     try{
-      const response=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},
+      const response=await fetch(marketNetwork().endpoint,{method:'POST',headers:{'content-type':'application/json'},
         body:JSON.stringify(calls.map(({method,params},id)=>({jsonrpc:'2.0',id,method,params:canonicalCellParams(method!,params!)}))),
         cache:'no-store',signal:AbortSignal.any([request.signal,AbortSignal.timeout(15000)])});
       const rows=await response.json();
@@ -38,7 +39,7 @@ export async function POST(request:Request){
   if(!input || !allowed.has(input.method||'') || !Array.isArray(input.params) || JSON.stringify(input.params).length>8192) return NextResponse.json({error:'Unsupported RPC request'}, {status:400});
   try {
     const params=canonicalCellParams(input.method!,input.params);
-    const response=await fetch('https://testnet.ckb.dev/',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:input.method,params}),cache:'no-store',signal:AbortSignal.timeout(15000)});
+    const response=await fetch(marketNetwork().endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:input.method,params}),cache:'no-store',signal:AbortSignal.timeout(15000)});
     const body=await response.json();
     if(!response.ok || body.error){
       const rpcError=body?.error as {code?:unknown;message?:unknown}|undefined;

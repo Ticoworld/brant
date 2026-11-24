@@ -23,7 +23,7 @@ const pinned:Record<string,string> = {
 export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, side:'buy'|'sell', quantity:bigint, ownerScript?:ccc.Script, timing?:(stage:string,ms:number)=>void, hint?:FundingHint, quotedAmount?:bigint, signal?:AbortSignal) {
   let started=performance.now();
   const mark=(stage:string)=>{const now=performance.now();timing?.(stage,now-started);started=now;};
-  const pudge=config.format==='roveko-pudge-market-v1';
+  const pudge=(config.format==='roveko-pudge-market-v1'||config.format==='brant-shared-pudge-market-v1');
   if(pudge&&(!ownerScript||ownerScript.hash()!==owner))throw Error('Connected wallet changed');
   const minimum=(amount:bigint)=>(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
   const earlyFunding=pudge&&quotedAmount!==undefined?selectTradeFunding(rpc,ownerScript!,minimum(quotedAmount),hint):undefined;
@@ -39,7 +39,10 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const p = body.proof;
   if (body.genesis !== config.genesis || p.side !== side || p.quantity !== quantity.toString() || !p.tip_outpoint) throw Error('Proof identity mismatch');
   const verified=pudge&&body.manifest&&Array.isArray(body.points)&&body.points.length===4;
+  if(pudge&&!verified)throw Error('Verified market proof required');
   if(verified){
+    if(!config.scripts||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Requested market differs from proof');
+    for(const name of ['market','marker','custody','custodyMarker','token'] as const)if(ccc.Script.from(config.scripts[name]).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash())throw Error('Proof script identity mismatch');
     const manifest=body.manifest;
     if(manifest.genesis!==config.genesis||manifest.initializationTransactionHash!==config.initializationTransactionHash||
       ccc.Script.from(manifest.scripts.market).hash()!==body.market||
@@ -71,7 +74,7 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   // Pudge's genesis was checked by readLiveSingletons. Its secp dep group
   // is pinned and the trade hook checks dependency liveness before signing.
   let secpDepHash='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
-  if(!pudge){
+  if(!pudge||config.format==='brant-shared-pudge-market-v1'){
     const genesisBlock=await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
     if(genesisBlock?.header?.hash?.toLowerCase()!==config.genesis.toLowerCase()||!genesisBlock?.transactions?.[1]?.hash)throw Error('Wrong genesis or missing secp dependency');
     secpDepHash=genesisBlock.transactions[1].hash;

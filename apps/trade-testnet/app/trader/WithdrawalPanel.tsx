@@ -9,21 +9,23 @@ import {prepareWithdrawal} from '../../lib/v2-engine/withdrawal-review.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
 import type {MarketData} from './types';
 import {formatCkb,pudgeRpc} from './rpc';
+import {assertWalletFundingAvailable} from '../../lib/v2-engine/wallet-pending.ts';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
 import {copy} from './copy';
 
 const JOURNAL='roveko-pudge-withdrawal-v1';
 type Review=Awaited<ReturnType<typeof prepareWithdrawal>>&{inputs:[any,any,any];internalAfter:bigint;externalAfter:bigint;destination:string};
-type Attempt={version:1;genesis:string;owner:string;txHash:string;quantity:string;transaction:unknown};
+type Attempt={market?:string;version:1;genesis:string;owner:string;txHash:string;quantity:string;transaction:unknown};
 const clone=(tx:ccc.Transaction)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(tx)));
-const key=(genesis:string,owner:string)=>`${JOURNAL}:${genesis.toLowerCase()}:${owner.toLowerCase()}`;
+const key=(genesis:string,owner:string,market?:string)=>`${JOURNAL}:${genesis.toLowerCase()}:${owner.toLowerCase()}${market?':'+market.toLowerCase():''}`;
 
 export default function WithdrawalPanel({market,owner,balance,balanceReady,onConfirmed}:{market:MarketData;owner:string;balance:bigint;balanceReady:boolean;onConfirmed:()=>Promise<void>}){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale();
   const [quantity,setQuantity]=useState(''),[review,setReview]=useState<Review|null>(null),[attemptRaw,setAttemptRaw]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
   const active=useRef(signer),working=useRef(false),onConfirmedRef=useRef(onConfirmed);active.current=signer;onConfirmedRef.current=onConfirmed;
-  const journalKey=owner?key(market.genesis,owner):'';
+  useEffect(()=>{active.current=signer;return()=>{active.current=undefined;};},[signer]);
+  const journalKey=owner?key(market.genesis,owner,market.id==='pudge-xudt'?undefined:market.identity):'';
   const [stage,setStage]=useState('Submitted');
   const tracking=useRef(false);
   const label=(en:string,zh:string)=>locale==='zh-CN'?zh:en;
@@ -35,7 +37,7 @@ export default function WithdrawalPanel({market,owner,balance,balanceReady,onCon
     tracking.current=true;
     try{
       const record=JSON.parse(raw) as Attempt;
-      if(record.version!==1||record.genesis.toLowerCase()!==market.genesis.toLowerCase()||record.owner.toLowerCase()!==owner.toLowerCase()||!/^0x[0-9a-f]{64}$/i.test(record.txHash))throw Error('Withdrawal record identity mismatch');
+      if((record.market&&record.market.toLowerCase()!==market.identity.toLowerCase())||record.version!==1||record.genesis.toLowerCase()!==market.genesis.toLowerCase()||record.owner.toLowerCase()!==owner.toLowerCase()||!/^0x[0-9a-f]{64}$/i.test(record.txHash))throw Error('Withdrawal record identity mismatch');
       const row=await pudgeRpc<any>('get_transaction',[record.txHash]);
       if(localStorage.getItem(journalKey)!==raw)return;
       if(['pending','proposed','committed'].includes(row?.tx_status?.status))setStage('Confirming');
@@ -88,8 +90,9 @@ export default function WithdrawalPanel({market,owner,balance,balanceReady,onCon
     const toastId=toast.loading(label('Preparing withdrawal review','正在准备提取审查'));
     try{
       if(!navigator.locks)throw Error('Exclusive withdrawal lock unavailable');
-      await navigator.locks.request(`roveko-withdrawal-${owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{
+      await navigator.locks.request(`roveko-gate2-trade-${owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{
         if(!lock)throw Error('Another withdrawal is in progress');
+        assertWalletFundingAvailable(localStorage,market.genesis,owner);
         if(localStorage.getItem(journalKey))throw Error('A previous withdrawal requires reconciliation');
         const prepared=review;if(!prepared){await prepare();toast.success(label('Review ready','审查已准备'),{id:toastId,description:label('Check the amount, fee and capacity before approving.','批准前请检查数量、手续费和容量。')});return;}
         const current=active.current;if(!current||current!==signer||!await current.isConnected())throw Error('Wallet changed before approval');
@@ -106,8 +109,9 @@ export default function WithdrawalPanel({market,owner,balance,balanceReady,onCon
         }
         verifyInitializationSignature(prepared.transaction,signed,prepared.inputs.map(cell=>({lock:cell.lock})),2,owner);
         await validateFresh(prepared,current);
+        assertWalletFundingAvailable(localStorage,market.genesis,owner);
         if(localStorage.getItem(journalKey))throw Error('A previous withdrawal requires reconciliation');
-        const record:Attempt={version:1,genesis:market.genesis,owner,txHash:signed.hash(),quantity:prepared.quantity.toString(),transaction:cccA.JsonRpcTransformers.transactionFrom(signed)};
+        const record:Attempt={...(market.id==='pudge-xudt'?{}:{market:market.identity}),version:1,genesis:market.genesis,owner,txHash:signed.hash(),quantity:prepared.quantity.toString(),transaction:cccA.JsonRpcTransformers.transactionFrom(signed)};
         const raw=JSON.stringify(record);localStorage.setItem(journalKey,raw);setStage('Submitted');setAttemptRaw(raw);setReview(null);
         toast.loading(label('Broadcasting approved withdrawal','正在广播已批准的提取交易'),{id:toastId});
         const submitted=await current.client.sendTransaction(signed);

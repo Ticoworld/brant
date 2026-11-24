@@ -3,11 +3,12 @@ import {launchOperations} from '../../../../../lib/v2-engine/launch-operations-s
 import {generatePudgeLaunchProof} from '../../../../../lib/v2-engine/pudge-launch-proof-server';
 import {openConfiguredSharedLaunchStore} from '../../../../../lib/v2-engine/shared-launch-store';
 import {PUDGE_GATE2_ANCHOR, PUDGE_GATE2_GENESIS} from '../../../../../lib/v2-engine/pudge-public-registry';
+import {marketNetwork} from '../../../../../lib/v2-engine/market-network-server';
 
 export const runtime = 'nodejs';
 
 const rpc = async (method: string, params: unknown[]) => {
-  const response = await fetch('https://testnet.ckb.dev/', {method: 'POST', cache: 'no-store',
+  const response = await fetch(marketNetwork().endpoint, {method: 'POST', cache: 'no-store',
     headers: {'Content-Type': 'application/json'}, signal: AbortSignal.timeout(8000),
     body: JSON.stringify({jsonrpc: '2.0', id: 1, method, params})});
   const data = await response.json();
@@ -17,11 +18,12 @@ const rpc = async (method: string, params: unknown[]) => {
 const approvedCreator = process.env.BRANT_LAUNCH_APPROVED_CREATOR;
 const launchWritesEnabled = process.env.BRANT_LAUNCH_WRITES === '1' &&
   typeof approvedCreator === 'string' && /^0x[0-9a-f]{64}$/.test(approvedCreator);
-const operate = launchOperations({rpc, genesis: PUDGE_GATE2_GENESIS, excludedAnchor: PUDGE_GATE2_ANCHOR,
+const network=marketNetwork();
+const operate = launchOperations({rpc, genesis: network.genesis, fixture:network.fixture, excludedAnchor: network.fixture?undefined:PUDGE_GATE2_ANCHOR,
   quantity: 7n, proof: generatePudgeLaunchProof, openStore: openConfiguredSharedLaunchStore,
   authorizeCreator: owner => owner === approvedCreator,
   send: launchWritesEnabled ? async transaction => {
-    if (await rpc('get_block_hash', ['0x0']) !== PUDGE_GATE2_GENESIS) throw Error('Wrong Pudge genesis');
+    if (await rpc('get_block_hash', ['0x0']) !== network.genesis) throw Error('Wrong launch genesis');
     return rpc('send_transaction', [cccA.JsonRpcTransformers.transactionFrom(transaction)]);
   } : undefined,
 });
@@ -63,8 +65,8 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     return new Response(null, {status: 403});
   }
   const {action} = await context.params;
-  if (!['prepare','submit','session','sessions','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
-  if (action === 'submit' && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
+  if (!['prepare','submit','resubmit','pending-review','session','sessions','publish','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
+  if (['submit','resubmit'].includes(action) && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
   active++;

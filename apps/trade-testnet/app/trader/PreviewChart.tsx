@@ -118,11 +118,11 @@ export default function PreviewChart({market, zh, loading, stale}: {
       {series && active ? <>
         <div className="preview-candle-readout" aria-label={zh ? '蜡烛图数据' : 'Candle details'}>
           <span>{utc.format(active.time * 1000)} UTC</span>
-          <span>{zh ? '开' : 'O'} <b>{formatCkb(active.open)}</b> · {zh ? '高' : 'H'} <b>{formatCkb(active.high)}</b> · {zh ? '低' : 'L'} <b>{formatCkb(active.low)}</b> · {zh ? '收' : 'C'} <b>{formatCkb(active.close)}</b> CKB/RVK</span>
-          <span>{zh ? '成交量' : 'Volume'} <b>{formatCkb(active.volume)} CKB</b> · {active.buys} {zh ? '笔买入' : 'Buy'} / {active.sells} {zh ? '笔卖出' : 'Sell'} · {active.quantity.toString()} RVK</span>
+          <span>{zh ? '开' : 'O'} <b>{formatCkb(active.open)}</b> · {zh ? '高' : 'H'} <b>{formatCkb(active.high)}</b> · {zh ? '低' : 'L'} <b>{formatCkb(active.low)}</b> · {zh ? '收' : 'C'} <b>{formatCkb(active.close)}</b> CKB/{market?.token.symbol ?? 'Token'}</span>
+          <span>{zh ? '成交量' : 'Volume'} <b>{formatCkb(active.volume)} CKB</b> · {active.buys} {zh ? '笔买入' : 'Buy'} / {active.sells} {zh ? '笔卖出' : 'Sell'} · {active.quantity.toString()} {market?.token.symbol ?? 'Token'}</span>
         </div>
         <div className="preview-plot-wrap">
-          {series.latest !== null && <span className="preview-current-price">{stale ? (zh ? '上次验证' : 'Last verified') : (zh ? '当前' : 'Current')} · {formatCkb(series.latest)} CKB/RVK</span>}
+          {series.latest !== null && <span className="preview-current-price">{stale ? (zh ? '上次验证' : 'Last verified') : (zh ? '当前' : 'Current')} · {formatCkb(series.latest)} CKB/{market?.token.symbol ?? 'Token'}</span>}
           
           <div ref={plot} className="preview-plot" role="img" aria-label={zh ? '价格蜡烛图和成交量' : 'Price candles and volume'} aria-describedby="preview-price-basis"/>
         </div>
@@ -136,7 +136,7 @@ export default function PreviewChart({market, zh, loading, stale}: {
 }
 
 export function RecentTrades({market, zh}: {market: MarketData | null; zh: boolean}) {
-  const symbol = market?.token.symbol ?? 'RVK';
+  const symbol = market?.token.symbol ?? 'Token';
   const locale = zh ? 'zh-CN' : 'en';
   const rows = market?.historyState === 'verified' ? market.history.filter(event => event.status === 'confirmed').slice(-6).reverse() : [];
   return <section className="preview-card preview-recent" aria-labelledby="preview-recent-title">

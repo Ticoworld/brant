@@ -11,6 +11,7 @@ import {quote} from '../../lib/v2-engine/curve.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
 import {makeTradeAttempt,parseTradeAttempt,recheckTradeSettlement,saveTradeSettlement,submitJournaledTrade,tradeKey,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
 import {PUDGE_GENESIS,pudgeRpc,pudgeReadBatch} from './rpc';
+import {assertWalletFundingAvailable} from '../../lib/v2-engine/wallet-pending.ts';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
 import {copy} from './copy';
@@ -27,8 +28,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
   const reconcileLock=useRef(false);
   const [failure,setFailure]=useState<{owner:string;message:string}|null>(null);
-  const key=account.owner?tradeKey(PUDGE_GENESIS,account.owner):'';
+  const key=account.owner&&market?tradeKey(market.genesis,account.owner,market.id==='pudge-xudt'?undefined:market.identity):'';
   const currentKey=useRef(key);currentKey.current=key;
+  useEffect(()=>{currentKey.current=key;return()=>{currentKey.current='';};},[key]);
   const [status,setStatus]=useState('');
   const [receipt,setReceipt]=useState('');
   const [inclusion,setInclusion]=useState<{key:string;hash:string;height:string}|null>(null);
@@ -40,7 +42,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     let timer:ReturnType<typeof setTimeout>;
     const poll=async()=>{
       try{
-        const response=await fetch('/api/v2/pudge-proof',{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(4000)])});
+        const response=await fetch('/api/v2/pudge-proof?market='+encodeURIComponent(market.id),{cache:'no-store',signal:AbortSignal.any([controller.signal,AbortSignal.timeout(4000)])});
         const value=await response.json();
         if(!controller.signal.aborted)setReadiness(response.ok?value.status:'unavailable');
       }catch{if(!controller.signal.aborted)setReadiness('unavailable');}
@@ -105,7 +107,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     reconcileLock.current=true;
     try{
       const attempt=parseTradeAttempt(raw);
-      if(tradeKey(attempt.genesis,attempt.owner)!==key)throw Error('Trade journal owner or network mismatch');
+      if(tradeKey(attempt.genesis,attempt.owner,attempt.market)!==key)throw Error('Trade journal owner or network mismatch');
       const row=await pudgeRpc<{transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string;block_number?:string}}|null>('get_transaction',[attempt.txHash]);
       if(!current())return;
       const state=row?.tx_status?.status;
@@ -194,6 +196,8 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       if(!navigator.locks)throw Error('Exclusive trade lock unavailable');
       await navigator.locks.request(`roveko-gate2-trade-${account.owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{
         if(!lock)throw Error('Another trade action is in progress');
+        assertWalletFundingAvailable(localStorage,market.genesis,account.owner);
+        if(currentKey.current!==key)throw Error('Market changed before signing');
         if(localStorage.getItem(key)!==null)throw Error('A previous trade requires reconciliation');
         const current=active.current;if(!current||current!==signer||!await current.isConnected())throw Error('Wallet changed before preparation');
         const address=await current.getRecommendedAddressObj(),owner=address.script.hash();
@@ -218,6 +222,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         }
         console.info('Brant trade validation',Math.round(performance.now()-validationStarted));
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase())throw Error('Wallet changed during preparation');
+        if(currentKey.current!==key)throw Error('Market changed before signing');
         setStatus('awaiting-wallet');
         const reviewedHash=review.transaction.hash();
         tradeTiming(reviewedHash,'click',clickedAt);
@@ -240,7 +245,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
         await recheckTradeSettlement(rpc,localStorage,key);
         await validateReviewedInputs(review,side,quantity,quotedAmount);
-        const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed);
+        if(currentKey.current!==key)throw Error('Market changed after approval');
+        assertWalletFundingAvailable(localStorage,market.genesis,owner);
+        const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed,market.id==='pudge-xudt'?undefined:market.identity);
         broadcasting.current=true;
         await submitJournaledTrade(localStorage,record,()=>current.client.sendTransaction(signed),raw=>{
           setAttemptRaw(raw);setPending(true);setUncertain(false);setStatus('broadcasting');
