@@ -112,10 +112,15 @@ function proofInput(domain, op, owners, updates) {
   return { domain, op, owners: owners.map(x => ({ owner_lock_hash: x.owner, balance: String(x.balance), revision: String(x.revision), active: x.balance > 0n })),
     updates: updates.map(x => ({ owner_lock_hash: x.owner, balance: String(x.balance), revision: String(x.revision), active: x.balance > 0n })) };
 }
+let sharedProofBinary;
 function makeProof(domain, op, owners, updates, extra = Buffer.alloc(0)) {
   const data = JSON.stringify(proofInput(domain, op, owners, updates));
   const args = ['run', '--quiet', '--locked', '--manifest-path', path.join(__dirname, 'smt-tools', 'Cargo.toml'), '--', 'proof', '-', '-'];
-  const result = execFileSync('cargo', args, { input: data, encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
+  if(process.env.TRADE_SHARED_LAUNCH_MODULE&&!sharedProofBinary){
+    execFileSync('cargo',['build','--locked','--offline','--manifest-path',path.join(__dirname,'smt-tools','Cargo.toml')],{stdio:'inherit'});
+    sharedProofBinary=path.join(__dirname,'smt-tools','target','debug',process.platform==='win32'?'trade-v2-smt-tools.exe':'trade-v2-smt-tools');
+  }
+  const result = execFileSync(sharedProofBinary||'cargo', sharedProofBinary?['proof','-','-']:args, { input: data, encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 });
   const parsed = JSON.parse(result);
   return { root: parsed.new_root, witness: hx(Buffer.concat([b(parsed.contract_witness.hex), extra])), parsed };
 }
@@ -216,7 +221,27 @@ async function main() {
     };
     await runSharedLaunch({rpc, genesis: genesis.header.hash, hashes, deps, secp, wallets, locks,
       cell, tx, sign, commit, makeProof, le, out, camel: C.camel, restartNode,
-      signMetadata:(role,message)=>new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(),keys[role]).signMessageRaw(message)});
+      signMetadata:(role,message)=>new ccc.SignerCkbPrivateKey(new ccc.ClientPublicTestnet(),keys[role]).signMessageRaw(message),
+      connectBrowserWallet:async(page,bundle)=>{
+        await page.addScriptTag({path:bundle});
+        await page.waitForFunction(()=>typeof document.querySelector('ccc-connector')?.updateSigner==='function');
+        // A custom element can upgrade before React hydrates its sibling button.
+        // Exercise the real button after hydration rather than losing the click.
+        for(let attempt=0;attempt<20;attempt++){
+          if(await page.locator('ccc-connector').isVisible())break;
+          const button=page.locator('.brant-wallet');
+          if(await button.isEnabled())await button.click();
+          await delay(500);
+        }
+        await page.locator('ccc-connector').waitFor({state:'visible'});
+        await page.evaluate(async({key,secp})=>{
+          const signer=window.createDisposableTestSigner(key,secp,'/fixture-wallet-rpc');
+          const connector=document.querySelector('ccc-connector');
+          await connector.updateComplete;
+          await connector.updateSigner({name:'Disposable native fixture',icon:''},{name:'Native fixture',signer});
+          connector.close();
+        },{key:keys[2],secp});
+      }});
     return;
   }
 

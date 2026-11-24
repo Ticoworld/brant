@@ -35,6 +35,7 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
               throw Error('Could not verify your token balance');
             }
             const body=await response.json();
+            if(body.token!==market.token.typeHash||!Array.isArray(body.points)||body.points.length!==4||body.custodyOutpoint?.tx_hash!==body.points[2]?.tx_hash||body.custodyOutpoint?.index!==body.points[2]?.index)throw Error('Balance market identity changed');
             if(body.genesis!==market.genesis||body.market!==market.identity||body.owner!==owner.toLowerCase()||body.root!==root||typeof body.balance!=='string'||!/^(0|[1-9][0-9]*)$/.test(body.balance))throw Error('Waiting for the current custody root');
             return body.balance as string;
           })().finally(()=>requests.delete(requestKey));

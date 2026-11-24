@@ -54,6 +54,7 @@ export default function WithdrawalPanel({market,owner,balance,balanceReady,onCon
       const header=await pudgeRpc<any>('get_header',[row.tx_status.block_hash]);
       if(header?.hash?.toLowerCase()!==row.tx_status.block_hash.toLowerCase()||!header.number||(await pudgeRpc<string>('get_block_hash',[header.number])).toLowerCase()!==row.tx_status.block_hash.toLowerCase())throw Error('Withdrawal block is not canonical');
       if(localStorage.getItem(journalKey)!==raw)throw Error('Withdrawal record changed during reconciliation');
+      localStorage.setItem(journalKey+':settled',JSON.stringify({raw}));
       localStorage.setItem(journalKey+':confirmed',record.txHash);
       localStorage.removeItem(journalKey);setAttemptRaw('');setReview(null);setMessage(label(`External ${market.token.symbol} withdrawal confirmed.`,`${market.token.symbol} 外部提取已确认。`));
       if(!silent)toast.success(label('Withdrawal confirmed','提取已确认'),{description:record.txHash});

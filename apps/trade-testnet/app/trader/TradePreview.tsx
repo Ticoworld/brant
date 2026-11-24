@@ -7,11 +7,17 @@ import {quote} from '../../lib/v2-engine/curve';
 import {PUDGE_TRADE_CHANGE_CAPACITY, PUDGE_TRADE_FEE} from '../../lib/v2-engine/market-capacity';
 import {copy} from './copy';
 import {useMarketSession} from './use-market-session';
+import {useAccount} from './account-provider';
 import {formatCkb} from './rpc';
 import type {MarketData, Side} from './types';
 import PreviewChart, {RecentTrades} from './PreviewChart';
 
 export default function TradePreview({marketId='pudge-xudt'}:{marketId?:string}) {
+  const account=useAccount();
+  return <MarketTradePreview key={marketId+':'+account.owner} marketId={marketId}/>;
+}
+
+function MarketTradePreview({marketId}:{marketId:string}) {
   const [side, setSide] = useState<Side>('buy');
   const session = useMarketSession(marketId, side, true);
   return <TradeV2 session={session} side={side} setSide={setSide} />;
@@ -115,7 +121,7 @@ export function TradeV2({session, side, setSide}: {
       <main className="preview-canvas">
         <header className="preview-market">
           <div className="preview-identity">
-            <TokenMark symbol={symbol} />
+            <TokenMark symbol={symbol} logo={market?.token.logo}/>
             <div><h1>{market?.pair ?? '— / CKB'}</h1><p>{market?.token.name ?? 'Loading market'}</p></div>
           </div>
           <dl className="preview-prices">
@@ -189,8 +195,8 @@ function Metric({label, value, unit, tone, detail}: {label: string; value: strin
   return <div><dt>{label}</dt><dd data-tone={tone}>{value} {unit && <small>{unit}</small>}</dd>{detail && <dd className="preview-metric-detail">{detail}</dd>}</div>;
 }
 
-function TokenMark({symbol}: {symbol: string}) {
-  return <span aria-hidden="true" className="preview-token-mark" data-ckb={symbol === 'CKB'}>{symbol === 'CKB' ? 'C' : 'R'}</span>;
+function TokenMark({symbol,logo}: {symbol: string;logo?:string}) {
+  return <span aria-hidden="true" className="preview-token-mark" data-ckb={symbol === 'CKB'}>{logo?<img src={logo} alt="" width={32} height={32}/>:symbol.charAt(0)}</span>;
 }
 
 function readAttemptHash(raw: string) {
@@ -232,7 +238,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
       <span>{buying ? (zh ? '买入数量' : `${symbol} quantity to buy`) : (zh ? '卖出数量' : `${symbol} quantity to sell`)}</span>
       <span className="preview-well-row">
         <input aria-invalid={!!market && !!quantity && amount === null} inputMode="numeric" pattern="[0-9]*" maxLength={10} value={quantity} placeholder="0" onChange={event => {setQuantity(event.target.value);}} />
-        <span className="preview-token"><TokenMark symbol={symbol} />{symbol}</span>
+        <span className="preview-token"><TokenMark symbol={symbol} logo={market?.token.logo}/>{symbol}</span>
       </span>
     </label>
   );

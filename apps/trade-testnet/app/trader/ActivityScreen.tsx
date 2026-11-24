@@ -30,20 +30,21 @@ export function ActivityScreen(){
   const [filter,setFilter]=useState<Filter>('all');
   const [refreshing,setRefreshing]=useState(false);
   const [journalRevision,setJournalRevision]=useState(0);
-  const [journals,setJournals]=useState<{owner:string;records:LocalAttempt[]}>({owner:'',records:[]});
+  const journalKey=JSON.stringify([owner,market?.genesis,market?.identity]);
+  const [journals,setJournals]=useState<{key:string;records:LocalAttempt[]}>({key:'',records:[]});
   const scope=selected??(account.state==='ready'?'personal':'market');
   const history=market?.historyState==='verified'?market.history:null;
   const rows=useMemo(()=>activityRows(market,scope,owner,filter),[market,scope,owner,filter]);
 
   useEffect(()=>{
     if(!owner)return;
-    const read=()=>setJournals({owner,records:readActivityAttempts(localStorage,PUDGE_GENESIS,owner,history??[],market?.id==='pudge-xudt'?undefined:market?.identity)});
+    const read=()=>setJournals({key:journalKey,records:readActivityAttempts(localStorage,PUDGE_GENESIS,owner,history??[],market?.id==='pudge-xudt'?undefined:market?.identity)});
     read();
     window.addEventListener('storage',read);
     return()=>window.removeEventListener('storage',read);
-  },[owner,history,journalRevision]);
+  },[owner,history,journalRevision,journalKey]);
 
-  const attempts=journals.owner===owner&&scope==='personal'
+  const attempts=journals.key===journalKey&&scope==='personal'
     ?journals.records.filter(record=>record.kind!=='trade'||!history?.some(event=>event.hash.toLowerCase()===record.hash))
     :[];
   const refresh=async()=>{

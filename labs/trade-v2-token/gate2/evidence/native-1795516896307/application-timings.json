@@ -1,0 +1,218 @@
+[
+  {
+    "path": "/api/markets/catalog",
+    "epoch": 1,
+    "status": 200,
+    "ms": 547
+  },
+  {
+    "path": "/api/markets/0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "epoch": 1,
+    "status": 200,
+    "ms": 591
+  },
+  {
+    "phase": "warm-read",
+    "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "ms": 592
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 7070
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 7075
+  },
+  {
+    "phase": "cold-concurrent-proof",
+    "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "requests": 2,
+    "ms": 7424
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 1,
+    "side": "buy",
+    "status": 200,
+    "ms": 863
+  },
+  {
+    "phase": "warm-proof",
+    "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "ms": 864
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 1919
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 2266
+  },
+  {
+    "path": "/api/markets/0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "epoch": 1,
+    "status": 200,
+    "ms": 1162
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 1,
+    "side": "balance",
+    "status": 200,
+    "ms": 1699
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 1,
+    "status": 200,
+    "ms": 1185
+  },
+  {
+    "phase": "warm-read",
+    "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "ms": 1185
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 1926
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 2004
+  },
+  {
+    "phase": "cold-concurrent-proof",
+    "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "requests": 2,
+    "ms": 2297
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 1,
+    "side": "buy",
+    "status": 200,
+    "ms": 1096
+  },
+  {
+    "phase": "warm-proof",
+    "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "ms": 1097
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 3481
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 4651
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 1,
+    "status": 200,
+    "ms": 4361
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 1,
+    "side": "balance",
+    "status": 200,
+    "ms": 6971
+  },
+  {
+    "path": "/api/markets/0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "epoch": 1,
+    "status": 200,
+    "ms": 4288
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 1,
+    "status": 200,
+    "ms": 4316
+  },
+  {
+    "path": "/api/markets/catalog",
+    "epoch": 1,
+    "status": 200,
+    "ms": 1517
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 2,
+    "side": "balance",
+    "status": 200,
+    "ms": 5176
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 2,
+    "side": "balance",
+    "status": 200,
+    "ms": 5179
+  },
+  {
+    "path": "/api/markets/catalog",
+    "epoch": 2,
+    "status": 200,
+    "ms": 331
+  },
+  {
+    "path": "/api/markets/catalog",
+    "epoch": 3,
+    "status": 200,
+    "ms": 588
+  },
+  {
+    "path": "/api/markets/0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "epoch": 3,
+    "status": 200,
+    "ms": 17175
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 3,
+    "status": 200,
+    "ms": 1150
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 3,
+    "status": 200,
+    "ms": 1866
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "epoch": 3,
+    "side": "balance",
+    "status": 200,
+    "ms": 9186
+  },
+  {
+    "path": "/api/v2/pudge-proof",
+    "status": 200,
+    "ms": 968
+  },
+  {
+    "path": "/api/markets/0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "epoch": 3,
+    "status": 200,
+    "ms": 1345
+  },
+  {
+    "path": "/api/markets/0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "epoch": 4,
+    "status": 200,
+    "ms": 17277
+  }
+]

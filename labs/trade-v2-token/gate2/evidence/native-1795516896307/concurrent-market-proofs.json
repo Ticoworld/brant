@@ -1,0 +1,59 @@
+{
+  "ms": 3409,
+  "markets": [
+    {
+      "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+      "token": "0x26883c8a6b36d20588a7d04cd383459d2c21b7a98c80025cfba39ecf528c9bdc",
+      "root": "0x15b7acfbbf10b4af55983ea8a7ac3ca07c4724c9c4531e19d33b77a15262b0ba",
+      "points": [
+        {
+          "index": "0x0",
+          "tx_hash": "0x538dff4cb4488deef9f86d45e8fe4bca6be2f530edb7b2469bc04bd8759cd262"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0x538dff4cb4488deef9f86d45e8fe4bca6be2f530edb7b2469bc04bd8759cd262"
+        },
+        {
+          "index": "0x2",
+          "tx_hash": "0x538dff4cb4488deef9f86d45e8fe4bca6be2f530edb7b2469bc04bd8759cd262"
+        },
+        {
+          "index": "0x3",
+          "tx_hash": "0x538dff4cb4488deef9f86d45e8fe4bca6be2f530edb7b2469bc04bd8759cd262"
+        }
+      ]
+    },
+    {
+      "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+      "token": "0x92e24f11b9685523ff6a6e725d803e67188feee04b073769f8d0defe6b46b3d5",
+      "root": "0xe1117cda82fead5c8f4d7c2ec22371a2c547a7c905dae6bdd7c9f204cda3061a",
+      "points": [
+        {
+          "index": "0x0",
+          "tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c"
+        },
+        {
+          "index": "0x0",
+          "tx_hash": "0x391e12aad3db16b78783f8aade60f5db4f06cd8165452de09bc98bb50672cdbc"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0x391e12aad3db16b78783f8aade60f5db4f06cd8165452de09bc98bb50672cdbc"
+        }
+      ]
+    }
+  ],
+  "processes": [
+    {
+      "epoch": 1,
+      "pid": 1198,
+      "node": "v24.19.0",
+      "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+    }
+  ]
+}

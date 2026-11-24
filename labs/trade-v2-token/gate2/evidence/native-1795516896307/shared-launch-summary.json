@@ -1,0 +1,147 @@
+{
+  "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+  "fixture": {
+    "market": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0xa"
+      },
+      "depType": "code",
+      "dataHash": "0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770"
+    },
+    "marker": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0x9"
+      },
+      "depType": "code",
+      "dataHash": "0xd09213f4c7755a004bb17d0866ac170b6a459e36e17a76df66079f9426604fd2"
+    },
+    "ownerLock": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0xb"
+      },
+      "depType": "code",
+      "dataHash": "0xf8679f2ffc2a07f6ff3e8ec71ddd8eb7f807d0c0c6f3482cf9e9fbe6af57da53"
+    },
+    "custody": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0xc"
+      },
+      "depType": "code",
+      "dataHash": "0xeb824875d13277957fbca6b683cfb20d7a3232de4d1737fe5a3a20dbad858000"
+    },
+    "custodyMarker": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0xd"
+      },
+      "depType": "code",
+      "dataHash": "0x21c973369f41486cd7d45b6a8aac18894b0f8bab69aea1e023e6a639baa7eadc"
+    },
+    "xudt": {
+      "outPoint": {
+        "txHash": "0x131632f040ec59641c6337ab5f96d492d94410685fa5b1abae012a26afca1819",
+        "index": "0x6"
+      },
+      "depType": "code",
+      "dataHash": "0x50bd8d6680b8b9cf98b73f3c08faf8b2a21914311954118ad6609be6e78a1b95"
+    },
+    "secp": {
+      "outPoint": {
+        "txHash": "0x0dacd8992436cbcd18d9384fe2bc3c3ee06c5052f5eaa9ea7393fa679126481e",
+        "index": "0x0"
+      },
+      "depType": "depGroup",
+      "dataHash": "0xeb77bb090ffe6550230c2278f24b68a022c3558c3945c89302adb8de4f4eb333"
+    }
+  },
+  "results": [
+    {
+      "scope": {
+        "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+        "owner": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+        "anchor": {
+          "txHash": "0x32aaa3f23afe89a5b1962e0b293878b569d3d30291cfa36f70dc7c452453f710",
+          "index": "0x0"
+        },
+        "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d"
+      },
+      "stageHashes": {
+        "setup": "0xc159209a917f32f6b55aae78b78200e57a9e2b049521ca84a14b9f652c5eb146",
+        "issuance": "0xbfc7fa4623f0c8833e1929cd3c6c200b6e418d4838698e64acc8b204017636ac",
+        "purchase": "0x8640b4b46dc6ff086ff113e14165fad94643ba5232bfebf1b2ab2cafd14b85b0"
+      },
+      "initial": [
+        {
+          "tx_hash": "0xbfc7fa4623f0c8833e1929cd3c6c200b6e418d4838698e64acc8b204017636ac",
+          "index": "0x0"
+        },
+        {
+          "tx_hash": "0xbfc7fa4623f0c8833e1929cd3c6c200b6e418d4838698e64acc8b204017636ac",
+          "index": "0x1"
+        }
+      ],
+      "trade": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+      "root": "0xeb3ad6536fb1eae0d2e4a53fd86dd10e80caf7eadee6574b735dffa08ba5a25d",
+      "custodyLock": "0xbebeada3e6f80a98ec919621e1ee943763724a6b29e401ce33537058ba081e5d",
+      "token": "0x92e24f11b9685523ff6a6e725d803e67188feee04b073769f8d0defe6b46b3d5",
+      "accounting": {
+        "eligibleFunding": "200000000000",
+        "locked": "139100000000",
+        "change": "60899992108",
+        "curveReserve": "9100000000",
+        "fees": "7892",
+        "stageFees": {
+          "setup": "1338",
+          "issuance": "2244",
+          "purchase": "4310"
+        }
+      }
+    },
+    {
+      "scope": {
+        "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+        "owner": "0xe681df98958680b0c856e3bc877f26e1d7c5accd3d4d558580cc01e8bc7e1e38",
+        "anchor": {
+          "txHash": "0x32aaa3f23afe89a5b1962e0b293878b569d3d30291cfa36f70dc7c452453f710",
+          "index": "0x2"
+        },
+        "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862"
+      },
+      "stageHashes": {
+        "setup": "0x9d500e1be63064640f1e498eb6e9fe2b693f59ac5aaf64bbceffdce86ee0ffb2",
+        "issuance": "0x221eeb27259c3a9f9cb167ca591a85e0a5bb2e60fb9cb728940e2e81fb882680",
+        "purchase": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c"
+      },
+      "initial": [
+        {
+          "tx_hash": "0x221eeb27259c3a9f9cb167ca591a85e0a5bb2e60fb9cb728940e2e81fb882680",
+          "index": "0x0"
+        },
+        {
+          "tx_hash": "0x221eeb27259c3a9f9cb167ca591a85e0a5bb2e60fb9cb728940e2e81fb882680",
+          "index": "0x1"
+        }
+      ],
+      "trade": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33",
+      "root": "0xa3b1e4e1298ff390026a9a2655fd59b6514586faaee8ee83fced4e9c89284e42",
+      "custodyLock": "0x82880137431751e9b7a8689767e6323bcd368d3902d386189585171bfc241d0e",
+      "token": "0x26883c8a6b36d20588a7d04cd383459d2c21b7a98c80025cfba39ecf528c9bdc",
+      "accounting": {
+        "eligibleFunding": "200000000000",
+        "locked": "139100000000",
+        "change": "60899992108",
+        "curveReserve": "9100000000",
+        "fees": "7892",
+        "stageFees": {
+          "setup": "1338",
+          "issuance": "2244",
+          "purchase": "4310"
+        }
+      }
+    }
+  ]
+}

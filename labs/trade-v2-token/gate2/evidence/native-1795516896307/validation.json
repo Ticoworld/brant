@@ -1,0 +1,27 @@
+{
+  "classification": "READY FOR OWNER PUDGE TEST",
+  "node": "24.19.0",
+  "productionBuild": {
+    "command": "node node_modules/next/dist/bin/next build --webpack",
+    "isolatedOverridesRemoved": true,
+    "exitCode": 0,
+    "compiledSeconds": 69,
+    "typescriptSeconds": 33.6,
+    "staticPages": 18
+  },
+  "passedFixtures": [
+    "shared-launch.mts",
+    "pudge-market-service-replay.mjs",
+    "pudge-settlement.mjs",
+    "activity-data.mts",
+    "v2-review.mts",
+    "multi-market-boundaries.mjs",
+    "v2-pudge-proof-security.mts"
+  ],
+  "nativeLifecycleExitCode": 0,
+  "verifiedPortfolioActivityFollowupExitCode": 0,
+  "externalWalletInteroperability": "UNVERIFIED; browser uses disposable fixture signer",
+  "publicWrites": false,
+  "deployment": false,
+  "push": false
+}

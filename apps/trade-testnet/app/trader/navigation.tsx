@@ -30,6 +30,7 @@ export function NavigationHeader({account}: {account: Pick<ReturnType<typeof use
   const pathname = usePathname();
   const {locale,setLocale} = useLocale();
   const zh = locale === 'zh-CN';
+  const network=process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_BRANT_ISOLATED_TEST==='1'?'Isolated':'Pudge';
   const opening = account.state === 'checking' || account.state === 'connecting';
   const address = account.state === 'ready' ? account.address : '';
   const issue = walletIssues[account.state as keyof typeof walletIssues];
@@ -46,7 +47,7 @@ export function NavigationHeader({account}: {account: Pick<ReturnType<typeof use
         </Link>)}
       </nav>
       <div className="brant-header-meta">
-        <span className="brant-network" data-wrong-network={account.state==='wrong-network'} title={copy(locale,'pudge')}><i aria-hidden="true"/>Pudge</span>
+        <span className="brant-network" data-wrong-network={account.state==='wrong-network'} title={network==='Pudge'?copy(locale,'pudge'):network}><i aria-hidden="true"/>{network}</span>
         <button type="button" className="brant-wallet" title={address||undefined} onClick={account.connect} disabled={opening} aria-busy={opening}>{walletLabel}</button>
         <button type="button" onClick={() => setLocale(zh?'en':'zh-CN')} aria-label={zh?'Switch to English':'切换到简体中文'}>{zh?'EN':'简中'}</button>
       </div>

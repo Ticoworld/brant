@@ -49,7 +49,7 @@ const verifiedManifests=new Map<string,{manifest:VerifiedManifest;verifiedAt:num
 type CustodyState={bundle:RecoveryBundle;snapshot:Record<string,unknown>};
 const custodyStates=new Map<string,CustodyState>();
 const custodyRefreshes=new Map<string,Promise<{state:CustodyState;live:Awaited<ReturnType<typeof getPudgeCustodyAnchor>>|null}>>();
-type ProofWorker={state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;users:number;idle?:ReturnType<typeof setTimeout>};
+type ProofWorker={state:CustodyState;native:ReturnType<typeof startPudgeProofWorker>;users:number;closing?:boolean;idle?:ReturnType<typeof setTimeout>};
 const proofWorkers=new Map<CustodyState,ProofWorker>();
 
 function rpcEndpoint(){
@@ -101,6 +101,10 @@ function consumeRateLimit(request:Request,balanceOnly:boolean){
   const edgeIP=process.env.RAILWAY_PUBLIC_DOMAIN ? request.headers.get('x-real-ip')?.trim() : undefined;
   const address=edgeIP&&isIP(edgeIP) ? edgeIP : 'unknown';
   const now=Date.now(),key=(balanceOnly?"balance:":"proof:")+address,current=rates.get(key);
+  if(!current&&rates.size>=2048){
+    for(const [saved,value]of rates)if(now-value.startedAt>=RATE_WINDOW_MS)rates.delete(saved);
+    if(rates.size>=2048)return false;
+  }
   if(!current||now-current.startedAt>=RATE_WINDOW_MS){rates.set(key,{startedAt:now,count:1});}
   else if(current.count>=(balanceOnly?24:RATE_LIMIT))return false;
   else current.count++;
@@ -253,12 +257,12 @@ export async function GET(request:Request){
   if(requested!=='pudge-xudt'&&!/^0x[0-9a-f]{64}$/.test(requested))return new Response('Invalid market',{status:400});
   if(params.has('trade')){
     const trade=params.get('trade')||'',owner=params.get('owner')||'';
-    const result=(incorporated:boolean)=>Response.json({incorporated,trade,owner},{headers:{'Cache-Control':'no-store'}});
-    if(!hash.test(trade)||!hash.test(owner)||rpcEndpoint()!=='https://testnet.ckb.dev/'||!custodyStates.size)return result(false);
+    const result=(incorporated:boolean)=>Response.json({incorporated,trade,owner,market:requested},{headers:{'Cache-Control':'no-store'}});
+    if(!hash.test(trade)||!hash.test(owner)||!custodyStates.size)return result(false);
     try{
       const {market,point,data}=await getPudgeCustodyAnchor(requested);
       const marketScript=ccc.Script.from(market.manifest.scripts.market);
-      const state=custodyStates.get(requestKey({...market.manifest,scripts:{market:marketScript}},'https://testnet.ckb.dev/'));
+      const state=custodyStates.get(requestKey({...market.manifest,scripts:{market:marketScript}},rpcEndpoint()));
       const external=state?.snapshot.net_external;
       return result(!!state&&market.historyState==='verified'&&
         market.history.some(row=>row.hash===trade&&row.owner===owner)&&
@@ -417,9 +421,9 @@ async function handleProof(request:Request,synchronize=false){
       return validateLiveCheckpoint(bundle,manifest,rpc);
     };
     if(current&&matchesMarket(current.bundle)){
-      // The current canonical outpoint and its root authenticate every leaf
-      // used by snapshot-transition, even if the collection tip changed.
-      if(market||await isLive(current.bundle)){
+      // Reuse requires both the current custody state and the saved canonical
+      // collection anchor, including when another market caused a reorg.
+      if(await isLive(current.bundle)){
         proofTrace.push('verified-custody-reuse');
         reconcile(current.snapshot);
         while(custodyStates.size>=16)custodyStates.delete(custodyStates.keys().next().value!);
@@ -503,11 +507,12 @@ async function handleProof(request:Request,synchronize=false){
       return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash,token:tokenHash,points:live?.points,custodyOutpoint:{tx_hash:selectedBundle.live.tx_hash,index:selectedBundle.live.index}},{headers:{'Cache-Control':'no-store'}});
     }
     let worker=proofWorkers.get(state);
+    if(worker?.closing){await worker.native.exited;worker=proofWorkers.get(state);}
     if(!worker){
       if(proofWorkers.size>=2){
-        const unused=[...proofWorkers.values()].find(candidate=>candidate.users===0);
+        const unused=[...proofWorkers.values()].find(candidate=>candidate.users===0&&!candidate.closing);
         if(!unused)throw Error('Native proof workers busy');
-        clearTimeout(unused.idle);proofWorkers.delete(unused.state);unused.native.stop();
+        clearTimeout(unused.idle);unused.closing=true;unused.native.stop();
         await unused.native.exited;
       }
       const snapshotPath=path.join(dir,'snapshot.json');
@@ -540,7 +545,7 @@ async function handleProof(request:Request,synchronize=false){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
     }
     console.info('Pudge proof timing',JSON.stringify({path:proofTrace,ms:Math.round(performance.now()-proofStarted)}));
-    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
+    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,token:tokenHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
     if(error instanceof Error&&error.message==='Expected JSON')return new Response('Expected JSON',{status:415});
@@ -550,7 +555,7 @@ async function handleProof(request:Request,synchronize=false){
     if(leasedWorker){
       const worker=leasedWorker;worker.users--;
       if(worker.users===0){
-        worker.idle=setTimeout(()=>{if(worker.users===0){if(proofWorkers.get(worker.state)===worker)proofWorkers.delete(worker.state);worker.native.stop();}},30_000);
+        worker.idle=setTimeout(()=>{if(worker.users===0){worker.closing=true;worker.native.stop();}},30_000);
         worker.idle.unref();
       }
     }

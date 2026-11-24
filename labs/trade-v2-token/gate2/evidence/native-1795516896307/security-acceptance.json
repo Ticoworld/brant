@@ -1,0 +1,6 @@
+{
+  "wrongInitializationRejected": true,
+  "corruptPublicationRejected": true,
+  "corruptCheckpointRebuilt": true,
+  "concurrentMarketsIsolated": true
+}

@@ -132,7 +132,7 @@ export function PortfolioOverview({account, market, position, walletBalance, cur
     </header>
     {!ready ? <section className="portfolio-surface portfolio-connect">
       <h2>{copy(locale,'connect')}</h2>
-      <p>{zh?'连接 Pudge 钱包以查看 CKB 和 RVK 余额。':'Connect a Pudge wallet to view your CKB and RVK balances.'}</p>
+      <p>{zh?'连接 Pudge 钱包以查看 CKB 和代币余额。':'Connect a Pudge wallet to view your CKB and token balances.'}</p>
       {account.error && <p role="alert">{account.error}</p>}
       <button type="button" className="portfolio-primary" disabled={opening} onClick={account.connect}>{opening?copy(locale,'walletChecking'):copy(locale,'connect')}</button>
     </section> : <div className="portfolio-layout">

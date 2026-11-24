@@ -16,8 +16,8 @@ export async function prepareWithdrawal(rpc:Rpc, config:Config, owner:string, qu
   const p=body.proof;
   if(body.genesis!==config.genesis || p.side!=='withdraw' || p.quantity!==quantity.toString()) throw Error('Recovery identity mismatch');
   if(pudge){
-    if(!config.scripts||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Withdrawal market identity mismatch');
-    if(!body.manifest||['market','custody','custodyMarker','token'].some(name=>ccc.Script.from(config.scripts![name]).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash()))throw Error('Withdrawal proof script identity mismatch');
+    if(!config.scripts||body.token!==ccc.Script.from(config.scripts.token).hash()||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Withdrawal market identity mismatch');
+    if(!body.manifest||['market','marker','owner','custody','custodyMarker','token'].some(name=>ccc.Script.from(config.scripts![name]).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash()))throw Error('Withdrawal proof script identity mismatch');
     if(!p.tip_outpoint?.tx_hash||!p.tip_outpoint?.index||!p.old_root||!p.new_root||typeof p.witness!=='string'||!config.scripts)throw Error('Pudge withdrawal proof is incomplete');
     const [genesis,points]=await Promise.all([rpc('get_block_hash',['0x0']),discoverCustodyPair(rpc,p.tip_outpoint)]);if(typeof genesis!=='string'||genesis.toLowerCase()!==config.genesis.toLowerCase())throw Error('Wrong Pudge network');
 

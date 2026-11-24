@@ -1,0 +1,188 @@
+{
+  "errors": [],
+  "beforeNode": {
+    "stage": "setup",
+    "immutableHash": "0xc159209a917f32f6b55aae78b78200e57a9e2b049521ca84a14b9f652c5eb146",
+    "renewedIdenticalReview": true,
+    "unrelatedReplacement": false
+  },
+  "transactionsBefore": [
+    {
+      "hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+      "blockHash": "0x13f45f2f1d7391baf62f395b9f51ada9b1527d5f3cd216ecadca24a82845f91e",
+      "blockNumber": "0x1f"
+    },
+    {
+      "hash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+      "blockHash": "0x3446a118c3d5eacd8bcd9953e6bcfa8b94c3ac9266e816ac4fecc1694c1b33e8",
+      "blockNumber": "0x2b"
+    }
+  ],
+  "before": {
+    "pid": 1575,
+    "chain": "/home/timot/.cache/brant-native-chains/trade-gate2-FP0zNd/chain",
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+    "tip": {
+      "compact_target": "0x20010000",
+      "dao": "0x443228d6f0f90f2f32412ca7a7872300ae776719e7d1000000375ebc9913ff06",
+      "epoch": "0xa0003000004",
+      "extra_hash": "0x25069982ebf5e54f0437f4dc4f2f88d2a9fd371a64c0079b70dd3d92519ce9e9",
+      "hash": "0x3446a118c3d5eacd8bcd9953e6bcfa8b94c3ac9266e816ac4fecc1694c1b33e8",
+      "nonce": "0x0",
+      "number": "0x2b",
+      "parent_hash": "0x5696b65fb5d62df94df523b215af67d306dde4c5a320f00e9f4533f346a2d3ec",
+      "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": "0x1a20d26675f",
+      "transactions_root": "0xa97f052bf5d59173c664519f8e5d60d92c887dc4668a18f0e24a479a2aba2508",
+      "version": "0x0"
+    }
+  },
+  "shutdown": {
+    "code": 0,
+    "signal": null
+  },
+  "after": {
+    "pid": 9625,
+    "chain": "/home/timot/.cache/brant-native-chains/trade-gate2-FP0zNd/chain",
+    "tip": {
+      "compact_target": "0x20010000",
+      "dao": "0x443228d6f0f90f2f32412ca7a7872300ae776719e7d1000000375ebc9913ff06",
+      "epoch": "0xa0003000004",
+      "extra_hash": "0x25069982ebf5e54f0437f4dc4f2f88d2a9fd371a64c0079b70dd3d92519ce9e9",
+      "hash": "0x3446a118c3d5eacd8bcd9953e6bcfa8b94c3ac9266e816ac4fecc1694c1b33e8",
+      "nonce": "0x0",
+      "number": "0x2b",
+      "parent_hash": "0x5696b65fb5d62df94df523b215af67d306dde4c5a320f00e9f4533f346a2d3ec",
+      "proposals_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": "0x1a20d26675f",
+      "transactions_root": "0xa97f052bf5d59173c664519f8e5d60d92c887dc4668a18f0e24a479a2aba2508",
+      "version": "0x0"
+    },
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+  },
+  "transactionsAfter": [
+    {
+      "hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+      "blockHash": "0x13f45f2f1d7391baf62f395b9f51ada9b1527d5f3cd216ecadca24a82845f91e",
+      "blockNumber": "0x1f"
+    },
+    {
+      "hash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+      "blockHash": "0x3446a118c3d5eacd8bcd9953e6bcfa8b94c3ac9266e816ac4fecc1694c1b33e8",
+      "blockNumber": "0x2b"
+    }
+  ],
+  "application": {
+    "pendingPreserved": true,
+    "processes": [
+      {
+        "epoch": 1,
+        "pid": 10467,
+        "node": "v24.19.0",
+        "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+      },
+      {
+        "epoch": 2,
+        "pid": 14376,
+        "node": "v24.19.0",
+        "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+      }
+    ],
+    "timings": [
+      {
+        "path": "/api/v2/launch/session",
+        "epoch": 1,
+        "status": 200,
+        "ms": 11571
+      },
+      {
+        "path": "/api/v2/launch/session",
+        "epoch": 2,
+        "status": 200,
+        "ms": 19401
+      }
+    ]
+  },
+  "pending": {
+    "stage": "purchase",
+    "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+    "state": "submitted"
+  },
+  "confirmed": {
+    "stage": "purchase",
+    "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+    "blockHash": "0x3446a118c3d5eacd8bcd9953e6bcfa8b94c3ac9266e816ac4fecc1694c1b33e8",
+    "outputs": [
+      {
+        "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+        "index": "0x0"
+      },
+      {
+        "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+        "index": "0x1"
+      },
+      {
+        "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+        "index": "0x2"
+      },
+      {
+        "txHash": "0xe5718756d50f7a00f0f67c15a5dbe3d8f70866bc95dfbe49d0575a1108d47b9c",
+        "index": "0x3"
+      }
+    ],
+    "state": "confirmed"
+  },
+  "duplicateConfirmationRejected": true,
+  "recoveredMarkets": [
+    {
+      "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+      "trade": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+      "pair": [
+        {
+          "index": "0x0",
+          "tx_hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45"
+        }
+      ],
+      "custody": [
+        {
+          "tx_hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+          "index": "0x2"
+        },
+        {
+          "tx_hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+          "index": "0x3"
+        }
+      ],
+      "root": "0xeb3ad6536fb1eae0d2e4a53fd86dd10e80caf7eadee6574b735dffa08ba5a25d"
+    },
+    {
+      "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+      "trade": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33",
+      "pair": [
+        {
+          "index": "0x0",
+          "tx_hash": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33"
+        }
+      ],
+      "custody": [
+        {
+          "tx_hash": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33",
+          "index": "0x2"
+        },
+        {
+          "tx_hash": "0xa4fcc46f46879ae4766ef21444520afd58ea555f23e22ba129a082438a916e33",
+          "index": "0x3"
+        }
+      ],
+      "root": "0xa3b1e4e1298ff390026a9a2655fd59b6514586faaee8ee83fced4e9c89284e42"
+    }
+  ]
+}

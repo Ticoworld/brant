@@ -1,0 +1,26 @@
+[
+  {
+    "epoch": 1,
+    "pid": 18802,
+    "node": "v24.19.0",
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+  },
+  {
+    "epoch": 2,
+    "pid": 33227,
+    "node": "v24.19.0",
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+  },
+  {
+    "epoch": 3,
+    "pid": 36766,
+    "node": "v24.19.0",
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+  },
+  {
+    "epoch": 4,
+    "pid": 53834,
+    "node": "v24.19.0",
+    "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c"
+  }
+]

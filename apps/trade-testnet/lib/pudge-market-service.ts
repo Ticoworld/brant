@@ -16,6 +16,7 @@ import type {MarketData,TradeEvent} from '../app/trader/types.ts';
 import {openPudgeSnapshot,sealPudgeSnapshot} from './pudge-snapshot.ts';
 import {getCatalogMarket} from './v2-engine/shared-market-catalog.ts';
 import {sharedLaunchDependencies} from './v2-engine/shared-launch.ts';
+import type {VerifiedMarketRecord} from './v2-engine/verified-market.ts';
 
 type Rpc=(method:string,params:unknown[])=>Promise<any>;
 type Script={code_hash:string;hash_type:string;args:string};
@@ -479,6 +480,8 @@ export type RecoveryManifest=Pick<Awaited<ReturnType<typeof loadPudgeManifest>>,
   initializationTransactionHash:string;
   format:string;
   journal:{owner:string;entries:{stage:string;txHash:string;state:string;blockHash?:string}[]};
+  verifiedMarket?:VerifiedMarketRecord;
+  secpDependency?:ccc.CellDepLike;
 };
 
 async function recoverVerifiedMarket(client:Rpc,manifest:RecoveryManifest,rawManifest?:string,display?:MarketData['token']):Promise<MarketData>{
@@ -538,6 +541,14 @@ async function recoverVerifiedMarket(client:Rpc,manifest:RecoveryManifest,rawMan
   }catch(error){console.warn('Gate 2 market history replay failed',error);historyState='unavailable';}
   const liquidity=marketLiquidity(current.transaction.outputs[marketIndex].capacity,issued.transaction.outputs[0].capacity);
   const token=display||resolvePudgeTokenMetadata({genesis:manifest.genesis,marketScriptHash:identity.market.hash(),tokenTypeHash:identity.token.hash(),initializationTransactionHash:manifest.initializationTransactionHash});
+  const stages={} as VerifiedMarketRecord['stages'];
+  for(const name of ['setup','issuance','purchase'] as const){
+    const entries=manifest.journal.entries.filter(entry=>entry.stage===name);
+    if(entries.length!==1||entries[0].state!=='confirmed'||!entries[0].blockHash)throw Error('Missing canonical market stage');
+    stages[name]={txHash:entries[0].txHash,blockHash:entries[0].blockHash};
+  }
+  const secp=manifest.secpDependency||{outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup' as const};
+  manifest={...manifest,verifiedMarket:{genesis:manifest.genesis,marketScriptHash:identity.market.hash(),routeId:identity.market.hash().toLowerCase(),creatorLockHash:manifest.journal.owner,tokenTypeHash:identity.token.hash(),scripts:identity,dependencies:[...codeCells,secp],stages,initial:initialPoints,issuanceCapacityFloor:BigInt(issued.transaction.outputs[0].capacity).toString(),metadata:{...token,typeHash:identity.token.hash()}}};
   const data:MarketData={
     id:identity.market.hash().toLowerCase(),identity:identity.market.hash(),genesis:manifest.genesis,
     token:{...token,typeHash:identity.token.hash()},pair:`${token.symbol} / CKB`,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,
@@ -566,12 +577,14 @@ async function refreshPublishedPudgeMarketData(id:string):Promise<MarketData>{
     format:'brant-shared-pudge-market-v1',genesis:record.genesis,scripts:record.scripts,
     initial:record.initial as RecoveryManifest['initial'],initializationTransactionHash:record.stages.purchase.txHash,
     journal:{owner:record.creatorLockHash,entries:catalog.receipts},
+    secpDependency:{outPoint:pinned.secp.outPoint,depType:'depGroup'},
     deps:{custody_smt:dep('custody'),market_smt:dep('market'),custody_marker:dep('custodyMarker'),marker_candidate:dep('marker'),owner_lineage_candidate:dep('ownerLock'),xudt:dep('xudt')},
   };
   const provenance=JSON.stringify({manifest,metadata:record.metadata});
   const cached=await cachedMarket(id,provenance);if(cached)return cached;
   return recoverVerifiedMarket(requestRpc(),manifest,provenance,{
     name:record.metadata.name,symbol:record.metadata.ticker,description:record.metadata.description,
+    ...(catalog.logo?{logo:catalog.logo}:{}),
     metadata:'Authenticated creator metadata',typeHash:record.tokenTypeHash,
   });
 }
@@ -581,7 +594,20 @@ export async function getPudgeMarketDataForManifest(rawManifest:string){
 }
 
 export function getPudgeMarketData():Promise<MarketData>{
-  registeredRefresh??=refreshRegisteredMarket().finally(()=>{registeredRefresh=undefined;});
+  registeredRefresh??=refreshRegisteredMarket().then(data=>{
+    const scripts=gate2Identity();
+    if(data.identity!==scripts.market.hash()||data.token.typeHash!==scripts.token.hash())throw Error('Registered market identity mismatch');
+    data.manifest.scripts=scripts;
+    const stages={} as VerifiedMarketRecord['stages'];
+    for(const name of ['setup','issuance','purchase'] as const){
+      const entries=PUDGE_GATE2_JOURNAL.entries.filter(entry=>entry.stage===name);
+      if(entries.length!==1||entries[0].state!=='confirmed'||!entries[0].blockHash)throw Error('Registered market stage identity missing');
+      stages[name]={txHash:entries[0].txHash,blockHash:entries[0].blockHash};
+    }
+    const record:VerifiedMarketRecord={genesis:data.genesis,marketScriptHash:data.identity,routeId:data.id,creatorLockHash:PUDGE_GATE2_OWNER,tokenTypeHash:data.token.typeHash,scripts,dependencies:[...Object.values(data.manifest.deps) as ccc.CellDepLike[],{outPoint:{txHash:'0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37',index:'0x0'},depType:'depGroup'}],stages,initial:data.manifest.initial,issuanceCapacityFloor:data.marketCapacityFloorShannons,metadata:data.token};
+    data.manifest.verifiedMarket=record;
+    return data;
+  }).finally(()=>{registeredRefresh=undefined;});
   return registeredRefresh;
 }
 

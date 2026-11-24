@@ -12,7 +12,9 @@ const emptySnapshot=():Snapshot=>({data:null,loading:true,error:'',lastSuccess:0
 
 function readSnapshot(id:string){return snapshots.get(id)||emptySnapshot();}
 function publish(id:string,value:Snapshot){
+  snapshots.delete(id);
   snapshots.set(id,value);
+  while(snapshots.size>32)snapshots.delete(snapshots.keys().next().value!);
   for(const listener of listeners.get(id)||[])listener(value);
 }
 

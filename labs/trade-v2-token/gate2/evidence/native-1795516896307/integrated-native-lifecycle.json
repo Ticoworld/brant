@@ -1,0 +1,86 @@
+{
+  "genesis": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+  "trader": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+  "lifecycle": [
+    {
+      "market": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+      "buy": {
+        "hash": "0x7a5cd21d20687f54711d838d7ae8521243468b4749728a4fc501ff3481fe74e4",
+        "blockHash": "0x427836510a1ac574ed7dbbedcde3cf4a1b27ad6d6d8ee3f6a54179689fdd0aec",
+        "blockNumber": "0x33"
+      },
+      "sell": {
+        "hash": "0x32e99eb3e7603965014bbd3acfda5b51206a9c4fd64109b2d32253069e8d4b7b",
+        "blockHash": "0x62646b577ed7d78783e4ba7134e280b1471a40c9d383db2f9cdb5cfbf3409d0f",
+        "blockNumber": "0x37"
+      },
+      "withdrawal": {
+        "hash": "0xcea6d56058d236a8c1bb185b0295fab731f9d7428ea3b0877a69b21d2c924c80",
+        "blockHash": "0x19effc4be81102f0508c1ed705b3cc64200ba2a35109c9cf4f12d77a2a51b774",
+        "blockNumber": "0x3b"
+      },
+      "marketPoints": [
+        {
+          "tx_hash": "0x32e99eb3e7603965014bbd3acfda5b51206a9c4fd64109b2d32253069e8d4b7b",
+          "index": "0x0"
+        },
+        {
+          "tx_hash": "0x32e99eb3e7603965014bbd3acfda5b51206a9c4fd64109b2d32253069e8d4b7b",
+          "index": "0x1"
+        }
+      ],
+      "custody": [
+        {
+          "index": "0x0",
+          "tx_hash": "0xcea6d56058d236a8c1bb185b0295fab731f9d7428ea3b0877a69b21d2c924c80"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0xcea6d56058d236a8c1bb185b0295fab731f9d7428ea3b0877a69b21d2c924c80"
+        }
+      ],
+      "buyAmount": "3700000000",
+      "sellAmount": "1900000000"
+    },
+    {
+      "market": "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+      "buy": {
+        "hash": "0x02d96ae430992177ab376e92676bd07fc26abe47e095bae55ca9efee1a1f99a1",
+        "blockHash": "0xa71f0e79b69bbd3b1779c4cf8e01942605ba724b1974ef53f7ca1e070f697e5e",
+        "blockNumber": "0x3f"
+      },
+      "sell": {
+        "hash": "0x2b06c27a2e04967fb48842a78decc3fd0703b841e3839ebade76b5c15d413b4a",
+        "blockHash": "0x1fa87d9acb3733c76bff27c1174b55082d2b0e48333d8a74ff0ec35ecaaaf2bd",
+        "blockNumber": "0x43"
+      },
+      "withdrawal": {
+        "hash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4",
+        "blockHash": "0xcd5ece07166d674758c39243572c97201592c59ee23ba6e6caa8b6c8d69c1674",
+        "blockNumber": "0x49"
+      },
+      "marketPoints": [
+        {
+          "tx_hash": "0x2b06c27a2e04967fb48842a78decc3fd0703b841e3839ebade76b5c15d413b4a",
+          "index": "0x0"
+        },
+        {
+          "tx_hash": "0x2b06c27a2e04967fb48842a78decc3fd0703b841e3839ebade76b5c15d413b4a",
+          "index": "0x1"
+        }
+      ],
+      "custody": [
+        {
+          "index": "0x0",
+          "tx_hash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4"
+        },
+        {
+          "index": "0x1",
+          "tx_hash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4"
+        }
+      ],
+      "buyAmount": "3700000000",
+      "sellAmount": "1900000000"
+    }
+  ]
+}

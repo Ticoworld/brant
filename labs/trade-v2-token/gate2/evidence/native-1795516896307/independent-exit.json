@@ -1,0 +1,11 @@
+{
+  "applicationOfflineDuringExit": true,
+  "proofSource": "canonical CKB RPC plus native collector/verifier; no hosted proof request",
+  "receipt": {
+    "hash": "0x391e12aad3db16b78783f8aade60f5db4f06cd8165452de09bc98bb50672cdbc",
+    "blockHash": "0xa7b3c7df08e27e3cb8fb5533f864c3b358a624a039433c1d3f9d2ecdb2d95ebc",
+    "blockNumber": "0x5d"
+  },
+  "custody": "7",
+  "root": "0xe1117cda82fead5c8f4d7c2ec22371a2c547a7c905dae6bdd7c9f204cda3061a"
+}

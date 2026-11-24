@@ -11,6 +11,7 @@ import {readFundingCell} from '../../lib/v2-engine/funding';
 import localFont from 'next/font/local';
 import {useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
+import {assertWalletFundingAvailable} from '../../lib/v2-engine/wallet-pending';
 import {firstPurchaseQuantity, LaunchPreflightError, previewLaunch} from './launch-preflight';
 import {formatCkb, PUDGE_GENESIS, pudgeRpc} from './rpc';
 import TraderShell from './shell';
@@ -140,6 +141,15 @@ export default function LaunchScreen() {
   }
 
   async function execute() {
+    if(!signer||!owner||!navigator.locks){setExecution('paused');return;}
+    await navigator.locks.request(`roveko-gate2-trade-${owner.toLowerCase()}`,{mode:'exclusive',ifAvailable:true},async lock=>{
+      if(!lock){setExecution('paused');return;}
+      try{assertWalletFundingAvailable(localStorage,PUDGE_GENESIS,owner);await executeLocked();}
+      catch{setExecution('paused');}
+    });
+  }
+
+  async function executeLocked() {
     if (!signer || !owner || executionLock.current) return;
     executionLock.current = true;
     const savedMarket = localStorage.getItem(sessionKey(owner));

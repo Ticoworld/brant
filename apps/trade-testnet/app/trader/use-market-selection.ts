@@ -23,5 +23,5 @@ export function useMarketSelection(){
     })().catch(()=>{if(!controller.signal.aborted)setError('Published markets unavailable');});
     return()=>controller.abort();
   },[]);
-  return {id,options,error,select:(value:string)=>{localStorage.setItem(ACTIVE_MARKET_KEY,value);setId(value);}};
+  return {id,options:options.some(option=>option.id===id)?options:[...options,{id,label:'Selected market'}],error,select:(value:string)=>{localStorage.setItem(ACTIVE_MARKET_KEY,value);setId(value);}};
 }

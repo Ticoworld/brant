@@ -11,7 +11,7 @@ import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from './market-capacity.ts'
 
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
-type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;initializationTransactionHash?:string;scripts?:{market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
+type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;initializationTransactionHash?:string;scripts?:{owner?:ccc.Script;market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
 const le64 = (n:bigint) => Array.from({length:8},(_,i)=>Number((n >> BigInt(i*8)) & 255n).toString(16).padStart(2,'0')).join('');
 const pinned:Record<string,string> = {
   market_smt:'0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770',
@@ -41,13 +41,13 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const verified=pudge&&body.manifest&&Array.isArray(body.points)&&body.points.length===4;
   if(pudge&&!verified)throw Error('Verified market proof required');
   if(verified){
-    if(!config.scripts||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Requested market differs from proof');
-    for(const name of ['market','marker','custody','custodyMarker','token'] as const)if(ccc.Script.from(config.scripts[name]).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash())throw Error('Proof script identity mismatch');
+    if(!config.scripts?.owner||body.token!==ccc.Script.from(config.scripts.token).hash()||body.market!==ccc.Script.from(config.scripts.market).hash())throw Error('Requested market differs from proof');
+    for(const name of ['market','marker','owner','custody','custodyMarker','token'] as const)if(ccc.Script.from(config.scripts[name]!).hash()!==ccc.Script.from(body.manifest.scripts[name]).hash())throw Error('Proof script identity mismatch');
     const manifest=body.manifest;
     if(manifest.genesis!==config.genesis||manifest.initializationTransactionHash!==config.initializationTransactionHash||
       ccc.Script.from(manifest.scripts.market).hash()!==body.market||
       body.points[2].tx_hash!==p.tip_outpoint.tx_hash||BigInt(body.points[2].index)!==BigInt(p.tip_outpoint.index))throw Error('Verified market identity mismatch');
-    config={...manifest,scripts:Object.fromEntries(['market','marker','custody','custodyMarker','token'].map(name=>[name,ccc.Script.from(manifest.scripts[name])]))};
+    config={...manifest,scripts:Object.fromEntries(['market','marker','owner','custody','custodyMarker','token'].map(name=>[name,ccc.Script.from(manifest.scripts[name])]))};
   }
   mark('manifestMs');
   const points:[Point,Point,Point,Point] = verified?body.points:

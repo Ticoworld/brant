@@ -1,0 +1,14 @@
+{
+  "orphanedReceipt": {
+    "hash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4",
+    "blockHash": "0x3f20d814699242c064257062f9744052a1a3d719463ac767604436316709917d",
+    "blockNumber": "0x46"
+  },
+  "reconciledBalance": "1",
+  "renewedIdenticalHash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4",
+  "restoredReceipt": {
+    "hash": "0x2a81d95612361969b8085095757033a1b0182431be6af9e3aae7837ad6cae7f4",
+    "blockHash": "0xcd5ece07166d674758c39243572c97201592c59ee23ba6e6caa8b6c8d69c1674",
+    "blockNumber": "0x49"
+  }
+}

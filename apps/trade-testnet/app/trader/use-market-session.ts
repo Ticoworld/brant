@@ -3,13 +3,14 @@
 import {useEffect} from 'react';
 import {useAccount} from './account-provider';
 import {useGate2Trade} from './use-gate2-trade';
-import {useMarketData} from './use-market-data';
+import {useMarketData,ACTIVE_MARKET_KEY} from './use-market-data';
 import {useOwnerPosition} from './use-owner-position';
 import type {Side} from './types';
 
 export function useMarketSession(id: string, side: Side, interactiveV2 = false) {
   const account=useAccount(),marketQuery=useMarketData(id,interactiveV2),market=marketQuery.data?.id===id?marketQuery.data:null;
   const accountOwner=account.state==='ready'?account.owner:'';
+  useEffect(()=>{if(market?.id===id&&market.historyState==='verified')localStorage.setItem(ACTIVE_MARKET_KEY,id);},[id,market?.id,market?.historyState]);
 
   const trade=useGate2Trade(market,marketQuery.refresh);
   const inclusion=trade.inclusion;

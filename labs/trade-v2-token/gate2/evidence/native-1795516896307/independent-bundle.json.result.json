@@ -1,0 +1,137 @@
+{
+  "custody_amount": "8",
+  "domain": {
+    "args_len": 128,
+    "custody_marker_type_hash": "0xa6e680f06256c5fab190d291c2ff3525d41c5fd33db9b857c45a644d3e36701d",
+    "genesis_hash": "0xf0eeb3fcbc37baabc8880f83836574e10c88bf9b43a04c883eb4e4b3a89ea83c",
+    "market_script_hash": "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d",
+    "xudt_type_script_hash": "0x92e24f11b9685523ff6a6e725d803e67188feee04b073769f8d0defe6b46b3d5"
+  },
+  "entitlement_total": "8",
+  "external_accounting_complete": true,
+  "format": "trade-v2-recovery-result-v1",
+  "init_tx_hash": "0x8640b4b46dc6ff086ff113e14165fad94643ba5232bfebf1b2ab2cafd14b85b0",
+  "net_external": "1",
+  "network_scope": "reconstruction only; native withdrawal requires compatible built script and a signed CKB transaction",
+  "owner": {
+    "active": true,
+    "balance": "8",
+    "revision": "1"
+  },
+  "owner_lock_hash": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+  "owner_membership_proof": {
+    "compiled_proof": "0x4c4ffd51fdb3ef6152aa1d097a33ce8fc715d624e7a8d2f6fa3a12affc9593290b61941ef6d0492a9998d13f0244ad5d957cae313d72a998e5b4219edc4623176e5c97520b4f02",
+    "key": "0x1bf52230ea5ef5caff97701d2229c8fc39c754556349ff63b8297746ee01c372",
+    "leaf_value": "0x0800000000000000010000000000000001000000000000000000000000000000",
+    "proof_bytes": 71,
+    "root_verified": true
+  },
+  "owners": [
+    {
+      "active": true,
+      "balance": "8",
+      "owner_lock_hash": "0x0b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7",
+      "revision": "1"
+    },
+    {
+      "active": false,
+      "balance": "0",
+      "owner_lock_hash": "0x59297894bff4b8f7e1427bf4943b467ba168565d25fe75de207c146debaec14b",
+      "revision": "5"
+    }
+  ],
+  "ownership_root": "0xf7007a4d103dbce812d985dfdad87030e0cd1a59446d3e6ee5be79412d1e98f5",
+  "tip_outpoint": {
+    "index": "0x2",
+    "tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c"
+  },
+  "tip_tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c",
+  "transitions": [
+    {
+      "block_number": "0x1b",
+      "custody_amount": "7",
+      "op": 0,
+      "reconstructed_entitlement_total": "7",
+      "root": "0x743d918f860a546d9daf0a01749dbf56081df368f536d7d7199749e2491746e4",
+      "tx_hash": "0x8640b4b46dc6ff086ff113e14165fad94643ba5232bfebf1b2ab2cafd14b85b0",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x1f",
+      "custody_amount": "8",
+      "op": 1,
+      "reconstructed_entitlement_total": "8",
+      "root": "0xeb3ad6536fb1eae0d2e4a53fd86dd10e80caf7eadee6574b735dffa08ba5a25d",
+      "tx_hash": "0x13973c1b5443628df225b662c6d5da6aa81b52260c2b2386d54f4fe84dda0c45",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x33",
+      "custody_amount": "10",
+      "op": 1,
+      "reconstructed_entitlement_total": "10",
+      "root": "0x369f58180646c7393f9f24709514288498da378ef19c04b407b84fc84ffe1261",
+      "tx_hash": "0x7a5cd21d20687f54711d838d7ae8521243468b4749728a4fc501ff3481fe74e4",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x37",
+      "custody_amount": "9",
+      "op": 4,
+      "reconstructed_entitlement_total": "9",
+      "root": "0x8f92d368c6fd3b935e2904e2b65fa8c9c1b41e117f9cc8d3bbe4db765a2d72b5",
+      "tx_hash": "0x32e99eb3e7603965014bbd3acfda5b51206a9c4fd64109b2d32253069e8d4b7b",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x3b",
+      "custody_amount": "8",
+      "op": 5,
+      "reconstructed_entitlement_total": "8",
+      "root": "0x0c03e3f8df61b1e209e18ae990aff004ef13592eb2ab5a03f42c39ca15aa9ace",
+      "tx_hash": "0xcea6d56058d236a8c1bb185b0295fab731f9d7428ea3b0877a69b21d2c924c80",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x4d",
+      "custody_amount": "9",
+      "op": 1,
+      "reconstructed_entitlement_total": "9",
+      "root": "0xf8487d2fbdb275c63156704a18ecd62f9409073ad0539524d854b5bc9089d9c2",
+      "tx_hash": "0xeccb2e8614967fcc1bd629e8eb0af4cf3159e1e29ef256c4a4cc32add124dded",
+      "tx_index": "0x1",
+      "update_count": 1
+    },
+    {
+      "block_number": "0x51",
+      "custody_amount": "8",
+      "op": 4,
+      "reconstructed_entitlement_total": "8",
+      "root": "0xf7007a4d103dbce812d985dfdad87030e0cd1a59446d3e6ee5be79412d1e98f5",
+      "tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c",
+      "tx_index": "0x1",
+      "update_count": 1
+    }
+  ],
+  "withdrawal_template": {
+    "authorization": "transaction must include an input locked by this owner and satisfy the compiled custody contract's withdrawal cell layout",
+    "input_custody_outpoint": {
+      "index": "0x2",
+      "tx_hash": "0x6829cafdc0124f2ce34489fbb94dff44c2dbe4aecbeda734b4039b7f9a89e18c"
+    },
+    "new_leaf": "0x0000000000000000020000000000000002000000000000000000000000000000",
+    "new_root": "0xcec70568c397c87e3005401968c5a74f006a72351397426d6fa2886b54440656",
+    "old_leaf": "0x0800000000000000010000000000000001000000000000000000000000000000",
+    "old_root": "0xf7007a4d103dbce812d985dfdad87030e0cd1a59446d3e6ee5be79412d1e98f5",
+    "op": 5,
+    "quantity": "8",
+    "remaining_custody_amount": "0",
+    "tms1_witness": "0x544d533101050100470000000b1bae4beaf456349c63c3ce67491fc75a1276d7f9eedd7ea84d6a77f9f3f5f7080000000000000001000000000000000100000000000000000000000000000000000000000000000200000000000000020000000000000000000000000000004c4ffd51fdb3ef6152aa1d097a33ce8fc715d624e7a8d2f6fa3a12affc9593290b61941ef6d0492a9998d13f0244ad5d957cae313d72a998e5b4219edc4623176e5c97520b4f02",
+    "witness_bytes": 179
+  }
+}

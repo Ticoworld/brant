@@ -1,0 +1,10 @@
+{
+  "freshContext": true,
+  "savedManifests": false,
+  "markets": [
+    "0x361632ab13f67272edb8bae1766b1bcb500150441ba25a643405765887431862",
+    "0x5160c6db26d3dbd5a492823f6e232463254a5d0aa993e9d96a72b828fbaaf97d"
+  ],
+  "errors": [],
+  "walletInteroperability": "NOT TESTED"
+}
