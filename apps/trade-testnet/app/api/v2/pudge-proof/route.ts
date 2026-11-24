@@ -14,7 +14,7 @@ import {startPudgeProofWorker} from '../../../../lib/pudge-proof-worker.ts';
 import {resolveGate2NativeTools} from '../../../../lib/v2-engine/native-tools.ts';
 import {resolvePudgeTokenMetadata} from '../../../../lib/pudge-market-metadata.ts';
 import {PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_STAGE_TXS} from '../../../../lib/v2-engine/pudge-public-registry.ts';
-import {POST as initialProof} from '../pudge-init-proof/route.ts';
+import {generatePudgeLaunchProof} from '../../../../lib/v2-engine/pudge-launch-proof-server.ts';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -337,8 +337,7 @@ async function handleProof(request:Request,synchronize=false){
       const row=JSON.parse(raw);if(!response.ok||row.error)throw Error('Pudge RPC failed');return row.result;
     };
     const proof=async(anchor:{txHash:string;index:string},owner:string)=>{
-      const result=await initialProof(new Request('http://127.0.0.1/api/v2/pudge-init-proof',{method:'POST',headers:{host:'127.0.0.1',origin:'http://127.0.0.1','content-type':'application/json'},body:JSON.stringify({anchor,owner})}));
-      if(!result.ok)throw Error('Initial proof unavailable');return result.json();
+      return generatePudgeLaunchProof(anchor,owner);
     };
     const rawManifest=JSON.stringify(body.manifest),manifestKey=cachedManifestKey(endpoint+rawManifest),cachedManifest=verifiedManifests.get(manifestKey);
     const manifestScope='pudge-proof-manifest-v1:'+manifestKey,manifestFile=cacheFile(manifestScope.slice(-64));

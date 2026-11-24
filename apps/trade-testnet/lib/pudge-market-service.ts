@@ -9,7 +9,7 @@ import {deriveMarketIdentity} from './v2-engine/initialization.ts';
 import {loadPudgeManifest} from './v2-engine/pudge-manifest.ts';
 import {resolvePudgeTokenMetadata} from './pudge-market-metadata.ts';
 import {deriveMarketLiquidity} from './v2-engine/market-capacity.ts';
-import {POST as generateInitialProof} from '../app/api/v2/pudge-init-proof/route.ts';
+import {generatePudgeLaunchProof} from './v2-engine/pudge-launch-proof-server.ts';
 import {PUDGE_GATE2_ANCHOR,PUDGE_GATE2_ATTEMPT,PUDGE_GATE2_BUY,PUDGE_GATE2_CODES,PUDGE_GATE2_GENESIS,PUDGE_GATE2_INITIALIZATION,PUDGE_GATE2_JOURNAL,PUDGE_GATE2_OWNER,PUDGE_GATE2_REGISTRY_ID,PUDGE_GATE2_SELL,PUDGE_GATE2_STAGE_TXS,PUDGE_GATE2_XUDT_DEP} from './v2-engine/pudge-public-registry.ts';
 import type {MarketData,TradeEvent} from '../app/trader/types.ts';
 import {openPudgeSnapshot,sealPudgeSnapshot} from './pudge-snapshot.ts';
@@ -127,6 +127,8 @@ async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|nu
     if(id===PUDGE_GATE2_REGISTRY_ID)return null;
     const [genesis,tip]=await Promise.all([rpc('get_block_hash',['0x0']) as Promise<string>,rpc('get_tip_header',[]) as Promise<{number:string;hash:string}>]);
     if(genesis.toLowerCase()!==PUDGE_GATE2_GENESIS||!tip?.number||!tip.hash)return null;
+    const anchor=await rpc('get_block_hash',[saved.data.tip.number]);
+    if(typeof anchor!=='string'||anchor.toLowerCase()!==saved.data.tip.hash.toLowerCase()){orphanedCheckpoints.add(saved);return null;}
     const [liveCells,codeCells]=await Promise.all([
       Promise.all(saved.points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>)),
       Promise.all(saved.deps.map(async(dependency,index)=>({result:await rpc('get_live_cell',[dependencyPoint(dependency),true]) as {status?:string;cell?:{data?:{content?:string}}},index}))),
@@ -459,11 +461,7 @@ function marketLiquidity(cellCapacity:string,floorCapacity:string){
 }
 
 async function verifyPudgeInitialProof(anchor:{txHash:string;index:string},owner:string){
-  const response=await generateInitialProof(new Request('http://localhost/api/v2/pudge-init-proof',{
-    method:'POST',headers:{host:'localhost'},body:JSON.stringify({anchor,owner}),
-  }));
-  if(!response.ok)throw Error('Initial proof verification unavailable');
-  return response.json();
+  return generatePudgeLaunchProof(anchor,owner);
 }
 
 async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>{
@@ -482,9 +480,11 @@ async function getMarketDataFromManifest(rawManifest:string):Promise<MarketData>
     if(result.status!=='live'||!result.cell?.data?.content||ccc.hashCkb(result.cell.data.content as ccc.Hex).toLowerCase()!==codeHashes[index].toLowerCase())throw Error('Gate 2 launch dependency is unavailable');
   }));
   const initialPoints=manifest.initial as [Point,Point,Point,Point];
+  const issuance=manifest.journal.entries.filter(entry=>entry.stage==='issuance');
+  if(issuance.length!==1||issuance[0].state!=='confirmed')throw Error('Missing unique confirmed issuance');
   const [initialized,issued]=await Promise.all([
     canonical(manifest.initializationTransactionHash,undefined,client),
-    canonical(manifest.journal.entries[2].txHash,manifest.journal.entries[2].blockHash,client),
+    canonical(issuance[0].txHash,issuance[0].blockHash,client),
   ]);
   verifyOutput(issued.transaction.outputs[0],issued.transaction.outputs_data[0],identity.market,identity.token);
   const recovered=await recoverMarketHistory(client,[initialPoints[0],initialPoints[1]],{maxIndexedDepth:256});

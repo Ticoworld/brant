@@ -14,7 +14,16 @@ function runNative(binary: string, args: string[], payload: object) {
 }
 
 
+let activeProofs = 0;
 export async function generatePudgeLaunchProof(anchor: {txHash: string; index: string}, owner: string) {
+  if (!hash.test(anchor.txHash) || !/^0x[0-9a-f]{1,8}$/i.test(anchor.index) || !hash.test(owner)) throw Error('Invalid proof identity');
+  if (activeProofs >= 2) throw Error('Launch proof service busy');
+  activeProofs++;
+  try { return await generateProof(anchor, owner); }
+  finally { activeProofs--; }
+}
+
+async function generateProof(anchor: {txHash: string; index: string}, owner: string) {
     const {smt, recovery} = await resolveGate2NativeTools();
     if (!smt || !recovery) throw Error('Proof tools unavailable');
 

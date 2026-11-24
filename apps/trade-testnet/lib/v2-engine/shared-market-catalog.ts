@@ -17,7 +17,7 @@ async function readRpc(method: string, params: unknown[]) {
   return body.result;
 }
 
-async function verifyCandidate(store: ReturnType<typeof openConfiguredSharedLaunchStore>, market: string, encoded: string) {
+async function verifyCandidate(store: ReturnType<typeof openConfiguredSharedLaunchStore>, market: string, encoded: string, includeExecution = false) {
   if (!marketHash.test(market) || encoded.length > 100_000) return null;
   const publication = JSON.parse(encoded);
   if (publication?.genesis !== genesis || publication.market !== market ||
@@ -29,16 +29,30 @@ async function verifyCandidate(store: ReturnType<typeof openConfiguredSharedLaun
   const plan = await verifyCompletedSharedLaunch(readRpc, store, session);
   const token = plan.identity.token.hash();
   if (token !== publication.token) return null;
+  const stages = Object.fromEntries(['setup', 'issuance', 'purchase'].map(stage => {
+    const entries = session.journal.entries.filter(entry => entry.stage === stage);
+    if (entries.length !== 1 || entries[0].state !== 'confirmed' || !entries[0].blockHash) throw Error('Invalid canonical launch stage');
+    return [stage, {txHash: entries[0].txHash, blockHash: entries[0].blockHash}];
+  }));
+  const execution = includeExecution ? {
+    genesis, marketScriptHash: market, routeId: market, creatorLockHash: session.scope.owner,
+    tokenTypeHash: token, scripts: plan.identity, stages,
+    dependencies: plan.projected.purchase.cellDeps,
+    initial: [0, 1, 2, 3].map(index => ({tx_hash: plan.stageHashes.purchase, index: '0x' + index.toString(16)})),
+    issuanceCapacityFloor: plan.projected.issuance.outputs[0].capacity.toString(),
+    metadata,
+  } : undefined;
   return {market, genesis, token, owner: session.scope.owner, metadata, receipts: session.journal.entries,
+    ...(execution ? {execution} : {}),
     logo: metadata.logoHash ? '/api/v2/launch/logo?market=' + market : null};
 }
 
-export async function getCatalogMarket(market: string) {
+export async function getCatalogMarket(market: string, includeExecution = false) {
   if (!marketHash.test(market) || !process.env.BRANT_LAUNCH_SQLITE_PATH) return null;
   const store = openConfiguredSharedLaunchStore();
   try {
     const encoded = store.publicationCandidate(genesis, market);
-    return encoded ? await verifyCandidate(store, market, encoded) : null;
+    return encoded ? await verifyCandidate(store, market, encoded, includeExecution) : null;
   } catch {
     return null;
   } finally {
