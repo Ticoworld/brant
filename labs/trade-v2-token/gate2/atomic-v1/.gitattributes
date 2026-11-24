@@ -1,0 +1,2 @@
+*.sh text eol=lf
+qualification/*.sh text eol=lf
