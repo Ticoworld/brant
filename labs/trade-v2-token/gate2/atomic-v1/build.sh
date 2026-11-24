@@ -4,6 +4,11 @@ here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/../../../.." && pwd)"
 : "${ZIG_BIN:?pinned Zig 0.14.1}" "${LLD_BIN:?LLVM 18 lld}"
 out="$here/build"; std="$root/labs/rebuild/mechanisms/deps/ckb-c-stdlib"
+# Populate unchanged continuation artifacts from the existing pinned native build
+# only for a fresh output directory; do not rebuild them on every qualification.
+if [[ ! -f "$out/custody_smt" || ! -f "$out/marker_candidate" || ! -f "$out/owner_lineage_candidate" ]]; then
+  TRADE_GATE2_BUILD_DIR="$out" bash "$here/../build.sh"
+fi
 flags=(-target riscv64-freestanding -mcpu=generic_rv64+m+c -O2 -fno-builtin -I"$std" -I"$std/libc")
 "$ZIG_BIN" cc "${flags[@]}" -nostdlib -DBRANT_ATOMIC_MARKER -Wl,--gc-sections -Wl,-e,_start -Wl,--strip-all -Wl,--image-base=0x10000 -o "$out/custody_marker" "$root/labs/trade-v2-token/custody_marker.c"
 TRADE_NATIVE_ROOT="$root/labs/rebuild/native" TRADE_GATE2_BUILD_DIR="$out" node "$here/../gen_codes.cjs" > "$out/codes.h"
