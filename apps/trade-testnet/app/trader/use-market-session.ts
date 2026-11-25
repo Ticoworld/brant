@@ -15,7 +15,7 @@ export function useMarketSession(id: string, side: Side, interactiveV2 = false) 
   const trade=useGate2Trade(market,marketQuery.refresh);
   const inclusion=trade.inclusion;
   const marketCaughtUp=!!inclusion&&market?.historyState==='verified'&&market.history.some(event=>event.hash===inclusion.hash);
-  const position=useOwnerPosition(accountOwner,market,0,interactiveV2||side==='sell'||!!inclusion);
+  const position=useOwnerPosition(accountOwner,market,0,side==='sell'||!!inclusion&&!marketCaughtUp);
   useEffect(()=>{
     if(!inclusion)return;
     console.info('Brant transaction timeline',JSON.stringify({hash:inclusion.hash,stage:'refresh-request',at:Date.now()}));

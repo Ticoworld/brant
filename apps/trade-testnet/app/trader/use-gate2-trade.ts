@@ -6,7 +6,7 @@ import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {toast} from 'sonner';
 import {safeSigningError} from '../../lib/v2-engine/wallet-signing.ts';
-import {prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
+import {TradeProofError,prepareLocalReview} from '../../lib/v2-engine/local-review.ts';
 import {validateLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {quote} from '../../lib/v2-engine/curve.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
@@ -38,7 +38,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const broadcasting=useRef(false);
   const [readiness,setReadiness]=useState('syncing');
   useEffect(()=>{
-    if(!market?.identity||!account.owner)return;
+    if(!market?.identity||!account.owner||market.manifest.format==='brant-shared-pudge-market-v1')return;
     const controller=new AbortController();
     let timer:ReturnType<typeof setTimeout>;
     const poll=async()=>{
@@ -71,8 +71,21 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     const review=(async()=>{
       const address=await signer.getRecommendedAddressObj();
       if(active.current!==signer||address.script.hash()!==account.owner)throw Error('Wallet changed during preparation');
-      return prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
-        (stage,ms)=>{lastStage=stage;console.info('Brant quote stage',id,stage,Math.round(ms));},account.fundingHint,amount,controller.signal);
+      const signal=controller.signal;
+      for(let attempt=0;;attempt++){
+        try{return await prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
+          (stage,ms)=>{lastStage=stage;console.info('Brant quote stage',id,stage,Math.round(ms));},account.fundingHint,amount,signal);}
+        catch(error){
+          const retry=error instanceof TradeProofError&&(error.status===429||(error.status===503&&error.retryAfterMs>0));
+          if(signal.aborted||attempt||!retry||error.retryAfterMs>60000)throw error;
+          await new Promise<void>((resolve,reject)=>{
+            const abort=()=>{clearTimeout(timer);reject(signal.reason);};
+            const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},Math.max(1500,error.retryAfterMs));
+            signal.addEventListener('abort',abort,{once:true});
+          });
+          signal.throwIfAborted();
+        }
+      }
     })();
     const entry:{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:typeof review}={key,signer,controller,review};
     prepared.current=entry;
@@ -88,7 +101,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         console.warn('Brant quote preparation unavailable',safeSigningError(error).message);
         prepared.current=null;
         const detail=error instanceof Error?error.message:'';
-        const code=/funding|eligible live/i.test(detail)?'funding':/price|stale custody/i.test(detail)?'changed':'proof';
+        const code=error instanceof TradeProofError&&error.status===429?'busy':error instanceof Error&&error.name==='TimeoutError'?'timeout':/funding|eligible live/i.test(detail)?'funding':/price|stale custody/i.test(detail)?'changed':'proof';
         console.info('Brant quote failed after',id,lastStage,Math.round(performance.now()-started));
         setFailedQuote({key,code});
       }
@@ -106,6 +119,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return failedQuote?.key===key?'unavailable':'updating';
   };
 
+  const cancelQuote=()=>{prepared.current?.controller.abort();prepared.current=null;};
   const quoteError=(side:Side,quantity:bigint,amount:bigint)=>failedQuote?.key===quoteKey(side,quantity,amount)?failedQuote.code:'';
   const dismissError=()=>{if(!pending)setFailure(null);};
   const reconcile=useCallback(async(silent=true)=>{
@@ -154,6 +168,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       }
       if(!saveTradeSettlement(localStorage,key,raw,height))return;
       setInclusion(previous=>previous?.key===key&&previous.hash===attempt.txHash&&previous.height===height?previous:{key,hash:attempt.txHash,height});
+      cancelQuote();
       setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
       prepared.current?.controller.abort();
       prepared.current=null;
@@ -278,7 +293,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision,refreshMarket]);
 
-  return {inclusion:inclusion?.key===key?inclusion:null,trade,dismissError,prepareQuote,quoteStatus,quoteError,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {inclusion:inclusion?.key===key?inclusion:null,trade,dismissError,prepareQuote,quoteStatus,quoteError,cancelQuote,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint){

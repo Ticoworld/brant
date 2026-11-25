@@ -10,9 +10,15 @@ import {selectTradeFunding,type FundingHint} from './multi-funding.ts';
 import {cccA} from '@ckb-ccc/core/advanced';
 import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from './market-capacity.ts';
 
+export class TradeProofError extends Error {
+  readonly status:number;
+  readonly retryAfterMs:number;
+  constructor(message:string,status:number,retryAfterMs:number){super(message);this.status=status;this.retryAfterMs=retryAfterMs;}
+}
+
 type Rpc = (method:string, params:unknown[]) => Promise<unknown>;
 type Point = {tx_hash:string;index:string};
-type Config = {genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;atomic?:boolean;initializationTransactionHash?:string;scripts?:{owner?:ccc.Script;market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
+type Config = {secpDependency?:ccc.CellDepLike;genesis:string;initial:[Point,Point,Point,Point];funding:{txHash:string;index:string};deps:Record<string,ccc.CellDepLike>;format?:string;atomic?:boolean;initializationTransactionHash?:string;scripts?:{owner?:ccc.Script;market:ccc.Script;marker:ccc.Script;custody:ccc.Script;custodyMarker:ccc.Script;token:ccc.Script}};
 const le64 = (n:bigint) => Array.from({length:8},(_,i)=>Number((n >> BigInt(i*8)) & 255n).toString(16).padStart(2,'0')).join('');
 const pinned:Record<string,string> = {
   market_smt:'0xdfeb6731293b4cc42bd09823806c284a7bd796ec1a88bd93769955864983a770',
@@ -32,7 +38,9 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const response = await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(65_000)]):AbortSignal.timeout(65_000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(pudge?{manifest:config}:config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
   if (!response.ok) {
     const detail=response.headers.get('content-type')?.startsWith('text/plain')?await response.text():'';
-    throw Error(detail&&detail.length<=200?detail:`Canonical proof unavailable (HTTP ${response.status})`);
+    const retry=response.headers.get('Retry-After');
+    const retryAfterMs=retry?(Number.isFinite(Number(retry))?Number(retry)*1000:Date.parse(retry)-Date.now()):0;
+    throw new TradeProofError(detail&&detail.length<=200?detail:`Canonical proof unavailable (HTTP ${response.status})`,response.status,Math.max(0,retryAfterMs||0));
   }
   const body = await response.json();
   mark('proofMs');
@@ -76,7 +84,13 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   // Pudge's genesis was checked by readLiveSingletons. Its secp dep group
   // is pinned and the trade hook checks dependency liveness before signing.
   let secpDepHash='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
-  if(!pudge||config.format==='brant-shared-pudge-market-v1'){
+  if(config.format==='brant-shared-pudge-market-v1'){
+    const authoritative=body.manifest as Config;
+    if(!authoritative.secpDependency)throw Error('Verified secp dependency missing');
+    const dep=ccc.CellDep.from(authoritative.secpDependency);
+    if(dep.depType!=='depGroup'||dep.outPoint.index!==0n||!/^0x[0-9a-f]{64}$/.test(dep.outPoint.txHash)||dep.outPoint.txHash==='0x'+'0'.repeat(64))throw Error('Invalid verified secp dependency');
+    secpDepHash=dep.outPoint.txHash;
+  }else if(!pudge){
     const genesisBlock=await rpc('get_block_by_number',['0x0']) as {header:{hash:string};transactions:{hash:string}[]};
     if(genesisBlock?.header?.hash?.toLowerCase()!==config.genesis.toLowerCase()||!genesisBlock?.transactions?.[1]?.hash)throw Error('Wrong genesis or missing secp dependency');
     secpDepHash=genesisBlock.transactions[1].hash;

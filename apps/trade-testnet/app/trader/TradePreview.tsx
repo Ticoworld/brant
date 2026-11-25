@@ -66,20 +66,25 @@ export function TradeV2({session, side, setSide}: {
   const catchingUp = trade.status === 'rechecking' || !!inclusion && !marketCaughtUp;
   const historyUnavailable = !!market && market.historyState !== 'verified';
   const walletReady = account.state === 'ready';
-  const balance = walletReady && account.balanceState === 'ready' && account.availableToTrade !== ''
+  const shared=market?.manifest.format==='brant-shared-pudge-market-v1';
+  const balanceCurrent=account.balanceState==='ready';
+  const balance = walletReady && account.availableToTrade !== ''
     ? BigInt(account.availableToTrade) : null;
   const holdings = walletReady && position.state === 'ready' ? BigInt(position.balance) : null;
   const count = amount === null ? 0n : BigInt(quantity);
-  const fundingInsufficient = balance !== null && (!account.hasFundingCell || (buying && amount !== null && amount > balance));
+  const fundingInsufficient = balanceCurrent && balance !== null && (!account.hasFundingCell || (buying && amount !== null && amount > balance));
   const ownershipInsufficient = !buying && holdings !== null && count > holdings;
   const blocked = !market || stale || catchingUp || historyUnavailable;
   const canPrepare = walletReady && !blocked && !trade.busy && !trade.pending &&
-    trade.readiness === 'ready' && amount !== null && balance !== null && !fundingInsufficient &&
+    (shared||trade.readiness === 'ready') && amount !== null && !fundingInsufficient &&
     (buying || (holdings !== null && !ownershipInsufficient));
   const review = canPrepare && amount !== null ? trade.quoteStatus(side, count, amount) : '';
   const prepareQuote = trade.prepareQuote;
   const prepareRef = useRef(prepareQuote);
   prepareRef.current = prepareQuote;
+  const cancelRef=useRef(trade.cancelQuote);
+  cancelRef.current=trade.cancelQuote;
+  useEffect(()=>()=>cancelRef.current(),[side,count,amount,market?.identity,market?.custodyRoot,account.owner]);
   useEffect(() => {
     if (!canPrepare || amount === null) return;
     const timer = setTimeout(() => prepareRef.current(side, count, amount), 300);
@@ -107,9 +112,9 @@ export function TradeV2({session, side, setSide}: {
     rejected: trade.error ? (zh ? '交易被拒绝' : 'Transaction rejected') : (zh ? '钱包批准已取消' : 'Wallet approval rejected'),
     failed: zh ? '交易未完成' : 'Trade failed',
   };
-  const status = walletReady && (trade.uncertain ? copy(locale, 'unknown') : statusLabels[trade.status]);
+  const status = walletReady && (catchingUp&&inclusion ? (zh?'交易已确认，正在更新市场和余额':'Trade confirmed, updating market and balance') : trade.uncertain ? copy(locale, 'unknown') : trade.status==='confirmed'?'':statusLabels[trade.status]);
   const attemptHash = trade.pending && trade.attemptRaw ? readAttemptHash(trade.attemptRaw) : '';
-  const receipt = walletReady ? trade.receipt || attemptHash : '';
+  const receipt = walletReady ? attemptHash || (catchingUp&&inclusion?inclusion.hash:'') : '';
   const action = !walletReady
     ? copy(locale, walletOpening ? (account.state === 'checking' ? 'walletChecking' : 'connecting') : 'connect')
     : review === 'unavailable' ? (zh ? '重新准备报价' : 'Retry quote preparation')
@@ -142,7 +147,7 @@ export function TradeV2({session, side, setSide}: {
           <div className="preview-market-column preview-ticket-column">
           <TradeTicket
             side={side} setSide={setSide} quantity={quantity} input={buying?budget:sellQuantity} setInput={buying?setBudget:setSellQuantity} budget={budgetAmount}
-            amount={amount} market={market} balance={balance} holdings={holdings} zh={zh}
+            amount={amount} market={market} balance={balance} balanceCurrent={balanceCurrent} holdings={holdings} zh={zh}
             action={action} submit={submit} sellAction={walletReady && !buying && review !== 'unavailable'}
             disabled={walletOpening || trade.busy || (walletReady && (!canPrepare || review === 'updating'))}
           >
@@ -160,10 +165,10 @@ export function TradeV2({session, side, setSide}: {
               {position.state === 'unavailable' && <> <button type="button" onClick={position.retry}>{copy(locale, 'retry')}</button></>}
             </p>}
             {ownershipInsufficient && <p role="alert" className="preview-note">{copy(locale, 'insufficientTokens')}</p>}
-            {walletReady && !blocked && trade.readiness !== 'ready' && <p role="status" className="preview-note">
+            {walletReady && !shared && !blocked && trade.readiness !== 'ready' && <p role="status" className="preview-note">
               {trade.readiness === 'unavailable' ? (zh ? '交易状态暂不可用' : 'Trading state unavailable') : (zh ? '正在同步交易状态' : 'Synchronizing trading state')}
             </p>}
-            {review==='unavailable'&&amount!==null&&<p role="alert" className="preview-note">{({funding:zh?'合格资金不足，请检查钱包余额。':'Eligible wallet funding is unavailable. Check your spendable CKB.',changed:zh?'价格已更新，请刷新报价。':'The market changed. Refresh the quote.',proof:zh?'暂时无法验证交易，当前估算不可执行。':'Trade verification is temporarily unavailable. This estimate is not executable.'} as Record<string,string>)[trade.quoteError(side,count,amount)]}</p>}
+            {review==='unavailable'&&amount!==null&&<p role="alert" className="preview-note">{({busy:zh?'验证服务繁忙，请稍后重试。':'Trade verification is busy. Try again shortly.',timeout:zh?'验证超时，请重试。':'Trade verification timed out. Try again.',funding:zh?'合格资金不足，请检查钱包余额。':'Eligible wallet funding is unavailable. Check your spendable CKB.',changed:zh?'价格已更新，请刷新报价。':'The market changed. Refresh the quote.',proof:zh?'暂时无法验证交易，当前估算不可执行。':'Trade verification is temporarily unavailable. This estimate is not executable.'} as Record<string,string>)[trade.quoteError(side,count,amount)]}</p>}
             {review === 'updating' && <p role="status" className="preview-note">{zh ? '正在准备报价…' : 'Preparing quote…'}</p>}
             {(status || receipt) && <div role="status" className="preview-note preview-settlement">
               <span>{status}</span>
@@ -212,9 +217,10 @@ function readAttemptHash(raw: string) {
   } catch { return ''; }
 }
 
-function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, submit, sellAction, disabled, children}: {
+function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, submit, sellAction, disabled, children}: {
   market: MarketData | null;
   balance: bigint | null;
+  balanceCurrent:boolean;
   holdings: bigint | null;
   zh: boolean;
   side: Side;
@@ -280,7 +286,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, in
         {ckbWell}
       </div>
       <div className="preview-ticket-details">
-        {balance !== null && <p>{zh ? '已验证可交易余额' : 'Verified CKB available to trade'} <strong>{formatCkb(balance)} CKB</strong></p>}
+        {balance !== null && <p>{zh ? '已验证可交易余额' : (balanceCurrent?'Verified CKB available to trade':'Last verified CKB available to trade')} <strong>{formatCkb(balance)} CKB</strong></p>}
         {holdings !== null && <p>{zh ? '已验证托管余额' : 'Verified custody balance'} <strong>{holdings.toString()} {symbol}</strong></p>}
         <p>{zh ? '当前单价' : 'Current unit price'} <strong>{unitPrice === null ? '—' : formatCkb(unitPrice) + unit}</strong></p>
         <p>{zh ? '平均成交价' : 'Average execution price'} <strong>{amount === null || count === null ? '—' : formatCkb((amount + count / 2n) / count) + unit}</strong></p>

@@ -372,7 +372,9 @@ async function handleProof(request:Request,synchronize=false){
       }
     }
     const requestedMarket=shared?ccc.Script.from(body.manifest.scripts.market).hash().toLowerCase():undefined;
-    const published=shared?await getPublishedPudgeMarketData(requestedMarket!):undefined;
+    const anchor=shared?await getPudgeCustodyAnchor(requestedMarket!):null;
+    const published=anchor?.market;
+    const marketMs=Math.round(performance.now()-proofStarted);
     if(published){
       if(body.manifest.genesis!==published.genesis||body.manifest.initializationTransactionHash!==published.manifest.initializationTransactionHash)throw Error('Requested market provenance mismatch');
       for(const name of ['market','marker','owner','token','custody','custodyMarker'] as const)if(ccc.Script.from(body.manifest.scripts[name]).hash()!==ccc.Script.from(published.manifest.scripts[name]).hash())throw Error('Requested market script mismatch');
@@ -396,7 +398,7 @@ async function handleProof(request:Request,synchronize=false){
     const refresh=async()=>{
     const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
     const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
-    let market=await ((shared||endpoint==='https://testnet.ckb.dev/')?getPudgeCustodyAnchor(requestedMarket):null);
+    let market=anchor??await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor(requestedMarket):null);
     const matchesMarket=(bundle:RecoveryBundle)=>!market||
       (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
     const reconcile=(snapshot:Record<string,unknown>)=>{
@@ -480,12 +482,17 @@ async function handleProof(request:Request,synchronize=false){
     custodyStates.set(key,state);
     return {state,live:market};
     };
-    let pending=custodyRefreshes.get(key);
+    const refreshStarted=performance.now();
+    const refreshKey=anchor?JSON.stringify([key,anchor.point,anchor.data]):key;
+    let pending=custodyRefreshes.get(refreshKey);
     if(!pending){
-      pending=refresh().finally(()=>custodyRefreshes.delete(key));
-      custodyRefreshes.set(key,pending);
+      pending=refresh().finally(()=>custodyRefreshes.delete(refreshKey));
+      custodyRefreshes.set(refreshKey,pending);
     }
     const {state,live}=await pending,selectedBundle=state.bundle;
+    const custodyMs=Math.round(performance.now()-refreshStarted);
+    if(anchor&&(live?.market.identity!==anchor.market.identity||selectedBundle.live.data!==anchor.data||selectedBundle.live.tx_hash!==anchor.point.tx_hash||BigInt(selectedBundle.live.index)!==BigInt(anchor.point.index)))throw Error('Custody changed during preparation');
+    const nativeStarted=performance.now();
     request.signal.throwIfAborted();
     if(balanceOnly){
       const root='0x'+selectedBundle.live.data.slice(34);
@@ -535,7 +542,7 @@ async function handleProof(request:Request,synchronize=false){
       BigInt(live.point.index)!==BigInt(selectedBundle.live.index)||live.data.toLowerCase()!==selectedBundle.live.data.toLowerCase())){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
     }
-    console.info('Pudge proof timing',JSON.stringify({path:proofTrace,ms:Math.round(performance.now()-proofStarted)}));
+    console.info('Pudge proof timing',JSON.stringify({path:proofTrace,marketMs,custodyMs,nativeMs:Math.round(performance.now()-nativeStarted),ms:Math.round(performance.now()-proofStarted)}));
     return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,token:tokenHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
