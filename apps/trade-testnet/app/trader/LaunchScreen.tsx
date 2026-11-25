@@ -13,7 +13,7 @@ import localFont from 'next/font/local';
 import {useLocale} from '../i18n-provider';
 import {useAccount} from './account-provider';
 import {assertWalletFundingAvailable} from '../../lib/v2-engine/wallet-pending';
-import {defaultLaunchTerms, launchBudgetTerms, type LaunchTerms} from '../../lib/v2-engine/launch-terms';
+import {defaultLaunchTerms, decimalCkb, launchBudgetTerms, type LaunchTerms} from '../../lib/v2-engine/launch-terms';
 import { LaunchPreflightError, previewLaunch} from './launch-preflight';
 import {formatCkb, PUDGE_GENESIS, pudgeRpc} from './rpc';
 import TraderShell from './shell';
@@ -574,12 +574,14 @@ export default function LaunchScreen() {
             </select>
           </label>}
           {step===0&&savedSessions.some(s=>s.entries.some(e=>e.state==='submitted'))&&<p role="status">{t('A submitted launch is awaiting recovery.','已提交的发行等待恢复。')} <button className={secondary} onClick={()=>{const pending=savedSessions.find(s=>s.entries.some(e=>e.state==='submitted'));if(pending)selectSaved(pending.market);}}>{t('Resume pending launch','继续待处理发行')}</button></p>}
-          {(session || preparation || step !== 0) && <button className={secondary} disabled={cancelBusy || busy || ['wallet','submitting','checking'].includes(execution)} onClick={() => void leaveReview(() => {
+          {step===2&&session&&<div className="mt-4 flex flex-wrap items-center gap-3">
+          {session.published && session.market && <a className={`${primary} inline-flex items-center justify-center`} href={'/market/'+session.market}>{t('Open market','打开市场')}</a>}
+          <button className={secondary} disabled={cancelBusy || busy || ['wallet','submitting','checking'].includes(execution)} onClick={() => void leaveReview(() => {
             generation.current++;workflow.current={genesis:PUDGE_GENESIS,owner,mode:'draft',family:'atomic',phase:'draft'};
             setSelection(undefined);setResumedMarket(undefined);setSession(undefined);setPreparation(undefined);setReview(undefined);setPublication(undefined);
             setTerms({...defaultLaunchTerms});setTermsError('');setBudget('');setName('');setTicker('');setDescription('');setSocial('');setLogo('');setLogoFile(undefined);setExecution('');setStep(0);
-          })}>{t('Create new token','创建新代币')}</button>}
-          {session?.published && session.market && <a className={secondary} href={'/market/'+session.market}>{t('Open market','打开市场')}</a>}
+          })}>{t('Create new token','创建新代币')}</button>
+          </div>}
           {step===0&&creationEnabled===false&&<p role="status">{t('New launches are currently unavailable. Saved launches remain accessible.','目前无法创建新代币，仍可访问已保存的发行。')}</p>}
           {step === 0 && creationEnabled===true && <form className="mt-6 grid gap-6 text-sm" onSubmit={event => {event.preventDefault(); try{launchBudgetTerms(budget);setTermsError('');if(name.trim()&&ticker.trim())setStep(1);}catch(error){setTermsError(error instanceof Error?error.message:'Invalid economics');}}}>
             <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-3 sm:gap-5">
@@ -604,23 +606,23 @@ export default function LaunchScreen() {
               <label className="mt-3 block">{t('Social link','社交链接')}<input className={field} type="url" value={social} onChange={event => setSocial(event.target.value)}/></label>
             </details>
             <label>{t('Initial purchase (CKB)','首次购买（CKB）')}<input className={field} required inputMode="decimal" value={budget} onChange={event=>setBudget(event.target.value)}/>
-              <span>{t('Minimum 10 CKB','最低 10 CKB')}</span></label>
+              <span className="mt-2 block text-xs text-[#a8b5ae]">{t('Minimum 10 CKB','最低 10 CKB')}</span></label>
             {termsError&&<p role="alert">{termsError}</p>}
             <button className={primary} disabled={!name.trim() || !ticker.trim()}>{steps[1]}</button>
           </form>}
           {step === 1 && <div className="mt-6 space-y-5">
             {account.state === 'ready' ? <p className="break-all text-sm text-[#a8b5ae]">{account.address}</p> :
               <p role="status" className="text-sm text-[#a8b5ae]">{account.state === 'wrong-network' ? t('Switch your wallet to Pudge.','请将钱包切换到 Pudge。') : account.state === 'unsupported' ? t('Switch to a supported Pudge wallet.','请切换到受支持的 Pudge 钱包。') : t('Connect your Pudge wallet to check funding.','连接 Pudge 钱包以检查资金。')}</p>}
-            <Amount label={t('Selected funding capacity','已选资金容量')} value={usable === undefined ? (issue?'—':undefined) : ckb(usable)}/>
             <Amount label={t('Estimated tokens received','预计收到代币')} value={preparation?.terms ? preparation.terms.quantity + ' ' + ticker : undefined}/>
-            {quote && <p className="text-sm text-[#a7e9c6]">{t('Verified read-only estimate','经过验证的只读估算')}</p>}
 
               <Amount label={t('Required cell capacity','所需 Cell 容量')} value={quote ? ckb(quote.accounting.locked-quote.accounting.curveReserve) : issue?'—':undefined}/>
               <Amount label={t('Initial purchase cost','首次购买费用')} value={quote ? ckb(quote.accounting.curveReserve) : issue?'—':undefined}/>
               <Amount label={t('Estimated network fees','预估网络费用')} value={quote ? ckb(quote.accounting.fees) : issue?'—':undefined}/>
               <Amount label={t('Total CKB required','预计总成本（锁定 CKB + 手续费）')} value={quote ? ckb(quote.accounting.locked + quote.accounting.fees) : undefined}/>
 
-            {quote && <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Advanced','高级详情')}</summary>
+            {quote && <details className="break-all text-xs text-[#a8b5ae]"><summary className="cursor-pointer">{t('Transaction details','交易详情')}</summary>
+                <Amount label={t('Selected funding capacity','已选资金容量')} value={usable===undefined?'—':ckb(usable)}/>
+                <Amount label={t('Expected change','预计找零')} value={ckb(quote.accounting.change)}/>
                 <p>{t('Provisional market ID','暂定市场标识')} {quote.market}</p>
                 <p>{t('Provisional token type hash','暂定代币类型哈希')} {quote.token}</p>
                 {Object.values(quote.accounting.stageFees).filter((_,index)=>preparation?.family!=='atomic'||index===0).map((fee, index) => <Amount key={stages[index]} label={stages[index]} value={ckb(fee)}/>)}
@@ -643,11 +645,13 @@ export default function LaunchScreen() {
             </div>}
             {execution === 'changed' && <p role="status">{t('The launch review changed. Review the updated estimate before launching.','发行审核已变更，请在发行前核对最新估算。')}</p>}
             {quote && !preparation?.enabled && <p>{t('Testnet launch execution is not enabled yet.','测试网发行暂未启用。')}</p>}
-            <div className="flex flex-wrap gap-2">
+            {execution==='wallet'&&<p role="status">{t('Approve or reject the transaction in your wallet.','请在钱包中批准或拒绝交易。')}</p>}
+            {execution==='paused'&&<p role="status">{t('Wallet approval did not finish. You can try again.','钱包审批未完成，可以重试。')}</p>}
+            <div className="flex flex-wrap items-center gap-3">
               <button className={secondary} disabled={executionLock.current} onClick={() => void leaveReview(()=>{setPreparation(undefined);setReview(undefined);setStep(0);})}>{owner && busy && reviewPhase === 'long' ? t('Cancel review','取消审核') : t('Back','返回')}</button>
               {!owner && account.state !== 'wrong-network' && <button className={primary} disabled={['checking','connecting'].includes(account.state)} onClick={account.connect}>{t('Connect wallet','连接钱包')}</button>}
               {owner && (issue != null||execution==='changed') && !busy && <button className={primary} onClick={() => setRetry(value => value + 1)}>{t('Retry','重试')}</button>}
-              {quote && <button className={primary} disabled={cancelBusy || busy || execution==='changed' || !preparation?.enabled} onClick={() => void execute()}>{t('Launch token','发行代币')}</button>}
+              {quote && <button className={primary} disabled={cancelBusy || busy || executionLock.current || execution==='changed' || !preparation?.enabled} onClick={() => void execute()}>{execution==='wallet'?t('Waiting for wallet…','正在等待钱包…'):t('Launch token','发行代币')}</button>}
             </div>
           </div>}
           {step === 2 && <div className="mt-5 space-y-4">
@@ -661,7 +665,7 @@ export default function LaunchScreen() {
               publishing:t('Publishing metadata','正在发布元数据'),checking:t('Checking previous transaction','正在检查上一笔交易'),pending:t('Submission is awaiting confirmation.','正在等待提交结果确认。'),
               paused:t('Launch paused. Resume when your wallet is ready.','发行已暂停。钱包就绪后可继续。'),
               error:t('The saved session could not be read.','无法读取已保存的会话。')}[execution]}</p>}
-            {!(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
+            {!session?.published && !(session?.enabled || preparation?.enabled) && <p className="text-sm text-[#a8b5ae]">{t('Launch execution is disabled.','发行执行已禁用。')}</p>}
             {session?.family==='atomic'&&session.published?<p role="status">{t('Token launched and metadata published','代币已发行，元数据已发布')}</p>:session?.entries.filter(entry => entry.state === 'confirmed').length === launchStages.length ?
               <div className="grid gap-3">
                 <p role="status">{t('Launch transactions confirmed','发行交易已确认')}</p>
@@ -685,6 +689,8 @@ export default function LaunchScreen() {
                   pending: t('Publication pending. You can retry without relaunching.','发布待完成。您可重试，无需重新发行。'),
                 }[publication.status]} {publication.error}</p>}
               </div> :
+              session?.family==='atomic'&&session.reviewState==='submitted'&&execution!=='paused'?
+              <details className="text-sm text-[#a8b5ae]"><summary className="cursor-pointer">{t('Submission options','提交选项')}</summary><button className={`${secondary} mt-2`} disabled={!owner||!session.enabled||executionLock.current} onClick={()=>void execute()}>{t('Retry submission','重试提交')}</button></details>:
               <button className={primary} disabled={!owner || !(session?.enabled || preparation?.owner === owner && preparation.enabled) ||
                 ['wallet','submitting','checking'].includes(execution)} onClick={() => void execute()}>{t('Resume launch','继续发行')}</button>}
           </div>}
@@ -700,7 +706,7 @@ export default function LaunchScreen() {
           {social.trim() && <p className="break-all text-xs text-[#a8b5ae]">{social}</p>}
 
           <Amount label={t('Fixed supply','固定供应量')} value={(preparation?.terms?.supply ?? terms.supply) + ' ' + (ticker || 'xUDT')}/>
-          <Amount label={t('Starting price','起始价格')} value={(preparation?.terms?.base ?? terms.base)+' CKB'}/>
+          <Amount label={t('Starting price','起始价格')} value={ckb(decimalCkb(preparation?.terms?.base ?? terms.base))}/>
 
         </aside>
       </div>
