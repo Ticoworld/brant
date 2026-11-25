@@ -44,6 +44,32 @@ export async function selectTradeFunding(rpc:Rpc,script:ccc.Script,minimum:bigin
 export type FundingCandidate = { outPoint: { txHash: string; index: string }; capacity: bigint; lock: {codeHash:string;hashType:string;args:string}; type?: unknown; data:string };
 const SECP = '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
 type Rpc = (method:string, params:unknown[])=>Promise<unknown>;
+/** Bounded plain-capacity search; verify only enough candidates to fund the plan. */
+export async function discoverLaunchFunding(rpc:Rpc,lock:ccc.Script,minimum:bigint,protectedPoints:string[]=[]){
+ const blocked=new Set([`${PUDGE_GATE2_ANCHOR.txHash}:${BigInt(PUDGE_GATE2_ANCHOR.index)}`,...protectedPoints]);
+ const indexed=await rpc('get_indexer_tip',[]) as {block_number:string;block_hash:string};
+ const tip=await rpc('get_tip_header',[]) as {number:string};
+ const lag=BigInt(tip.number)-BigInt(indexed.block_number);
+ if(lag<0n||lag>6n)throw Error('Funding index is catching up. Retry shortly.');
+ const selected:FundingCandidate[]=[];let total=0n;
+ for(const sufficientOnly of [true,false]){
+  const page=await rpc('get_cells',[{script:{code_hash:lock.codeHash,hash_type:lock.hashType,args:lock.args},script_type:'lock',script_search_mode:'exact',with_data:true,
+   filter:{output_data:'0x',output_data_filter_mode:'exact',script_len_range:['0x0','0x1'],...(sufficientOnly?{output_capacity_range:[ccc.numToHex(minimum),'0xffffffffffffffff']}:{})}},'desc','0x40']) as {objects:{out_point:{tx_hash:string;index:string};output:{capacity:string;type?:unknown};output_data:string}[]};
+  const candidates=page.objects.filter(c=>!c.output.type&&c.output_data==='0x').sort((a,b)=>BigInt(a.output.capacity)>BigInt(b.output.capacity)?-1:1);
+  for(const row of candidates){
+   const key=`${row.out_point.tx_hash}:${BigInt(row.out_point.index)}`;
+   if(blocked.has(key))continue;blocked.add(key);
+   const cell=await readFundingCell(rpc,{txHash:row.out_point.tx_hash,index:row.out_point.index},lock.hash());
+   if(cell.type||cell.data!=='0x')continue;
+   selected.push({...cell,lock:{codeHash:lock.codeHash,hashType:lock.hashType,args:lock.args}});total+=cell.capacity;
+   if(total>=minimum){
+    if(await rpc('get_block_hash',[indexed.block_number])!==indexed.block_hash)throw Error('Funding index changed during selection. Retry shortly.');
+    return selected;
+   }
+  }
+ }
+ throw Error('Insufficient eligible funding in bounded launch search');
+}
 /** Discover candidates through a synchronized CKB indexer and revalidate each
  * against the full node. Indexer omissions can understate the available funds. */
 export async function discoverFunding(indexer:Rpc, node:Rpc, lock:FundingCandidate['lock']): Promise<FundingCandidate[]> {

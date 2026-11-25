@@ -117,7 +117,13 @@ export function launchOperations({rpc, genesis, fixture, excludedAnchor, quantit
       if (!session) return null;
       const {scope, hashes, journal} = session;
       const entries = journal.entries.map(({stage, state, txHash, blockHash}) => ({stage, state, txHash, blockHash}));
-      if (action === 'session') return {entries, hashes, published: store.isPublished(scope, hashes), enabled: Boolean(send && authorizeCreator(scope.owner))};
+      if (action === 'session') {
+        const encoded=store.publicationCandidate(genesis,market);
+        const authorization=store.readPublicationAuthorization(scope,hashes);
+        const savedMetadata=encoded?JSON.parse(encoded):authorization?JSON.parse(authorization):undefined;
+        const metadata=savedMetadata?verifyLaunchMetadata(scope,savedMetadata.metadata,savedMetadata.signature):undefined;
+        return {family:'legacy',market,metadata,entries,hashes,published:store.isPublished(scope,hashes),enabled:Boolean(send&&authorizeCreator(scope.owner))};
+      }
       if(action==='publish'||action==='retry-publication'){
         const saved=store.readPublicationAuthorization(scope,hashes);
         if(action==='retry-publication'&&!saved)await publicationStep('publication_signature',()=>{throw Error('No saved publication authorization');});

@@ -29,7 +29,13 @@
     "**/*.tsx",
     "**/*.mts",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    ".next-wo2a-dev/types/**/*.ts",
+    ".next-wo2a-dev/dev/types/**/*.ts",
+    ".next-ui02-dev/types/**/*.ts",
+    ".next-ui02-dev/dev/types/**/*.ts",
+    ".next-r7-assignment/shared-native-acceptance/types/**/*.ts",
+    ".next-r7-assignment/shared-native-acceptance/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

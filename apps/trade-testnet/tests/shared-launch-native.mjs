@@ -213,6 +213,7 @@ export async function runSharedLaunch({rpc, genesis, hashes, deps, secp, wallets
     application=await startSharedMarketApp({genesis,fixture,out,dbPath});
     const catalog=await application.request('/api/markets/catalog');
     assert.equal(catalog.markets.length,2);
+    await application.legacyLaunchAcceptance(catalog.markets,{rpc});
     const browser=await application.browserAcceptance(catalog.markets);
     writeFileSync(join(out,'browser-acceptance.json'),JSON.stringify(browser,null,2));
     globalThis.fetch=async(url,options)=>{

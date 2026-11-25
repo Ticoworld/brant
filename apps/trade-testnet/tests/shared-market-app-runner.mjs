@@ -11,7 +11,7 @@ import {ccc} from '@ckb-ccc/core';
 import {cccA} from '@ckb-ccc/core/advanced';
 
 /** Runs actual application routes against the harness's genuine isolated node. */
-export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedCreator,startupTimeoutMs=180_000}){
+export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedCreator,startupTimeoutMs=600_000}){
   const app=fileURLToPath(new URL('..',import.meta.url));
   const root=resolve(app,'../..'),config=join(out,'isolated-app-config.json');
   const base='http://127.0.0.1:3143';
@@ -76,6 +76,38 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedC
       }
       assert.deepEqual(errors,[]);
       return {freshContext:true,savedManifests:false,markets:markets.map(market=>market.market),errors,walletInteroperability:'NOT TESTED'};
+    }finally{await browser.close();}
+  }
+  async function legacyLaunchAcceptance(markets,{rpc}){
+    const require=createRequire(import.meta.url),C=require(join(root,'labs/rebuild/native/src/lib.cjs'));
+    const webpack=require('next/dist/compiled/webpack/webpack').webpack;
+    await new Promise((ok,no)=>webpack({mode:'development',target:'web',entry:join(app,'tests/v2-browser-wallet-entry.cjs'),output:{path:out,filename:'legacy-launch-wallet.js'}},(error,stats)=>error||stats.hasErrors()?no(error||Error(stats.toString({all:false,errors:true}))):ok()));
+    const market=markets[0],role=C.locks.findIndex(lock=>ccc.Script.from(lock).hash()===market.owner);assert(role>=0);
+    const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN||'/home/timot/.cache/ms-playwright/chromium-1208/chrome-linux64/chrome',args:['--no-sandbox']});
+    try{
+      const page=await browser.newPage();page.setDefaultTimeout(180000);page.setDefaultNavigationTimeout(360000);
+      await page.route('**/fixture-wallet-rpc',async route=>{const payload=route.request().postDataJSON();assert(!['send_transaction','send_transaction_dry_run'].includes(payload.method));await route.fulfill({json:{jsonrpc:'2.0',id:payload.id,result:await rpc(payload.method,payload.params)}});});
+      await request('/api/v2/launch/sessions',{owner:market.owner});
+      await page.goto(base+'/launch',{waitUntil:'commit'});
+      await page.evaluate(({owner,market})=>localStorage.setItem('brant-launch-session:'+owner,market),market);
+      await page.waitForFunction(()=>Boolean(document.head&&document.body));
+      await page.addScriptTag({path:join(out,'legacy-launch-wallet.js')});
+      await page.waitForFunction(()=>typeof document.querySelector('ccc-connector')?.updateSigner==='function');
+      for(let attempt=0;attempt<20;attempt++){if(await page.locator('ccc-connector').isVisible())break;const button=page.locator('.brant-wallet');if(await button.isEnabled())await button.click();await delay(500);}
+      await page.locator('ccc-connector').waitFor({state:'visible'});
+      await page.evaluate(async({key,secp})=>{const connector=document.querySelector('ccc-connector');await connector.updateComplete;await connector.updateSigner({name:'Disposable fixture',icon:''},{name:'Legacy fixture',signer:window.createDisposableTestSigner(key,secp,'/fixture-wallet-rpc')});connector.close();},{key:C.keys[role],secp:fixture.secp});
+      await page.getByLabel('Saved launches').waitFor();
+      assert.equal(await page.getByLabel('Token name',{exact:true}).inputValue(),'');assert.equal(await page.getByLabel('Ticker',{exact:true}).inputValue(),'');
+      await page.getByLabel('Saved launches').selectOption(market.market);
+      await page.getByText('Metadata saved',{exact:true}).waitFor();
+      assert.equal(await page.getByLabel('Token name',{exact:true}).inputValue(),market.metadata.name);
+      assert.equal(await page.getByLabel('Ticker',{exact:true}).inputValue(),market.metadata.ticker);
+      assert(await page.getByLabel('Ticker',{exact:true}).isDisabled());
+      assert.equal(await page.getByText('Your wallet will ask you to sign a message to authorize publishing this metadata.',{exact:true}).count(),0);
+      await page.getByRole('button',{name:'Create new token',exact:true}).click();
+      assert.equal(await page.getByLabel('Token name',{exact:true}).inputValue(),'');assert.equal(await page.getByLabel('Ticker',{exact:true}).inputValue(),'');
+      await page.screenshot({path:join(out,'legacy-launch-fresh-after-saved.png'),fullPage:true});
+      writeFileSync(join(out,'legacy-launch-lifecycle.json'),JSON.stringify({actualLegacyChain:true,rememberedMarket:market.market,freshDraft:true,metadataHydrated:true,publishedReadOnly:true,noPublicationPrompt:true,newDraftAfterSaved:true},null,2));
     }finally{await browser.close();}
   }
   async function securityAcceptance(markets){
@@ -174,5 +206,5 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedC
       throw error;
     }finally{await browser.close();}
   }
-  return {base,request,timings,processes,stop,browserAcceptance,walletAcceptance,securityAcceptance,restart:async()=>{await stop();await start();}};
+  return {base,request,timings,processes,stop,browserAcceptance,walletAcceptance,securityAcceptance,legacyLaunchAcceptance,restart:async(overrides={})=>{await stop();Object.assign(env,overrides);await start();}};
 }

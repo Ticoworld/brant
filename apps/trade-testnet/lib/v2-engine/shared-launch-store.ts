@@ -69,13 +69,15 @@ export function openSharedLaunchStore(path: string) {
     },
     listSessions(genesis: string, owner: string) {
       const rows = db.prepare(`
-        SELECT journal FROM shared_launch
+        SELECT journal, market_key FROM shared_launch
         WHERE json_extract(journal, '$.genesis') = ? AND json_extract(journal, '$.owner') = ?
         ORDER BY rowid DESC LIMIT 50
       `).all(genesis, owner);
       return rows.map(row => {
         const {market, entries} = JSON.parse(String(row.journal)) as Journal;
-        return {market, entries};
+        const publication=db.prepare('SELECT publication FROM shared_launch_publication WHERE market_key=?').get(row.market_key);
+        const metadata=typeof publication?.publication==='string'?JSON.parse(publication.publication).metadata:undefined;
+        return {family:'legacy' as const,market,entries,metadata,published:Boolean(publication)};
       });
     },
     publicationCandidates(genesis: string, after: string, limit: number) {

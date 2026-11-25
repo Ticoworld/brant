@@ -32,6 +32,11 @@ const legacyOperate = launchOperations({rpc, genesis: network.genesis, fixture:n
 });
 const atomicOperate=(network.atomic||network.fixture?.market.dataHash===atomicV2Codes.market)?atomicLaunchOperations(rpc,network,launchWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>owner===approvedCreator):undefined;
 const operate=async(action:string,input:Record<string,unknown>,timing?:(name:string,ms:number)=>void):Promise<unknown>=>{
+ if(action==='prepare'){
+  if(!launchWritesEnabled)throw Error('New atomic creation is disabled');
+  if(!atomicOperate||(!network.fixture&&process.env.BRANT_ATOMIC_PUDGE_QUALIFICATION!=='1'))throw Error('New atomic creation is disabled');
+  return atomicOperate(action,input,timing);
+ }
  if(!atomicOperate||action==='normalize-logo')return legacyOperate(action,input,timing);
  if(action==='sessions'){const [atomic,legacy]=await Promise.all([atomicOperate(action,input,timing),legacyOperate(action,input,timing)]);return [...atomic as unknown[],...legacy as unknown[]];}
  const result=await atomicOperate(action,input,timing);return result===null?legacyOperate(action,input,timing):result;
@@ -75,7 +80,7 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     return new Response(null, {status: 403});
   }
   const {action} = await context.params;
-  if (!['prepare','submit','resubmit','pending-review','session','sessions','publish','retry-publication','normalize-logo','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
+  if (!['status','cancel','prepare','submit','resubmit','pending-review','session','sessions','publish','retry-publication','normalize-logo','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
   if (['submit','resubmit'].includes(action) && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
@@ -107,7 +112,19 @@ export async function POST(request: Request, context: {params: Promise<{action: 
       console.warn('Brant publication rejected',{code:error.code,diagnosticId,action});
       return Response.json({error:error.message,code:error.code,diagnosticId,recovery:publicationRecovery[error.code]},{status:409,headers:{'Cache-Control':'no-store'}});
     }
-    return Response.json({error: 'Launch could not be verified'}, {status: 409, headers: {'Cache-Control': 'no-store'}});
+    const message=error instanceof Error?error.message:'';
+    const failures:[RegExp,string,string][]=[
+      [/disabled/,'creation_disabled','Creation is disabled. Existing sessions remain available.'],
+      [/not approved/,'creator_not_approved','This creator is not approved for launch.'],
+      [/Insufficient|No eligible/,'insufficient_funding','Eligible funding is insufficient for the reviewed launch.'],
+      [/index|RPC|fetch failed|timeout/i,'network_unavailable','The indexer or RPC is unavailable. Retry shortly.'],
+      [/terms|economic/i,'invalid_economics','Economic parameters are outside the supported bounds.'],
+      [/expired|superseded|immutable review/,'review_expired','This review expired or changed. Prepare a new review.'],
+      [/Funding|funding.*changed|input.*live/i,'funding_changed','Funding changed. Prepare a new review.'],
+      [/acknowledgement|reconciled|pending transaction/i,'submission_uncertain','Submission status is uncertain. Recover the saved transaction before launching again.'],
+    ];
+    const failure=failures.find(([pattern])=>pattern.test(message));
+    return Response.json({error:failure?.[2]??'Launch could not be verified',code:failure?.[1]??'verification_failed',diagnosticId},{status:409,headers:{'Cache-Control':'no-store'}});
   } finally {
     clearTimeout(timer);
     void reader?.cancel().catch(() => {});
