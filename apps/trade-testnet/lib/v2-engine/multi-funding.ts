@@ -59,7 +59,11 @@ export async function discoverLaunchFunding(rpc:Rpc,lock:ccc.Script,minimum:bigi
   for(const row of candidates){
    const key=`${row.out_point.tx_hash}:${BigInt(row.out_point.index)}`;
    if(blocked.has(key))continue;blocked.add(key);
-   const cell=await readFundingCell(rpc,{txHash:row.out_point.tx_hash,index:row.out_point.index},lock.hash());
+   const cell=await readFundingCell(rpc,{txHash:row.out_point.tx_hash,index:row.out_point.index},lock.hash()).catch(error=>{
+    if(error instanceof Error&&['Funding cell is unavailable or not plain','Funding cell does not belong to connected wallet','Gate 2 requires a standard CKB secp owner'].includes(error.message))return undefined;
+    throw error;
+   });
+   if(!cell)continue;
    if(cell.type||cell.data!=='0x')continue;
    selected.push({...cell,lock:{codeHash:lock.codeHash,hashType:lock.hashType,args:lock.args}});total+=cell.capacity;
    if(total>=minimum){

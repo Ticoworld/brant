@@ -7,7 +7,7 @@ import AccountProvider from './trader/account-provider';
 import ConnectorClientBridge from './trader/connector-client-bridge';
 import {rovekoSignersController} from './trader/signers';
 
-const client=ccc.ClientPublicTestnet.open({urls:['https://testnet.ckb.dev/']}).value;
+const client=new ccc.ClientPublicTestnet({url:'https://testnet.ckb.dev/'});
 
 export default function AppProviders({children}:{children:React.ReactNode}){
   return <Provider name="Brant" defaultClient={client} clientOptions={[{name:'CKB Pudge',client}]} signersController={rovekoSignersController}>

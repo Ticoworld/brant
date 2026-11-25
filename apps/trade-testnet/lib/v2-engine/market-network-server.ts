@@ -11,7 +11,8 @@ export function marketNetwork(){
     const enabled=process.env.BRANT_ATOMIC_PUDGE_QUALIFICATION==='1';
     const manifest=process.env.BRANT_ATOMIC_PUDGE_MANIFEST;
     if(enabled&&!manifest)throw Error('Atomic Pudge manifest unavailable');
-    const parsed=manifest?parseAtomicPudgeConfig(readFileSync(manifest!,'utf8'),process.env.BRANT_LAUNCH_APPROVED_CREATOR):undefined;
+    const contents=manifest?readFileSync(manifest,'utf8'):undefined;
+    const parsed=contents?parseAtomicPudgeConfig(contents,JSON.parse(contents).creator):undefined;
     return {genesis:PUDGE_GATE2_GENESIS,endpoint:'https://testnet.ckb.dev/',fixture:undefined as Fixture|undefined,atomic:parsed?.dependencies,atomicReceipt:parsed?.deployment};
   }
   if(process.env.NODE_ENV==='production'||process.env.BRANT_ISOLATED_TEST!=='1')throw Error('Isolated network overrides are disabled');

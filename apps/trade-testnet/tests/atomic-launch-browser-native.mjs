@@ -72,10 +72,12 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Launch token'&&!b.disabled));
   await page.evaluate(()=>{window.rejectAtomicOnce=true;});
   await page.getByRole('button',{name:'Launch token',exact:true}).click();
-  await page.getByText('Launch paused. Resume when your wallet is ready.',{exact:true}).waitFor();
+  if(process.argv.includes('--creator-lifecycle'))await launch.waitFor();
+  else await page.getByText('Launch paused. Resume when your wallet is ready.',{exact:true}).waitFor();
   pauseMining=true;
   await page.route('**/api/v2/launch/submit',async route=>{await route.fetch();await route.abort('failed');},{times:1});
-  await page.getByRole('button',{name:'Resume launch',exact:true}).click();
+  if(process.argv.includes('--creator-lifecycle'))await launch.click();
+  else await page.getByRole('button',{name:'Resume launch',exact:true}).click();
   await page.getByText('Submission is awaiting confirmation.',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>window.atomicApprovals),1);
   const secondPending=await page.evaluate(()=>Object.entries(localStorage).find(([key])=>key.startsWith('brant-launch-session:'))?.[1]);assert(secondPending);
@@ -91,6 +93,11 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   await page.getByLabel('Saved launches').selectOption(market.market);
   await page.getByText('Token launched and metadata published',{exact:true}).waitFor();
   }else{catalog=await app.request('/api/markets/catalog');market=catalog.markets.find(m=>m.market===resumeMarket);assert(market,'Retained atomic market missing');launchedMarket=market.market;}
+  if(process.argv.includes('--creator-lifecycle')){
+   const data=await app.request('/api/markets/'+market.market);
+   assert.equal(data.supply,'1234');
+   return;
+  }
   // Stop empty-block mining before stable-snapshot funding selection. Trades
   // mine on submission, matching the existing wallet acceptance harness.
   mining=false;await mine;

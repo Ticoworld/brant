@@ -42,10 +42,11 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
    if(!db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='shared_launch'").get())return [];
    return db.prepare('SELECT anchor_key FROM shared_launch WHERE anchor_key LIKE ?').all(genesis+':%').map(row=>String(row.anchor_key).slice(genesis.length+1));
   },
-  cancel(market:string,owner:string){
+  cancel(market:string,owner:string,expectedReviewId:unknown){
    db.exec('BEGIN IMMEDIATE');try{
     const {raw,value}=load(market);
     if(value.owner!==owner)throw Error('Atomic creator differs');
+    if(!value.reviewId||value.reviewId!==expectedReviewId)throw Error('Atomic review superseded; prepare again');
     if(value.state==='cancelled'){db.exec('COMMIT');return {state:'cancelled' as const};}
     if(value.state!=='reviewed'||value.signed)throw Error('Submitted atomic transaction must be reconciled');
     save(market,raw,{...value,state:'cancelled'});

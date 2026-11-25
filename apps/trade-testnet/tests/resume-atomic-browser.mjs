@@ -36,7 +36,7 @@ let seq=0;const rpc=async(method,params=[])=>{const r=await fetch('http://127.0.
 try{
  let ready=false;for(let i=0;i<600;i++){if(child.exitCode!==null)throw Error('Cloned isolated node exited');try{assert.equal(await rpc('get_block_hash',['0x0']),config.genesis);ready=true;break;}catch{await delay(200);}}assert(ready,'Cloned chain not ready');
  const run=process.argv[4]==='--release-closure'?(await import('./atomic-release-closure.mjs')).runReleaseClosure:runSharedLaunch;
- await run({rpc,genesis:config.genesis,hashes,deps,secp,locks:C.locks,out,resumeMarket:String(row.market),priorTrades,retainedEvidence:source,connectBrowserWallet:async(page,bundle)=>{
+ await run({rpc,genesis:config.genesis,hashes,deps,secp,locks:C.locks,out,resumeMarket:process.argv[4]==='--creator-lifecycle'?undefined:String(row.market),priorTrades,retainedEvidence:source,connectBrowserWallet:async(page,bundle)=>{
   await page.waitForFunction(()=>Boolean(document.head&&document.body));await page.addScriptTag({path:bundle});await page.waitForFunction(()=>typeof document.querySelector('ccc-connector')?.updateSigner==='function');
   for(let i=0;i<20;i++){if(await page.locator('ccc-connector').isVisible())break;const button=page.locator('.brant-wallet');if(await button.isEnabled())await button.click();await delay(500);}
   await page.locator('ccc-connector').waitFor({state:'visible'});

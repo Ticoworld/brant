@@ -30,17 +30,25 @@ const legacyOperate = launchOperations({rpc, genesis: network.genesis, fixture:n
     return rpc('send_transaction', [cccA.JsonRpcTransformers.transactionFrom(transaction)]);
   } : undefined,
 });
-const atomicOperate=(network.atomic||network.fixture?.market.dataHash===atomicV2Codes.market)?atomicLaunchOperations(rpc,network,launchWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>owner===approvedCreator):undefined;
+const atomicWritesEnabled = process.env.BRANT_LAUNCH_WRITES === '1' && Boolean(network.fixture || process.env.BRANT_ATOMIC_PUDGE_QUALIFICATION==='1');
+const atomicOperate=(network.atomic||network.fixture?.market.dataHash===atomicV2Codes.market)?atomicLaunchOperations(rpc,network,atomicWritesEnabled?async transaction=>rpc('send_transaction',[cccA.JsonRpcTransformers.transactionFrom(transaction),'passthrough']):undefined,owner=>/^0x[0-9a-f]{64}$/.test(owner)):undefined;
 const operate=async(action:string,input:Record<string,unknown>,timing?:(name:string,ms:number)=>void):Promise<unknown>=>{
  if(action==='prepare'){
-  if(!launchWritesEnabled)throw Error('New atomic creation is disabled');
+  if(!atomicWritesEnabled)throw Error('New atomic creation is disabled');
   if(!atomicOperate||(!network.fixture&&process.env.BRANT_ATOMIC_PUDGE_QUALIFICATION!=='1'))throw Error('New atomic creation is disabled');
   return atomicOperate(action,input,timing);
  }
+ if(action==='submit'&&input.stage==='setup')throw Error('New legacy setup is disabled');
  if(!atomicOperate||action==='normalize-logo')return legacyOperate(action,input,timing);
  if(action==='sessions'){const [atomic,legacy]=await Promise.all([atomicOperate(action,input,timing),legacyOperate(action,input,timing)]);return [...atomic as unknown[],...legacy as unknown[]];}
- const result=await atomicOperate(action,input,timing);return result===null?legacyOperate(action,input,timing):result;
+ const result=await atomicOperate(action,input,timing);
+ if(result===null&&action==='submit'&&input.stage==='atomic')throw Error('Atomic review expired or unavailable');
+ return result===null?legacyOperate(action,input,timing):result;
 };
+export async function GET(_request: Request, context: {params: Promise<{action:string}>}) {
+ if((await context.params).action!=='availability')return new Response(null,{status:404});
+ return Response.json({enabled:Boolean(atomicOperate&&atomicWritesEnabled&&process.env.BRANT_LAUNCH_SQLITE_PATH)},{headers:{'Cache-Control':'no-store'}});
+}
 let active = 0;
 const preparing = new Map<string, Promise<{result: unknown; serverTiming: string}>>();
 
@@ -81,7 +89,7 @@ export async function POST(request: Request, context: {params: Promise<{action: 
   }
   const {action} = await context.params;
   if (!['status','cancel','prepare','submit','resubmit','pending-review','session','sessions','publish','retry-publication','normalize-logo','next-stage','reconcile'].includes(action)) return new Response(null, {status: 404});
-  if (['submit','resubmit'].includes(action) && !launchWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
+  if (['submit','resubmit'].includes(action) && !launchWritesEnabled && !atomicWritesEnabled) return Response.json({error: 'Launch execution is disabled'}, {status: 403});
   if (request.headers.get('content-type')?.split(';')[0] !== 'application/json') return new Response(null, {status: 415});
   if (active >= 2) return new Response(null, {status: 429});
   active++;
@@ -102,7 +110,7 @@ export async function POST(request: Request, context: {params: Promise<{action: 
     clearTimeout(timer);
     const input = JSON.parse(body + decoder.decode());
     if (!input || typeof input !== 'object' || Array.isArray(input)) return new Response(null, {status: 400});
-    if (action === 'submit' && input.owner !== approvedCreator) {
+    if (action === 'submit' && input.stage !== 'atomic' && input.owner !== approvedCreator) {
       return Response.json({error: 'Creator is not approved for launch'}, {status: 403});
     }
     const {result, serverTiming} = await runOperation(action, input);
@@ -118,6 +126,9 @@ export async function POST(request: Request, context: {params: Promise<{action: 
       [/not approved/,'creator_not_approved','This creator is not approved for launch.'],
       [/Insufficient|No eligible/,'insufficient_funding','Eligible funding is insufficient for the reviewed launch.'],
       [/index|RPC|fetch failed|timeout/i,'network_unavailable','The indexer or RPC is unavailable. Retry shortly.'],
+      [/^Initial purchase requires|^Enter an initial purchase|^Enter a CKB amount/,'invalid_economics',message],
+      [/deployment is not canonical/,'deployment_unavailable','The configured Pudge deployment is not canonical. Contact the operator.'],
+      [/standard.*secp/i,'unsupported_wallet','Connect a standard CKB secp wallet on Pudge.'],
       [/terms|economic/i,'invalid_economics','Economic parameters are outside the supported bounds.'],
       [/expired|superseded|immutable review/,'review_expired','This review expired or changed. Prepare a new review.'],
       [/Funding|funding.*changed|input.*live/i,'funding_changed','Funding changed. Prepare a new review.'],

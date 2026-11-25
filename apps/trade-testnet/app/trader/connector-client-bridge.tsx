@@ -11,7 +11,7 @@ export default function ConnectorClientBridge(){
   const {client}=useCcc();
   useEffect(()=>{
     const connector=document.querySelector('ccc-connector') as ConnectorElement|null;
-    if(!connector)return;
+    if(!connector||!client)return;
     connector.client=client;
     connector.signersController=rovekoSignersController;
   },[client]);
