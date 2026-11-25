@@ -4,6 +4,7 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {useAccount} from './account-provider';
 import {useLocale} from '../i18n-provider';
 import {quote} from '../../lib/v2-engine/curve.ts';
+import {maximumWholeTokens} from './trade-budget';
 import {copy} from './copy';
 import TokenInput from './TokenInput';
 import SwapInfoBoard from './SwapInfoBoard';
@@ -12,12 +13,6 @@ import {formatCkb,parseCkb} from './rpc';
 import {PUDGE_TRADE_CHANGE_CAPACITY,PUDGE_TRADE_FEE} from '../../lib/v2-engine/market-capacity.ts';
 
 const FEE=PUDGE_TRADE_FEE;
-function maximumWholeTokens(market:MarketData,budget:bigint){
-  let low=0n,high=BigInt(market.inventory);
-  const curve={base:BigInt(market.curve.base),step:BigInt(market.curve.step),supply:BigInt(market.curve.supply),inventory:BigInt(market.inventory)};
-  while(low<high){const mid=(low+high+1n)>>1n;try{if(quote(curve,'buy',mid)<=budget)low=mid;else high=mid-1n;}catch{high=mid-1n;}}
-  return low;
-}
 
 export default function SwapPanel({market,tokenBalance,tokenBalanceState,ckbBalance,ckbCurrent=true,hasFundingCell,walletReady,walletState,pending,busy,readiness,tradeError,onDismissTradeError,executionStatus,onTrade,onPrepare,quoteStatus,tradeStatus,onQuoteChange,onSideChange,onRefreshTokenBalance,className=''}:{market:MarketData;tokenBalance:bigint|null;tokenBalanceState:'idle'|'loading'|'ready'|'unavailable';ckbBalance:bigint|null;ckbCurrent?:boolean;hasFundingCell:boolean;walletReady:boolean;walletState:string;pending:boolean;busy:boolean;readiness?:string;tradeError?:string;onDismissTradeError?:()=>void;executionStatus?:React.ReactNode;onTrade:(side:Side,quantity:bigint,amount:bigint)=>Promise<void>;tradeStatus?:string;quoteStatus?:(side:Side,quantity:bigint,amount:bigint)=>string;onPrepare?:(side:Side,quantity:bigint,amount:bigint)=>void;onQuoteChange?:(price:number|null,side:Side)=>void;onSideChange?:(side:Side)=>void;onRefreshTokenBalance:()=>void;className?:string}){
   const account=useAccount();

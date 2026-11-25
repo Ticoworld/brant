@@ -54,7 +54,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   },[market?.identity,account.owner]);
   const prepared=useRef<{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
   const [,renderPreparation]=useState(0);
-  const [failedQuote,setFailedQuote]=useState('');
+  const [failedQuote,setFailedQuote]=useState<{key:string;code:string}|null>(null);
   useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,market?.custodyRoot]);
   const quoteKey=(side:Side,quantity:bigint,amount:bigint)=>JSON.stringify([
     market?.genesis,market?.identity,market?.custodyRoot,market?.manifest.initializationTransactionHash,
@@ -66,17 +66,20 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     if(!market||!signer)throw Error('Wallet or market is unavailable');
     previous?.controller.abort();
     const controller=new AbortController(),id=crypto.randomUUID();
+    const started=performance.now();
+    let lastStage='wallet';
     const review=(async()=>{
       const address=await signer.getRecommendedAddressObj();
       if(active.current!==signer||address.script.hash()!==account.owner)throw Error('Wallet changed during preparation');
       return prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
-        (stage,ms)=>console.info('Brant quote stage',id,stage,Math.round(ms)),account.fundingHint,amount,controller.signal);
+        (stage,ms)=>{lastStage=stage;console.info('Brant quote stage',id,stage,Math.round(ms));},account.fundingHint,amount,controller.signal);
     })();
     const entry:{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:typeof review}={key,signer,controller,review};
     prepared.current=entry;
-    setFailedQuote('');
+    setFailedQuote(null);
     void review.then(()=>{
       entry.readyAt=Date.now();
+      console.info('Brant quote timing',id,Math.round(performance.now()-started));
       if(prepared.current===entry&&!controller.signal.aborted){
         setFailure(null);renderPreparation(value=>value+1);
       }
@@ -84,7 +87,10 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       if(prepared.current===entry&&!controller.signal.aborted){
         console.warn('Brant quote preparation unavailable',safeSigningError(error).message);
         prepared.current=null;
-        setFailedQuote(key);
+        const detail=error instanceof Error?error.message:'';
+        const code=/funding|eligible live/i.test(detail)?'funding':/price|stale custody/i.test(detail)?'changed':'proof';
+        console.info('Brant quote failed after',id,lastStage,Math.round(performance.now()-started));
+        setFailedQuote({key,code});
       }
     });
     return review;
@@ -97,9 +103,10 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const quoteStatus=(side:Side,quantity:bigint,amount:bigint)=>{
     const key=quoteKey(side,quantity,amount),entry=prepared.current;
     if(entry?.key===key&&entry.signer===signer&&entry.readyAt!==undefined&&!entry.controller.signal.aborted)return 'ready';
-    return failedQuote===key?'unavailable':'updating';
+    return failedQuote?.key===key?'unavailable':'updating';
   };
 
+  const quoteError=(side:Side,quantity:bigint,amount:bigint)=>failedQuote?.key===quoteKey(side,quantity,amount)?failedQuote.code:'';
   const dismissError=()=>{if(!pending)setFailure(null);};
   const reconcile=useCallback(async(silent=true)=>{
     if(!key||reconcileLock.current||broadcasting.current)return;
@@ -271,7 +278,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     }finally{broadcasting.current=false;setBusy(false);}
   },[account.owner,account.state,busy,key,locale,market,signer,preparation,revision,refreshMarket]);
 
-  return {inclusion:inclusion?.key===key?inclusion:null,trade,dismissError,prepareQuote,quoteStatus,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
+  return {inclusion:inclusion?.key===key?inclusion:null,trade,dismissError,prepareQuote,quoteStatus,quoteError,readiness,busy,pending,uncertain,attemptRaw,reconcile,revision,status,receipt:key?receipt:'',error:failure?.owner===account.owner?failure.message:''};
 }
 
 async function validateReviewedInputs(review:Awaited<ReturnType<typeof prepareLocalReview>>,side:Side,quantity:bigint,amount:bigint){

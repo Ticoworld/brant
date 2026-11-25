@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import {useEffect, useRef, useState} from 'react';
 import {useSigner} from '@ckb-ccc/connector-react';
 import {ccc} from '@ckb-ccc/core';
@@ -575,7 +576,7 @@ export default function LaunchScreen() {
           </label>}
           {step===0&&savedSessions.some(s=>s.entries.some(e=>e.state==='submitted'))&&<p role="status">{t('A submitted launch is awaiting recovery.','已提交的发行等待恢复。')} <button className={secondary} onClick={()=>{const pending=savedSessions.find(s=>s.entries.some(e=>e.state==='submitted'));if(pending)selectSaved(pending.market);}}>{t('Resume pending launch','继续待处理发行')}</button></p>}
           {step===2&&session&&<div className="mt-4 flex flex-wrap items-center gap-3">
-          {session.published && session.market && <a className={`${primary} inline-flex items-center justify-center`} href={'/market/'+session.market}>{t('Open market','打开市场')}</a>}
+          {session.published && session.market && <Link className={`${primary} inline-flex items-center justify-center`} href={'/market/'+session.market}>{t('Open market','打开市场')}</Link>}
           <button className={secondary} disabled={cancelBusy || busy || ['wallet','submitting','checking'].includes(execution)} onClick={() => void leaveReview(() => {
             generation.current++;workflow.current={genesis:PUDGE_GENESIS,owner,mode:'draft',family:'atomic',phase:'draft'};
             setSelection(undefined);setResumedMarket(undefined);setSession(undefined);setPreparation(undefined);setReview(undefined);setPublication(undefined);

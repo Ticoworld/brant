@@ -8,7 +8,8 @@ import {PUDGE_TRADE_CHANGE_CAPACITY, PUDGE_TRADE_FEE} from '../../lib/v2-engine/
 import {copy} from './copy';
 import {useMarketSession} from './use-market-session';
 import {useAccount} from './account-provider';
-import {formatCkb} from './rpc';
+import {maximumWholeTokens} from './trade-budget';
+import {formatCkb,parseCkb} from './rpc';
 import type {MarketData, Side} from './types';
 import PreviewChart, {RecentTrades} from './PreviewChart';
 
@@ -32,7 +33,8 @@ export function TradeV2({session, side, setSide}: {
   const zh = locale === 'zh-CN';
   const {account, marketQuery, market, trade, inclusion, marketCaughtUp, position} = session;
   const {loading, error, refresh} = marketQuery;
-  const [quantity, setQuantity] = useState('1');
+  const [budget,setBudget]=useState('');
+  const [sellQuantity,setSellQuantity]=useState('');
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 5_000);
@@ -41,6 +43,9 @@ export function TradeV2({session, side, setSide}: {
 
   const symbol = market?.token.symbol ?? 'Token';
   const buying = side === 'buy';
+  let budgetAmount=0n;
+  try{budgetAmount=parseCkb(budget);}catch{}
+  const quantity=buying?(market?maximumWholeTokens(market,budgetAmount):0n).toString():sellQuantity;
   const validQuantity = /^[0-9]{1,10}$/.test(quantity) && BigInt(quantity) > 0n;
   let amount: bigint | null = null;
   if (market && validQuantity) {
@@ -136,7 +141,7 @@ export function TradeV2({session, side, setSide}: {
           </div>
           <div className="preview-market-column preview-ticket-column">
           <TradeTicket
-            side={side} setSide={setSide} quantity={quantity} setQuantity={setQuantity}
+            side={side} setSide={setSide} quantity={quantity} input={buying?budget:sellQuantity} setInput={buying?setBudget:setSellQuantity} budget={budgetAmount}
             amount={amount} market={market} balance={balance} holdings={holdings} zh={zh}
             action={action} submit={submit} sellAction={walletReady && !buying && review !== 'unavailable'}
             disabled={walletOpening || trade.busy || (walletReady && (!canPrepare || review === 'updating'))}
@@ -158,6 +163,7 @@ export function TradeV2({session, side, setSide}: {
             {walletReady && !blocked && trade.readiness !== 'ready' && <p role="status" className="preview-note">
               {trade.readiness === 'unavailable' ? (zh ? '交易状态暂不可用' : 'Trading state unavailable') : (zh ? '正在同步交易状态' : 'Synchronizing trading state')}
             </p>}
+            {review==='unavailable'&&amount!==null&&<p role="alert" className="preview-note">{({funding:zh?'合格资金不足，请检查钱包余额。':'Eligible wallet funding is unavailable. Check your spendable CKB.',changed:zh?'价格已更新，请刷新报价。':'The market changed. Refresh the quote.',proof:zh?'暂时无法验证交易，当前估算不可执行。':'Trade verification is temporarily unavailable. This estimate is not executable.'} as Record<string,string>)[trade.quoteError(side,count,amount)]}</p>}
             {review === 'updating' && <p role="status" className="preview-note">{zh ? '正在准备报价…' : 'Preparing quote…'}</p>}
             {(status || receipt) && <div role="status" className="preview-note preview-settlement">
               <span>{status}</span>
@@ -206,7 +212,7 @@ function readAttemptHash(raw: string) {
   } catch { return ''; }
 }
 
-function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, setQuantity, amount, action, submit, sellAction, disabled, children}: {
+function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, submit, sellAction, disabled, children}: {
   market: MarketData | null;
   balance: bigint | null;
   holdings: bigint | null;
@@ -214,7 +220,9 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   side: Side;
   setSide: (side: Side) => void;
   quantity: string;
-  setQuantity: (quantity: string) => void;
+  input:string;
+  setInput:(value:string)=>void;
+  budget:bigint;
   amount: bigint | null;
   action: string;
   submit: () => void;
@@ -235,19 +243,19 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
   const unit = ` CKB / ${symbol}`;
   const tokenWell = (
     <label className="preview-well preview-editable" key="token">
-      <span>{buying ? (zh ? '买入数量' : `${symbol} quantity to buy`) : (zh ? '卖出数量' : `${symbol} quantity to sell`)}</span>
+      <span>{buying ? (zh ? '买入预算（CKB）' : 'Purchase budget (CKB)') : (zh ? '卖出数量' : `${symbol} quantity to sell`)}</span>
       <span className="preview-well-row">
-        <input aria-invalid={!!market && !!quantity && amount === null} inputMode="numeric" pattern="[0-9]*" maxLength={10} value={quantity} placeholder="0" onChange={event => {setQuantity(event.target.value);}} />
-        <span className="preview-token"><TokenMark symbol={symbol} logo={market?.token.logo}/>{symbol}</span>
+        <input aria-invalid={!!market && !!quantity && amount === null} inputMode={buying?'decimal':'numeric'} maxLength={buying?20:10} value={input} placeholder="0" onChange={event => setInput(event.target.value)} />
+        <span className="preview-token"><TokenMark symbol={buying?'CKB':symbol} logo={buying?undefined:market?.token.logo}/>{buying?'CKB':symbol}</span>
       </span>
     </label>
   );
   const ckbWell = (
     <div className="preview-well preview-estimate" key="ckb">
-      <span>{buying ? (zh ? '预计交易金额' : 'Estimated trade amount') : (zh ? '预计收入总额' : 'Estimated gross proceeds')}</span>
+      <span>{buying ? (zh ? '预计收到代币' : 'Estimated tokens received') : (zh ? '预计收入总额' : 'Estimated gross proceeds')}</span>
       <div className="preview-well-row">
-        <output>{amount === null ? '—' : formatCkb(amount)}</output>
-        <span className="preview-token"><TokenMark symbol="CKB" />CKB</span>
+        <output>{amount === null ? '—' : buying?quantity:formatCkb(amount)}</output>
+        <span className="preview-token"><TokenMark symbol={buying?symbol:'CKB'} />{buying?symbol:'CKB'}</span>
       </div>
     </div>
   );
@@ -264,7 +272,10 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
       <div className="preview-wells">
         {tokenWell}
         <div className="preview-presets" aria-label={zh ? '数量预设' : 'Quantity presets'}>
-          {[1, 5, 10, 25].map(value => <button type="button" key={value} aria-pressed={String(value) === quantity} onClick={() => {setQuantity(String(value));}}>{value} {symbol}</button>)}
+          {(buying?[20,50,100,250]:[25,50,75,100]).map(value=>{
+            const selected=buying?BigInt(value):(holdings??0n)*BigInt(value)/100n;
+            return <button type="button" key={value} disabled={selected===0n} onClick={()=>setInput(String(selected))}>{value}{buying?' CKB':'%'}</button>;
+          })}
         </div>
         {ckbWell}
       </div>
@@ -275,6 +286,8 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
         <p>{zh ? '平均成交价' : 'Average execution price'} <strong>{amount === null || count === null ? '—' : formatCkb((amount + count / 2n) / count) + unit}</strong></p>
         <p>{zh ? '价格影响' : 'Price impact'} <strong>{impact === null ? '—' : impact.toLocaleString(zh ? 'zh-CN' : 'en', {maximumFractionDigits: 2}) + '%'}</strong></p>
         {amount !== null && <>
+          {buying&&<p>{zh?'实际购买金额':'Purchase cost'} <strong>{formatCkb(amount)} CKB</strong></p>}
+          {buying&&budget>amount&&<p>{zh?'未使用预算':'Unused purchase budget'} <strong>{formatCkb(budget-amount)} CKB</strong></p>}
           <p>{zh ? '网络费用' : 'Network fee'} <strong>{formatCkb(PUDGE_TRADE_FEE)} CKB</strong></p>
           <p className="preview-total">{buying ? (zh ? '应付总额' : 'Total to pay') : (zh ? '扣费后收入' : 'Net proceeds')} <strong>{formatCkb(buying ? amount + PUDGE_TRADE_FEE : amount > PUDGE_TRADE_FEE ? amount - PUDGE_TRADE_FEE : 0n)} CKB</strong></p>
           <details className="preview-funding">
@@ -289,7 +302,7 @@ function TradeTicket({market, balance, holdings, zh, side, setSide, quantity, se
         <strong>{zh ? '价格影响较高' : 'High price impact'}</strong>
         <p>{zh ? '交易数量越大，成交价格沿曲线变化越多。此笔交易的平均成交价与当前单价相差至少 10%。' : 'This trade size moves along the curve. Its average execution price differs from the current unit price by at least 10%.'}</p>
       </div>}
-      {market && quantity && amount === null && <p role="status" className="preview-note">{zh ? '该数量无法报价。请输入可用范围内的整数。' : 'Quote unavailable. Enter a whole quantity within market limits.'}</p>}
+      {market && input && amount === null && <p role="status" className="preview-note">{zh ? '该数量无法报价。请输入可用范围内的整数。' : buying&&unitPrice!==null?'Minimum budget for one token: '+formatCkb(unitPrice)+' CKB':'Enter a whole quantity within available liquidity.'}</p>}
       <button type="button" className="preview-action" data-sell={sellAction} disabled={disabled} onClick={submit}>{action}</button>
       {children}
     </section>

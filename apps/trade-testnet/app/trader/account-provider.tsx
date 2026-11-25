@@ -55,7 +55,7 @@ async function readBalance(script:{codeHash:string;hashType:string;args:string},
 
 export default function AccountProvider({children}:{children:React.ReactNode}){
   const signer=useSigner(),{client,isOpen,open}=useCcc();
-  const [identity,setIdentity]=useState<{state:State;address:string;owner:string;error:string}>({state:'disconnected',address:'',owner:'',error:''});
+  const [identity,setIdentity]=useState<{state:State;address:string;owner:string;error:string}>({state:'checking',address:'',owner:'',error:''});
   const [balance,setBalance]=useState({...emptyBalance,state:'idle' as BalanceState,error:''});
   const requestRefresh=useRef<(minimumHeight?:bigint)=>Promise<void>>(async()=>{});
   const inFlight=useRef<Promise<void>|undefined>(undefined);

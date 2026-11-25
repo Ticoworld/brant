@@ -316,18 +316,9 @@ export async function GET(request:Request){
 }
 
 export async function POST(request:Request){
-  if(rpcEndpoint()!=='https://testnet.ckb.dev/')return handleProof(request);
-  const controller=new AbortController();
-  let timer:ReturnType<typeof setTimeout>;
-  const deadline=new Promise<Response>(resolve=>{
-    timer=setTimeout(()=>{
-      controller.abort();
-      resolve(new Response('Trading state could not be verified in time. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}}));
-    },5000);
-  });
-  try{
-    return await Promise.race([deadline,handleProof(new Request(request,{signal:AbortSignal.any([request.signal,controller.signal])}))]);
-  }finally{clearTimeout(timer!);}
+  // The verified checkpoint refresh is shared with readiness and has its own
+  // bounded RPC and collector budgets. Keep the request attached to that work.
+  return handleProof(request);
 }
 
 async function handleProof(request:Request,synchronize=false){
@@ -549,6 +540,7 @@ async function handleProof(request:Request,synchronize=false){
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
     if(error instanceof Error&&error.message==='Expected JSON')return new Response('Expected JSON',{status:415});
+    console.info('Pudge proof failed',JSON.stringify({path:proofTrace,ms:Math.round(performance.now()-proofStarted)}));
     console.error('Pudge proof request failed:',error instanceof Error?error.message:'unknown error');
     return new Response('Pudge canonical history or proof unavailable',{status:503});
   }finally{

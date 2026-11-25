@@ -12,16 +12,17 @@ export async function selectTradeFunding(rpc:Rpc,script:ccc.Script,minimum:bigin
       if(reserved(point))return null;
       const cell=await readFundingCell(rpc,point,owner);
       return cell.capacity>=minimum?cell:null;
-    }catch{return null;}
+    }catch(error){
+      if(error instanceof Error&&['Funding cell is unavailable or not plain','Funding cell does not belong to connected wallet','Gate 2 requires a standard CKB secp owner'].includes(error.message))return null;
+      throw error;
+    }
   };
   if(hint?.genesis===PUDGE_GATE2_GENESIS&&hint.owner===owner){
     const live=await check(hint);
     if(live)return live;
   }
-  const [tip,indexed]=await Promise.all([
-    rpc('get_tip_header',[]) as Promise<{number:string}>,
-    rpc('get_indexer_tip',[]) as Promise<{block_number:string;block_hash:string}>,
-  ]);
+  const indexed=await rpc('get_indexer_tip',[]) as {block_number:string;block_hash:string};
+  const tip=await rpc('get_tip_header',[]) as {number:string};
   const lag=BigInt(tip.number)-BigInt(indexed.block_number);
   if(lag<0n||lag>6n)throw Error('Funding index is catching up. Retry shortly.');
   const page=await rpc('get_cells',[{
@@ -30,13 +31,17 @@ export async function selectTradeFunding(rpc:Rpc,script:ccc.Script,minimum:bigin
   },'desc','0x64']) as {objects:{out_point:{tx_hash:string;index:string};output:{capacity:string;type?:unknown};output_data:string}[]};
   const candidates=page.objects.filter(row=>!row.output.type&&row.output_data==='0x'&&BigInt(row.output.capacity)>=minimum)
     .sort((a,b)=>BigInt(a.output.capacity)<BigInt(b.output.capacity)?1:BigInt(a.output.capacity)>BigInt(b.output.capacity)?-1:0).slice(0,8);
-  const [live,canonical,after]=await Promise.all([
-    Promise.all(candidates.map(row=>check({txHash:row.out_point.tx_hash,index:row.out_point.index}))),
-    rpc('get_block_hash',[indexed.block_number]),
-    rpc('get_indexer_tip',[]) as Promise<typeof indexed>,
+  let funding:Awaited<ReturnType<typeof check>>=null;
+  for(const row of candidates){
+    funding=await check({txHash:row.out_point.tx_hash,index:row.out_point.index});
+    if(funding)break;
+  }
+  const after=await rpc('get_indexer_tip',[]) as typeof indexed;
+  const [canonical,afterCanonical,end]=await Promise.all([
+    rpc('get_block_hash',[indexed.block_number]),rpc('get_block_hash',[after.block_number]),rpc('get_tip_header',[]) as Promise<typeof tip>,
   ]);
-  if(canonical!==indexed.block_hash||after.block_hash!==indexed.block_hash||after.block_number!==indexed.block_number)throw Error('Funding index changed during selection. Retry shortly.');
-  const funding=live.find(cell=>cell!==null);
+  const endLag=BigInt(end.number)-BigInt(after.block_number);
+  if(canonical!==indexed.block_hash||afterCanonical!==after.block_hash||BigInt(after.block_number)<BigInt(indexed.block_number)||endLag<0n||endLag>6n)throw Error('Funding index changed during selection. Retry shortly.');
   if(!funding)throw Error('No eligible live funding Cell found in the funding search');
   return funding;
 }
