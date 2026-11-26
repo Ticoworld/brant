@@ -62,30 +62,43 @@ async function checkpoint(data:MarketData,points:Point[],cells:{output:Output;da
   checkpoints.set(data.id,saved);
   while(checkpoints.size>32)checkpoints.delete(checkpoints.keys().next().value!);
   verifiedCheckpoints.add(saved);
-  if(data.id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw)await persistMarketCheckpoint(saved).catch(error=>console.warn('Market checkpoint publication failed',error));
+  await persistMarketCheckpoint(saved).catch(error=>console.warn('Market checkpoint publication failed',error));
 }
 
-function marketCheckpointPath(){
+function marketCheckpointPath(id:string){
   const directory=process.env.ROVEKO_PUDGE_PROOF_CACHE_DIR;
-  return directory?path.join(path.resolve(directory),'pudge-xudt-market.json'):undefined;
+  if(!directory||(id!==PUDGE_GATE2_REGISTRY_ID&&!/^0x[0-9a-f]{64}$/.test(id)))return undefined;
+  return path.join(path.resolve(directory),id+'-market.json');
 }
 
 async function persistMarketCheckpoint(saved:Checkpoint){
-  const file=marketCheckpointPath();if(!file)return;
+  const file=marketCheckpointPath(saved.data.id);if(!file)return;
   const directory=path.dirname(file),temporary=path.join(directory,`.pudge-xudt-market.${randomUUID()}.tmp`);
-  const payload=sealPudgeSnapshot(marketSnapshotScope,saved);
+  const payload=sealPudgeSnapshot(checkpointScope(saved.data.id),saved);
   if(!payload||Buffer.byteLength(payload)>8*1024*1024)return;
   await mkdir(directory,{recursive:true,mode:0o700});
   try{await writeFile(temporary,payload,{flag:'wx',mode:0o600});await rename(temporary,file);}
   finally{await rm(temporary,{force:true}).catch(()=>{});}
 }
 
-async function readMarketCheckpoint(){
-  const file=marketCheckpointPath();if(!file)return null;
+function checkpointScope(id:string){
+  return id===PUDGE_GATE2_REGISTRY_ID?marketSnapshotScope:marketSnapshotScope+':'+id;
+}
+
+async function readMarketCheckpoint(id=PUDGE_GATE2_REGISTRY_ID){
+  const file=marketCheckpointPath(id);if(!file)return null;
   try{
     const info=await stat(file);if(!info.isFile()||info.size>8*1024*1024)return null;
-    const saved=openPudgeSnapshot<Checkpoint>(marketSnapshotScope,await readFile(file,'utf8'));
-    if(saved?.data?.id!==PUDGE_GATE2_REGISTRY_ID||saved.data.historyState!=='verified'||!saved.data.history?.length||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
+    const saved=openPudgeSnapshot<Checkpoint>(checkpointScope(id),await readFile(file,'utf8'));
+    if(saved?.data?.id!==id||saved.data.historyState!=='verified'||!saved.data.history?.length||!Array.isArray(saved.points)||saved.points.length!==4||!Array.isArray(saved.cells)||saved.cells.length!==4||!Array.isArray(saved.deps)||saved.deps.length!==6||!Array.isArray(saved.hashes)||saved.hashes.length!==6)return null;
+    if(id!==PUDGE_GATE2_REGISTRY_ID){
+      const manifest=saved.data.manifest as RecoveryManifest;
+      for(const name of ['market','marker','custody','custodyMarker','owner','token'] as const){
+        manifest.scripts[name]=ccc.Script.from(manifest.scripts[name]);
+        if(manifest.verifiedMarket)manifest.verifiedMarket.scripts[name]=manifest.scripts[name];
+      }
+      if(manifest.scripts.market.hash().toLowerCase()!==id)return null;
+    }
     verifiedCheckpoints.add(saved);
     return saved;
   }catch{return null;}
@@ -104,7 +117,13 @@ function dependencyPoint(value:any):Point{
 
 async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|null>{
   let saved=checkpoints.get(id);
-  if(!saved&&id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw){saved=await readMarketCheckpoint()||undefined;if(saved)checkpoints.set(id,saved);}
+  if(!saved){
+    saved=await readMarketCheckpoint(id)||undefined;
+    if(saved&&saved.manifestRaw===manifestRaw){
+      checkpoints.set(id,saved);
+      while(checkpoints.size>32)checkpoints.delete(checkpoints.keys().next().value!);
+    }
+  }
   if(!saved||saved.manifestRaw!==manifestRaw)return null;
   try{
     if(!verifiedCheckpoints.has(saved))return null;
