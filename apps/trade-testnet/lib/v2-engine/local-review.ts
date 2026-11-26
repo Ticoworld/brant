@@ -35,6 +35,9 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const minimum=(amount:bigint)=>(side==='buy'?amount:0n)+PUDGE_TRADE_CHANGE_CAPACITY+PUDGE_TRADE_FEE;
   const earlyFunding=pudge&&quotedAmount!==undefined?selectTradeFunding(rpc,ownerScript!,minimum(quotedAmount),hint):undefined;
   void earlyFunding?.catch(()=>{});
+  // Fee policy is independent of the proof and singleton reads.
+  const poolInfo = pudge ? rpc('tx_pool_info', []) : undefined;
+  void poolInfo?.catch(() => {});
   const response = await fetch(pudge?'/api/v2/pudge-proof':'/api/v2/proof',{signal:signal?AbortSignal.any([signal,AbortSignal.timeout(65_000)]):AbortSignal.timeout(65_000),method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({owner,side,quantity:quantity.toString(),...(pudge?{manifest:config}:config.format==='roveko-local-market-v1'?{initTxHash:config.initializationTransactionHash}:{})})});
   if (!response.ok) {
     const detail=response.headers.get('content-type')?.startsWith('text/plain')?await response.text():'';
@@ -109,7 +112,13 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   if (!oldBalanceBytes || BigInt('0x' + oldBalanceBytes.reverse().join('')) !== BigInt(p.owner.balance)) throw Error('Proof owner balance mismatch');
   const fee=pudge?PUDGE_TRADE_FEE:100000n,inputs=[...cells,funding] as [Cell,Cell,Cell,Cell,Cell];
   const reviewed = buildReviewedTransaction({curve:live.curve,cells:inputs,custodyAmount:live.custodyAmount,newRoot:p.new_root,witness,fee,side,quantity},deps,config.genesis,owner);
-  if(pudge){const placeholder=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(reviewed.transaction)));placeholder.witnesses[4]=ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex();const pool=await rpc('tx_pool_info',[]) as {min_fee_rate:string};const rate=BigInt(pool.min_fee_rate)*2n;if(rate<2000n||rate>200000n||placeholder.estimateFee(rate)>fee)throw Error('Trade fee is insufficient or outside review bounds');}
+  if(poolInfo){
+    const placeholder=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(cccA.JsonRpcTransformers.transactionFrom(reviewed.transaction)));
+    placeholder.witnesses[4]=ccc.WitnessArgs.from({lock:'0x'+'00'.repeat(65)}).toHex();
+    const pool=await poolInfo as {min_fee_rate:string};
+    const rate=BigInt(pool.min_fee_rate)*2n;
+    if(rate<2000n||rate>200000n||placeholder.estimateFee(rate)>fee)throw Error('Trade fee is insufficient or outside review bounds');
+  }
   mark('constructionAndFeesMs');
   return {...reviewed,inputs,live, ownerBalance:BigInt(p.owner.balance), nextOwnerBalance:BigInt(p.owner.balance)+(side === 'buy' ? quantity : -quantity)};
 }

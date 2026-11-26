@@ -265,10 +265,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         setStatus('broadcasting');
         tradeTiming(reviewedHash,'signature-received');
         verifyInitializationSignature(review.transaction,signed,review.inputs.map(cell=>({lock:ccc.Script.from(cell.lock as ccc.ScriptLike)})),4,owner);
-        const [againGenesis,againRpcGenesis]=await Promise.all([current.client.getHeaderByNumber(0),pudgeRpc<string>('get_block_hash',['0x0'])]);
-        if(active.current!==current||!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
-        await recheckTradeSettlement(rpc,localStorage,key);
-        await validateReviewedInputs(review,side,quantity,quotedAmount);
+        const [againGenesis,againRpcGenesis]=await Promise.all([
+          current.client.getHeaderByNumber(0),
+          pudgeRpc<string>('get_block_hash',['0x0']),
+          recheckTradeSettlement(rpc,localStorage,key),
+          validateReviewedInputs(review,side,quantity,quotedAmount),
+        ]);
+        if(!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||active.current!==current||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');
         if(currentKey.current!==key)throw Error('Market changed after approval');
         assertWalletFundingAvailable(localStorage,market.genesis,owner);
         const record=makeTradeAttempt(PUDGE_GENESIS,owner,signed,market.id==='pudge-xudt'?undefined:market.identity);
