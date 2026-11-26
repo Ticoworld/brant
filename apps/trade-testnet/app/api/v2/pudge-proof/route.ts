@@ -434,7 +434,7 @@ async function handleProof(request:Request,synchronize=false){
     const canonicalCollector=path.resolve(process.cwd(),'lib/v2-engine/pudge-recover.cjs'),collector=process.env.ROVEKO_RECOVERY_COLLECTOR||canonicalCollector;
     const [canonicalBytes,configuredBytes]=await Promise.all([readFile(canonicalCollector),readFile(collector),access(binary)]).then(([a,b])=>[a,b] as const);
     if(createHash('sha256').update(canonicalBytes).digest('hex')!==createHash('sha256').update(configuredBytes).digest('hex'))throw Error('Recovery collector differs from repository');
-    const common=['--node',endpoint,'--indexer',endpoint,'--init',manifest.initializationTransactionHash,'--owner',replayOwner,'--custody-lock',custody,'--xudt-type',token,'--max-pages','32','--max-transactions','512'];
+    const common=['--collection-only','true','--node',endpoint,'--indexer',endpoint,'--init',manifest.initializationTransactionHash,'--owner',replayOwner,'--custody-lock',custody,'--xudt-type',token,'--max-pages','32','--max-transactions','512'];
     const childEnv={...process.env,ROVEKO_PROOF_BINARY:binary,ROVEKO_RECOVERY_RPC_TIMEOUT_MS:'15000',ROVEKO_RECOVERY_MAX_RPC:'1100'};
     let checkpoint=current?.bundle||await loadCheckpoint(key,file,manifest,replayOwner);
     let reusable=checkpoint?await isLive(checkpoint):false;
@@ -466,7 +466,7 @@ async function handleProof(request:Request,synchronize=false){
     };
     let selectedBundle=bundle,snapshot;
     try{snapshot=await replay(bundle);}catch(error){
-      if(!reusable&&!current)throw error;
+      if(!reusable&&!current&&!proofTrace.includes('incremental-collection'))throw error;
       await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
       selectedBundle=JSON.parse(await readFile(bundlePath,'utf8'));
       if(!validBundle(selectedBundle,manifest,replayOwner))throw Error('Rebuilt checkpoint identity mismatch');

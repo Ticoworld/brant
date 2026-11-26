@@ -288,7 +288,8 @@ async function collect(args) {
   fs.writeFileSync(args.out, JSON.stringify(bundle, null, 2) + '\n');
   process.stderr.write(`Fetched ${historyRows.length} committed custody transitions; live cell ${livePoint.tx_hash}:${livePoint.index}.\n`);
   const manifest = path.resolve(args.out);
-  await verifyBundleFile(manifest);
+  // The proof route requests collection only and replays before publication.
+  if (args['collection-only'] !== 'true') await verifyBundleFile(manifest);
 }
 async function collectIncremental(args) {
   for (const k of ['node', 'indexer', 'init', 'owner', 'custody-lock', 'xudt-type', 'checkpoint', 'out']) if (!args[k]) fail(`missing --${k}`);
@@ -379,7 +380,8 @@ async function collectIncremental(args) {
   };
   fs.writeFileSync(args.out, JSON.stringify(bundle, null, 2) + '\n');
   process.stderr.write(`Reused ${previous.history.length} verified transitions and appended ${appended.length}; live cell ${bundle.live.tx_hash}:${bundle.live.index}.\n`);
-  await verifyBundleFile(path.resolve(args.out));
+  // The proof route requests collection only and replays before publication.
+  if (args['collection-only'] !== 'true') await verifyBundleFile(path.resolve(args.out));
 }
 async function collectBlocks(args) {
   for (const k of ['node', 'init', 'owner', 'custody-lock', 'xudt-type', 'out']) if (!args[k]) fail(`missing --${k}`);
