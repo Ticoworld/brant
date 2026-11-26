@@ -4,7 +4,7 @@ import {cccA} from '@ckb-ccc/core/advanced';
 type Rpc=(method:string,params:unknown[])=>Promise<unknown>;
 type Stage='setup'|'issuance'|'purchase';
 type Point={txHash:string;index:string};
-type Confirmed={stage:Stage;txHash:string;blockHash:string;outputs:Point[]};
+type Confirmed={stage:Stage;txHash:string;blockHash:string;blockNumber?:string;outputs:Point[]};
 const h=/^0x[0-9a-f]{64}$/i;
 const pointKey=(p:Point)=>`${p.txHash.toLowerCase()}:${BigInt(p.index)}`;
 /** Verify a reviewed initialization transaction on a canonical chain. The
@@ -34,7 +34,7 @@ export async function verifyInitializationStage(rpc:Rpc,genesis:string,stage:Sta
     if(BigInt(actual.capacity)!==out.capacity||script(actual.lock).hash()!==out.lock.hash()||Boolean(actual.type)!==Boolean(out.type)||(actual.type&&out.type&&script(actual.type).hash()!==out.type.hash())||row.cell.data.content.toLowerCase()!==reviewed.outputsData[i].toLowerCase())throw Error('Successor differs from reviewed output');
     outputs.push(point);
   }
-  return {stage,txHash,blockHash:header.hash!,outputs};
+  return {stage,txHash,blockHash:header.hash!,blockNumber:header.number,outputs};
 }
 
 /** Require the exact predecessor outputs and keep ambiguous attempts blocked. */

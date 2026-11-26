@@ -9,7 +9,7 @@ export async function getAtomicCatalogMarket(rpc:Rpc,market:string){
  const store=openAtomicLaunchDelivery(file,rpc);
  try{
   const hint=store.candidate(market);if(!hint||hint.genesis!==marketNetwork().genesis)return null;
-  const {publication}=await store.reconcile(market,hint.owner);
+  const publication=await store.readPublished(market,hint.owner);
   const tx=ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(hint.signed as never));
   const w=ccc.bytesFrom(tx.getWitnessArgs(0)!.outputType!);const view=new DataView(w.buffer,w.byteOffset,w.byteLength);
   const owner=ccc.Script.fromBytes(w.slice(view.getUint32(4,true),view.getUint32(8,true)));

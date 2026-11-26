@@ -14,6 +14,13 @@ type Plan=Awaited<ReturnType<typeof import('./atomic-launch-v2.ts').planAtomicLa
 type Snapshot={genesis:string;market:string;owner:string;reviewed:unknown;signed?:unknown;inputs:unknown[];dependencies:Dependencies;logo?:string;reviewId?:string;expiresAt?:number;state:'reviewed'|'submitted'|'published'|'cancelled';receipt?:unknown;publication?:unknown};
 const encode=(x:unknown)=>JSON.stringify(x,(_,v)=>typeof v==='bigint'?String(v):v);
 const decodeTx=(x:unknown)=>ccc.Transaction.from(cccA.JsonRpcTransformers.transactionTo(x as never));
+type Publication={
+ version:number;genesis:string;market:string;owner:string;token:string;transactionHash:string;
+ metadata:ReturnType<typeof verifyAtomicMetadataAuthorization>;
+ receipt:Awaited<ReturnType<typeof verifyInitializationStage>>;
+};
+const verifiedPublications=new Map<string,{raw:string;publication:Publication}>();
+
 /** Durable atomic delivery in the application's existing SQLite database. All
  * transitions compare the immutable snapshot, including unknown submissions. */
 export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
@@ -36,6 +43,16 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
  function load(market:string){const row=db.prepare('SELECT snapshot FROM atomic_launch_delivery WHERE market=?').get(market);if(typeof row?.snapshot!=='string')throw Error('Atomic review unavailable');return {raw:row.snapshot,value:JSON.parse(row.snapshot) as Snapshot};}
  function save(market:string,raw:string,value:Snapshot){if(db.prepare('UPDATE atomic_launch_delivery SET snapshot=? WHERE market=? AND snapshot=?').run(encode(value),market,raw).changes!==1)throw Error('Atomic session changed concurrently');}
  function inputs(value:Snapshot):Inputs{return value.inputs.map(raw=>{const c=raw as Inputs[number];return {...c,capacity:BigInt(c.capacity)};});}
+ async function verifyPublication(market:string,owner:string,value:Snapshot){
+   const signed=decodeTx(value.signed),creatorInputs=inputs(value);
+   verifyInitializationSignature(decodeTx(value.reviewed),signed,creatorInputs,0,owner);
+   const metadata=verifyAtomicMetadataAuthorization(signed,creatorInputs,value);
+   // Historical outputs may already be spent; canonical receipt, not liveness,
+   // establishes issuance. Successor recovery is a separate obligation.
+   const receipt=await verifyInitializationStage(rpc,value.genesis,'purchase',signed,creatorInputs.map(c=>c.outPoint),[0,1,2,3],false);
+   if(value.logo!==undefined||metadata.logoHash){const logo=await validateLaunchLogo(value.logo,metadata.logoHash);if(logo!==value.logo)throw Error('Atomic logo differs from authorization');}
+   return {version:1,genesis:value.genesis,market,owner,token:signed.outputs[0].type!.hash(),metadata,receipt,transactionHash:signed.hash()};
+ }
  return {
   close:()=>db.close(),
   protectedLegacyAnchors(genesis:string){
@@ -126,16 +143,28 @@ export function openAtomicLaunchDelivery(path:string,rpc:Rpc){
    if(await send(signed.clone())!==reviewed.hash())throw Error('Atomic acknowledgement differs; retain pending transaction');
    return {state:'submitted',txHash:reviewed.hash()};
   },
+  async readPublished(market:string,owner:string){
+   const {raw,value}=load(market);
+   if(value.owner!==owner||value.state!=='published'||!value.signed)throw Error('No published atomic market');
+   const key=JSON.stringify([path,market]);
+   const cached=verifiedPublications.get(key);
+   if(cached?.raw===raw&&cached.publication.receipt.blockNumber){
+    const [genesis,anchor]=await Promise.all([
+     rpc('get_block_hash',['0x0']),
+     rpc('get_block_hash',[cached.publication.receipt.blockNumber]),
+    ]);
+    if(genesis===value.genesis&&anchor===cached.publication.receipt.blockHash)return cached.publication;
+    verifiedPublications.delete(key);
+   }
+   const publication=await verifyPublication(market,owner,value);
+   verifiedPublications.set(key,{raw,publication});
+   while(verifiedPublications.size>32)verifiedPublications.delete(verifiedPublications.keys().next().value!);
+   return publication;
+  },
   async reconcile(market:string,owner:string){
    const {raw,value}=load(market);if(value.owner!==owner||!value.signed||value.state==='reviewed')throw Error('No submitted atomic transaction');
-   const signed=decodeTx(value.signed),creatorInputs=inputs(value);
-   verifyInitializationSignature(decodeTx(value.reviewed),signed,creatorInputs,0,owner);
-   const metadata=verifyAtomicMetadataAuthorization(signed,creatorInputs,value);
-   // Historical outputs may already be spent; canonical receipt, not liveness,
-   // establishes issuance. Successor recovery is a separate obligation.
-   const receipt=await verifyInitializationStage(rpc,value.genesis,'purchase',signed,creatorInputs.map(c=>c.outPoint),[0,1,2,3],false);
-   if(value.logo!==undefined||metadata.logoHash){const logo=await validateLaunchLogo(value.logo,metadata.logoHash);if(logo!==value.logo)throw Error('Atomic logo differs from authorization');}
-   const publication={version:1,genesis:value.genesis,market,owner,token:signed.outputs[0].type!.hash(),metadata,receipt,transactionHash:signed.hash()};
+   const publication=await verifyPublication(market,owner,value);
+   const {receipt}=publication;
    save(market,raw,{...value,state:'published',receipt,publication});
    return {state:'published',publication};
   },
