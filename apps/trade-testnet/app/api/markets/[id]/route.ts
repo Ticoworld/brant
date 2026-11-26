@@ -1,11 +1,19 @@
-import {getPudgeMarketDataForManifest,getPublishedPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
+import {after} from 'next/server';
+import {getPublishedDisplaySnapshot,getPudgeMarketDataForManifest,getPublishedPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 
-export async function GET(_request:Request,{params}:{params:Promise<{id:string}>}){
+export async function GET(request:Request,{params}:{params:Promise<{id:string}>}){
   const {id}=await params;
   if(!/^0x[0-9a-f]{64}$/.test(id))return Response.json({error:'Invalid market identity'},{status:404});
+  if(new URL(request.url).searchParams.get('display')==='1'){
+    const snapshot=getPublishedDisplaySnapshot(id);
+    if(snapshot){
+      after(async()=>{await getPublishedPudgeMarketData(id).catch(()=>{});});
+      return Response.json(snapshot,{headers:{'Cache-Control':'no-store','X-Roveko-State':'display-snapshot'}});
+    }
+  }
   try{return Response.json(await getPublishedPudgeMarketData(id),{headers:{'Cache-Control':'no-store'}});}
   catch{return Response.json({error:'Verified market recovery unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});}
 }

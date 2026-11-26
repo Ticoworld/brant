@@ -44,7 +44,7 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
         let response:Response;
         if(marketId===DEFAULT_MARKET)response=await fetch(canonical?'/api/markets':'/api/markets?display=1',{cache:'no-store',signal:AbortSignal.timeout(30_000)});
         else{
-          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}`,{cache:'no-store',signal:AbortSignal.timeout(30_000)});
+          response=await fetch(`/api/markets/${encodeURIComponent(marketId)}${canonical?"":"?display=1"}`,{cache:'no-store',signal:AbortSignal.timeout(30_000)});
           if(!response.ok){
             const manifest=localStorage.getItem(MARKET_MANIFEST_KEY);
             if(manifest){
@@ -69,11 +69,15 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
   useEffect(()=>{
     const set=listeners.get(marketId)||new Set();set.add(setState);listeners.set(marketId,set);setState(readSnapshot(marketId));
     const update=()=>{void refresh(false);};
-    update();
+    if(requireCanonical&&!readSnapshot(marketId).data&&marketId!==DEFAULT_MARKET){
+      void requestMarket(false,false).then(()=>{
+        if(set.has(setState)&&readSnapshot(marketId).displayOnly)void requestMarket(true,true);
+      });
+    }else update();
     const timer=setInterval(update,30_000);
     document.addEventListener('visibilitychange',update);
     return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);document.removeEventListener('visibilitychange',update);};
-  },[marketId,refresh]);
+  },[marketId,refresh,requestMarket,requireCanonical]);
   const data=state.data?.id===marketId&&(!requestedId||requestedId===marketId)?state.data:null;
   return {...state,data,refresh,refreshDisplay};
 }

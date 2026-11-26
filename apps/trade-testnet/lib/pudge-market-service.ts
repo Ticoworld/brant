@@ -620,6 +620,12 @@ export function getPudgeMarketData():Promise<MarketData>{
   return registeredRefresh;
 }
 
+export function getPublishedDisplaySnapshot(id:string){
+  const saved=checkpoints.get(id);
+  if(!saved||orphanedCheckpoints.has(saved)||!saved.manifestRaw||Date.now()-saved.data.refreshedAt>30_000)return null;
+  return saved.data;
+}
+
 export async function getPudgeDisplaySnapshot(){
   const saved=checkpoints.get(PUDGE_GATE2_REGISTRY_ID)||await readMarketCheckpoint();
   if(!saved||!verifiedCheckpoints.has(saved)||orphanedCheckpoints.has(saved))return null;
