@@ -16,7 +16,7 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedC
   const root=resolve(app,'../..'),config=join(out,'isolated-app-config.json');
   const base='http://127.0.0.1:3143';
   writeFileSync(config,JSON.stringify({genesis,fixture,endpoint:'http://127.0.0.1:19224/'}));
-  const env={...process.env,NODE_ENV:'development',BRANT_ISOLATED_TEST:'1',BRANT_ISOLATED_CONFIG:config,
+  const env={...process.env,NODE_ENV:'development',BRANT_ATOMIC_PUDGE_QUALIFICATION:'0',BRANT_ISOLATED_TEST:'1',BRANT_ISOLATED_CONFIG:config,
     R7_NEXT_DIST_DIR:'.next-r7-assignment/shared-native-acceptance',NEXT_TELEMETRY_DISABLED:'1',
     NEXT_PUBLIC_BRANT_ISOLATED_TEST:'1',NEXT_PUBLIC_BRANT_ISOLATED_GENESIS:genesis,
     BRANT_LAUNCH_SQLITE_PATH:dbPath,BRANT_LAUNCH_PROOF_ORIGIN:base,BRANT_LAUNCH_WRITES:approvedCreator?'1':'0',BRANT_LAUNCH_APPROVED_CREATOR:approvedCreator,
