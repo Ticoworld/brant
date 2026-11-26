@@ -109,7 +109,6 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     return review;
   },[account.owner,account.fundingHint,market,signer]);
   const prepareQuote=(side:Side,quantity:bigint,amount:bigint)=>{
-    if(status==='rechecking'||(inclusion?.key===key&&(market?.historyState!=='verified'||!market.history.some(event=>event.hash===inclusion.hash))))return;
     if(!market||!signer||account.state!=='ready'||pending||busy||document.hidden||localStorage.getItem(key))return;
     void preparation(side,quantity,amount,quoteKey(side,quantity,amount)).catch(()=>{});
   };
@@ -233,16 +232,13 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const walletGenesis=current.client.getHeaderByNumber(0);
         void walletGenesis.catch(()=>{});
         if(owner.toLowerCase()!==account.owner.toLowerCase())throw Error('Wallet account or network changed');
-        const settlement=await recheckTradeSettlement(rpc,localStorage,key);
-        if(settlement&&(market.historyState!=='verified'||!market.history.some(event=>event.hash===settlement.hash))){
-          void refreshMarket().catch(()=>{});
-          throw Error('Trade confirmed. Waiting for verified market data.');
-        }
+        const settlementCheck=recheckTradeSettlement(rpc,localStorage,key);
+        void settlementCheck.catch(()=>{});
         const cacheKey=quoteKey(side,quantity,quotedAmount);
         const review=await preparation(side,quantity,quotedAmount,cacheKey);
         const validationStarted=performance.now();
         try{
-          const [genesis]=await Promise.all([walletGenesis,validateReviewedInputs(review,side,quantity,quotedAmount)]);
+          const [genesis]=await Promise.all([walletGenesis,validateReviewedInputs(review,side,quantity,quotedAmount),settlementCheck]);
           if(genesis?.hash?.toLowerCase()!==PUDGE_GENESIS)throw Error('Switch UTXO Global to Pudge and try again.');
         }catch(error){
           prepared.current=null;
