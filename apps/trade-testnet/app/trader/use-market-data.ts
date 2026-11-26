@@ -29,7 +29,9 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     const existing=requests.get(marketId);
     if(existing){
       await existing.promise;
-      if(canonical&&!existing.canonical){
+      if(committed&&!readSnapshot(marketId).data?.history.some(event=>event.hash===committed)){
+        await refreshMarket(true,true,committed);
+      }else if(canonical&&!existing.canonical){
         const settled=readSnapshot(marketId);
         if(settled.displayOnly||settled.error)await refreshMarket(true,true);
       }

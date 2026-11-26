@@ -21,18 +21,5 @@ export function useMarketSession(id: string, side: Side, interactiveV2 = false) 
     console.info('Brant transaction timeline',JSON.stringify({hash:inclusion.hash,stage:'refresh-request',at:Date.now()}));
     void account.refresh(inclusion.height?BigInt(inclusion.height):undefined);
   },[inclusion,account.refresh]);
-  useEffect(()=>{
-    if(!inclusion||marketCaughtUp)return;
-    let active=true,delay=2000;
-    let timer:ReturnType<typeof setTimeout>;
-    const refresh=async()=>{
-      await marketQuery.refresh();
-      if(!active)return;
-      timer=setTimeout(refresh,delay);
-      delay=Math.min(delay*2,30_000);
-    };
-    void refresh();
-    return()=>{active=false;clearTimeout(timer);};
-  },[inclusion,marketCaughtUp,marketQuery.refresh]);
   return {account, marketQuery, market, trade, inclusion, marketCaughtUp, position};
 }

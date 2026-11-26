@@ -104,16 +104,24 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   const data=await app.request('/api/markets/'+market.market);assert.equal(data.supply,resumeMarket?'2000':'1234');
   const proof=await app.request('/api/v2/pudge-proof',{manifest:data.manifest,owner:market.owner,side:'balance'});assert.equal(proof.balance,'7');assert.equal(proof.root,data.custodyRoot);
   await page.goto(app.base+'/market/'+market.market,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
-  await page.locator('.preview-editable input').fill('1');
-  for(const side of priorTrades?[]:['buy','sell']){
+  const expectedSides=['buy','buy','sell','buy','sell'];
+  for(const side of priorTrades?[]:expectedSides){
+    const started=Date.now();
     await page.getByRole('button',{name:side==='buy'?'Buy':'Sell',exact:true}).click();
+    await page.locator('.preview-editable input').fill(side==='buy'?'40':'1');
     const label=(side==='buy'?'Buy ':'Sell ')+market.metadata.ticker;
     await page.waitForFunction(label=>{const b=document.querySelector('.preview-action');return b?.textContent===label&&!b.disabled;},label,{timeout:120000});
+    const ready=Date.now(),priorCount=trades.length;
     await page.getByRole('button',{name:label,exact:true}).click();
     const key=`roveko-pudge-trade-v1:${genesis}:${market.owner}:${market.market}:settled`;
-    await page.waitForFunction(({key,side})=>{const raw=localStorage.getItem(key);return raw&&JSON.parse(JSON.parse(raw).raw).transaction.witnesses[5].slice(12,14)===(side==='buy'?'01':'04');},{key,side},{timeout:120000});
+    while(trades.length===priorCount&&Date.now()-ready<120000)await delay(100);
+    assert.equal(trades.length,priorCount+1);
+    const trade=trades.at(-1);
+    await page.waitForFunction(({key,hash})=>{const raw=localStorage.getItem(key);return raw&&JSON.parse(JSON.parse(raw).raw).txHash===hash;},{key,hash:trade.hash},{timeout:120000});
+    trade.timings={preparationMs:ready-started,clickToSettledMs:Date.now()-ready};
   }
-  assert.equal(trades.length,2);
+  assert.equal(trades.length,priorTrades?2:expectedSides.length);
+  assert.equal(new Set(trades.map(trade=>trade.hash)).size,trades.length);
   for(const trade of trades){const current=await rpc('get_transaction',[trade.hash]);assert.equal(current.tx_status.status,'committed');assert.equal(current.tx_status.block_hash,trade.receipt.tx_status.block_hash);assert.equal(await rpc('get_block_hash',[current.tx_status.block_number]),current.tx_status.block_hash);}
   for(const path of ['/portfolio','/activity']){
     await page.goto(app.base+path,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));

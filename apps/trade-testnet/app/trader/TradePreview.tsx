@@ -79,17 +79,18 @@ export function TradeV2({session, side, setSide}: {
     (shared||trade.readiness === 'ready') && amount !== null && !fundingInsufficient &&
     (buying || (holdings !== null && !ownershipInsufficient));
   const review = canPrepare && amount !== null ? trade.quoteStatus(side, count, amount) : '';
+  const executionIdentity=JSON.stringify(market?.executionPoints);
   const prepareQuote = trade.prepareQuote;
   const prepareRef = useRef(prepareQuote);
   prepareRef.current = prepareQuote;
   const cancelRef=useRef(trade.cancelQuote);
   cancelRef.current=trade.cancelQuote;
-  useEffect(()=>()=>cancelRef.current(),[side,count,amount,market?.identity,market?.custodyRoot,account.owner]);
+  useEffect(()=>()=>cancelRef.current(),[side,count,amount,market?.identity,executionIdentity,market?.custodyRoot,account.owner]);
   useEffect(() => {
     if (!canPrepare || amount === null) return;
     const timer = setTimeout(() => prepareRef.current(side, count, amount), 300);
     return () => clearTimeout(timer);
-  }, [canPrepare, side, count, amount, market?.identity, market?.custodyRoot, account.owner, trade.revision]);
+  }, [canPrepare, side, count, amount, market?.identity, executionIdentity, market?.custodyRoot, account.owner, trade.revision]);
 
   const walletIssue = {
     'wrong-network': 'walletWrongNetwork',
@@ -115,7 +116,7 @@ export function TradeV2({session, side, setSide}: {
   const status = walletReady && (catchingUp&&inclusion ? (zh?'交易已确认，正在更新市场和余额':'Trade confirmed, updating market and balance') : trade.uncertain ? copy(locale, 'unknown') : trade.status==='confirmed'?'':statusLabels[trade.status]);
   const action = !walletReady
     ? copy(locale, walletOpening ? (account.state === 'checking' ? 'walletChecking' : 'connecting') : 'connect')
-    : trade.busy && status ? status
+    : (trade.busy || trade.pending) && status ? status
     : review === 'updating' ? (zh ? '正在准备交易' : 'Preparing trade')
     : review === 'unavailable' ? (zh ? '重新准备报价' : 'Retry quote preparation')
     : zh ? (buying ? `买入 ${symbol}` : `卖出 ${symbol}`) : (buying ? `Buy ${symbol}` : `Sell ${symbol}`);

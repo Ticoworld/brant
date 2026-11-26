@@ -55,7 +55,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const prepared=useRef<{key:string;signer:typeof signer;readyAt?:number;controller:AbortController;review:ReturnType<typeof prepareLocalReview>}|null>(null);
   const [,renderPreparation]=useState(0);
   const [failedQuote,setFailedQuote]=useState<{key:string;code:string}|null>(null);
-  useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,market?.custodyRoot]);
+  useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,JSON.stringify(market?.executionPoints),market?.custodyRoot]);
   const quoteKey=(side:Side,quantity:bigint,amount:bigint)=>JSON.stringify([
     market?.genesis,market?.identity,market?.executionPoints,market?.custodyRoot,market?.manifest.initializationTransactionHash,
     account.owner,revision,side,quantity.toString(),amount.toString(),
@@ -178,7 +178,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       prepared.current?.controller.abort();
       prepared.current=null;
       setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
-      void incorporate(attempt.txHash).catch(()=>{});
+      await incorporate(attempt.txHash);
     }catch(error){
       if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}
