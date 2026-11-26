@@ -39,13 +39,11 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   await app.request('/api/v2/launch/sessions',{owner:ccc.Script.from(locks[2]).hash()});
   await page.goto(app.base+'/launch',{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
   await page.getByLabel('Token name',{exact:true}).fill('Atomic Browser');await page.getByLabel('Ticker',{exact:true}).fill('ABR');
-  await page.getByLabel('Fixed supply',{exact:true}).fill('1234');
-  await page.getByLabel('Starting price (CKB)',{exact:true}).fill('3');
-  await page.getByLabel('Price increase per token (CKB)',{exact:true}).fill('2');
+  await page.getByLabel(/Initial purchase \(CKB\)/).fill('91');
   await page.getByRole('button',{name:'Review launch',exact:true}).click();
   await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Launch token')||document.querySelector('p[role=alert]'));if(await page.locator('p[role=alert]').count())throw Error(await page.locator('p[role=alert]').innerText());
   await page.getByRole('button',{name:'Back',exact:true}).click();
-  await page.getByLabel('Starting price (CKB)',{exact:true}).fill('4');
+  await page.getByLabel(/Initial purchase \(CKB\)/).fill('92');
   await page.getByRole('button',{name:'Review launch',exact:true}).click();
   const launch=page.getByRole('button',{name:'Launch token',exact:true});await launch.waitFor();await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Launch token'&&!b.disabled));
   await page.route('**/api/v2/launch/submit',async route=>{await route.fetch();await route.abort('failed');},{times:1});
@@ -68,6 +66,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   assert.equal(await page.getByLabel('Token name',{exact:true}).inputValue(),'');
   assert.equal(await page.getByLabel('Ticker',{exact:true}).inputValue(),'');
   await page.getByLabel('Token name',{exact:true}).fill('Second Atomic');await page.getByLabel('Ticker',{exact:true}).fill('TWO');
+  await page.getByLabel(/Initial purchase \(CKB\)/).fill('91');
   await page.getByRole('button',{name:'Review launch',exact:true}).click();
   await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Launch token'&&!b.disabled));
   await page.evaluate(()=>{window.rejectAtomicOnce=true;});
@@ -95,20 +94,20 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   }else{catalog=await app.request('/api/markets/catalog');market=catalog.markets.find(m=>m.market===resumeMarket);assert(market,'Retained atomic market missing');launchedMarket=market.market;}
   if(process.argv.includes('--creator-lifecycle')){
    const data=await app.request('/api/markets/'+market.market);
-   assert.equal(data.supply,'1234');
+   assert.equal(data.supply,'2000');
    return;
   }
   // Stop empty-block mining before stable-snapshot funding selection. Trades
   // mine on submission, matching the existing wallet acceptance harness.
   mining=false;await mine;
-  const data=await app.request('/api/markets/'+market.market);assert.equal(data.supply,resumeMarket?'2000':'1234');
+  const data=await app.request('/api/markets/'+market.market);assert.equal(data.supply,'2000');
   const proof=await app.request('/api/v2/pudge-proof',{manifest:data.manifest,owner:market.owner,side:'balance'});assert.equal(proof.balance,'7');assert.equal(proof.root,data.custodyRoot);
   await page.goto(app.base+'/market/'+market.market,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
   const expectedSides=['buy','buy','sell','buy','sell'];
   for(const side of priorTrades?[]:expectedSides){
     const started=Date.now();
     await page.getByRole('button',{name:side==='buy'?'Buy':'Sell',exact:true}).click();
-    await page.locator('.preview-editable input').fill(side==='buy'?'40':'1');
+    await page.locator('.preview-editable input').fill(side==='buy'?'20':'1');
     const label=(side==='buy'?'Buy ':'Sell ')+market.metadata.ticker;
     await page.waitForFunction(label=>{const b=document.querySelector('.preview-action');return b?.textContent===label&&!b.disabled;},label,{timeout:120000});
     const ready=Date.now(),priorCount=trades.length;
@@ -126,7 +125,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   for(const path of ['/portfolio','/activity']){
     await page.goto(app.base+path,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
     await page.getByLabel(path==='/portfolio'?'Portfolio market':'Activity market').selectOption(market.market);
-    if(path==='/portfolio')await page.waitForFunction(()=>document.querySelector('.portfolio-rvk-total dd span')?.textContent==='7',undefined,{timeout:120000});
+    if(path==='/portfolio')await page.waitForFunction(expected=>document.querySelector('.portfolio-rvk-total dd span')?.textContent===expected,priorTrades?'7':'8',{timeout:120000});
     else await page.locator(`a[href$="${trades[1].hash}"]`).waitFor({state:'attached'});
     await page.screenshot({path:join(out,'atomic-'+path.slice(1)+'.png'),fullPage:true});
   }
@@ -136,7 +135,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   await app.restart({BRANT_LAUNCH_WRITES:'0'});
   const readOnlyCatalog=await app.request('/api/markets/catalog');assert(readOnlyCatalog.markets.some(m=>m.market===market.market));
   await app.browserAcceptance([market]);
-  assert.deepEqual(errors,[]);writeFileSync(join(out,'atomic-browser-acceptance.json'),JSON.stringify({acceptanceVersion:4,creatorLifecycle:resumeMarket?'retained recovery only':{nonDefaultEconomics:true,unsignedCancellation:true,editAndReprepare:true,repeatLaunch:true,mixedCompletedPendingReload:true,walletRejectionRetry:true,publicationFailureRetry:true,bilingual:true,creationDisabledRead:true},resumedMarket:resumeMarket,retainedTrades:Boolean(priorTrades),retainedEvidence,quoteDiagnostics,trades,portfolio:true,activity:true,wallet:'SIMULATED disposable fixture',chain:'REAL isolated',oneApproval:resumeMarket?'verified in retained Launch checkpoint':true,noMetadataApproval:true,interruptedSubmissionRecovery:true,proofBalanceVerified:true,market,catalog,requests,timings:app.timings,processes:app.processes,restart:true,errors},null,2));
+  assert.deepEqual(errors,[]);writeFileSync(join(out,'atomic-browser-acceptance.json'),JSON.stringify({acceptanceVersion:4,creatorLifecycle:resumeMarket?'retained recovery only':{unsignedCancellation:true,editAndReprepare:true,repeatLaunch:true,mixedCompletedPendingReload:true,walletRejectionRetry:true,publicationFailureRetry:true,bilingual:true,creationDisabledRead:true},resumedMarket:resumeMarket,retainedTrades:Boolean(priorTrades),retainedEvidence,quoteDiagnostics,trades,portfolio:true,activity:true,wallet:'SIMULATED disposable fixture',chain:'REAL isolated',oneApproval:resumeMarket?'verified in retained Launch checkpoint':true,noMetadataApproval:true,interruptedSubmissionRecovery:true,proofBalanceVerified:true,market,catalog,requests,timings:app.timings,processes:app.processes,restart:true,errors},null,2));
  }catch(e){if(page)await page.screenshot({path:join(out,'atomic-browser-failure.png'),fullPage:true}).catch(()=>{});writeFileSync(join(out,'atomic-browser-failure.json'),JSON.stringify({error:String(e),errors,requests,quoteDiagnostics,trades},null,2));throw e;}
  finally{await browser.close();mining=false;await mine;await app.stop();}
 }
