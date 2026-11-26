@@ -115,15 +115,17 @@ async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|nu
       ...saved.points.map(point=>['get_live_cell',[point,true]] as [string,unknown[]]),
       ...saved.deps.map(dep=>['get_live_cell',[dependencyPoint(dep),false]] as [string,unknown[]]),
     ]);
-    if(genesis!==marketNetwork().genesis||!tip?.number||!tip.hash||BigInt(tip.number)<BigInt(saved.data.tip.number))return null;
     if(typeof anchor==='string'&&anchor!==saved.data.tip.hash)orphanedCheckpoints.add(saved);
+    if(genesis!==marketNetwork().genesis||!tip?.number||!tip.hash||BigInt(tip.number)<BigInt(saved.data.tip.number))return null;
     if(anchor!==saved.data.tip.hash||results.slice(4).some(dep=>dep?.status!=='live'))return null;
     if(results.slice(0,4).some((cell,index)=>!matchesLiveCell(cell,saved.cells[index]))){
       const identity=id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw?gate2Identity():(saved.data.manifest as RecoveryManifest).scripts;
       return await recoverCachedMarketSuccessors(saved,identity);
     }
     if(await rpc('get_block_hash',[tip.number])!==tip.hash)return null;
-    return {...saved.data,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
+    const data={...saved.data,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
+    saved.data=data;
+    return data;
   }catch{return null;}
 }
 
