@@ -437,6 +437,7 @@ async function handleProof(request:Request,synchronize=false){
     const common=['--collection-only','true','--node',endpoint,'--indexer',endpoint,'--init',manifest.initializationTransactionHash,'--owner',replayOwner,'--custody-lock',custody,'--xudt-type',token,'--max-pages','32','--max-transactions','512'];
     const childEnv={...process.env,ROVEKO_PROOF_BINARY:binary,ROVEKO_RECOVERY_RPC_TIMEOUT_MS:'15000',ROVEKO_RECOVERY_MAX_RPC:'1100'};
     let checkpoint=current?.bundle||await loadCheckpoint(key,file,manifest,replayOwner);
+    let canAdvance=false;
     let reusable=checkpoint?await isLive(checkpoint):false;
     if(checkpoint&&!reusable){
       proofTrace.push('incremental-collection');
@@ -445,6 +446,7 @@ async function handleProof(request:Request,synchronize=false){
         await boundedRun(canonicalCollector,['collect-incremental',...common,'--checkpoint',checkpointPath,'--out',bundlePath],deadline,childEnv);
         checkpoint=JSON.parse(await readFile(bundlePath,'utf8'));
         if(!validBundle(checkpoint,manifest,replayOwner))throw Error('Incremental checkpoint identity mismatch');
+        canAdvance=!!current?.snapshot.history_length;
       }catch{
         proofTrace.push('full-collection-fallback');
         await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
@@ -460,12 +462,19 @@ async function handleProof(request:Request,synchronize=false){
       reusable=false;
     }
     const bundle=checkpoint as RecoveryBundle;
-    const replay=async(selected:RecoveryBundle)=>{
-      const result=await run(binary,['replay',await cacheBundleForTransition(dir!,selected)],{timeout:MAX_RECOVERY_MS,maxBuffer:2*1024*1024});
+    const replay=async(selected:RecoveryBundle,advance=false)=>{
+      const input=await cacheBundleForTransition(dir!,selected);
+      const args=['replay',input];
+      if(advance&&current){
+        const snapshotPath=path.join(dir!,'previous-ownership.json');
+        await writeFile(snapshotPath,JSON.stringify(current.snapshot),{flag:'wx',mode:0o600});
+        args.splice(0,args.length,'advance',input,snapshotPath);
+      }
+      const result=await run(binary,args,{timeout:MAX_RECOVERY_MS,maxBuffer:2*1024*1024});
       return JSON.parse(result.stdout);
     };
     let selectedBundle=bundle,snapshot;
-    try{snapshot=await replay(bundle);}catch(error){
+    try{snapshot=await replay(bundle,canAdvance);}catch(error){
       if(!reusable&&!current&&!proofTrace.includes('incremental-collection'))throw error;
       await boundedRun(canonicalCollector,['collect',...common,'--out',bundlePath],deadline,childEnv);
       selectedBundle=JSON.parse(await readFile(bundlePath,'utf8'));
@@ -474,7 +483,7 @@ async function handleProof(request:Request,synchronize=false){
     }
     if(market)market=await getPudgeCustodyAnchor(requestedMarket);
     if(!await isLive(selectedBundle))throw Error('Custody changed during recovery');
-    const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,net_external:snapshot.net_external,external_accounting_complete:snapshot.external_accounting_complete,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
+    const state={bundle:selectedBundle,snapshot:{custody_args:custodyScript.args,marker_outpoint:snapshot.marker_outpoint,history_length:snapshot.history_length,history_tail:snapshot.history_tail,ownership_root:snapshot.ownership_root,custody_amount:snapshot.custody_amount,net_external:snapshot.net_external,external_accounting_complete:snapshot.external_accounting_complete,tip_outpoint:snapshot.tip_outpoint,owners:snapshot.owners}};
     reconcile(state.snapshot);
     if(!reusable||selectedBundle!==bundle)await saveCheckpoint(key,file,selectedBundle,manifest,replayOwner);
     await writeAuthenticated(snapshotFile,snapshotScope,state).catch(()=>{});
@@ -483,7 +492,7 @@ async function handleProof(request:Request,synchronize=false){
     return {state,live:market};
     };
     const refreshStarted=performance.now();
-    const refreshKey=anchor?JSON.stringify([key,anchor.point,anchor.data]):key;
+    const refreshKey=key;
     let pending=custodyRefreshes.get(refreshKey);
     if(!pending){
       pending=refresh().finally(()=>custodyRefreshes.delete(refreshKey));

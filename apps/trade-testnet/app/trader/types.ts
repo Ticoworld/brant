@@ -20,6 +20,7 @@ export type MarketData={
   tip:{number:string;hash:string};
   refreshedAt:number;
   history:TradeEvent[];
+  executionPoints?:{tx_hash:string;index:string}[];
   historyState:'verified'|'unavailable';
   manifest:any;
 };

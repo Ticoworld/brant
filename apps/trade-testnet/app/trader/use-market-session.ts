@@ -12,7 +12,7 @@ export function useMarketSession(id: string, side: Side, interactiveV2 = false) 
   const accountOwner=account.state==='ready'?account.owner:'';
   useEffect(()=>{if(market?.id===id&&market.historyState==='verified')localStorage.setItem(ACTIVE_MARKET_KEY,id);},[id,market?.id,market?.historyState]);
 
-  const trade=useGate2Trade(market,marketQuery.refresh);
+  const trade=useGate2Trade(market,marketQuery.refresh,marketQuery.incorporate);
   const inclusion=trade.inclusion;
   const marketCaughtUp=!!inclusion&&market?.historyState==='verified'&&market.history.some(event=>event.hash===inclusion.hash);
   const position=useOwnerPosition(accountOwner,market,0,side==='sell'||!!inclusion&&!marketCaughtUp);

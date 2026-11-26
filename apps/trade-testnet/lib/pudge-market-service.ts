@@ -57,6 +57,7 @@ function requestRpc():Rpc{
 }
 
 async function checkpoint(data:MarketData,points:Point[],cells:{output:Output;data:string}[],deps:unknown[],hashes:string[],manifestRaw?:string){
+  data.executionPoints=points;
   const saved={data,points,cells,deps,hashes,...(manifestRaw?{manifestRaw}:{})};
   if(data.historyState!=='verified')return;
   checkpoints.set(data.id,saved);
@@ -115,7 +116,7 @@ function dependencyPoint(value:any):Point{
   return {tx_hash:txHash,index};
 }
 
-async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|null>{
+async function cachedMarket(id:string,manifestRaw?:string,committedHash?:string):Promise<MarketData|null>{
   let saved=checkpoints.get(id);
   if(!saved){
     saved=await readMarketCheckpoint(id)||undefined;
@@ -139,10 +140,14 @@ async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|nu
     if(anchor!==saved.data.tip.hash||results.slice(4).some(dep=>dep?.status!=='live'))return null;
     if(results.slice(0,4).some((cell,index)=>!matchesLiveCell(cell,saved.cells[index]))){
       const identity=id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw?gate2Identity():(saved.data.manifest as RecoveryManifest).scripts;
+      if(committedHash){
+        const direct=await recoverCachedMarketSuccessors(saved,identity,committedHash).catch(()=>null);
+        if(direct)return direct;
+      }
       return await recoverCachedMarketSuccessors(saved,identity);
     }
     if(await rpc('get_block_hash',[tip.number])!==tip.hash)return null;
-    const data={...saved.data,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
+    const data={...saved.data,executionPoints:saved.points,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
     saved.data=data;
     return data;
   }catch{return null;}
@@ -154,10 +159,11 @@ function matchesLiveCell(cell:{status?:string;cell?:{output:Output;data:{content
     cell.cell.data.content.toLowerCase()===expected.data.toLowerCase();
 }
 
-async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnType<typeof deriveMarketIdentity>):Promise<MarketData|null>{
+async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnType<typeof deriveMarketIdentity>,committedHash?:string):Promise<MarketData|null>{
   const previous=saved.data;
   if(previous.historyState!=='verified'||!previous.history.length||previous.history.at(-1)?.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())return null;
-  const [recovered,custodyPair]=await Promise.all([
+  const direct=committedHash?await directMarketSuccessor(saved,identity,committedHash):null;
+  const [recovered,custodyPair]=direct?[direct,direct.custodyPair]:await Promise.all([
     recoverMarketSuccessors(rpc,[saved.points[0],saved.points[1]],{maxIndexedDepth:256}),
     currentCustodyPair([saved.points[2],saved.points[3]],rpc),
   ]);
@@ -195,6 +201,22 @@ async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnTyp
   const data:MarketData={...previous,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,...marketLiquidity(current.outputs[marketIndex].capacity,previous.marketCapacityFloorShannons),buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now(),history,historyState:'verified'};
   await checkpoint(data,points,cells.map(cell=>({output:cell.output,data:cell.data.content})),saved.deps,saved.hashes,saved.manifestRaw);
   return data;
+}
+
+async function directMarketSuccessor(saved:Checkpoint,identity:ReturnType<typeof deriveMarketIdentity>,hash:string){
+  const [previous,next]=await Promise.all([canonical(saved.points[0].tx_hash),canonical(hash)]);
+  const inputs=next.transaction.inputs.map(input=>input.previous_output);
+  if(!saved.points.every(point=>inputs.some(input=>input.tx_hash===point.tx_hash&&BigInt(input.index)===BigInt(point.index))))throw Error('Committed trade does not spend the checkpoint pairs');
+  const point=(lock:ccc.Script,type:ccc.Script)=>{
+    const index=next.transaction.outputs.findIndex(output=>sameScript(output.lock,{code_hash:lock.codeHash,hash_type:lock.hashType,args:lock.args})&&sameScript(output.type,{code_hash:type.codeHash,hash_type:type.hashType,args:type.args}));
+    if(index<0)throw Error('Committed trade successor output missing');
+    return {tx_hash:hash,index:'0x'+index.toString(16)};
+  };
+  return {
+    pair:[point(identity.market,identity.token),point(identity.market,identity.marker)] as [Point,Point],
+    custodyPair:[point(identity.custody,identity.token),point(identity.custody,identity.custodyMarker)] as [Point,Point],
+    lineage:[previous,next].map(row=>({...row,transaction:{...row.transaction,outputs:row.transaction.outputs.map(output=>({...output,type:output.type??null}))},blockNumber:row.blockNumber.toString(),timestampMs:row.timestampMs.toString()})),
+  };
 }
 
 async function currentCustodyPair(start:[Point,Point],client:Rpc):Promise<[Point,Point]>{
@@ -569,15 +591,15 @@ async function recoverVerifiedMarket(client:Rpc,manifest:RecoveryManifest,rawMan
 }
 
 const publishedRefreshes=new Map<string,Promise<MarketData>>();
-export function getPublishedPudgeMarketData(id:string):Promise<MarketData>{
+export function getPublishedPudgeMarketData(id:string,committedHash?:string):Promise<MarketData>{
   if(!/^0x[0-9a-f]{64}$/.test(id))return Promise.reject(Error('Invalid market identity'));
   const pending=publishedRefreshes.get(id);if(pending)return pending;
   if(publishedRefreshes.size>=4)return Promise.reject(Error('Market recovery busy'));
-  const refresh=refreshPublishedPudgeMarketData(id).finally(()=>publishedRefreshes.delete(id));
+  const refresh=refreshPublishedPudgeMarketData(id,committedHash).finally(()=>publishedRefreshes.delete(id));
   publishedRefreshes.set(id,refresh);return refresh;
 }
 
-async function refreshPublishedPudgeMarketData(id:string):Promise<MarketData>{
+async function refreshPublishedPudgeMarketData(id:string,committedHash?:string):Promise<MarketData>{
   const catalog=await getCatalogMarket(id,true),record=catalog?.execution;
   if(!catalog||!record||record.marketScriptHash!==id||record.scripts.market.hash()!==id)throw Error('Verified published market not found');
   const pinned=record.codeDependencies;
@@ -590,7 +612,7 @@ async function refreshPublishedPudgeMarketData(id:string):Promise<MarketData>{
     deps:{custody_smt:dep('custody'),market_smt:dep('market'),custody_marker:dep('custodyMarker'),marker_candidate:dep('marker'),owner_lineage_candidate:dep('ownerLock'),xudt:dep('xudt')},
   };
   const provenance=JSON.stringify({manifest,metadata:record.metadata});
-  const cached=await cachedMarket(id,provenance);if(cached)return cached;
+  const cached=await cachedMarket(id,provenance,committedHash);if(cached)return cached;
   return recoverVerifiedMarket(requestRpc(),manifest,provenance,{
     name:record.metadata.name,symbol:record.metadata.ticker,description:record.metadata.description,
     ...(catalog.logo?{logo:catalog.logo}:{}),

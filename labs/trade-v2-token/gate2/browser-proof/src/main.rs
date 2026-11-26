@@ -319,6 +319,10 @@ fn value_at<'a>(tx: &'a Value, field: &str) -> Result<&'a Vec<Value>> {
 }
 
 fn replay(bundle: &Bundle) -> Result<Value> {
+    replay_from(bundle, None)
+}
+
+fn replay_from(bundle: &Bundle, checkpoint: Option<&Value>) -> Result<Value> {
     ensure!(
         bundle.format == "trade-v2-recovery-bundle-v1",
         "unsupported bundle format"
@@ -345,7 +349,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
         script_hash(&bundle.xudt_type_script)?.as_slice() == asset_hash,
         "provided xUDT type script hash does not match custody lock args"
     );
-    let history = bundle.history.clone();
+    let history = &bundle.history;
     let init_hex = fmt(&init);
     let init_pos = history
         .iter()
@@ -366,7 +370,40 @@ fn replay(bundle: &Bundle) -> Result<Value> {
     let mut transitions = Vec::new();
     let mut net_external = 0i128;
     let mut external_accounting_complete = true;
-    for (tx_no, row) in history.iter().enumerate() {
+    let mut start = 0;
+    if let Some(saved) = checkpoint {
+        let (saved_domain, tree) = snapshot_tree(saved)?;
+        ensure!(saved_domain == domain, "checkpoint custody domain differs");
+        let field = |value: &Value| value.as_str().map(str::to_owned).ok_or_else(|| anyhow!("missing checkpoint field"));
+        start = usize::try_from(saved["history_length"].as_u64().ok_or_else(|| anyhow!("missing checkpoint history length"))?)?;
+        ensure!(start > 0 && start < history.len(), "checkpoint has no successor");
+        let tail = &history[start - 1];
+        ensure!(tail.tx_hash == field(&saved["history_tail"])?,
+            "checkpoint history tail differs");
+        prior_tx_order = Some((
+            rpc_u64(&Value::String(tail.block_number.clone()), "checkpoint block")?,
+            rpc_u64(&Value::String(tail.tx_index.clone()), "checkpoint index")?,
+        ));
+        let read_point = |value: &Value| -> Result<(String, u64)> {
+            Ok((field(&value["tx_hash"])?, rpc_u64(&value["index"], "checkpoint output index")?))
+        };
+        current_point = Some(read_point(&saved["tip_outpoint"])?);
+        marker_point = Some(read_point(&saved["marker_outpoint"])?);
+        let mut data = field(&saved["custody_amount"])?.parse::<u128>()?.to_le_bytes().to_vec();
+        data.extend_from_slice(tree.root().as_slice());
+        current_data = Some(data);
+        net_external = field(&saved["net_external"])?.parse()?;
+        external_accounting_complete = saved["external_accounting_complete"].as_bool()
+            .ok_or_else(|| anyhow!("missing checkpoint accounting state"))?;
+        for row in saved["owners"].as_array().unwrap() {
+            let owner = bytes32(&field(&row["owner_lock_hash"])?, "checkpoint owner")?;
+            let key = derive_key(&domain, &owner);
+            map.insert(key, parse_leaf(tree.get(&key)?)?);
+            owner_keys.insert(owner, key);
+        }
+        ownership_tree = tree;
+    }
+    for (tx_no, row) in history.iter().enumerate().skip(start) {
         let bno = rpc_u64(&Value::String(row.block_number.clone()), "history block")?;
         let tino = rpc_u64(
             &Value::String(row.tx_index.clone()),
@@ -691,12 +728,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
         revision: 0,
         active: false,
     });
-    let mut tree = Tree::default();
-    for (k, p) in &map {
-        tree.update(*k, p.value)
-            .context("build current proof tree")?;
-    }
-    let compiled: CompiledMerkleProof = tree
+    let compiled: CompiledMerkleProof = ownership_tree
         .merkle_proof(vec![owner_key])
         .context("generate owner recovery proof")?
         .compile(vec![owner_key])
@@ -763,6 +795,9 @@ fn replay(bundle: &Bundle) -> Result<Value> {
         "withdrawal_template":withdrawal_template,
         "domain":{"market_script_hash":fmt(market_hash),"xudt_type_script_hash":fmt(asset_hash),"genesis_hash":fmt(genesis_hash),"custody_marker_type_hash":fmt(marker_hash),"args_len":script_args.len()},
         "owners":owner_keys.iter().map(|(owner,key)| { let p = &map[key]; json!({"owner_lock_hash":fmt(owner),"balance":p.balance.to_string(),"revision":p.revision.to_string(),"active":p.active}) }).collect::<Vec<_>>(),
+        "marker_outpoint":marker_point.map(|(hash,index)|json!({"tx_hash":hash,"index":format!("0x{index:x}")})),
+        "history_length":history.len(),
+        "history_tail":history.last().unwrap().tx_hash,
         "transitions":transitions
     }))
 }
@@ -915,6 +950,11 @@ fn run() -> Result<()> {
                 (replay(&serde_json::from_str(&source)?)?, &a[2], &a[3])
             };
             write_json(&transition(&result, side, quantity)?, None)
+        }
+        Some("advance") if a.len() == 3 => {
+            let bundle = serde_json::from_str(&read_json(Some(&a[1]))?)?;
+            let checkpoint = serde_json::from_str(&read_json(Some(&a[2]))?)?;
+            write_json(&replay_from(&bundle, Some(&checkpoint))?, None)
         }
         Some("replay") if a.len() == 2 || a.len() == 3 => {
             let raw = read_json(Some(&a[1]))?;
@@ -1127,6 +1167,26 @@ mod tests {
         assert_eq!(result["transitions"].as_array().unwrap().len(), 2);
         assert_eq!(result["withdrawal_template"]["quantity"], "2");
     }
+    #[test]
+    fn authenticated_checkpoint_advances_to_the_full_recovery_state() {
+        let bundle = reference_bundle();
+        let mut prefix = reference_bundle();
+        prefix.history.truncate(1);
+        let row = &prefix.history[0];
+        prefix.live.tx_hash = row.tx_hash.clone();
+        prefix.live.index = "0x0".into();
+        prefix.live.data = row.transaction["outputs_data"][0].as_str().unwrap().into();
+        prefix.live.output = row.transaction["outputs"][0].clone();
+        let mut state = replay(&prefix).unwrap();
+        state["custody_args"] = prefix.custody_lock["args"].clone();
+        let advanced = replay_from(&bundle, Some(&state)).unwrap();
+        let full = replay(&bundle).unwrap();
+        for field in ["owners", "ownership_root", "custody_amount", "net_external", "tip_outpoint", "owner_membership_proof"] {
+            assert_eq!(advanced[field], full[field], "{field}");
+        }
+        assert_eq!(advanced["transitions"].as_array().unwrap().len(), 1);
+    }
+
     #[test]
     fn snapshot_reproduces_owner_proof_and_rejects_corrupted_leaves() {
         let bundle = reference_bundle();

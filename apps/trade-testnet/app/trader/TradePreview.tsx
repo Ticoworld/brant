@@ -64,7 +64,7 @@ export function TradeV2({session, side, setSide}: {
 
   const stale = !!error || !!market && now - market.refreshedAt > 60_000;
   const catchingUp = trade.status === 'rechecking' || !!inclusion && !marketCaughtUp;
-  const historyUnavailable = !!market && market.historyState !== 'verified';
+
   const walletReady = account.state === 'ready';
   const shared=market?.manifest.format==='brant-shared-pudge-market-v1';
   const balanceCurrent=account.balanceState==='ready';
@@ -74,7 +74,7 @@ export function TradeV2({session, side, setSide}: {
   const count = amount === null ? 0n : BigInt(quantity);
   const fundingInsufficient = balanceCurrent && balance !== null && (!account.hasFundingCell || (buying && amount !== null && amount > balance));
   const ownershipInsufficient = !buying && holdings !== null && count > holdings;
-  const blocked = !market || stale || catchingUp || historyUnavailable || marketQuery.displayOnly;
+  const blocked = !market;
   const canPrepare = walletReady && !blocked && !trade.busy && !trade.pending &&
     (shared||trade.readiness === 'ready') && amount !== null && !fundingInsufficient &&
     (buying || (holdings !== null && !ownershipInsufficient));
@@ -121,7 +121,7 @@ export function TradeV2({session, side, setSide}: {
     : zh ? (buying ? `买入 ${symbol}` : `卖出 ${symbol}`) : (buying ? `Buy ${symbol}` : `Sell ${symbol}`);
   const submit = () => {
     if (!walletReady) {account.connect(); return;}
-    if (!canPrepare || amount === null || !market || Date.now() - market.refreshedAt > 60_000) return;
+    if (!canPrepare || amount === null || !market) return;
     if (review === 'unavailable') prepareQuote(side, count, amount);
     if (review === 'ready') void trade.trade(side, count, amount);
   };
@@ -154,7 +154,6 @@ export function TradeV2({session, side, setSide}: {
             {issue && <p role="alert" className="preview-note">{copy(locale, issue)}</p>}
             {blocked && <p role="status" className="preview-note">
               {catchingUp ? (zh ? '正在重新验证市场状态' : 'Rechecking verified market state')
-                : historyUnavailable ? (zh ? '无法验证交易历史，交易已暂停' : 'Trading is paused while canonical market history is unavailable.')
                 : stale ? (zh ? '正在更新市场数据' : 'Updating market data.')
                 : copy(locale, loading ? 'loading' : 'unavailable')}
             </p>}

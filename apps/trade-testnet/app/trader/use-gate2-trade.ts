@@ -24,7 +24,7 @@ function tradeTiming(hash:string,stage:string,at=Date.now(),detail?:string){
   console.info('Brant transaction timeline',JSON.stringify({hash,stage,at,detail}));
 }
 
-export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>){
+export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<void>,incorporate:(hash:string)=>Promise<void>){
   const signer=useSigner(),account=useAccount(),{locale}=useLocale(),active=useRef(signer);active.current=signer;
   const [busy,setBusy]=useState(false),[pending,setPending]=useState(false),[uncertain,setUncertain]=useState(false),[attemptRaw,setAttemptRaw]=useState(''),[revision,setRevision]=useState(0);
   const reconcileLock=useRef(false);
@@ -57,7 +57,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const [failedQuote,setFailedQuote]=useState<{key:string;code:string}|null>(null);
   useEffect(()=>()=>prepared.current?.controller.abort(),[signer,account.owner,market?.identity,market?.custodyRoot]);
   const quoteKey=(side:Side,quantity:bigint,amount:bigint)=>JSON.stringify([
-    market?.genesis,market?.identity,market?.custodyRoot,market?.manifest.initializationTransactionHash,
+    market?.genesis,market?.identity,market?.executionPoints,market?.custodyRoot,market?.manifest.initializationTransactionHash,
     account.owner,revision,side,quantity.toString(),amount.toString(),
   ]);
   const preparation=useCallback((side:Side,quantity:bigint,amount:bigint,key:string)=>{
@@ -178,11 +178,11 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       prepared.current?.controller.abort();
       prepared.current=null;
       setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
-      void refreshMarket().catch(()=>{});
+      void incorporate(attempt.txHash).catch(()=>{});
     }catch(error){
       if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}
-  },[account.owner,key,locale,refreshMarket]);
+  },[account.owner,key,locale,incorporate]);
 
   useEffect(()=>{
     let generation=0;
