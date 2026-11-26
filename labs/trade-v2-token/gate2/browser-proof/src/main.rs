@@ -304,15 +304,6 @@ fn csmt_verify(root: H256, pairs: &[(H256, H256)], proof: &[u8]) -> Result<()> {
         .map_err(|e| anyhow!("CSMT proof rejected with code {e}"))?;
     Ok(())
 }
-fn tree_root(map: &BTreeMap<H256, Position>) -> Result<H256> {
-    let mut t = Tree::default();
-    for (k, p) in map {
-        if p.value != zero_h256() {
-            t.update(*k, p.value).context("rebuild SMT state")?;
-        }
-    }
-    Ok(*t.root())
-}
 fn amount_root(data: &[u8]) -> Result<(u64, H256)> {
     ensure!(data.len() == 48, "custody singleton data must be 48 bytes");
     ensure!(
@@ -366,6 +357,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
     );
     ensure!(!history.is_empty(), "empty custody history");
     let mut map: BTreeMap<H256, Position> = BTreeMap::new();
+    let mut ownership_tree = Tree::default();
     let mut owner_keys: BTreeMap<[u8; 32], H256> = BTreeMap::new();
     let mut current_point: Option<(String, u64)> = None;
     let mut marker_point: Option<(String, u64)> = None;
@@ -646,6 +638,9 @@ fn replay(bundle: &Bundle) -> Result<Value> {
             .with_context(|| format!("new root proof in {}", row.tx_hash))?;
         for u in &updates {
             let p = parse_leaf(u.new)?;
+            ownership_tree
+                .update(u.key, p.value)
+                .context("advance reconstructed ownership tree")?;
             if p.value == zero_h256() {
                 map.remove(&u.key);
             } else {
@@ -653,7 +648,7 @@ fn replay(bundle: &Bundle) -> Result<Value> {
             }
         }
         ensure!(
-            tree_root(&map)? == out_root,
+            *ownership_tree.root() == out_root,
             "full independently reconstructed ownership root does not match committed output root"
         );
         let sum = map.values().filter(|p| p.active).try_fold(0u64, |n, p| {
