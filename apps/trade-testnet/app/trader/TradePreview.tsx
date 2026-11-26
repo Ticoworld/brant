@@ -104,19 +104,19 @@ export function TradeV2({session, side, setSide}: {
     preparing: copy(locale, 'reviewing'),
     'awaiting-wallet': copy(locale, 'walletApproval'),
     broadcasting: copy(locale, 'broadcasting'),
-    submitted: zh ? '已提交' : 'Submitted',
-    pending: copy(locale, 'pending'),
-    proposed: zh ? '已提议' : 'Proposed',
+    submitted: zh ? '正在确认' : 'Confirming',
+    pending: zh ? '正在确认' : 'Confirming',
+    proposed: zh ? '正在确认' : 'Confirming',
     confirmed: copy(locale, 'confirmed'),
     rechecking: zh ? '正在重新验证确认状态' : 'Rechecking confirmation',
     rejected: trade.error ? (zh ? '交易被拒绝' : 'Transaction rejected') : (zh ? '钱包批准已取消' : 'Wallet approval rejected'),
     failed: zh ? '交易未完成' : 'Trade failed',
   };
   const status = walletReady && (catchingUp&&inclusion ? (zh?'交易已确认，正在更新市场和余额':'Trade confirmed, updating market and balance') : trade.uncertain ? copy(locale, 'unknown') : trade.status==='confirmed'?'':statusLabels[trade.status]);
-  const attemptHash = trade.pending && trade.attemptRaw ? readAttemptHash(trade.attemptRaw) : '';
-  const receipt = walletReady ? attemptHash || (catchingUp&&inclusion?inclusion.hash:'') : '';
   const action = !walletReady
     ? copy(locale, walletOpening ? (account.state === 'checking' ? 'walletChecking' : 'connecting') : 'connect')
+    : trade.busy && status ? status
+    : review === 'updating' ? (zh ? '正在准备交易' : 'Preparing trade')
     : review === 'unavailable' ? (zh ? '重新准备报价' : 'Retry quote preparation')
     : zh ? (buying ? `买入 ${symbol}` : `卖出 ${symbol}`) : (buying ? `Buy ${symbol}` : `Sell ${symbol}`);
   const submit = () => {
@@ -155,7 +155,7 @@ export function TradeV2({session, side, setSide}: {
             {blocked && <p role="status" className="preview-note">
               {catchingUp ? (zh ? '正在重新验证市场状态' : 'Rechecking verified market state')
                 : historyUnavailable ? (zh ? '无法验证交易历史，交易已暂停' : 'Trading is paused while canonical market history is unavailable.')
-                : stale ? (zh ? '市场数据已过期，请刷新' : 'Market data is stale. Refresh to continue.')
+                : stale ? (zh ? '正在更新市场数据' : 'Updating market data.')
                 : copy(locale, loading ? 'loading' : 'unavailable')}
             </p>}
             {walletReady && fundingInsufficient && <p role="alert" className="preview-note">{copy(locale, 'insufficientCkb')}</p>}
@@ -169,10 +169,8 @@ export function TradeV2({session, side, setSide}: {
               {trade.readiness === 'unavailable' ? (zh ? '交易状态暂不可用' : 'Trading state unavailable') : (zh ? '正在同步交易状态' : 'Synchronizing trading state')}
             </p>}
             {review==='unavailable'&&amount!==null&&<p role="alert" className="preview-note">{({busy:zh?'验证服务繁忙，请稍后重试。':'Trade verification is busy. Try again shortly.',timeout:zh?'验证超时，请重试。':'Trade verification timed out. Try again.',funding:zh?'合格资金不足，请检查钱包余额。':'Eligible wallet funding is unavailable. Check your spendable CKB.',changed:zh?'价格已更新，请刷新报价。':'The market changed. Refresh the quote.',proof:zh?'暂时无法验证交易，当前估算不可执行。':'Trade verification is temporarily unavailable. This estimate is not executable.'} as Record<string,string>)[trade.quoteError(side,count,amount)]}</p>}
-            {review === 'updating' && <p role="status" className="preview-note">{zh ? '正在准备报价…' : 'Preparing quote…'}</p>}
-            {(status || receipt) && <div role="status" className="preview-note preview-settlement">
+            {status && <div role="status" className="preview-note preview-settlement">
               <span>{status}</span>
-              {receipt && <a href={`https://pudge.explorer.nervos.org/transaction/${receipt}`} target="_blank" rel="noreferrer">{copy(locale, 'explorer')}</a>}
               {trade.pending && (trade.uncertain || trade.error || trade.status === 'rechecking') &&
                 <button type="button" onClick={() => void trade.reconcile(false)}>{copy(locale, 'reconcile')}</button>}
             </div>}
@@ -208,13 +206,6 @@ function Metric({label, value, unit, tone, detail}: {label: string; value: strin
 
 function TokenMark({symbol,logo}: {symbol: string;logo?:string}) {
   return <span aria-hidden="true" className="preview-token-mark" data-ckb={symbol === 'CKB'}>{logo?<img src={logo} alt="" width={32} height={32}/>:symbol.charAt(0)}</span>;
-}
-
-function readAttemptHash(raw: string) {
-  try {
-    const hash = JSON.parse(raw)?.txHash;
-    return typeof hash === 'string' && /^0x[0-9a-f]{64}$/i.test(hash) ? hash : '';
-  } catch { return ''; }
 }
 
 function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, submit, sellAction, disabled, children}: {
