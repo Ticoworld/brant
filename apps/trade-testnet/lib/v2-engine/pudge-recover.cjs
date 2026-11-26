@@ -90,12 +90,12 @@ async function rpc(url, method, params = []) {
 function scriptKey(script, scriptType, filter, withData = false) {
   return { script, script_type: scriptType, script_search_mode: 'exact', ...(withData ? { with_data: true } : {}), ...(filter ? { filter } : {}) };
 }
-async function indexedHistory(indexer, custodyLock, xudtType, { maxPages = 64, maxTransactions = 2048 } = {}) {
+async function indexedHistory(indexer, custodyLock, xudtType, { maxPages = 64, maxTransactions = 2048, blockRange } = {}) {
   const result = [];
   const seen = new Map();
   let cursor;
   for (let pageNo = 0; pageNo < maxPages; pageNo++) {
-    const params = [scriptKey(custodyLock, 'lock'), 'asc', '0x64'];
+    const params = [scriptKey(custodyLock, 'lock', blockRange && { block_range: blockRange }), 'asc', '0x64'];
     if (cursor) params.push(cursor);
     const page = await rpc(indexer, 'get_transactions', params);
     if (!Array.isArray(page?.objects)) fail('get_transactions returned no objects array');
@@ -315,17 +315,26 @@ async function collectIncremental(args) {
   if (qhex(indexerTip.block_number, 'indexer tip') === qhex(startTip.number, 'node tip') && indexerTip.block_hash?.toLowerCase() !== startTip.hash.toLowerCase()) fail('indexer tip differs from canonical tip');
   const indexerCanonical = await canonicalBlock(args.node, qhex(indexerTip.block_number, 'indexer tip'));
   if (indexerCanonical.header.hash.toLowerCase() !== indexerTip.block_hash?.toLowerCase()) fail('indexer tip is not canonical');
-  const history = await indexedHistory(args.indexer, custodyLock, xudtType, { maxPages, maxTransactions });
-  const initIndex = history.findIndex((x) => x.tx_hash.toLowerCase() === args.init.toLowerCase());
-  if (initIndex < 0) fail('initialization transaction was not found in exact-script indexer history');
-  const refs = history.slice(initIndex);
-  if (previous.history.length > refs.length) fail('checkpoint history is ahead of the canonical indexer');
-  for (let index = 0; index < previous.history.length; index++) {
-    const old = previous.history[index], current = refs[index];
-    if (old.tx_hash?.toLowerCase() !== current.tx_hash.toLowerCase() || qhex(old.block_number, 'checkpoint block number') !== qhex(current.block_number, 'indexer block number') || qhex(old.tx_index, 'checkpoint transaction index') !== qhex(current.tx_index, 'indexer transaction index')) fail('checkpoint history conflicts with canonical indexer history');
-  }
-  const additions = refs.slice(previous.history.length);
-  if (additions.length > 256) fail('checkpoint successor batch exceeds 256 transactions');
+  // Replay the checkpoint's entire final block to preserve same-block ordering.
+  const lastBlock = qhex(previous.history.at(-1).block_number, 'checkpoint tail block');
+  const coveredBlock = qhex(startTip.number, 'captured canonical tip');
+  if (lastBlock > coveredBlock) fail('checkpoint tail is ahead of the canonical tip');
+  const blockRange = [`0x${lastBlock.toString(16)}`, `0x${(coveredBlock + 1n).toString(16)}`];
+  const history = await indexedHistory(args.indexer, custodyLock, xudtType, { maxPages, maxTransactions, blockRange });
+  if (history.some(entry => {
+    const height = qhex(entry.block_number, 'indexer block number');
+    return height < lastBlock || height > coveredBlock;
+  })) fail('indexer returned history outside the requested block range');
+  const tail = previous.history.filter(entry => qhex(entry.block_number, 'checkpoint block number') === lastBlock);
+  const start = history.findIndex(entry => entry.tx_hash.toLowerCase() === tail[0].tx_hash.toLowerCase());
+  if (start < 0 || tail.some((old, index) => {
+    const current = history[start + index];
+    return !current || old.tx_hash.toLowerCase() !== current.tx_hash.toLowerCase() ||
+      qhex(old.block_number, 'checkpoint block number') !== qhex(current.block_number, 'indexer block number') ||
+      qhex(old.tx_index, 'checkpoint transaction index') !== qhex(current.tx_index, 'indexer transaction index');
+  })) fail('checkpoint tail conflicts with canonical indexer history');
+  const additions = history.slice(start + tail.length);
+  if (additions.length > 256 || previous.history.length + additions.length > maxTransactions) fail('checkpoint successor history exceeds its bounds');
   const appended = [];
   for (const entry of additions) {
     const response = await rpc(args.node, 'get_transaction', [entry.tx_hash]);

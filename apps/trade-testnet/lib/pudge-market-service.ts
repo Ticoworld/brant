@@ -107,42 +107,22 @@ async function cachedMarket(id:string,manifestRaw?:string):Promise<MarketData|nu
   if(!saved&&id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw){saved=await readMarketCheckpoint()||undefined;if(saved)checkpoints.set(id,saved);}
   if(!saved||saved.manifestRaw!==manifestRaw)return null;
   try{
-    if(id===PUDGE_GATE2_REGISTRY_ID&&verifiedCheckpoints.has(saved)){
-      const tip=await rpc('get_tip_header');
-      if(!tip?.number||!tip.hash||BigInt(tip.number)<BigInt(saved.data.tip.number))return null;
-      const [anchor,...results]=await rpcBatch([
-        ['get_block_hash',[saved.data.tip.number]],
-        ...saved.points.map(point=>['get_live_cell',[point,true]] as [string,unknown[]]),
-        ...saved.deps.map(dep=>['get_live_cell',[dependencyPoint(dep),false]] as [string,unknown[]]),
-      ]);
-      const cells=results.slice(0,4),deps=results.slice(4);
-      if(typeof anchor==='string'&&anchor!==saved.data.tip.hash){
-        orphanedCheckpoints.add(saved);
-        return null;
-      }
-      if(anchor!==saved.data.tip.hash||deps.some(dep=>dep?.status!=='live'))return null;
-      if(cells.some((cell,index)=>!matchesLiveCell(cell,saved!.cells[index]))){
-        return await recoverCachedMarketSuccessors(saved,gate2Identity());
-      }
-      if(await rpc('get_block_hash',[tip.number])!==tip.hash)return null;
-      const data={...saved.data,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
-      saved.data=data;
-      return data;
-    }
-    if(id===PUDGE_GATE2_REGISTRY_ID)return null;
-    const [genesis,tip]=await Promise.all([rpc('get_block_hash',['0x0']) as Promise<string>,rpc('get_tip_header',[]) as Promise<{number:string;hash:string}>]);
-    if(genesis.toLowerCase()!==marketNetwork().genesis||!tip?.number||!tip.hash)return null;
-    const anchor=await rpc('get_block_hash',[saved.data.tip.number]);
-    if(typeof anchor!=='string'||anchor.toLowerCase()!==saved.data.tip.hash.toLowerCase()){orphanedCheckpoints.add(saved);return null;}
-    const [liveCells,codeCells]=await Promise.all([
-      Promise.all(saved.points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>)),
-      Promise.all(saved.deps.map(async(dependency,index)=>({result:await rpc('get_live_cell',[dependencyPoint(dependency),true]) as {status?:string;cell?:{data?:{content?:string}}},index}))),
+    if(!verifiedCheckpoints.has(saved))return null;
+    const [genesis,tip,anchor,...results]=await rpcBatch([
+      ['get_block_hash',['0x0']],
+      ['get_tip_header',[]],
+      ['get_block_hash',[saved.data.tip.number]],
+      ...saved.points.map(point=>['get_live_cell',[point,true]] as [string,unknown[]]),
+      ...saved.deps.map(dep=>['get_live_cell',[dependencyPoint(dep),false]] as [string,unknown[]]),
     ]);
-    if(liveCells.some((cell,index)=>cell.status!=='live'||!cell.cell||!sameScript(cell.cell.output.lock,saved.cells[index].output.lock)||!sameScript(cell.cell.output.type,saved.cells[index].output.type)||BigInt(cell.cell.output.capacity)!==BigInt(saved.cells[index].output.capacity)||cell.cell.data.content.toLowerCase()!==saved.cells[index].data.toLowerCase())){
-      return null;
+    if(genesis!==marketNetwork().genesis||!tip?.number||!tip.hash||BigInt(tip.number)<BigInt(saved.data.tip.number))return null;
+    if(typeof anchor==='string'&&anchor!==saved.data.tip.hash)orphanedCheckpoints.add(saved);
+    if(anchor!==saved.data.tip.hash||results.slice(4).some(dep=>dep?.status!=='live'))return null;
+    if(results.slice(0,4).some((cell,index)=>!matchesLiveCell(cell,saved.cells[index]))){
+      const identity=id===PUDGE_GATE2_REGISTRY_ID&&!manifestRaw?gate2Identity():(saved.data.manifest as RecoveryManifest).scripts;
+      return await recoverCachedMarketSuccessors(saved,identity);
     }
-    if(codeCells.some(({result,index})=>result.status!=='live'||!result.cell?.data?.content||ccc.hashCkb(result.cell.data.content as ccc.Hex).toLowerCase()!==saved.hashes[index].toLowerCase()))return null;
-    const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase())return null;
+    if(await rpc('get_block_hash',[tip.number])!==tip.hash)return null;
     return {...saved.data,tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now()};
   }catch{return null;}
 }
@@ -156,12 +136,15 @@ function matchesLiveCell(cell:{status?:string;cell?:{output:Output;data:{content
 async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnType<typeof deriveMarketIdentity>):Promise<MarketData|null>{
   const previous=saved.data;
   if(previous.historyState!=='verified'||!previous.history.length||previous.history.at(-1)?.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())return null;
-  const recovered=await recoverMarketSuccessors(rpc,[saved.points[0],saved.points[1]],{maxIndexedDepth:256});
+  const [recovered,custodyPair]=await Promise.all([
+    recoverMarketSuccessors(rpc,[saved.points[0],saved.points[1]],{maxIndexedDepth:256}),
+    currentCustodyPair([saved.points[2],saved.points[3]],rpc),
+  ]);
   const lineage=recovered.lineage;
   if(!lineage.length||lineage[0].transaction.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())throw Error('Successor history does not start at the cached market anchor');
   const history=[...previous.history];
   await appendMarketExecutions(history,lineage,identity,rpc);
-  const marketPair=recovered.pair,custodyPair=await currentCustodyPair([saved.points[2],saved.points[3]],rpc);
+  const marketPair=recovered.pair;
   const points=[...marketPair,...custodyPair],live=await Promise.all(points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>));
   if(live.some(cell=>cell.status!=='live'||!cell.cell))throw Error('Gate 2 successor cells are not live');
   const current=lineage.at(-1)!.transaction as Transaction,marketIndex=Number(BigInt(marketPair[0].index)),custodyIndex=Number(BigInt(custodyPair[0].index));
@@ -180,10 +163,14 @@ async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnTyp
   const marketData=current.outputs_data[marketIndex],custodyData=custodyTransaction.outputs_data[custodyIndex];
   if(cells[1].data.content.toLowerCase()!==identity.markerData.toLowerCase()||cells[3].data.content.toLowerCase()!==identity.custodyMarkerData.toLowerCase()||marketData.slice(34).toLowerCase()!==identity.custodyMarker.hash().slice(2).toLowerCase())throw Error('Gate 2 successor marker identity mismatch');
   const curve=decodeCurve(current.outputs[marketIndex].lock.args,marketData),supply=curve.supply,inventory=curve.inventory,custody=readLE(`0x${custodyData.slice(2,34)}`),root=`0x${custodyData.slice(34)}`;
-  if(curve.base!==1_000_000_000n||curve.step!==100_000_000n||supply!==2_000n||custodyData.length!==98||inventory+custody>supply||!/^0x[0-9a-f]{64}$/i.test(root))throw Error('Gate 2 successor supply and custody totals do not reconcile');
+  if(curve.base!==BigInt(previous.curve.base)||curve.step!==BigInt(previous.curve.step)||supply!==BigInt(previous.curve.supply)||custodyData.length!==98||inventory+custody>supply||!/^0x[0-9a-f]{64}$/i.test(root))throw Error('Gate 2 successor supply and custody totals do not reconcile');
   const tip=await rpc('get_tip_header',[]) as {number:string;hash:string};
   if(!tip?.number||!tip.hash)throw Error('Pudge chain tip unavailable during successor recovery');
-  const stable=await rpc('get_block_hash',[tip.number]);if(typeof stable!=='string'||stable.toLowerCase()!==tip.hash.toLowerCase())throw Error('Pudge chain changed during successor recovery');
+  const [stable,anchor]=await rpcBatch([
+    ['get_block_hash',[tip.number]],
+    ['get_block_hash',[previous.tip.number]],
+  ]);
+  if(stable!==tip.hash||anchor!==previous.tip.hash)throw Error('Pudge chain changed during successor recovery');
   const data:MarketData={...previous,supply:supply.toString(),inventory:inventory.toString(),circulating:(supply-inventory).toString(),custody:custody.toString(),custodyRoot:root,...marketLiquidity(current.outputs[marketIndex].capacity,previous.marketCapacityFloorShannons),buyOneShannons:quote(curve,'buy',1n).toString(),sellOneShannons:quote(curve,'sell',1n).toString(),curve:{base:curve.base.toString(),step:curve.step.toString(),supply:supply.toString(),sold:(supply-inventory).toString()},tip:{number:tip.number,hash:tip.hash},refreshedAt:Date.now(),history,historyState:'verified'};
   await checkpoint(data,points,cells.map(cell=>({output:cell.output,data:cell.data.content})),saved.deps,saved.hashes,saved.manifestRaw);
   return data;
