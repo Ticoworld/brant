@@ -131,7 +131,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     try{
       const attempt=parseTradeAttempt(raw);
       if(tradeKey(attempt.genesis,attempt.owner,attempt.market)!==key)throw Error('Trade journal owner or network mismatch');
-      const row=await pudgeRpc<{transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string;block_number?:string}}|null>('get_transaction',[attempt.txHash]);
+      type TradeRpcResult={transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string;block_number?:string}}|null;
+      const row=await pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash,'0x1'])
+        .catch(()=>pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash]));
       if(!current())return;
       const state=row?.tx_status?.status;
       if(state==='pending'||state==='proposed'){
@@ -153,7 +155,10 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         setStatus(acknowledged?'submitted':'unknown');setUncertain(!acknowledged);return;
       }
       let height:string;
-      try{height=await verifyTradeInclusion(rpc,attempt,row);}
+      try{
+        const full=row?.transaction?row:await pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash]);
+        height=await verifyTradeInclusion(rpc,attempt,full);
+      }
       catch(error){
         if(current()){setInclusion(null);setReceipt('');setStatus('rechecking');setUncertain(false);}
         throw error;
