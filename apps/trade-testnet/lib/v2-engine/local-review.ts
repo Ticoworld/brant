@@ -1,6 +1,6 @@
 import {atomicV2Codes} from './atomic-launch-v2.ts';
 import { ccc } from '@ckb-ccc/core';
-import { readLiveSingletons } from './live.ts';
+import { readLiveSingletons, validateLiveSingletons } from './live.ts';
 import { readFundingCell } from './funding.ts';
 import { buildReviewedTransaction } from './review.ts';
 import { quote } from './curve.ts';
@@ -64,7 +64,11 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   mark('manifestMs');
   const points:[Point,Point,Point,Point] = verified?body.points:
     (await Promise.all([discoverMarketPair(rpc,[config.initial[0],config.initial[1]]),discoverCustodyPair(rpc,p.tip_outpoint)])).flat() as [Point,Point,Point,Point];
-  const live = await readLiveSingletons(rpc,points,config.genesis);
+  const live = verified && Array.isArray(body.cells)
+    ? validateLiveSingletons(points,config.genesis,body.genesis,body.cells.map((cell:{output:unknown;data:string})=>({
+        status:'live',cell:{output:cell.output,data:{content:cell.data}},
+      })))
+    : await readLiveSingletons(rpc,points,config.genesis);
   mark('singletonsMs');
   if(pudge){
     if(!config.scripts)throw Error('Verified market scripts required');
@@ -84,7 +88,7 @@ export async function prepareLocalReview(rpc:Rpc, config:Config, owner:string, s
   const funding=pudge?await (earlyFunding||selectTradeFunding(rpc,ownerScript!,minimum(amount),hint)):await readFundingCell(rpc,config.funding,owner);
   mark('fundingMs');
   const witness=p.witness+(side==='sell'?le64(quantity)+le64(amount):'');
-  // Pudge's genesis was checked by readLiveSingletons. Its secp dep group
+  // The Pudge snapshot is network-bound. Its secp dep group
   // is pinned and the trade hook checks dependency liveness before signing.
   let secpDepHash='0xf8de3bb47d055cdf460d93a2a6e1b05f7432f9777c8c474abf4eec1d4aee5d37';
   if(config.format==='brant-shared-pudge-market-v1'){

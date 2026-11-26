@@ -351,7 +351,7 @@ async function handleProof(request:Request,synchronize=false){
     const tools=await resolveGate2NativeTools(),binary=tools.recovery;
     if(!binary||!tools.smt)return new Response('Proof tool unavailable',{status:503});
     const endpoint=rpcEndpoint();let rpcCalls=0;
-    const readyOnly=!shared&&!synchronize&&!balanceOnly&&endpoint==='https://testnet.ckb.dev/';
+    const readyOnly=!shared&&!synchronize&&!balanceOnly&&marketNetwork().genesis===PUDGE_GATE2_GENESIS;
     if(readyOnly&&readiness!=='ready')return new Response('Trading state is synchronizing. Your quote has been kept.',{status:503,headers:{'Retry-After':'3'}});
     const rpc=async(method:string,params:unknown[]=[] )=>{
       if(++rpcCalls>MAX_RPC_CALLS||Date.now()>=deadline)throw Error('Pudge RPC work limit exceeded');
@@ -398,7 +398,7 @@ async function handleProof(request:Request,synchronize=false){
     const refresh=async()=>{
     const snapshotScope='pudge-custody-v2:'+key,snapshotFile=file&&file+'.snapshot';
     const current=custodyStates.get(key)||await readAuthenticated<CustodyState>(snapshotFile,snapshotScope);
-    let market=anchor??await (endpoint==='https://testnet.ckb.dev/'?getPudgeCustodyAnchor(requestedMarket):null);
+    let market=anchor??await (marketNetwork().genesis===PUDGE_GATE2_GENESIS?getPudgeCustodyAnchor(requestedMarket):null);
     const matchesMarket=(bundle:RecoveryBundle)=>!market||
       (market.point.tx_hash===bundle.live.tx_hash&&BigInt(market.point.index)===BigInt(bundle.live.index)&&market.data===bundle.live.data);
     const reconcile=(snapshot:Record<string,unknown>)=>{
@@ -543,7 +543,7 @@ async function handleProof(request:Request,synchronize=false){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
     }
     console.info('Pudge proof timing',JSON.stringify({path:proofTrace,marketMs,custodyMs,nativeMs:Math.round(performance.now()-nativeStarted),ms:Math.round(performance.now()-proofStarted)}));
-    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,token:tokenHash,manifest,points:live?.points},{headers:{'Cache-Control':'no-store'}});
+    return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,token:tokenHash,manifest,points:live?.points,cells:live?.cells},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});
     if(error instanceof Error&&error.message==='Expected JSON')return new Response('Expected JSON',{status:415});
