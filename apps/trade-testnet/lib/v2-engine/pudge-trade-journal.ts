@@ -102,5 +102,15 @@ export async function recheckTradeSettlement(rpc:Rpc,storage:Pick<Storage,'getIt
  const attempt=readTradeSettlement(storage,key);
  if(!attempt)return null;
  const row=await rpc('get_transaction',[attempt.txHash]) as CommittedRow|null;
- return {hash:attempt.txHash,height:await verifyTradeInclusion(rpc,attempt,row)};
+ const height=await verifyTradeInclusion(rpc,attempt,row);
+ return {hash:attempt.txHash,height,blockHash:row!.tx_status!.block_hash!};
+}
+
+export async function verifySettlementAnchor(
+ rpc:Rpc, storage:Pick<Storage,'getItem'>, key:string,
+ saved:string|null, anchor:{height:string;blockHash:string}|null,
+){
+ if(storage.getItem(key+':settled')!==saved)throw Error('Trade settlement changed during approval');
+ if(anchor&&await rpc('get_block_hash',[anchor.height])!==anchor.blockHash)throw Error('Previous trade settlement is no longer canonical');
+ if(storage.getItem(key+':settled')!==saved)throw Error('Trade settlement changed during approval');
 }

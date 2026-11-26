@@ -654,10 +654,10 @@ export async function getPudgeDisplaySnapshot(){
   return {...saved.data,historyState:'unavailable' as const};
 }
 
-export async function getPudgeCustodyAnchor(id=PUDGE_GATE2_REGISTRY_ID){
-  const market=await (id===PUDGE_GATE2_REGISTRY_ID?getPudgeMarketData():getPublishedPudgeMarketData(id));
+export async function getPudgeCustodyAnchor(id=PUDGE_GATE2_REGISTRY_ID,verifiedMarket?:MarketData){
+  const market=verifiedMarket??await (id===PUDGE_GATE2_REGISTRY_ID?getPudgeMarketData():getPublishedPudgeMarketData(id));
   const saved=checkpoints.get(id);
-  if(market.historyState!=='verified'||!saved||saved.data.custodyRoot!==market.custodyRoot)throw Error('Pudge market recovery changed');
+  if(market.id!==id||market.historyState!=='verified'||!saved||saved.data.custodyRoot!==market.custodyRoot||JSON.stringify(saved.points)!==JSON.stringify(market.executionPoints))throw Error('Pudge market recovery changed');
   return {market,points:saved.points,cells:saved.cells,point:saved.points[2],data:saved.cells[2].data,inventory:market.inventory,custody:market.custody,supply:market.supply};
 }
 

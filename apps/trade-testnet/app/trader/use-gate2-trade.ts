@@ -10,7 +10,7 @@ import {TradeProofError,prepareLocalReview} from '../../lib/v2-engine/local-revi
 import {validateLiveSingletons} from '../../lib/v2-engine/live.ts';
 import {quote} from '../../lib/v2-engine/curve.ts';
 import {verifyInitializationSignature} from '../../lib/v2-engine/initialization-signature.ts';
-import {makeTradeAttempt,parseTradeAttempt,recheckTradeSettlement,saveTradeSettlement,submitJournaledTrade,tradeKey,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
+import {makeTradeAttempt,parseTradeAttempt,recheckTradeSettlement,saveTradeSettlement,submitJournaledTrade,tradeKey,verifySettlementAnchor,verifyTradeInclusion} from '../../lib/v2-engine/pudge-trade-journal.ts';
 import {PUDGE_GENESIS,pudgeRpc,pudgeReadBatch} from './rpc';
 import {assertWalletFundingAvailable} from '../../lib/v2-engine/wallet-pending.ts';
 import {useAccount} from './account-provider';
@@ -232,6 +232,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const walletGenesis=current.client.getHeaderByNumber(0);
         void walletGenesis.catch(()=>{});
         if(owner.toLowerCase()!==account.owner.toLowerCase())throw Error('Wallet account or network changed');
+        const savedSettlement=localStorage.getItem(key+':settled');
         const settlementCheck=recheckTradeSettlement(rpc,localStorage,key);
         void settlementCheck.catch(()=>{});
         const cacheKey=quoteKey(side,quantity,quotedAmount);
@@ -269,7 +270,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const [againGenesis,againRpcGenesis]=await Promise.all([
           current.client.getHeaderByNumber(0),
           pudgeRpc<string>('get_block_hash',['0x0']),
-          recheckTradeSettlement(rpc,localStorage,key),
+          settlementCheck.then(anchor=>verifySettlementAnchor(rpc,localStorage,key,savedSettlement,anchor)),
           validateReviewedInputs(review,side,quantity,quotedAmount),
         ]);
         if(!await current.isConnected()||(await current.getRecommendedAddressObj()).script.hash().toLowerCase()!==owner.toLowerCase()||active.current!==current||againGenesis?.hash?.toLowerCase()!==PUDGE_GENESIS||againRpcGenesis.toLowerCase()!==PUDGE_GENESIS)throw Error('Wallet or network changed after approval');

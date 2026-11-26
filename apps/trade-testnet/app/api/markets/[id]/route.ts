@@ -1,3 +1,4 @@
+import {incorporateCommittedTrade} from '../../v2/pudge-proof/service.ts';
 import {after} from 'next/server';
 import {getPublishedDisplaySnapshot,getPudgeMarketDataForManifest,getPublishedPudgeMarketData} from '../../../../lib/pudge-market-service.ts';
 
@@ -17,7 +18,7 @@ export async function GET(request:Request,{params}:{params:Promise<{id:string}>}
       return Response.json(snapshot,{headers:{'Cache-Control':'no-store','X-Roveko-State':'display-snapshot'}});
     }
   }
-  try{return Response.json(await getPublishedPudgeMarketData(id,committed||undefined),{headers:{'Cache-Control':'no-store'}});}
+  try{return Response.json(await (committed?incorporateCommittedTrade(id,committed):getPublishedPudgeMarketData(id)),{headers:{'Cache-Control':'no-store'}});}
   catch{return Response.json({error:'Verified market recovery unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});}
 }
 
