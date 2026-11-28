@@ -135,6 +135,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       const attempt=parseTradeAttempt(raw);
       if(tradeKey(attempt.genesis,attempt.owner,attempt.market)!==key)throw Error('Trade journal owner or network mismatch');
       type TradeRpcResult={transaction?:unknown;tx_status?:{status?:string;reason?:string;block_hash?:string;block_number?:string}}|null;
+      const statusReadStarted=performance.now();
       const row=await pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash,'0x1'])
         .catch(()=>pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash]));
       if(!current())return;
@@ -157,9 +158,11 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         const acknowledged=localStorage.getItem(key+':submitted')===attempt.txHash;
         setStatus(acknowledged?'submitted':'unknown');setUncertain(!acknowledged);return;
       }
+      tradeTiming(attempt.txHash,'commitment-detected',Date.now(),String(Math.round(performance.now()-statusReadStarted)));
       let height:string;
       try{
         const full=row?.transaction?row:await pudgeRpc<TradeRpcResult>('get_transaction',[attempt.txHash]);
+        tradeTiming(attempt.txHash,'committed-transaction-loaded');
         height=await verifyTradeInclusion(rpc,attempt,full);
       }
       catch(error){

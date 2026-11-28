@@ -237,18 +237,19 @@ function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSi
   const unit = ` CKB / ${symbol}`;
   const tokenWell = (
     <label className="preview-well preview-editable" key="token">
-      <span>{buying ? (zh ? '买入预算（CKB）' : 'Purchase budget (CKB)') : (zh ? '卖出数量' : `${symbol} quantity to sell`)}</span>
+      <span>{buying ? (zh ? '支付预算' : 'You pay (budget)') : (zh ? '卖出' : 'You sell')}</span>
       <span className="preview-well-row">
         <input aria-invalid={!!market && !!quantity && amount === null} inputMode={buying?'decimal':'numeric'} maxLength={buying?20:10} value={input} placeholder="0" onChange={event => setInput(event.target.value)} />
         <span className="preview-token"><TokenMark symbol={buying?'CKB':symbol} logo={buying?undefined:market?.token.logo}/>{buying?'CKB':symbol}</span>
       </span>
     </label>
   );
+  const netProceeds = amount === null ? null : amount > PUDGE_TRADE_FEE ? amount - PUDGE_TRADE_FEE : 0n;
   const ckbWell = (
     <div className="preview-well preview-estimate" key="ckb">
-      <span>{buying ? (zh ? '预计收到代币' : 'Estimated tokens received') : (zh ? '预计收入总额' : 'Estimated gross proceeds')}</span>
+      <span>{zh ? '预计收到' : 'You receive (estimated)'}</span>
       <div className="preview-well-row">
-        <output>{amount === null ? '—' : buying?quantity:formatCkb(amount)}</output>
+        <output>{amount === null ? '—' : buying?quantity:formatCkb(netProceeds!)}</output>
         <span className="preview-token"><TokenMark symbol={buying?symbol:'CKB'} />{buying?symbol:'CKB'}</span>
       </div>
     </div>
@@ -274,16 +275,16 @@ function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSi
         {ckbWell}
       </div>
       <div className="preview-ticket-details">
-        {balance !== null && <p>{zh ? '已验证可交易余额' : (balanceCurrent?'Verified CKB available to trade':'Last verified CKB available to trade')} <strong>{formatCkb(balance)} CKB</strong></p>}
-        {holdings !== null && <p>{zh ? '已验证托管余额' : 'Verified custody balance'} <strong>{holdings.toString()} {symbol}</strong></p>}
-        <p>{zh ? '当前单价' : 'Current unit price'} <strong>{unitPrice === null ? '—' : formatCkb(unitPrice) + unit}</strong></p>
-        <p>{zh ? '平均成交价' : 'Average execution price'} <strong>{amount === null || count === null ? '—' : formatCkb((amount + count / 2n) / count) + unit}</strong></p>
+        {balance !== null && <p>{balanceCurrent ? (zh ? '可用 CKB' : 'Available CKB') : (zh ? '上次确认的可用 CKB' : 'Last verified available CKB')} <strong>{formatCkb(balance)} CKB</strong></p>}
+        {holdings !== null && <p>{zh ? '已验证托管余额' : 'Available token balance'} <strong>{holdings.toString()} {symbol}</strong></p>}
+        <p>{zh ? '当前单价' : 'Price'} <strong>{unitPrice === null ? '—' : formatCkb(unitPrice) + unit}</strong></p>
+        <p>{zh ? '平均成交价' : 'Average price'} <strong>{amount === null || count === null ? '—' : formatCkb((amount + count / 2n) / count) + unit}</strong></p>
         <p>{zh ? '价格影响' : 'Price impact'} <strong>{impact === null ? '—' : impact.toLocaleString(zh ? 'zh-CN' : 'en', {maximumFractionDigits: 2}) + '%'}</strong></p>
         {amount !== null && <>
           {buying&&<p>{zh?'实际购买金额':'Purchase cost'} <strong>{formatCkb(amount)} CKB</strong></p>}
           {buying&&budget>amount&&<p>{zh?'未使用预算':'Unused purchase budget'} <strong>{formatCkb(budget-amount)} CKB</strong></p>}
           <p>{zh ? '网络费用' : 'Network fee'} <strong>{formatCkb(PUDGE_TRADE_FEE)} CKB</strong></p>
-          <p className="preview-total">{buying ? (zh ? '应付总额' : 'Total to pay') : (zh ? '扣费后收入' : 'Net proceeds')} <strong>{formatCkb(buying ? amount + PUDGE_TRADE_FEE : amount > PUDGE_TRADE_FEE ? amount - PUDGE_TRADE_FEE : 0n)} CKB</strong></p>
+          {buying && <p className="preview-total">{zh ? '应付总额' : 'Total to pay'} <strong>{formatCkb(amount + PUDGE_TRADE_FEE)} CKB</strong></p>}
           <details className="preview-funding">
             <summary>{zh ? '钱包资金要求' : 'Wallet funding requirements'}</summary>
             <p>{zh ? '最低合格资金 Cell 容量' : 'Minimum eligible funding Cell capacity'} <strong>{formatCkb((buying ? amount : 0n) + PUDGE_TRADE_CHANGE_CAPACITY + PUDGE_TRADE_FEE)} CKB</strong></p>
