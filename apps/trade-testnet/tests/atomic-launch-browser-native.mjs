@@ -111,6 +111,10 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     const label=(side==='buy'?'Buy ':'Sell ')+market.metadata.ticker;
     await page.waitForFunction(label=>{const b=document.querySelector('.preview-action');return b?.textContent===label&&!b.disabled;},label,{timeout:120000});
     const ready=Date.now(),priorCount=trades.length;
+    const incorporation=page.waitForResponse(response=>{
+      const url=new URL(response.url());
+      return response.ok()&&url.pathname==='/api/markets/'+market.market&&url.searchParams.has('committed');
+    },{timeout:30000}).catch(()=>null);
     await page.getByRole('button',{name:label,exact:true}).click();
     const key=`roveko-pudge-trade-v1:${genesis}:${market.owner}:${market.market}:settled`;
     while(trades.length===priorCount&&Date.now()-ready<120000)await delay(100);
@@ -118,6 +122,12 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     const trade=trades.at(-1);
     await page.waitForFunction(({key,hash})=>{const raw=localStorage.getItem(key);return raw&&JSON.parse(JSON.parse(raw).raw).txHash===hash;},{key,hash:trade.hash},{timeout:120000});
     trade.timings={preparationMs:ready-started,clickToSettledMs:Date.now()-ready};
+    const incorporated=await incorporation;
+    assert(incorporated,'Expected coherent incorporation after '+trade.hash);
+    assert.equal(new URL(incorporated.url()).searchParams.get('committed'),trade.hash);
+    const combined=await incorporated.json();
+    assert(combined.executionVersion&&combined.history.some(event=>event.hash===trade.hash));
+
   }
   assert.equal(trades.length,priorTrades?2:expectedSides.length);
   assert.equal(new Set(trades.map(trade=>trade.hash)).size,trades.length);

@@ -19,7 +19,9 @@ export async function GET(request:Request,{params}:{params:Promise<{id:string}>}
     }
   }
   try{return Response.json(await (committed?incorporateCommittedTrade(id,committed):getPublishedPudgeMarketData(id)),{headers:{'Cache-Control':'no-store'}});}
-  catch{return Response.json({error:'Verified market recovery unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});}
+  catch(error){
+    if(committed)console.warn('Trade incorporation failed',id,committed,error instanceof Error?error.message:'Unknown error');
+    return Response.json({error:'Verified market recovery unavailable'},{status:503,headers:{'Cache-Control':'no-store'}});}
 }
 
 export async function POST(request:Request,{params}:{params:Promise<{id:string}>}){

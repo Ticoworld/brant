@@ -176,8 +176,16 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
       setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
       prepared.current?.controller.abort();
       prepared.current=null;
-      setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
-      await incorporate(attempt.txHash);
+      try{
+        await incorporate(attempt.txHash);
+        tradeTiming(attempt.txHash,'execution-incorporated');
+      }catch(error){
+        if(currentKey.current===key)toast.error(error instanceof Error?error.message:'Market synchronization failed');
+      }finally{
+        if(currentKey.current===key){
+          setFailure(null);setPending(false);setAttemptRaw('');setRevision(value=>value+1);
+        }
+      }
     }catch(error){
       if(current()&&!silent)toast.error('Unable to check trade status',{description:error instanceof Error?error.message:undefined});
     }finally{reconcileLock.current=false;}

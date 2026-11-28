@@ -20,6 +20,7 @@ export type MarketData={
   tip:{number:string;hash:string};
   refreshedAt:number;
   history:TradeEvent[];
+  incorporatedTrade?:string;
   executionVersion?:string;
   executionPoints?:{tx_hash:string;index:string}[];
   historyState:'verified'|'unavailable';

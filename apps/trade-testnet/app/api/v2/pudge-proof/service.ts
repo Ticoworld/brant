@@ -31,6 +31,7 @@ const RATE_LIMIT=12;
 const rates=new Map<string,{startedAt:number;count:number}>();
 const memoryCheckpoints=new Map<string,{value:unknown;size:number}>();
 let activeRequests=0;
+let activeIncorporations=0;
 
 type Script={code_hash:string;hash_type:string;args:string};
 type RecoveryBundle={
@@ -336,8 +337,9 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       if((source.origin!==expectedOrigin&&(railwayDomain||!localAlias))||(site&&site!=='same-origin'))return new Response('Same-origin request required',{status:403});
     }catch{return new Response('Same-origin request required',{status:403});}
 
-    if(activeRequests>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
-    activeRequests++;entered=true;
+    if((suppliedAnchor?activeIncorporations:activeRequests)>=MAX_PARALLEL)return new Response('Proof service is busy; retry shortly',{status:429,headers:{'Retry-After':'5'}});
+    if(suppliedAnchor)activeIncorporations++;else activeRequests++;
+    entered=true;
     const text=await readBoundedBody(request);
     let body:{owner?:string;side?:string;quantity?:string;manifest?:any};
     try{body=JSON.parse(text);}catch{return new Response('Invalid JSON',{status:400});}
@@ -497,7 +499,18 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       pending=refresh().finally(()=>custodyRefreshes.delete(refreshKey));
       custodyRefreshes.set(refreshKey,pending);
     }
-    const {state,live}=await pending,selectedBundle=state.bundle;
+    let recovered=await pending;
+    // A request that joined recovery for older outpoints must refresh against
+    // its own anchor after the earlier operation has released the market.
+    if(anchor&&JSON.stringify(recovered.live?.points)!==JSON.stringify(anchor.points)){
+      let successor=custodyRefreshes.get(refreshKey);
+      if(!successor){
+        successor=refresh().finally(()=>custodyRefreshes.delete(refreshKey));
+        custodyRefreshes.set(refreshKey,successor);
+      }
+      recovered=await successor;
+    }
+    const {state,live}=recovered,selectedBundle=state.bundle;
     const custodyMs=Math.round(performance.now()-refreshStarted);
     if(anchor&&(JSON.stringify(live?.points)!==JSON.stringify(anchor.points)||selectedBundle.live.data!==anchor.data||selectedBundle.live.tx_hash!==anchor.point.tx_hash||BigInt(selectedBundle.live.index)!==BigInt(anchor.point.index)))throw Error('Custody changed during preparation');
     const nativeStarted=performance.now();
@@ -568,7 +581,7 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       }
     }
     if(dir){const target=path.resolve(dir),parent=path.resolve(tmpdir());if(path.dirname(target)===parent&&path.basename(target).startsWith('roveko-pudge-proof-'))await rm(target,{recursive:true,force:true});}
-    if(entered)activeRequests--;
+    if(entered){if(suppliedAnchor)activeIncorporations--;else activeRequests--;}
   }
 }
 
@@ -587,8 +600,8 @@ export async function incorporateCommittedTrade(id:string,hash:string){
     method:'POST',headers:{origin:'http://127.0.0.1','content-type':'application/json'},
     body:JSON.stringify({owner:market.manifest.journal.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
   }),true,anchor);
-  if(!response.ok)throw Error('Committed trade custody recovery unavailable');
+  if(!response.ok)throw Error('Committed trade custody recovery failed (HTTP '+response.status+'): '+await response.text());
   const {points,identity}=await response.json();
   if(JSON.stringify(points)!==JSON.stringify(anchor.points))throw Error('Execution state advanced during incorporation');
-  return {...market,executionVersion:JSON.stringify([points,identity])};
+  return {...market,incorporatedTrade:hash,executionVersion:JSON.stringify([points,identity])};
 }

@@ -19,7 +19,7 @@ function publish(id:string,value:Snapshot){
 }
 
 function hasIncorporated(snapshot:Snapshot,hash:string){
-  return !snapshot.error&&!!snapshot.data?.executionVersion&&snapshot.data.history.some(event=>event.hash===hash);
+  return !snapshot.error&&!!snapshot.data?.executionVersion&&snapshot.data.incorporatedTrade===hash;
 }
 
 export function useMarketData(requestedId?:string, requireCanonical=false){
@@ -90,5 +90,6 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
       await requestMarket(true,true,hash);
       if(hasIncorporated(readSnapshot(marketId),hash)||marketId===DEFAULT_MARKET)return;
     }
+    throw Error('Trade committed. Market synchronization is incomplete.');
   },[marketId,requestMarket])};
 }
