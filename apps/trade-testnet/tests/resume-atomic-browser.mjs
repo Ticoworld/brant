@@ -12,7 +12,10 @@ import {DatabaseSync} from 'node:sqlite';
 import {runSharedLaunch} from './atomic-launch-browser-native.mjs';
 const require=createRequire(import.meta.url),root=resolve(fileURLToPath(new URL('../../..',import.meta.url)));
 const source=resolve(process.argv[2]),sourceChain=resolve(process.argv[3]);
-assert(source.startsWith(root+'/labs/trade-v2-token/gate2/evidence/'));assert(sourceChain.startsWith('/tmp/trade-gate2-')||sourceChain.startsWith('/tmp/brant-atomic-browser-resume-'));
+const chainRoot=resolve(process.env.TRADE_GATE2_CHAIN_ROOT||'/tmp');
+assert(source.startsWith(root+'/labs/trade-v2-token/gate2/evidence/'));
+assert(sourceChain.startsWith('/tmp/brant-atomic-browser-resume-')||
+ (sourceChain.startsWith(chainRoot+'/')&&/^trade-gate2-[A-Za-z0-9]+\/chain$/.test(sourceChain.slice(chainRoot.length+1))));
 const priorTrades=process.argv[4]==='--retained-trades'?JSON.parse(readFileSync(join(source,'atomic-browser-failure.json'),'utf8')).trades:undefined;
 if(priorTrades)assert.equal(priorTrades.length,2);
 const config=JSON.parse(readFileSync(join(source,'isolated-app-config.json'),'utf8'));

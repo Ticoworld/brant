@@ -38,6 +38,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   if(!resumeMarket){
   await app.request('/api/v2/launch/sessions',{owner:ccc.Script.from(locks[2]).hash()});
   await page.goto(app.base+'/launch',{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
+  await page.locator('.brant-wallet[title^=ckt]').waitFor();
   await page.getByLabel('Token name',{exact:true}).fill('Atomic Browser');await page.getByLabel('Ticker',{exact:true}).fill('ABR');
   await page.getByLabel(/Initial purchase \(CKB\)/).fill('91');
   await page.getByRole('button',{name:'Review launch',exact:true}).click();
@@ -71,12 +72,10 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   await page.waitForFunction(()=>[...document.querySelectorAll('button')].some(b=>b.textContent==='Launch token'&&!b.disabled));
   await page.evaluate(()=>{window.rejectAtomicOnce=true;});
   await page.getByRole('button',{name:'Launch token',exact:true}).click();
-  if(process.argv.includes('--creator-lifecycle'))await launch.waitFor();
-  else await page.getByText('Launch paused. Resume when your wallet is ready.',{exact:true}).waitFor();
+  await page.getByText('Wallet approval did not finish. You can try again.',{exact:true}).waitFor();
   pauseMining=true;
   await page.route('**/api/v2/launch/submit',async route=>{await route.fetch();await route.abort('failed');},{times:1});
-  if(process.argv.includes('--creator-lifecycle'))await launch.click();
-  else await page.getByRole('button',{name:'Resume launch',exact:true}).click();
+  await launch.click();
   await page.getByText('Submission is awaiting confirmation.',{exact:true}).waitFor();
   assert.equal(await page.evaluate(()=>window.atomicApprovals),1);
   const secondPending=await page.evaluate(()=>Object.entries(localStorage).find(([key])=>key.startsWith('brant-launch-session:'))?.[1]);assert(secondPending);
@@ -103,6 +102,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   const data=await app.request('/api/markets/'+market.market);assert.equal(data.supply,'2000');
   const proof=await app.request('/api/v2/pudge-proof',{manifest:data.manifest,owner:market.owner,side:'balance'});assert.equal(proof.balance,'7');assert.equal(proof.root,data.custodyRoot);
   await page.goto(app.base+'/market/'+market.market,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
+  await page.locator('.brant-wallet[title^=ckt]').waitFor();
   const expectedSides=['buy','buy','sell','buy','sell'];
   for(const side of priorTrades?[]:expectedSides){
     const started=Date.now();

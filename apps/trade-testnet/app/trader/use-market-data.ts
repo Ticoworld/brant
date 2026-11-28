@@ -18,6 +18,10 @@ function publish(id:string,value:Snapshot){
   for(const listener of listeners.get(id)||[])listener(value);
 }
 
+function hasIncorporated(snapshot:Snapshot,hash:string){
+  return !snapshot.error&&!!snapshot.data?.executionVersion&&snapshot.data.history.some(event=>event.hash===hash);
+}
+
 export function useMarketData(requestedId?:string, requireCanonical=false){
   const [marketId,setMarketId]=useState(requestedId||DEFAULT_MARKET),[state,setState]=useState(()=>readSnapshot(requestedId||DEFAULT_MARKET));
   useEffect(()=>{
@@ -29,7 +33,7 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     const existing=requests.get(marketId);
     if(existing){
       await existing.promise;
-      if(committed&&!readSnapshot(marketId).data?.history.some(event=>event.hash===committed)){
+      if(committed&&!hasIncorporated(readSnapshot(marketId),committed)){
         await refreshMarket(true,true,committed);
       }else if(canonical&&!existing.canonical){
         const settled=readSnapshot(marketId);
@@ -81,5 +85,10 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     return()=>{set.delete(setState);if(!set.size)listeners.delete(marketId);clearInterval(timer);document.removeEventListener('visibilitychange',update);};
   },[marketId,refresh,requestMarket,requireCanonical]);
   const data=state.data?.id===marketId&&(!requestedId||requestedId===marketId)?state.data:null;
-  return {...state,data,refresh,refreshDisplay,incorporate:useCallback((hash:string)=>requestMarket(true,true,hash),[requestMarket])};
+  return {...state,data,refresh,refreshDisplay,incorporate:useCallback(async(hash:string)=>{
+    for(let attempt=0;attempt<3;attempt++){
+      await requestMarket(true,true,hash);
+      if(hasIncorporated(readSnapshot(marketId),hash)||marketId===DEFAULT_MARKET)return;
+    }
+  },[marketId,requestMarket])};
 }
