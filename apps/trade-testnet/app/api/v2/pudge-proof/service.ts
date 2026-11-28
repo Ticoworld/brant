@@ -499,7 +499,7 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
     }
     const {state,live}=await pending,selectedBundle=state.bundle;
     const custodyMs=Math.round(performance.now()-refreshStarted);
-    if(anchor&&(live?.market.identity!==anchor.market.identity||selectedBundle.live.data!==anchor.data||selectedBundle.live.tx_hash!==anchor.point.tx_hash||BigInt(selectedBundle.live.index)!==BigInt(anchor.point.index)))throw Error('Custody changed during preparation');
+    if(anchor&&(JSON.stringify(live?.points)!==JSON.stringify(anchor.points)||selectedBundle.live.data!==anchor.data||selectedBundle.live.tx_hash!==anchor.point.tx_hash||BigInt(selectedBundle.live.index)!==BigInt(anchor.point.index)))throw Error('Custody changed during preparation');
     const nativeStarted=performance.now();
     request.signal.throwIfAborted();
     if(balanceOnly){
@@ -512,6 +512,7 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       if(!/^\d+$/.test(balance))throw Error('Verified owner balance is invalid');
       return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash,token:tokenHash,points:live?.points,custodyOutpoint:{tx_hash:selectedBundle.live.tx_hash,index:selectedBundle.live.index}},{headers:{'Cache-Control':'no-store'}});
     }
+    if(synchronize&&suppliedAnchor)return Response.json({points:live?.points,identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
     let worker=proofWorkers.get(state);
     if(worker?.closing){await worker.native.exited;worker=proofWorkers.get(state);}
     if(!worker){
@@ -589,5 +590,5 @@ export async function incorporateCommittedTrade(id:string,hash:string){
   if(!response.ok)throw Error('Committed trade custody recovery unavailable');
   const {points,identity}=await response.json();
   if(JSON.stringify(points)!==JSON.stringify(anchor.points))throw Error('Execution state advanced during incorporation');
-  return {...market,executionVersion:identity};
+  return {...market,executionVersion:JSON.stringify([points,identity])};
 }
