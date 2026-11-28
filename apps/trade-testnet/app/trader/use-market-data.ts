@@ -6,7 +6,7 @@ import type {MarketData} from './types';
 const DEFAULT_MARKET='pudge-xudt';
 const MARKET_MANIFEST_KEY='roveko-pudge-market-v1';
 export const ACTIVE_MARKET_KEY='roveko-active-market-id-v1';
-type Snapshot={data:MarketData|null;loading:boolean;error:string;lastSuccess:number;displayOnly?:boolean};
+type Snapshot={data:MarketData|null;loading:boolean;error:string;lastSuccess:number;displayOnly?:boolean;pendingIncorporation?:string};
 const snapshots=new Map<string,Snapshot>(),requests=new Map<string,{canonical:boolean;promise:Promise<void>}>(),listeners=new Map<string,Set<(value:Snapshot)=>void>>();
 const emptySnapshot=():Snapshot=>({data:null,loading:true,error:'',lastSuccess:0});
 
@@ -30,6 +30,7 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
   },[requestedId]);
   const requestMarket=useCallback(async function refreshMarket(force:boolean, canonical:boolean, committed?:string): Promise<void> {
 
+    committed??=readSnapshot(marketId).pendingIncorporation;
     const existing=requests.get(marketId);
     if(existing){
       await existing.promise;
@@ -43,7 +44,7 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
     }
     const current=readSnapshot(marketId);
     const needsCanonical=canonical&&current.displayOnly;
-    if(!force&&(document.hidden||(!needsCanonical&&current.lastSuccess&&Date.now()-current.lastSuccess<30_000)))return;
+    if(!force&&(document.hidden||(!committed&&!needsCanonical&&current.lastSuccess&&Date.now()-current.lastSuccess<30_000)))return;
     publish(marketId,{...current,loading:!current.data});
     const request=(async()=>{
       try{
@@ -63,7 +64,9 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
         if(body.id!==marketId)throw Error('Market identity does not match the requested market');
         const latest=readSnapshot(marketId).data;
         if(latest&&body.refreshedAt<latest.refreshedAt)return;
-        publish(marketId,{data:body as MarketData,loading:false,error:'',lastSuccess:Date.now(),displayOnly:response.headers.get('X-Roveko-State')==='display-snapshot'||(!canonical&&body.historyState!=='verified')});
+        const pending=readSnapshot(marketId).pendingIncorporation;
+        const incorporated=body.executionVersion&&body.incorporatedTrade===pending;
+        publish(marketId,{pendingIncorporation:incorporated?undefined:pending,data:body as MarketData,loading:false,error:'',lastSuccess:Date.now(),displayOnly:response.headers.get('X-Roveko-State')==='display-snapshot'||(!canonical&&body.historyState!=='verified')});
       }catch(cause){
         publish(marketId,{...readSnapshot(marketId),loading:false,error:cause instanceof Error?cause.message:'Market refresh failed'});
       }finally{requests.delete(marketId);}
@@ -86,6 +89,7 @@ export function useMarketData(requestedId?:string, requireCanonical=false){
   },[marketId,refresh,requestMarket,requireCanonical]);
   const data=state.data?.id===marketId&&(!requestedId||requestedId===marketId)?state.data:null;
   return {...state,data,refresh,refreshDisplay,incorporate:useCallback(async(hash:string)=>{
+    if(marketId!==DEFAULT_MARKET)publish(marketId,{...readSnapshot(marketId),pendingIncorporation:hash});
     for(let attempt=0;attempt<3;attempt++){
       await requestMarket(true,true,hash);
       if(hasIncorporated(readSnapshot(marketId),hash)||marketId===DEFAULT_MARKET)return;

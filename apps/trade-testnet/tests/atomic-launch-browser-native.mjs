@@ -103,6 +103,11 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   const proof=await app.request('/api/v2/pudge-proof',{manifest:data.manifest,owner:market.owner,side:'balance'});assert.equal(proof.balance,'7');assert.equal(proof.root,data.custodyRoot);
   await page.goto(app.base+'/market/'+market.market,{waitUntil:'commit'});await connectBrowserWallet(page,join(out,'atomic-wallet.js'));
   await page.locator('.brant-wallet[title^=ckt]').waitFor();
+  let unavailableResponses=0;
+  await page.route(url=>url.pathname==='/api/markets/'+market.market&&url.searchParams.has('committed'),async route=>{
+    unavailableResponses++;
+    await route.fulfill({status:503,json:{error:'Fixture incorporation unavailable'}});
+  },{times:3});
   const expectedSides=['buy','buy','sell','buy','sell'];
   for(const side of priorTrades?[]:expectedSides){
     const started=Date.now();
@@ -114,7 +119,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     const incorporation=page.waitForResponse(response=>{
       const url=new URL(response.url());
       return response.ok()&&url.pathname==='/api/markets/'+market.market&&url.searchParams.has('committed');
-    },{timeout:30000}).catch(()=>null);
+    },{timeout:55000}).catch(()=>null);
     await page.getByRole('button',{name:label,exact:true}).click();
     const key=`roveko-pudge-trade-v1:${genesis}:${market.owner}:${market.market}:settled`;
     while(trades.length===priorCount&&Date.now()-ready<120000)await delay(100);
@@ -122,6 +127,9 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     const trade=trades.at(-1);
     await page.waitForFunction(({key,hash})=>{const raw=localStorage.getItem(key);return raw&&JSON.parse(JSON.parse(raw).raw).txHash===hash;},{key,hash:trade.hash},{timeout:120000});
     trade.timings={preparationMs:ready-started,clickToSettledMs:Date.now()-ready};
+    if(priorCount===0){
+      await page.waitForFunction(()=>document.querySelector('.preview-action')?.disabled===true);
+    }
     const incorporated=await incorporation;
     assert(incorporated,'Expected coherent incorporation after '+trade.hash);
     assert.equal(new URL(incorporated.url()).searchParams.get('committed'),trade.hash);
@@ -134,6 +142,7 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     assert.equal(custodyVersion,[combined.identity,trade.hash,'0x2',combined.custodyRoot.slice(2)].join(':'));
 
   }
+  if(!priorTrades)assert.equal(unavailableResponses,3);
   assert.equal(trades.length,priorTrades?2:expectedSides.length);
   assert.equal(new Set(trades.map(trade=>trade.hash)).size,trades.length);
   for(const trade of trades){const current=await rpc('get_transaction',[trade.hash]);assert.equal(current.tx_status.status,'committed');assert.equal(current.tx_status.block_hash,trade.receipt.tx_status.block_hash);assert.equal(await rpc('get_block_hash',[current.tx_status.block_number]),current.tx_status.block_hash);}

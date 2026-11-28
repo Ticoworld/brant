@@ -232,10 +232,11 @@ async function validateLiveCheckpoint(bundle:RecoveryBundle,manifest:RecoveryMan
   const index=Number(BigInt(point.index)),output=transaction.transaction.outputs?.[index],data=transaction.transaction.outputs_data?.[index];
   if(!output||output.capacity!==bundle.live.output.capacity||!sameScript(output.lock,bundle.live.output.lock)||!sameScript(output.type,bundle.live.output.type)||data?.toLowerCase()!==bundle.live.data.toLowerCase())return false;
   if(transaction.tx_status.block_number===undefined||transaction.tx_status.block_hash===undefined)return false;
-  const canonicalHash=await rpc('get_block_hash',[transaction.tx_status.block_number]);
-  if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==transaction.tx_status.block_hash.toLowerCase())return false;
   if(live.cell.output.capacity!==bundle.live.output.capacity||!sameScript(live.cell.output.lock,toScript(manifest.scripts.custody))||!sameScript(live.cell.output.type,toScript(manifest.scripts.token))||live.cell.data.content.toLowerCase()!==bundle.live.data.toLowerCase()||!/^0x[0-9a-f]{96}$/i.test(bundle.live.data))return false;
-  const [stableTip,canonicalAnchorHash]=await Promise.all([rpc('get_block_hash',[tip.number]),rpc('get_block_hash',[anchor.number])]);
+  const heights=[tip.number,anchor.number,transaction.tx_status.block_number];
+  const hashes=new Map(await Promise.all([...new Set(heights)].map(async height=>[height,await rpc('get_block_hash',[height])] as const)));
+  const [stableTip,canonicalAnchorHash,canonicalHash]=heights.map(height=>hashes.get(height));
+  if(typeof canonicalHash!=='string'||canonicalHash.toLowerCase()!==transaction.tx_status.block_hash.toLowerCase())return false;
   return typeof stableTip==='string'&&stableTip.toLowerCase()===tip.hash.toLowerCase()&&typeof canonicalAnchorHash==='string'&&canonicalAnchorHash.toLowerCase()===storedAnchorHash.toLowerCase();
 }
 
@@ -551,7 +552,10 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
     clearTimeout(worker.idle);
     await worker.native.ready;
     if(synchronize)return Response.json({points:live?.points,identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
+    const proofComputeStarted=performance.now();
     const result=await worker.native.proof(body.owner!,body.side!,body.quantity!),expectedRoot=`0x${selectedBundle.live.data.slice(34)}`;
+    const proofComputeMs=performance.now()-proofComputeStarted;
+    const finalValidationStarted=performance.now();
     const mismatches:string[]=[];
     if(result.old_root?.toLowerCase()!==expectedRoot.toLowerCase())mismatches.push('old-root');
     if(typeof result.witness!=='string'||!/^0x544d5331[0-9a-f]+$/i.test(result.witness)||`0x${result.witness.slice(26,90)}`.toLowerCase()!==body.owner!.toLowerCase())mismatches.push('owner-witness');
@@ -564,7 +568,7 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       BigInt(live.point.index)!==BigInt(selectedBundle.live.index)||live.data.toLowerCase()!==selectedBundle.live.data.toLowerCase())){
       return new Response('Custody changed during preparation. Retry the quote.',{status:409});
     }
-    console.info('Pudge proof timing',JSON.stringify({path:proofTrace,marketMs,custodyMs,nativeMs:Math.round(performance.now()-nativeStarted),ms:Math.round(performance.now()-proofStarted)}));
+    console.info('Pudge proof timing',JSON.stringify({path:proofTrace,marketMs,custodyMs,rpcCalls,workerMs:Math.round(proofComputeStarted-nativeStarted),proofComputeMs:Math.round(proofComputeMs),finalValidationMs:Math.round(performance.now()-finalValidationStarted),nativeMs:Math.round(performance.now()-nativeStarted),ms:Math.round(performance.now()-proofStarted)}));
     return Response.json({proof:result,genesis:manifest.genesis,market:marketHash,token:tokenHash,manifest,points:live?.points,cells:live?.cells},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     if(error instanceof Error&&error.message==='Request too large')return new Response('Request too large',{status:400});

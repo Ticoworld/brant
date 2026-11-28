@@ -69,10 +69,13 @@ export async function startSharedMarketApp({genesis,fixture,out,dbPath,approvedC
       assert.equal(await page.evaluate(()=>localStorage.getItem('roveko-pudge-market-v1')),null);
       await page.screenshot({path:join(out,'fresh-browser-discovery.png'),fullPage:true});
       for(const market of markets){
-        await page.goto(base+'/market/'+market.market,{waitUntil:'domcontentloaded'});
-        await page.getByText(market.metadata.name,{exact:true}).waitFor({timeout:90_000});
-        assert.equal(await page.evaluate(()=>localStorage.getItem('roveko-pudge-market-v1')),null);
-        await page.screenshot({path:join(out,'fresh-browser-'+market.metadata.ticker+'.png'),fullPage:true});
+        const marketPage=await context.newPage();
+        marketPage.on('pageerror',error=>errors.push(error.message));
+        await marketPage.goto(base+'/market/'+market.market,{waitUntil:'commit',timeout:120_000});
+        await marketPage.getByText(market.metadata.name,{exact:true}).waitFor({timeout:90_000});
+        assert.equal(await marketPage.evaluate(()=>localStorage.getItem('roveko-pudge-market-v1')),null);
+        await marketPage.screenshot({path:join(out,'fresh-browser-'+market.metadata.ticker+'.png'),fullPage:true});
+        await marketPage.close();
       }
       assert.deepEqual(errors,[]);
       return {freshContext:true,savedManifests:false,markets:markets.map(market=>market.market),errors,walletInteroperability:'NOT TESTED'};

@@ -74,7 +74,7 @@ export function TradeV2({session, side, setSide}: {
   const count = amount === null ? 0n : BigInt(quantity);
   const fundingInsufficient = balanceCurrent && balance !== null && (!account.hasFundingCell || (buying && amount !== null && amount > balance));
   const ownershipInsufficient = !buying && holdings !== null && count > holdings;
-  const blocked = !market;
+  const blocked = !market || !!marketQuery.pendingIncorporation;
   const canPrepare = walletReady && !blocked && !trade.busy && !trade.pending &&
     (shared||trade.readiness === 'ready') && amount !== null && !fundingInsufficient &&
     (buying || (holdings !== null && !ownershipInsufficient));
