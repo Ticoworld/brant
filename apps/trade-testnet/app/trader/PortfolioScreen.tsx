@@ -50,8 +50,10 @@ export function PortfolioScreen(){
         const token=ccc.Script.from(market!.manifest.scripts.token);
         if(token.hash()!==tokenHash)throw Error('Token identity mismatch');
         const query={script:script(lock),script_type:'lock',script_search_mode:'exact',filter:{script:script(token)},with_data:true};
-        const indexed=await pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip');
-        const tip=await pudgeRpc<{number:string}>('get_tip_header');
+        const [indexed,tip]=await Promise.all([
+          pudgeRpc<{block_number:string;block_hash:string}>('get_indexer_tip'),
+          pudgeRpc<{number:string}>('get_tip_header'),
+        ]);
         if(BigInt(tip.number)-BigInt(indexed.block_number)>6n)throw Error('Wallet indexer is catching up');
         const page=await pudgeRpc<{objects:{out_point:unknown}[]}>('get_cells',[query,'asc','0x64']);
         if(page.objects.length>=100)throw Error('Wallet cell page is incomplete');

@@ -1,5 +1,7 @@
 "use client";
 
+import {useEffect,useState} from 'react';
+import {ACTIVE_MARKET_KEY} from './use-market-data';
 import Link from 'next/link';
 import {useLinkStatus} from 'next/link';
 import {usePathname} from 'next/navigation';
@@ -10,7 +12,7 @@ import {copy} from './copy';
 import './navigation.css';
 
 const geist = localFont({src:'../../node_modules/next/dist/next-devtools/server/font/geist-latin.woff2',weight:'100 900'});
-const items = [['/','markets'],['/market/pudge-xudt','trade'],['/portfolio','portfolio'],['/activity','activity'],['/launch','launch']] as const;
+const items = [['/','markets'],['/','trade'],['/portfolio','portfolio'],['/activity','activity'],['/launch','launch']] as const;
 const walletIssues = {
   'wrong-network':'walletWrongNetwork',unsupported:'walletUnsupported',
   'connection-timeout':'connectionTimeout','connection-rejected':'walletRejected',error:'walletRequestFailed',
@@ -28,6 +30,17 @@ export default function TraderNavigation() {
 
 export function NavigationHeader({account}: {account: Pick<ReturnType<typeof useAccount>, 'state'|'address'|'connect'>}) {
   const pathname = usePathname();
+  const [lastMarket,setLastMarket]=useState('');
+  useEffect(()=>{
+    try{
+      const id=localStorage.getItem(ACTIVE_MARKET_KEY)||'';
+      setLastMarket(/^0x[0-9a-f]{64}$/.test(id)||id==='pudge-xudt'?id:'');
+    }catch{setLastMarket('');}
+  },[pathname]);
+  const tradeHref=/^\/market\/(?:0x[0-9a-f]{64}|pudge-xudt)$/.test(pathname)
+    ? pathname
+    : lastMarket ? '/market/'+lastMarket : '/';
+
   const {locale,setLocale} = useLocale();
   const zh = locale === 'zh-CN';
   const network=process.env.NODE_ENV!=='production'&&process.env.NEXT_PUBLIC_BRANT_ISOLATED_TEST==='1'?'Isolated':'Pudge';
@@ -41,8 +54,8 @@ export function NavigationHeader({account}: {account: Pick<ReturnType<typeof use
     <div className="brant-header-inner">
       <Link href="/" className="brant-brand"><img src="/brand/brant-horizontal-white.svg" alt="Brant" width={1037} height={273}/></Link>
       <nav aria-label={zh ? '主导航' : 'Primary navigation'}>
-        {items.map(([href,key]) => <Link key={key} href={href} prefetch={key === 'trade' ? true : undefined}
-          aria-current={pathname===href || key==='trade'&&pathname.startsWith('/market/') ? 'page' : undefined}>
+        {items.map(([href,key]) => <Link key={key} href={key==='trade'?tradeHref:href}
+          aria-current={(key==='trade'?pathname.startsWith('/market/'):pathname===href) ? 'page' : undefined}>
           <NavigationLabel label={copy(locale,key)}/>
         </Link>)}
       </nav>

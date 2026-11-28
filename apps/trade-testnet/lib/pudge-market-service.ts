@@ -170,12 +170,15 @@ async function recoverCachedMarketSuccessors(saved:Checkpoint,identity:ReturnTyp
   const lineage=recovered.lineage;
   if(!lineage.length||lineage[0].transaction.hash.toLowerCase()!==saved.points[0].tx_hash.toLowerCase())throw Error('Successor history does not start at the cached market anchor');
   const history=[...previous.history];
-  await appendMarketExecutions(history,lineage,identity,rpc);
-  const marketPair=recovered.pair;
-  const points=[...marketPair,...custodyPair],live=await Promise.all(points.map(point=>rpc('get_live_cell',[point,true]) as Promise<{status?:string;cell?:{output:Output;data:{content:string}}}>));
+  const marketPair=recovered.pair,points=[...marketPair,...custodyPair];
+  const current=lineage.at(-1)!.transaction as Transaction;
+  const marketIndex=Number(BigInt(marketPair[0].index)),custodyIndex=Number(BigInt(custodyPair[0].index));
+  const [live,custodyTransaction]=await Promise.all([
+    rpcBatch(points.map(point=>['get_live_cell',[point,true]])),
+    custodyPair[0].tx_hash===current.hash?current:canonical(custodyPair[0].tx_hash).then(row=>row.transaction),
+    appendMarketExecutions(history,lineage,identity,rpc),
+  ]);
   if(live.some(cell=>cell.status!=='live'||!cell.cell))throw Error('Gate 2 successor cells are not live');
-  const current=lineage.at(-1)!.transaction as Transaction,marketIndex=Number(BigInt(marketPair[0].index)),custodyIndex=Number(BigInt(custodyPair[0].index));
-  const custodyTransaction=custodyPair[0].tx_hash===current.hash?current:(await canonical(custodyPair[0].tx_hash)).transaction;
   const cells=live.map(cell=>cell.cell!);
   for(let index=0;index<4;index++){
     const txIndex=Number(BigInt(points[index].index));

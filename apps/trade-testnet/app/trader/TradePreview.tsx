@@ -102,24 +102,23 @@ export function TradeV2({session, side, setSide}: {
   const issue = walletIssue[account.state as keyof typeof walletIssue];
   const walletOpening = account.state === 'checking' || account.state === 'connecting';
   const statusLabels: Record<string, string> = {
-    preparing: copy(locale, 'reviewing'),
-    'awaiting-wallet': copy(locale, 'walletApproval'),
-    broadcasting: copy(locale, 'broadcasting'),
+    preparing: zh ? '正在准备' : 'Preparing',
+    'awaiting-wallet': zh ? '在钱包中批准' : 'Approve in wallet',
+    broadcasting: zh ? '正在提交' : 'Submitting',
     submitted: zh ? '正在确认' : 'Confirming',
     pending: zh ? '正在确认' : 'Confirming',
     proposed: zh ? '正在确认' : 'Confirming',
-    confirmed: copy(locale, 'confirmed'),
-    rechecking: zh ? '正在重新验证确认状态' : 'Rechecking confirmation',
-    rejected: trade.error ? (zh ? '交易被拒绝' : 'Transaction rejected') : (zh ? '钱包批准已取消' : 'Wallet approval rejected'),
-    failed: zh ? '交易未完成' : 'Trade failed',
+    rechecking: zh ? '正在确认' : 'Confirming',
   };
-  const status = walletReady && (catchingUp&&inclusion ? (zh?'交易已确认，正在更新市场和余额':'Trade confirmed, updating market and balance') : trade.uncertain ? copy(locale, 'unknown') : trade.status==='confirmed'?'':statusLabels[trade.status]);
+  const progress = marketQuery.pendingIncorporation
+    ? (zh ? '正在更新市场' : 'Updating market')
+    : (trade.busy || trade.pending) && statusLabels[trade.status]
+      || (review === 'updating' ? (zh ? '正在准备' : 'Preparing') : '');
   const action = !walletReady
     ? copy(locale, walletOpening ? (account.state === 'checking' ? 'walletChecking' : 'connecting') : 'connect')
-    : (trade.busy || trade.pending) && status ? status
-    : review === 'updating' ? (zh ? '正在准备交易' : 'Preparing trade')
-    : review === 'unavailable' ? (zh ? '重新准备报价' : 'Retry quote preparation')
-    : zh ? (buying ? `买入 ${symbol}` : `卖出 ${symbol}`) : (buying ? `Buy ${symbol}` : `Sell ${symbol}`);
+    : progress || (review === 'unavailable'
+      ? (zh ? '重新准备报价' : 'Retry quote')
+      : zh ? (buying ? '买入' : '卖出') : (buying ? 'Buy' : 'Sell'));
   const submit = () => {
     if (!walletReady) {account.connect(); return;}
     if (!canPrepare || amount === null || !market) return;
@@ -149,11 +148,11 @@ export function TradeV2({session, side, setSide}: {
           <TradeTicket
             side={side} setSide={setSide} quantity={quantity} input={buying?budget:sellQuantity} setInput={buying?setBudget:setSellQuantity} budget={budgetAmount}
             amount={amount} market={market} balance={balance} balanceCurrent={balanceCurrent} holdings={holdings} zh={zh}
-            action={action} submit={submit} sellAction={walletReady && !buying && review !== 'unavailable'}
+            action={action} progressing={walletReady && !!progress} submit={submit} sellAction={walletReady && !buying && review !== 'unavailable'}
             disabled={walletOpening || trade.busy || (walletReady && (!canPrepare || review === 'updating'))}
           >
             {issue && <p role="alert" className="preview-note">{copy(locale, issue)}</p>}
-            {blocked && <p role="status" className="preview-note">
+            {blocked && !progress && <p role="status" className="preview-note">
               {catchingUp ? (zh ? '正在重新验证市场状态' : 'Rechecking verified market state')
                 : stale ? (zh ? '正在更新市场数据' : 'Updating market data.')
                 : copy(locale, loading ? 'loading' : 'unavailable')}
@@ -169,11 +168,9 @@ export function TradeV2({session, side, setSide}: {
               {trade.readiness === 'unavailable' ? (zh ? '交易状态暂不可用' : 'Trading state unavailable') : (zh ? '正在同步交易状态' : 'Synchronizing trading state')}
             </p>}
             {review==='unavailable'&&amount!==null&&<p role="alert" className="preview-note">{({busy:zh?'验证服务繁忙，请稍后重试。':'Trade verification is busy. Try again shortly.',timeout:zh?'验证超时，请重试。':'Trade verification timed out. Try again.',funding:zh?'合格资金不足，请检查钱包余额。':'Eligible wallet funding is unavailable. Check your spendable CKB.',changed:zh?'价格已更新，请刷新报价。':'The market changed. Refresh the quote.',proof:zh?'暂时无法验证交易，当前估算不可执行。':'Trade verification is temporarily unavailable. This estimate is not executable.'} as Record<string,string>)[trade.quoteError(side,count,amount)]}</p>}
-            {status && <div role="status" className="preview-note preview-settlement">
-              <span>{status}</span>
-              {trade.pending && (trade.uncertain || trade.error || trade.status === 'rechecking') &&
-                <button type="button" onClick={() => void trade.reconcile(false)}>{copy(locale, 'reconcile')}</button>}
-            </div>}
+            {trade.uncertain && <p role="status" className="preview-note">{copy(locale, 'unknown')}</p>}
+            {trade.pending && (trade.uncertain || trade.error || trade.status === 'rechecking') &&
+              <button type="button" onClick={() => void trade.reconcile(false)}>{copy(locale, 'reconcile')}</button>}
             {walletReady && trade.error && <p role="alert" className="preview-note">
               {trade.error} {!trade.pending && <button type="button" onClick={trade.dismissError}>{zh ? '关闭' : 'Dismiss'}</button>}
             </p>}
@@ -208,7 +205,7 @@ function TokenMark({symbol,logo}: {symbol: string;logo?:string}) {
   return <span aria-hidden="true" className="preview-token-mark" data-ckb={symbol === 'CKB'}>{logo?<img src={logo} alt="" width={32} height={32}/>:symbol.charAt(0)}</span>;
 }
 
-function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, submit, sellAction, disabled, children}: {
+function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSide, quantity, input, setInput, budget, amount, action, progressing, submit, sellAction, disabled, children}: {
   market: MarketData | null;
   balance: bigint | null;
   balanceCurrent:boolean;
@@ -221,7 +218,7 @@ function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSi
   setInput:(value:string)=>void;
   budget:bigint;
   amount: bigint | null;
-  action: string;
+  action: string; progressing: boolean;
   submit: () => void;
   sellAction: boolean;
   disabled: boolean;
@@ -300,7 +297,7 @@ function TradeTicket({market, balance, balanceCurrent, holdings, zh, side, setSi
         <p>{zh ? '交易数量越大，成交价格沿曲线变化越多。此笔交易的平均成交价与当前单价相差至少 10%。' : 'This trade size moves along the curve. Its average execution price differs from the current unit price by at least 10%.'}</p>
       </div>}
       {market && input && amount === null && <p role="status" className="preview-note">{zh ? '该数量无法报价。请输入可用范围内的整数。' : buying&&unitPrice!==null?'Minimum budget for one token: '+formatCkb(unitPrice)+' CKB':'Enter a whole quantity within available liquidity.'}</p>}
-      <button type="button" className="preview-action" data-sell={sellAction} disabled={disabled} onClick={submit}>{action}</button>
+      <button type="button" className="preview-action" data-sell={sellAction} disabled={disabled} onClick={submit} aria-busy={progressing}>{progressing && <span className="preview-action-spinner" aria-hidden="true"/>}{action}</button>
       {children}
     </section>
   );

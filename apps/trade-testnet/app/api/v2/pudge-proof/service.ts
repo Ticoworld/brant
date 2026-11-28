@@ -597,7 +597,9 @@ async function cacheBundleForTransition(directory:string,bundle:RecoveryBundle){
 
 /** Advance the same custody state used by quote preparation before publishing a confirmation. */
 export async function incorporateCommittedTrade(id:string,hash:string){
+  const started=performance.now();
   const market=await getPublishedPudgeMarketData(id,hash);
+  const marketMs=Math.round(performance.now()-started);
   if(!market.history.some(event=>event.hash===hash))throw Error('Committed trade is not in verified market history');
   const anchor=await getPudgeCustodyAnchor(id,market);
   const response=await handleProof(new Request('http://127.0.0.1/api/v2/pudge-proof',{
@@ -607,5 +609,6 @@ export async function incorporateCommittedTrade(id:string,hash:string){
   if(!response.ok)throw Error('Committed trade custody recovery failed (HTTP '+response.status+'): '+await response.text());
   const {points,identity}=await response.json();
   if(JSON.stringify(points)!==JSON.stringify(anchor.points))throw Error('Execution state advanced during incorporation');
+  console.info('Trade incorporation timing',JSON.stringify({hash,marketMs,custodyMs:Math.round(performance.now()-started)-marketMs}));
   return {...market,incorporatedTrade:hash,executionVersion:JSON.stringify([points,identity])};
 }

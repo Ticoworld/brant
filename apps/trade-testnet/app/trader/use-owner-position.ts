@@ -3,7 +3,7 @@
 import {useCallback,useEffect,useState} from 'react';
 import type {MarketData} from './types';
 
-const verified=new Map<string,string>();
+const verified=new Map<string,{root:string;balance:string;verifiedAt:number}>();
 const requests=new Map<string,Promise<string>>();
 let balanceRetryAt=0;
 
@@ -12,6 +12,11 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
   const key=owner&&market?JSON.stringify([owner,market.genesis,market.identity]):'';
   useEffect(()=>{
     if(!enabled||!owner||!market){setSnapshot(null);setState('idle');return;}
+    const cached=verified.get(key);
+    if(retryRevision===0&&revision===0&&cached?.root===market.custodyRoot&&Date.now()-cached.verifiedAt<10_000){
+      setSnapshot({key,root:cached.root,balance:cached.balance});setState('ready');setError('');
+      return;
+    }
     let active=true,delay=2000;
 
     let timer:ReturnType<typeof setTimeout>;
@@ -44,12 +49,12 @@ export function useOwnerPosition(owner:string,market:MarketData|null,revision=0,
         const balance=await request;
         if(active){
           if(verified.size>=16)verified.delete(verified.keys().next().value!);
-          verified.set(key,balance);setSnapshot({key,root,balance});setState('ready');setError('');
+          verified.set(key,{root,balance,verifiedAt:Date.now()});setSnapshot({key,root,balance});setState('ready');setError('');
         }
       }catch(cause){if(active){setError(cause instanceof Error?cause.message:'Balance verification failed');setState('unavailable');timer=setTimeout(load,Math.max(delay,balanceRetryAt-Date.now()));delay=Math.min(delay*2,30_000);}}
     };
     void load();return()=>{active=false;clearTimeout(timer);};
   },[enabled,owner,market?.id,market?.custodyRoot,revision,retryRevision,key]);
   const retry=useCallback(()=>setRetryRevision(value=>value+1),[]);
-  return {balance:enabled?(snapshot?.key===key?snapshot.balance:verified.get(key)||''):'',state:state==='ready'&&(snapshot?.key!==key||snapshot?.root!==market?.custodyRoot)?'loading' as const:state,retry,error};
+  return {balance:enabled?(snapshot?.key===key?snapshot.balance:verified.get(key)?.balance||''):'',state:state==='ready'&&(snapshot?.key!==key||snapshot?.root!==market?.custodyRoot)?'loading' as const:state,retry,error};
 }
