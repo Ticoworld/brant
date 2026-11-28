@@ -111,16 +111,16 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
   const expectedSides=['buy','buy','sell','buy','sell'];
   for(const side of priorTrades?[]:expectedSides){
     const started=Date.now();
-    await page.getByRole('button',{name:side==='buy'?'Buy':'Sell',exact:true}).click();
+    await page.locator('.preview-segment').getByRole('button',{name:side==='buy'?'Buy':'Sell',exact:true}).click();
     await page.locator('.preview-editable input').fill(side==='buy'?'20':'1');
-    const label=(side==='buy'?'Buy ':'Sell ')+market.metadata.ticker;
+    const label=side==='buy'?'Buy':'Sell';
     await page.waitForFunction(label=>{const b=document.querySelector('.preview-action');return b?.textContent===label&&!b.disabled;},label,{timeout:120000});
     const ready=Date.now(),priorCount=trades.length;
     const incorporation=page.waitForResponse(response=>{
       const url=new URL(response.url());
       return response.ok()&&url.pathname==='/api/markets/'+market.market&&url.searchParams.has('committed');
     },{timeout:55000}).catch(()=>null);
-    await page.getByRole('button',{name:label,exact:true}).click();
+    await page.locator('.preview-action').click();
     const key=`roveko-pudge-trade-v1:${genesis}:${market.owner}:${market.market}:settled`;
     while(trades.length===priorCount&&Date.now()-ready<120000)await delay(100);
     assert.equal(trades.length,priorCount+1);

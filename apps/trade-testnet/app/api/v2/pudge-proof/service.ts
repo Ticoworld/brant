@@ -322,7 +322,7 @@ export async function prepareProof(request:Request){
   return handleProof(request);
 }
 
-async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Awaited<ReturnType<typeof getPudgeCustodyAnchor>>){
+async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Awaited<ReturnType<typeof getPudgeCustodyAnchor>>, committedHash?:string){
   const proofStarted=performance.now(),proofTrace:string[]=[];
   let dir:string|undefined,entered=false;
   let leasedWorker:ProofWorker|undefined;
@@ -441,7 +441,38 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
     let checkpoint=current?.bundle||await loadCheckpoint(key,file,manifest,replayOwner);
     let canAdvance=false;
     let reusable=checkpoint?await isLive(checkpoint):false;
-    if(checkpoint&&!reusable){
+    if(current&&committedHash&&market?.point.tx_hash===committedHash&&!reusable){
+      try {
+        const event=market.market.history.find(row=>row.hash===committedHash);
+        const prior=current.bundle.collection.end_tip;
+        if(!event||!prior?.number||!prior.hash||!current.snapshot.history_length)throw Error('Missing direct custody anchor');
+        const height=ccc.numToHex(BigInt(event.blockNumber));
+        const [block,priorHash]=await Promise.all([
+          rpc('get_block_by_number',[height]),rpc('get_block_hash',[prior.number]),
+        ]);
+        if(priorHash!==prior.hash||!block?.header?.hash||block.header.number!==height)throw Error('Custody anchor is no longer canonical');
+        const index=block.transactions.findIndex((tx:{hash:string})=>tx.hash===committedHash);
+        if(index<0)throw Error('Trade absent from canonical block');
+        const tx=block.transactions[index];
+        const previousPoint=current.bundle.live;
+        if(!tx.inputs.some((input:{previous_output:{tx_hash:string;index:string}})=>
+          input.previous_output.tx_hash===previousPoint.tx_hash&&BigInt(input.previous_output.index)===BigInt(previousPoint.index)))throw Error('Trade skips custody transitions');
+        const slot=Number(BigInt(market.point.index));
+        const output=tx.outputs[slot],data=tx.outputs_data[slot];
+        if(!output||data!==market.data)throw Error('Trade custody output differs');
+        const historyRow={tx_hash:committedHash,block_number:height,tx_index:ccc.numToHex(index),transaction:tx};
+        checkpoint={
+          ...current.bundle, history:[...current.bundle.history,historyRow],
+          collection:{...current.bundle.collection,end_tip:BigInt(prior.number)>BigInt(height)?prior:{number:height,hash:block.header.hash}},
+          live:{...market.point,output,data,capacity:output.capacity},
+        };
+        canAdvance=true;
+        proofTrace.push('direct-custody-successor');
+      }catch{
+        proofTrace.push('direct-custody-fallback');
+      }
+    }
+    if(checkpoint&&!reusable&&!canAdvance){
       proofTrace.push('incremental-collection');
       await writeFile(checkpointPath,JSON.stringify(checkpoint),{mode:0o600});
       try{
@@ -526,7 +557,7 @@ async function handleProof(request:Request,synchronize=false, suppliedAnchor?:Aw
       if(!/^\d+$/.test(balance))throw Error('Verified owner balance is invalid');
       return Response.json({owner,balance,root,genesis:manifest.genesis,market:marketHash,token:tokenHash,points:live?.points,custodyOutpoint:{tx_hash:selectedBundle.live.tx_hash,index:selectedBundle.live.index}},{headers:{'Cache-Control':'no-store'}});
     }
-    if(synchronize&&suppliedAnchor)return Response.json({points:live?.points,identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
+    if(synchronize&&suppliedAnchor)return Response.json({path:proofTrace,rpcCalls,points:live?.points,identity:`${marketHash}:${selectedBundle.live.tx_hash}:${selectedBundle.live.index}:${selectedBundle.live.data.slice(34)}`});
     let worker=proofWorkers.get(state);
     if(worker?.closing){await worker.native.exited;worker=proofWorkers.get(state);}
     if(!worker){
@@ -605,10 +636,10 @@ export async function incorporateCommittedTrade(id:string,hash:string){
   const response=await handleProof(new Request('http://127.0.0.1/api/v2/pudge-proof',{
     method:'POST',headers:{origin:'http://127.0.0.1','content-type':'application/json'},
     body:JSON.stringify({owner:market.manifest.journal.owner,manifest:market.manifest,side:'buy',quantity:'1'}),
-  }),true,anchor);
+  }),true,anchor,hash);
   if(!response.ok)throw Error('Committed trade custody recovery failed (HTTP '+response.status+'): '+await response.text());
-  const {points,identity}=await response.json();
+  const {points,identity,path,rpcCalls}=await response.json();
   if(JSON.stringify(points)!==JSON.stringify(anchor.points))throw Error('Execution state advanced during incorporation');
-  console.info('Trade incorporation timing',JSON.stringify({hash,marketMs,custodyMs:Math.round(performance.now()-started)-marketMs}));
+  console.info('Trade incorporation timing',JSON.stringify({hash,marketMs,path,rpcCalls,custodyMs:Math.round(performance.now()-started)-marketMs}));
   return {...market,incorporatedTrade:hash,executionVersion:JSON.stringify([points,identity])};
 }

@@ -152,8 +152,8 @@ export function PortfolioOverview({account, market, position, walletBalance, cur
           <div className="portfolio-asset-heading"><span aria-hidden="true" className="portfolio-mark portfolio-mark-rvk">{symbol[0]}</span><div><h2>{symbol}</h2><p>{market.token.name}</p></div><Link href={'/market/'+market.id}>{copy(locale,'trade')} ↗</Link></div>
           <div className="portfolio-rvk-total"><Balance label={zh?`${symbol} 总额`:`Total ${symbol}`} value={total} unit={symbol} state={total===null?(zh?'等待两个余额完成验证':'Awaiting both balance checks'):walletState==='refreshing'?refreshing:verified}/></div>
           <div className="portfolio-balances">
-            <Balance label={zh?'Brant 内':'In Brant'} value={position.balance!==''?BigInt(position.balance).toLocaleString(locale):null} unit={symbol} state={position.state==='unavailable'?(position.balance!==''?lastKnown:unavailable):status(custodyCurrent,position.balance!=='')}/>
-            <Balance label={zh?'钱包内':'In wallet'} value={walletBalance?.toLocaleString(locale)??null} unit={symbol} state={walletBalance!==null&&!currentWallet?lastKnown+" · "+walletStatus:walletStatus}/>
+            <Balance label={zh?'Brant 内可用':'Available in Brant'} value={position.balance!==''?BigInt(position.balance).toLocaleString(locale):null} unit={symbol} state={position.state==='unavailable'?(position.balance!==''?lastKnown:unavailable):status(custodyCurrent,position.balance!=='')}/>
+            <Balance label={zh?'钱包内':'In your wallet'} value={walletBalance?.toLocaleString(locale)??null} unit={symbol} state={walletBalance!==null&&!currentWallet?lastKnown+" · "+walletStatus:walletStatus}/>
           </div>
           {(walletState==='failed'||walletState==='expired')&&<p role='status'>{walletStatus} <button type='button' onClick={retryWallet}>{copy(locale,'retry')}</button></p>}
           {position.state==='unavailable'&&<p role="alert">{position.error||copy(locale,'holdingsUnavailable')} <button type="button" onClick={position.retry}>{copy(locale,'retry')}</button></p>}

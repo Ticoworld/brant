@@ -128,7 +128,7 @@ export function MarketsListing({markets, loading=false, error='', displayOnly=fa
                 <p>{zh ? '登记显示名称' : 'Registry display name'} · {market.token.name}</p>
                 <p>{zh ? '代币类型哈希' : 'Token type hash'} <code>{market.token.typeHash}</code></p>
                 <p>{zh ? '快照区块' : 'Snapshot block'} {BigInt(market.tip.number).toLocaleString(locale)}</p>
-                {checkpoint && <p>{zh ? '此快照未验证链上成交历史。' : 'Canonical trading history is unavailable in this snapshot.'}</p>}
+                {checkpoint && <p>{zh ? '成交历史暂不可用。' : 'Trade history is temporarily unavailable.'}</p>}
               </details>
             </div>
           </article>;

@@ -76,10 +76,10 @@ export function ActivityScreen(){
       <h2>{t('Transactions to check','待核查的交易')}</h2>
       {attempts.map(attempt=><AttemptRow key={owner+attempt.kind+attempt.hash} attempt={attempt} marketId={market?.id??'pudge-xudt'}/>)}
     </section>}
-    <section className="activity-surface" aria-label={t('Verified trades','已验证成交')} aria-busy={refreshing||query.loading}>
+    <section className="activity-surface" aria-label={t('Trade history','已验证成交')} aria-busy={refreshing||query.loading}>
       {connectRequired ? <div className="activity-empty"><p>{t('Connect a verified Pudge wallet to see your Brant activity.','连接已验证的 Pudge 钱包以查看你的 Brant 活动。')}</p>
         <button type="button" onClick={account.connect} disabled={account.state==='checking'||account.state==='connecting'}>{copy(locale,'connect')}</button></div>
-      : !rows||scope==='personal'&&!owner ? <p className="activity-empty" role="status">{query.loading?t('Loading canonical history…','正在加载链上成交历史…'):t('Verified history unavailable','已验证成交历史暂不可用')}</p>
+      : !rows||scope==='personal'&&!owner ? <p className="activity-empty" role="status">{query.loading?t('Loading trades…','正在加载链上成交历史…'):t('Trade history unavailable','成交历史暂不可用')}</p>
       : <>
         {market&&<p className="activity-freshness" role="status">{query.error?t('Refresh failed · Last verified','刷新失败 · 上次验证'):t('Last verified','上次验证')} · <time dateTime={new Date(market.refreshedAt).toISOString()}>{new Date(market.refreshedAt).toLocaleString(locale)}</time></p>}
         {rows.length>0 ? <>
@@ -99,7 +99,7 @@ export function ActivityScreen(){
               </summary>
               <dl className="activity-details">
                 <div><dt>{t('Transaction hash','交易哈希')}</dt><dd>{event.hash}</dd></div>
-                <div><dt>{t('Verified block','已验证区块')}</dt><dd>{BigInt(event.blockNumber).toLocaleString(locale)}</dd></div>
+                <div><dt>{t('Block','区块')}</dt><dd>{BigInt(event.blockNumber).toLocaleString(locale)}</dd></div>
                 <div><dt>{t('Owner lock hash','所有者锁脚本哈希')}</dt><dd>{event.owner}</dd></div>
                 <div><dt>{t('Market','市场')}</dt><dd>{market?.pair}</dd></div>
                 {event.executionIndex!==undefined&&<div><dt>{t('Execution index','成交序号')}</dt><dd>{event.executionIndex}</dd></div>}
