@@ -21,8 +21,10 @@ export async function selectTradeFunding(rpc:Rpc,script:ccc.Script,minimum:bigin
     const live=await check(hint);
     if(live)return live;
   }
-  const indexed=await rpc('get_indexer_tip',[]) as {block_number:string;block_hash:string};
-  const tip=await rpc('get_tip_header',[]) as {number:string};
+  const [indexed,tip]=await Promise.all([
+    rpc('get_indexer_tip',[]) as Promise<{block_number:string;block_hash:string}>,
+    rpc('get_tip_header',[]) as Promise<{number:string}>,
+  ]);
   const lag=BigInt(tip.number)-BigInt(indexed.block_number);
   if(lag<0n||lag>6n)throw Error('Funding index is catching up. Retry shortly.');
   const page=await rpc('get_cells',[{

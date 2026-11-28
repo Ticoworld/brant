@@ -126,7 +126,12 @@ export async function runSharedLaunch({rpc,genesis,hashes,deps,secp,locks,out,co
     assert(incorporated,'Expected coherent incorporation after '+trade.hash);
     assert.equal(new URL(incorporated.url()).searchParams.get('committed'),trade.hash);
     const combined=await incorporated.json();
-    assert(combined.executionVersion&&combined.history.some(event=>event.hash===trade.hash));
+    assert.equal(combined.incorporatedTrade,trade.hash);
+    assert(combined.history.some(event=>event.hash===trade.hash));
+    const [points,custodyVersion]=JSON.parse(combined.executionVersion);
+    assert.deepEqual(points,combined.executionPoints);
+    assert.deepEqual(points,Array.from({length:4},(_,index)=>({tx_hash:trade.hash,index:'0x'+index.toString(16)})));
+    assert.equal(custodyVersion,[combined.identity,trade.hash,'0x2',combined.custodyRoot.slice(2)].join(':'));
 
   }
   assert.equal(trades.length,priorTrades?2:expectedSides.length);

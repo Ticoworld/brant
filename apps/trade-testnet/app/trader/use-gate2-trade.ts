@@ -36,6 +36,7 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
   const [receipt,setReceipt]=useState('');
   const [inclusion,setInclusion]=useState<{key:string;hash:string;height:string}|null>(null);
   const broadcasting=useRef(false);
+  const changeHint=useRef<import('../../lib/v2-engine/multi-funding.ts').FundingHint|undefined>(undefined);
   const [readiness,setReadiness]=useState('syncing');
   useEffect(()=>{
     if(!market?.identity||!account.owner||market.manifest.format==='brant-shared-pudge-market-v1')return;
@@ -68,13 +69,16 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
     const controller=new AbortController(),id=crypto.randomUUID();
     const started=performance.now();
     let lastStage='wallet';
+    const change=changeHint.current;
+    const fundingHint=change?.owner===account.owner&&change.genesis===market.genesis
+      ?change:account.fundingHint;
     const review=(async()=>{
       const address=await signer.getRecommendedAddressObj();
       if(active.current!==signer||address.script.hash()!==account.owner)throw Error('Wallet changed during preparation');
       const signal=controller.signal;
       for(let attempt=0;;attempt++){
         try{return await prepareLocalReview(rpc,market.manifest,account.owner,side,quantity,address.script,
-          (stage,ms)=>{lastStage=stage;console.info('Brant quote stage',id,stage,Math.round(ms));},account.fundingHint,amount,signal);}
+          (stage,ms)=>{lastStage=stage;console.info('Brant quote stage',id,stage,Math.round(ms));},fundingHint,amount,signal);}
         catch(error){
           const retry=error instanceof TradeProofError&&(error.status===429||(error.status===503&&error.retryAfterMs>0));
           if(signal.aborted||attempt||!retry||error.retryAfterMs>60000)throw error;
@@ -171,6 +175,9 @@ export function useGate2Trade(market:MarketData|null,refreshMarket:()=>Promise<v
         toast.success(locale==='zh-CN'?'交易已确认':'Trade confirmed',{id:attempt.txHash});
       }
       if(!saveTradeSettlement(localStorage,key,raw,height))return;
+      // Funding selection independently verifies this committed output's lock,
+      // data, capacity and liveness before it can enter a new review.
+      changeHint.current={txHash:attempt.txHash,index:'0x4',owner:attempt.owner,genesis:attempt.genesis};
       setInclusion(previous=>previous?.key===key&&previous.hash===attempt.txHash&&previous.height===height?previous:{key,hash:attempt.txHash,height});
       cancelQuote();
       setReceipt(attempt.txHash);setStatus('confirmed');setUncertain(false);
